@@ -54,6 +54,8 @@ class Semester(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='classes')
+
     def __str__(self):
         return self.name
 
