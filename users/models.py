@@ -21,6 +21,7 @@ class User(AbstractUser):
     gender = models.CharField(max_length=10, null=True, blank=True, choices=[(gender.name, gender.value) for gender in Gender])
 
     avatar = CloudinaryField(null=True)
+    email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=150)
     middle_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)

@@ -33,7 +33,7 @@ class ExtracurricularActivity(BaseModel):
     description = CKEditor5Field('Text', config_name='extends')
 
     # Danh sách sinh viên tham gia
-    participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivityParticipation')
+    list_of_participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivityParticipation')
 
     # Thuộc bản tin nào?
     news = models.ForeignKey(News, null=True, on_delete=models.SET_NULL, related_name='activities')
