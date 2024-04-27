@@ -7,7 +7,7 @@ from interacts.models import BaseModel
 
 class News(BaseModel):
     title = models.CharField(max_length=20)
-    image = CloudinaryField(null=True)
+    image = CloudinaryField(null=True, blank=True)
     content = CKEditor5Field('Text', config_name='extends')
 
     created_by = models.ForeignKey('users.Officer', null=True, on_delete=models.SET_NULL, related_name='news')

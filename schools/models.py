@@ -54,7 +54,7 @@ class Semester(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
-    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='classes')
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='semesters')
 
     def __str__(self):
         return self.name
@@ -85,7 +85,7 @@ class DeficiencyReport(BaseModel):
         unique_together = ('student', 'activity')
 
     is_resolved = models.BooleanField(default=False)
-    image = CloudinaryField(null=True)
+    image = CloudinaryField(null=True, blank=True)
     content = CKEditor5Field('Text', config_name='extends', null=True, blank=True)
 
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE, related_name='deficiency_reports')
