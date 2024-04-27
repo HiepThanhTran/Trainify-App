@@ -36,10 +36,14 @@ class AcademicYear(BaseModel):
     end_date = models.DateField()
 
     def __str__(self):
-        return self.name
+        return self.academic_year
 
 
 class Class(BaseModel):
+    class Meta:
+        verbose_name = 'class'
+        verbose_name_plural = 'classes'
+
     name = models.CharField(max_length=20)
 
     major = models.ForeignKey(Major, on_delete=models.CASCADE, related_name='classes')

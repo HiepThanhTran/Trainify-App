@@ -22,11 +22,11 @@ class User(AbstractUser):
 
     avatar = CloudinaryField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=150)
-    middle_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=150, blank=True)
+    middle_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     phone_number = models.CharField(max_length=11, blank=True, unique=True)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=255, blank=True, unique=True)
 
     faculty = models.ForeignKey('schools.Faculty', null=True, on_delete=models.SET_NULL)
@@ -45,11 +45,19 @@ class User(AbstractUser):
 
 
 class Officer(User):
+    class Meta:
+        verbose_name = 'officer'
+        verbose_name_plural = 'officers'
+
     job_title = models.CharField(max_length=50)
     academic_degree = models.CharField(max_length=50)
 
 
 class Student(User):
+    class Meta:
+        verbose_name = 'student'
+        verbose_name_plural = 'students'
+
     student_code = models.CharField(max_length=10, null=True, unique=True)
 
     major = models.ForeignKey('schools.Major', null=True, on_delete=models.SET_NULL, related_name='students')

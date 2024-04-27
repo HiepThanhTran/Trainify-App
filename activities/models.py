@@ -6,6 +6,10 @@ from interacts.models import BaseModel
 
 
 class News(BaseModel):
+    class Meta:
+        verbose_name = 'news'
+        verbose_name_plural = 'news'
+
     title = models.CharField(max_length=20)
     image = CloudinaryField(null=True, blank=True)
     content = CKEditor5Field('Text', config_name='extends')
@@ -52,7 +56,7 @@ class ExtracurricularActivity(BaseModel):
 
 class StudentActivityParticipation(BaseModel):
     class Meta:
-        unique_together = ('student', 'activity')
+        unique_together = ('student', 'activity')  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
 
     is_joined = models.BooleanField(default=False)
     is_point_added = models.BooleanField(default=False)
