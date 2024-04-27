@@ -15,7 +15,7 @@ class EducationalSystem(BaseModel):
 class Faculty(BaseModel):
     name = models.CharField(max_length=30)
 
-    training_program = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name='faculties')
+    educational_system = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name='faculties')
 
     def __str__(self):
         return self.name
