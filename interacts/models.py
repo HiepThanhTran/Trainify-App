@@ -8,7 +8,7 @@ class Interaction(BaseModel):
     class Meta:
         abstract = True
 
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    user = models.ForeignKey('users.Account', on_delete=models.CASCADE)
     activity = models.ForeignKey('activities.ExtracurricularActivity', on_delete=models.CASCADE)
 
 

@@ -1,53 +1,67 @@
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
+from tpm.models import BaseModel
 from users.managers import CustomUserManager
 
 
-class User(AbstractUser):
-    class Role(models.TextChoices):
-        STUDENT_COLLABORATION_SPECIALIST = 'Chuyên viên cộng tác sinh viên'
-        STUDENT_ASSISTANT = 'Trợ lý sinh viên'
-        STUDENT = 'Sinh viên'
-        ADMIN = 'Administrator'
+class Account(AbstractUser):
+    class Meta:
+        verbose_name = _('account')
+        verbose_name_plural = _('accounts')
 
-    role = models.CharField(max_length=50, default=Role.STUDENT, choices=[(role.name, role.value) for role in Role])
+    class Role(models.IntegerChoices):
+        ADMIN = 1, _('Administrator')
+        STUDENT = 2, _('Sinh viên')
+        ASSISTANT = 3, _('Trợ lý sinh viên')
+        SPECIALIST = 4, _('Chuyên viên cộng tác sinh viên')
 
-    class Gender(models.TextChoices):
-        MALE = 'Nam'
-        FEMALE = 'Nữ'
+    role = models.IntegerField(choices=Role, default=Role.STUDENT)
 
-    gender = models.CharField(max_length=10, null=True, blank=True, choices=[(gender.name, gender.value) for gender in Gender])
-
-    avatar = CloudinaryField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=150, blank=True)
-    middle_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
-    phone_number = models.CharField(max_length=11, blank=True, unique=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    address = models.CharField(max_length=255, blank=True, unique=True)
+    avatar = CloudinaryField(null=True, blank=True)
 
-    faculty = models.ForeignKey('schools.Faculty', null=True, on_delete=models.SET_NULL)
+    first_name = None
+    last_name = None
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'middle_name', 'last_name']
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.username
 
-    def get_full_name(self):
-        full_name = "%s %s %s" % (self.last_name, self.middle_name, self.first_name)
-        return full_name.strip()
+
+class User(BaseModel):
+    class Meta:
+        abstract = True
+
+    class Gender(models.TextChoices):
+        MALE = 'M', _('Nam')
+        FEMALE = 'F', _('Nữ')
+        UNKNOWN = 'U', _('Khác')
+
+    gender = models.CharField(max_length=1, choices=Gender, default=Gender.UNKNOWN)
+
+    first_name = models.CharField(max_length=50, blank=True)  # Tên
+    middle_name = models.CharField(max_length=50, blank=True)  # Tên đệm
+    last_name = models.CharField(max_length=50, blank=True)  # Họ
+    date_of_birth = models.DateField(null=True, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=11, blank=True, unique=True)
+
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+
+    faculty = models.ForeignKey('schools.Faculty', null=True, on_delete=models.SET_NULL)
 
 
 class Officer(User):
     class Meta:
-        verbose_name = 'officer'
-        verbose_name_plural = 'officers'
+        verbose_name = _('officer')
+        verbose_name_plural = _('officers')
 
     job_title = models.CharField(max_length=50)
     academic_degree = models.CharField(max_length=50)
@@ -55,8 +69,8 @@ class Officer(User):
 
 class Student(User):
     class Meta:
-        verbose_name = 'student'
-        verbose_name_plural = 'students'
+        verbose_name = _('student')
+        verbose_name_plural = _('students')
 
     student_code = models.CharField(max_length=10, null=True, unique=True)
 

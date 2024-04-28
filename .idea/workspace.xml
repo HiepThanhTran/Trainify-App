@@ -5,28 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Training-Point-Management.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tpm-mobileapp/configs/APIs.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tpm-mobileapp/configs/Contexts.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tpm/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tpm/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Training-Point-Management-API.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0002_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0003_remove_extracurricularactivity_news_and_more.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0002_alter_user_role.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +35,13 @@
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="FormatOnSaveOptions">
     <option name="myRunOnSave" value="true" />
@@ -83,7 +90,7 @@
     "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
+    "settings.editor.selected.configurable": "terminal",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -134,7 +141,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1714260980249</updated>
-      <workItem from="1714260980252" duration="4797000" />
+      <workItem from="1714260980252" duration="19595000" />
     </task>
     <servers />
   </component>

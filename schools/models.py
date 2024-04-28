@@ -81,7 +81,7 @@ class TrainingPoint(BaseModel):
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE, related_name='points')
 
     def __str__(self):
-        return self.criterion.name
+        return f'{self.student.student_code} - {self.point} - {self.criterion} - {self.semester}'
 
 
 class DeficiencyReport(BaseModel):
@@ -96,4 +96,4 @@ class DeficiencyReport(BaseModel):
     activity = models.ForeignKey('activities.ExtracurricularActivity', on_delete=models.CASCADE, related_name='deficiency_reports')
 
     def __str__(self):
-        return f"{self.student.get_full_name()} - {self.activity.name}"
+        return f'{self.student.student_code} - {self.activity}'

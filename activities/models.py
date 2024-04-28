@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
 from tpm.models import BaseModel
@@ -6,15 +7,15 @@ from tpm.models import BaseModel
 
 class ExtracurricularActivity(BaseModel):
     class Meta:
-        verbose_name = 'Extracurricular Activities'
-        verbose_name_plural = 'List of extracurricular activities (EA)'
+        verbose_name = _('Extracurricular Activities')
+        verbose_name_plural = _('List of extracurricular activities (EA)')
 
-    class OrganizationalForm(models.TextChoices):
-        ONLINE = 'Online'
-        OFFLINE = 'Offline'
+    class OrganizationalType(models.TextChoices):
+        ONLINE = 'Onl', _('Online')
+        OFFLINE = 'Off', _('Offline')
 
     # Hình thức tổ chức
-    organizational_form = models.CharField(max_length=20, choices=[(form.name, form.value) for form in OrganizationalForm])
+    organizational_form = models.CharField(max_length=3, choices=OrganizationalType, default=OrganizationalType.OFFLINE)
 
     name = models.CharField(max_length=20)
     participant = models.CharField(max_length=20)  # Đối tượng tham gia
@@ -42,8 +43,8 @@ class ExtracurricularActivity(BaseModel):
 
 class StudentActivityParticipation(BaseModel):
     class Meta:
-        verbose_name = 'EA registration form'
-        verbose_name_plural = 'List of student EA registration forms'
+        verbose_name = _('EA registration form')
+        verbose_name_plural = _('List of student EA registration forms')
         unique_together = ('student', 'activity')  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
 
     is_joined = models.BooleanField(default=False)
