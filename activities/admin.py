@@ -1,7 +1,7 @@
-from django.contrib import admin
+# from django.contrib import admin
 
+from tpm.admin import my_admin_site
 from .models import *
 
-admin.site.register(News)
-admin.site.register(ExtracurricularActivity)
-admin.site.register(StudentActivityParticipation)
+my_admin_site.register(ExtracurricularActivity)
+my_admin_site.register(StudentActivityParticipation)

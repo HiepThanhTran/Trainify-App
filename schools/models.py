@@ -2,7 +2,7 @@ from cloudinary.models import CloudinaryField
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 
-from interacts.models import BaseModel
+from tpm.models import BaseModel
 
 
 class EducationalSystem(BaseModel):

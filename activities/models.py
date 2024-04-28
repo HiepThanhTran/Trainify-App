@@ -1,26 +1,14 @@
-from cloudinary.models import CloudinaryField
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 
-from interacts.models import BaseModel
-
-
-class News(BaseModel):
-    class Meta:
-        verbose_name = 'news'
-        verbose_name_plural = 'news'
-
-    title = models.CharField(max_length=20)
-    image = CloudinaryField(null=True, blank=True)
-    content = CKEditor5Field('Text', config_name='extends')
-
-    created_by = models.ForeignKey('users.Officer', null=True, on_delete=models.SET_NULL, related_name='news')
-
-    def __str__(self):
-        return self.title
+from tpm.models import BaseModel
 
 
 class ExtracurricularActivity(BaseModel):
+    class Meta:
+        verbose_name = 'Extracurricular Activities'
+        verbose_name_plural = 'List of extracurricular activities (EA)'
+
     class OrganizationalForm(models.TextChoices):
         ONLINE = 'Online'
         OFFLINE = 'Offline'
@@ -39,8 +27,6 @@ class ExtracurricularActivity(BaseModel):
     # Danh sách sinh viên tham gia
     list_of_participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivityParticipation')
 
-    # Thuộc bản tin nào?
-    news = models.ForeignKey(News, null=True, on_delete=models.SET_NULL, related_name='activities')
     # Thuộc khoa nào?
     faculty = models.ForeignKey('schools.Faculty', on_delete=models.CASCADE, related_name='activities')
     # Thuộc học kỳ nào?
@@ -56,6 +42,8 @@ class ExtracurricularActivity(BaseModel):
 
 class StudentActivityParticipation(BaseModel):
     class Meta:
+        verbose_name = 'EA registration form'
+        verbose_name_plural = 'List of student EA registration forms'
         unique_together = ('student', 'activity')  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
 
     is_joined = models.BooleanField(default=False)

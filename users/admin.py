@@ -1,7 +1,8 @@
-from django.contrib import admin
+# from django.contrib import admin
 
+from tpm.admin import my_admin_site
 from .models import *
 
-admin.site.register(User)
-admin.site.register(Officer)
-admin.site.register(Student)
+my_admin_site.register(User)
+my_admin_site.register(Officer)
+my_admin_site.register(Student)

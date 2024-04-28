@@ -16,13 +16,14 @@ Including another URLconf
 """
 import debug_toolbar
 from django.conf.urls.static import static
-from django.contrib import admin
+# from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from . import settings
+from .admin import my_admin_site
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -37,7 +38,8 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
+                  # path('admin/', admin.site.urls),
+                  path('admin/', my_admin_site.urls),
                   path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
                   path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
                   re_path(r'^swagger(?P<format>\.json|\.yaml)$',

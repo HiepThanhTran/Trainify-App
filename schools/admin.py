@@ -1,13 +1,14 @@
-from django.contrib import admin
+# from django.contrib import admin
 
+from tpm.admin import my_admin_site
 from .models import *
 
-admin.site.register(EducationalSystem)
-admin.site.register(Faculty)
-admin.site.register(Major)
-admin.site.register(AcademicYear)
-admin.site.register(Class)
-admin.site.register(Semester)
-admin.site.register(Criterion)
-admin.site.register(TrainingPoint)
-admin.site.register(DeficiencyReport)
+my_admin_site.register(EducationalSystem)
+my_admin_site.register(Faculty)
+my_admin_site.register(Major)
+my_admin_site.register(AcademicYear)
+my_admin_site.register(Class)
+my_admin_site.register(Semester)
+my_admin_site.register(Criterion)
+my_admin_site.register(TrainingPoint)
+my_admin_site.register(DeficiencyReport)

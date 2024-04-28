@@ -7,7 +7,7 @@ from users.managers import CustomUserManager
 
 class User(AbstractUser):
     class Role(models.TextChoices):
-        OFFICER = 'Chuyên viên cộng tác sinh viên'
+        STUDENT_COLLABORATION_SPECIALIST = 'Chuyên viên cộng tác sinh viên'
         STUDENT_ASSISTANT = 'Trợ lý sinh viên'
         STUDENT = 'Sinh viên'
         ADMIN = 'Administrator'
