@@ -1,5 +1,6 @@
 from cloudinary.models import CloudinaryField
 from django.db import models
+from django.template.defaultfilters import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
 from tpm.models import BaseModel
@@ -7,27 +8,48 @@ from tpm.models import BaseModel
 
 class EducationalSystem(BaseModel):
     name = models.CharField(max_length=30)
+    slug = models.SlugField(max_length=30, unique=True)
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
+
 
 class Faculty(BaseModel):
     name = models.CharField(max_length=30)
+    slug = models.SlugField(max_length=30, unique=True)
 
     educational_system = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name='faculties')
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
+
 
 class Major(BaseModel):
     name = models.CharField(max_length=30)
+    slug = models.SlugField(max_length=30, unique=True)
 
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='majors')
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 class AcademicYear(BaseModel):
@@ -45,12 +67,19 @@ class Class(BaseModel):
         verbose_name_plural = 'classes'
 
     name = models.CharField(max_length=20)
+    slug = models.SlugField(max_length=30, unique=True)
 
     major = models.ForeignKey(Major, on_delete=models.CASCADE, related_name='classes')
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='classes')
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 class Semester(BaseModel):
@@ -68,9 +97,16 @@ class Criterion(BaseModel):
     name = models.CharField(max_length=20)
     max_point = models.SmallIntegerField()
     description = CKEditor5Field('Text', config_name='extends')
+    slug = models.SlugField(max_length=30, unique=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 class TrainingPoint(BaseModel):

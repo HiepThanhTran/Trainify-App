@@ -1,6 +1,7 @@
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 
 from tpm.models import BaseModel
@@ -22,6 +23,7 @@ class Account(AbstractUser):
 
     email = models.EmailField(unique=True)
     avatar = CloudinaryField(null=True, blank=True)
+    slug = models.SlugField(max_length=150, unique=True)
 
     first_name = None
     last_name = None
@@ -33,6 +35,12 @@ class Account(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.username)
+
+        return super().save(*args, **kwargs)
 
 
 class User(BaseModel):
@@ -53,7 +61,7 @@ class User(BaseModel):
     address = models.CharField(max_length=255, blank=True)
     phone_number = models.CharField(max_length=11, blank=True, unique=True)
 
-    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, null=True, on_delete=models.SET_NULL)
 
     faculty = models.ForeignKey('schools.Faculty', null=True, on_delete=models.SET_NULL)
 
@@ -72,7 +80,7 @@ class Student(User):
         verbose_name = _('student')
         verbose_name_plural = _('students')
 
-    student_code = models.CharField(max_length=10, null=True, unique=True)
+    student_code = models.CharField(max_length=10, unique=True)
 
     major = models.ForeignKey('schools.Major', null=True, on_delete=models.SET_NULL, related_name='students')
     class_name = models.ForeignKey('schools.Class', null=True, on_delete=models.SET_NULL, related_name='students')
@@ -83,7 +91,7 @@ class Student(User):
         return f"{self.student_code} - {super().__str__()}"
 
     def save(self, *args, **kwargs):
-        if not self.student_code:
+        if not self.id:
             self.student_code = self.generate_student_code()
 
         return super().save(*args, **kwargs)

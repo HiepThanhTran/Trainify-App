@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -24,6 +25,7 @@ class ExtracurricularActivity(BaseModel):
     location = models.CharField(max_length=255)
     point = models.SmallIntegerField()  # Điểm được cộng
     description = CKEditor5Field('Text', config_name='extends')
+    slug = models.SlugField(max_length=50, unique=True)
 
     # Danh sách sinh viên tham gia
     list_of_participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivityParticipation')
@@ -39,6 +41,12 @@ class ExtracurricularActivity(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 class StudentActivityParticipation(BaseModel):

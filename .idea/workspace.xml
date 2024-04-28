@@ -4,29 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="">
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="models: fix model User, add model Account">
       <change afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/migrations/0002_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/migrations/0003_remove_extracurricularactivity_news_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/migrations/0002_alter_user_role.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,24 +46,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "HiepThanhTran"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;HiepThanhTran&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/HiepThanhTran/Training-Point-Management.git",
-    "accountId": "e9c93740-d40f-45b6-9be8-12ed13c1e0d4"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/HiepThanhTran/Training-Point-Management.git&quot;,
+    &quot;accountId&quot;: &quot;e9c93740-d40f-45b6-9be8-12ed13c1e0d4&quot;
   }
-}]]></component>
+}</component>
   <component name="OptimizeOnSaveOptions">
     <option name="myRunOnSave" value="true" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2fhl1kXOq3z1FtaPAiPL7ax3sYO" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -90,7 +87,7 @@
     "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "terminal",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Console Font",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -141,8 +138,18 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1714260980249</updated>
-      <workItem from="1714260980252" duration="19595000" />
+      <workItem from="1714260980252" duration="27109000" />
+      <workItem from="1714341845330" duration="855000" />
     </task>
+    <task id="LOCAL-00001" summary="models: fix model User, add model Account">
+      <option name="closed" value="true" />
+      <created>1714294288114</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1714294288114</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,5 +157,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="models: fix model User, add model Account" />
+    <option name="LAST_COMMIT_MESSAGE" value="models: fix model User, add model Account" />
   </component>
 </project>
