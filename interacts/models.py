@@ -8,7 +8,7 @@ class Interaction(BaseModel):
     class Meta:
         abstract = True
 
-    user = models.ForeignKey('users.Account', on_delete=models.CASCADE)
+    account = models.ForeignKey('users.Account', on_delete=models.CASCADE)
     activity = models.ForeignKey('activities.ExtracurricularActivity', on_delete=models.CASCADE)
 
 
@@ -18,4 +18,4 @@ class Comment(Interaction):
 
 class Like(Interaction):
     class Meta:
-        unique_together = ('user', 'activity')
+        unique_together = ('account', 'activity')

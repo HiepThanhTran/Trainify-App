@@ -41,6 +41,7 @@ urlpatterns = [
                   # path('admin/', admin.site.urls),
                   path('admin/', my_admin_site.urls),
                   path('', include('users.urls')),
+                  path('', include('interacts.urls')),
                   path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
                   path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
                   re_path(r'^swagger(?P<format>\.json|\.yaml)$',
