@@ -1,7 +1,6 @@
 # from django.contrib import admin
-
+from interacts.models import Comment, Like
 from tpm.admin import my_admin_site
-from .models import *
 
 my_admin_site.register(Comment)
 my_admin_site.register(Like)

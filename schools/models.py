@@ -1,6 +1,6 @@
 from cloudinary.models import CloudinaryField
 from django.db import models
-from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
 from tpm.models import BaseModel
@@ -8,48 +8,31 @@ from tpm.models import BaseModel
 
 class EducationalSystem(BaseModel):
     name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-
-        return super().save(*args, **kwargs)
 
 
 class Faculty(BaseModel):
-    name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=30, unique=True, editable=False)
+    class Meta:
+        verbose_name = _("faculty")
+        verbose_name_plural = _("faculties")
 
-    educational_system = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name='faculties')
+    name = models.CharField(max_length=30)
+
+    educational_system = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name="faculties")
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-
-        return super().save(*args, **kwargs)
 
 
 class Major(BaseModel):
     name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='majors')
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name="majors")
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-
-        return super().save(*args, **kwargs)
 
 
 class AcademicYear(BaseModel):
@@ -63,23 +46,16 @@ class AcademicYear(BaseModel):
 
 class Class(BaseModel):
     class Meta:
-        verbose_name = 'class'
-        verbose_name_plural = 'classes'
+        verbose_name = _("class")
+        verbose_name_plural = _("classes")
 
     name = models.CharField(max_length=20)
-    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
-    major = models.ForeignKey(Major, on_delete=models.CASCADE, related_name='classes')
-    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='classes')
+    major = models.ForeignKey(Major, on_delete=models.CASCADE, related_name="classes")
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name="classes")
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-
-        return super().save(*args, **kwargs)
 
 
 class Semester(BaseModel):
@@ -87,7 +63,7 @@ class Semester(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
-    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='semesters')
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name="semesters")
 
     def __str__(self):
         return self.name
@@ -96,40 +72,85 @@ class Semester(BaseModel):
 class Criterion(BaseModel):
     name = models.CharField(max_length=20)
     max_point = models.SmallIntegerField()
-    description = CKEditor5Field('Text', config_name='extends')
-    slug = models.SlugField(max_length=30, unique=True, editable=False)
+    description = CKEditor5Field("Text", config_name="extends")
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-
-        return super().save(*args, **kwargs)
 
 
 class TrainingPoint(BaseModel):
     point = models.SmallIntegerField()
 
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name='points')
-    criterion = models.ForeignKey(Criterion, on_delete=models.CASCADE, related_name='points')
-    student = models.ForeignKey('users.Student', on_delete=models.CASCADE, related_name='points')
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="points")
+    criterion = models.ForeignKey(Criterion, on_delete=models.CASCADE, related_name="points")
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="points")
 
     def __str__(self):
-        return f'{self.student.student_code} - {self.point} - {self.criterion} - {self.semester}'
+        return f"{self.student.code} - {self.point} - {self.criterion} - {self.semester}"
+
+
+class Activity(BaseModel):
+    class Meta:
+        verbose_name = _('Activity')
+        verbose_name_plural = _('Activities')
+
+    class Type(models.TextChoices):
+        ONLINE = 'Onl', _('Online')
+        OFFLINE = 'Off', _('Offline')
+
+    # Hình thức tổ chức
+    organizational_form = models.CharField(max_length=3, choices=Type, default=Type.OFFLINE)
+
+    name = models.CharField(max_length=20)
+    participant = models.CharField(max_length=20)  # Đối tượng tham gia
+    start_date = models.DateField()
+    end_date = models.DateField()
+    location = models.CharField(max_length=255)
+    point = models.SmallIntegerField()  # Điểm được cộng
+    description = CKEditor5Field('Text', config_name='extends')
+
+    # Danh sách sinh viên tham gia
+    list_of_participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivity')
+
+    # Thuộc khoa nào?
+    faculty = models.ForeignKey('schools.Faculty', on_delete=models.CASCADE, related_name='activities')
+    # Thuộc học kỳ nào?
+    semester = models.ForeignKey('schools.Semester', on_delete=models.CASCADE, related_name='activities')
+    # Người tạo là ai?
+    created_by = models.ForeignKey('users.Officer', null=True, on_delete=models.SET_NULL, related_name='activities')
+    # Cộng điểm rèn luyện điều mấy?
+    criterion = models.ForeignKey('schools.Criterion', null=True, on_delete=models.SET_NULL, related_name='activities')
+
+    def __str__(self):
+        return self.name
+
+
+class StudentActivity(BaseModel):
+    class Meta:
+        verbose_name = _('Student Activity')
+        verbose_name_plural = _('Student Activities')
+        unique_together = ('student', 'activity')  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
+
+    is_joined = models.BooleanField(default=False)
+    is_point_added = models.BooleanField(default=False)
+
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.student.code} - {self.activity}"
 
 
 class DeficiencyReport(BaseModel):
     class Meta:
-        unique_together = ('student', 'activity')
+        unique_together = ("student", "activity")
 
     is_resolved = models.BooleanField(default=False)
     image = CloudinaryField(null=True, blank=True)
-    content = CKEditor5Field('Text', config_name='extends', null=True, blank=True)
+    content = CKEditor5Field("Text", config_name="extends", null=True, blank=True)
 
-    student = models.ForeignKey('users.Student', on_delete=models.CASCADE, related_name='deficiency_reports')
-    activity = models.ForeignKey('activities.ExtracurricularActivity', on_delete=models.CASCADE, related_name='deficiency_reports')
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="deficiency_reports")
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="deficiency_reports")
 
     def __str__(self):
-        return f'{self.student.student_code} - {self.activity}'
+        return f"{self.student.code} - {self.activity}"

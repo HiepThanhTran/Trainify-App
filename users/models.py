@@ -1,7 +1,6 @@
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 
 from tpm.models import BaseModel
@@ -22,7 +21,6 @@ class Account(AbstractUser):
 
     email = models.EmailField(unique=True)
     avatar = CloudinaryField(null=True, blank=True)
-    slug = models.SlugField(max_length=150, unique=True, editable=False)
 
     first_name = None
     last_name = None
@@ -35,12 +33,6 @@ class Account(AbstractUser):
 
     def __str__(self):
         return self.username
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.username)
-
-        return super().save(*args, **kwargs)
 
 
 class User(BaseModel):

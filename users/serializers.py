@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from schools.serializers import FacultySerializer
 from tpm.serializers import BaseSerializer
 from users.models import Account, Officer, Student
 
@@ -15,7 +14,7 @@ class UserSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     date_of_birth = serializers.DateField()
 
-    faculty = FacultySerializer(source="name", read_only=True)
+    faculty = serializers.CharField(source="faculty.name")
 
     class Meta:
         fields = [

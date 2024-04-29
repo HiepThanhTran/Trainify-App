@@ -17,7 +17,7 @@ class AccountViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
         return [permissions.AllowAny()]
 
-    @action(methods=["get"], detail=False, url_path="account")
+    @action(methods=["get"], detail=False, url_path="account-details")
     def account(self, request):
         account = request.user
 

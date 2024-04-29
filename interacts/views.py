@@ -1,14 +1,14 @@
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 
-from interacts import paginations, serializers, perms
+from interacts import paginators, serializers, perms
 from interacts.models import Comment
 
 
 class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     queryset = Comment.objects.filter(is_active=True)
     serializer_class = serializers.CommentSerializer
-    pagination_class = paginations.CommentPagination
+    pagination_class = paginators.CommentPagination
     permission_classes = [perms.CommentOwner]
 
     def update(self, request, pk=None):

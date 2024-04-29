@@ -1,24 +1,29 @@
 from rest_framework import serializers
 
-from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, DeficiencyReport
+from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, DeficiencyReport, Activity, StudentActivity
+from users.serializers import OfficerSerializer, StudentSerializer
 
 
 class EducationalSystemSerializer(serializers.ModelSerializer):
     class Meta:
         model = EducationalSystem
-        fields = ["id", "name", "is_active", "created_date"]
+        fields = [
+            "id", "name", "is_active", "created_date", "updated_date"
+        ]
 
 
 class FacultySerializer(serializers.ModelSerializer):
-    educational_system = EducationalSystemSerializer()
+    educational_system = serializers.CharField(source='educational_system.name')
 
     class Meta:
         model = Faculty
-        fields = ["id", "name", "educational_system", "is_active", "created_date"]
+        fields = [
+            "id", "name", "educational_system", "is_active", "created_date", "updated_date"
+        ]
 
 
 class MajorSerializer(serializers.ModelSerializer):
-    faculty = FacultySerializer()
+    faculty = serializers.CharField(source='faculty.name')
 
     class Meta:
         model = Major
@@ -32,8 +37,8 @@ class AcademicYearSerializer(serializers.ModelSerializer):
 
 
 class ClassSerializer(serializers.ModelSerializer):
-    major = MajorSerializer()
     academic_year = AcademicYearSerializer()
+    major = serializers.CharField(source='major.name')
 
     class Meta:
         model = Class
@@ -51,22 +56,45 @@ class SemesterSerializer(serializers.ModelSerializer):
 class CriterionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Criterion
-        fields = ["id", "name", "description", "is_active", "created_date"]
+        fields = ["id", "name", 'max_point', "description", "is_active", "created_date", 'updated_date']
 
 
 class TrainingPointSerializer(serializers.ModelSerializer):
-    # criterion = CriterionSerializer()
-    # student = StudentSerializer()
-    # semester = SemesterSerializer()
+    import users.serializers as users_serializers
+    criterion = CriterionSerializer()
+    semester = SemesterSerializer()
+    student = users_serializers.StudentSerializer()
 
     class Meta:
         model = TrainingPoint
-        fields = ["id", "point", "criterion", "student", "semester"]
+        fields = ["id", "point", "criterion", "semester", "student"]
 
 
-class DeficiencyReportSerializer(serializers.Serializer):
-    # student = StudentSerializer()
-    # activity = ""
+class ActivitySerializer(serializers.ModelSerializer):
+    faculty = serializers.CharField(source='faculty.name')
+
+    semester = SemesterSerializer()
+    created_by = OfficerSerializer()
+    criterion = CriterionSerializer()
+    list_of_participants = StudentSerializer(many=True)
+
+    class Meta:
+        model = Activity
+        fields = "__all__"
+
+
+class StudentActivitySerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+    activity = ActivitySerializer()
+
+    class Meta:
+        model = StudentActivity
+        fields = "__all__"
+
+
+class DeficiencyReportSerializer(serializers.ModelSerializer):
+    activity = ActivitySerializer()
+    student = StudentSerializer()
 
     class Meta:
         model = DeficiencyReport

@@ -9,7 +9,7 @@ class Interaction(BaseModel):
         abstract = True
 
     account = models.ForeignKey('users.Account', on_delete=models.CASCADE)
-    activity = models.ForeignKey('activities.ExtracurricularActivity', on_delete=models.CASCADE)
+    activity = models.ForeignKey('schools.Activity', on_delete=models.CASCADE)
 
 
 class Comment(Interaction):
