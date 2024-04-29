@@ -25,7 +25,7 @@ class ExtracurricularActivity(BaseModel):
     location = models.CharField(max_length=255)
     point = models.SmallIntegerField()  # Điểm được cộng
     description = CKEditor5Field('Text', config_name='extends')
-    slug = models.SlugField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=50, unique=True, editable=False)
 
     # Danh sách sinh viên tham gia
     list_of_participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivityParticipation')

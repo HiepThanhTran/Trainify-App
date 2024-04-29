@@ -1,9 +1,9 @@
-from django.contrib.auth.models import UserManager
+from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
 
-class CustomUserManager(UserManager):
-    def _create_user(self, username, email, password, **extra_fields):
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, email=None, password=None, **extra_fields):
         if not email:
             raise ValueError(_('Email must be set'))
 
@@ -11,16 +11,15 @@ class CustomUserManager(UserManager):
             raise ValueError(_('Username must be set'))
 
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, **extra_fields)
+        account = self.model(email=email, username=username, **extra_fields)
+        account.set_password(password)
+        account.save()
 
-        user.set_password(password)
-        user.save()
-        return user
+        from users.models import Officer
+        officer = Officer(first_name='Administrator', account=account)
+        officer.save()
 
-    def create_user(self, username, email=None, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", False)
-        extra_fields.setdefault("is_superuser", False)
-        return self._create_user(username, email, password, **extra_fields)
+        return account
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
         from users.models import Account
@@ -37,4 +36,4 @@ class CustomUserManager(UserManager):
         if extra_fields.get('role') is not Account.Role.ADMIN:
             raise ValueError(_('Superuser must have ADMIN role'))
 
-        return self._create_user(email=email, username=username, password=password, **extra_fields)
+        return self.create_user(email=email, username=username, password=password, **extra_fields)

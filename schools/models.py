@@ -8,7 +8,7 @@ from tpm.models import BaseModel
 
 class EducationalSystem(BaseModel):
     name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=30, unique=True)
+    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
     def __str__(self):
         return self.name
@@ -22,7 +22,7 @@ class EducationalSystem(BaseModel):
 
 class Faculty(BaseModel):
     name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=30, unique=True)
+    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
     educational_system = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name='faculties')
 
@@ -38,7 +38,7 @@ class Faculty(BaseModel):
 
 class Major(BaseModel):
     name = models.CharField(max_length=30)
-    slug = models.SlugField(max_length=30, unique=True)
+    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='majors')
 
@@ -67,7 +67,7 @@ class Class(BaseModel):
         verbose_name_plural = 'classes'
 
     name = models.CharField(max_length=20)
-    slug = models.SlugField(max_length=30, unique=True)
+    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
     major = models.ForeignKey(Major, on_delete=models.CASCADE, related_name='classes')
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='classes')
@@ -97,7 +97,7 @@ class Criterion(BaseModel):
     name = models.CharField(max_length=20)
     max_point = models.SmallIntegerField()
     description = CKEditor5Field('Text', config_name='extends')
-    slug = models.SlugField(max_length=30, unique=True)
+    slug = models.SlugField(max_length=30, unique=True, editable=False)
 
     def __str__(self):
         return self.name

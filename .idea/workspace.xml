@@ -4,25 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="models: fix model User, add model Account">
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="models: fix relationship between Account and User, add slug to models">
       <change afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/factory.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/signals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/aca1b13b-787c-4598-9b68-29de92216eeb/storage_v2/_src_/schema/training_point_db.Uu8wuQ.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/migrations/0002_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0002_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/apps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,30 +80,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/devlin/Documents/Workspace/python/Training-Point-Management",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.stylelint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.stylelint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Console Font",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/devlin/Documents/Workspace/python/Training-Point-Management&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Training-Point-Management" type="Python.DjangoServer" factoryName="Django server">
       <module name="Training-Point-Management" />
@@ -139,7 +147,8 @@
       <option name="presentableId" value="Default" />
       <updated>1714260980249</updated>
       <workItem from="1714260980252" duration="27109000" />
-      <workItem from="1714341845330" duration="855000" />
+      <workItem from="1714341845330" duration="10182000" />
+      <workItem from="1714352527275" duration="5536000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -149,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714294288114</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="models: fix relationship between Account and User, add slug to models">
+      <option name="closed" value="true" />
+      <created>1714343054640</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1714343054640</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,6 +175,7 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="models: fix model User, add model Account" />
-    <option name="LAST_COMMIT_MESSAGE" value="models: fix model User, add model Account" />
+    <MESSAGE value="models: fix relationship between Account and User, add slug to models" />
+    <option name="LAST_COMMIT_MESSAGE" value="models: fix relationship between Account and User, add slug to models" />
   </component>
 </project>
