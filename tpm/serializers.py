@@ -5,12 +5,12 @@ class BaseSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        image = rep.get('image', None)
+        image = rep.get("image", None)
         if image:
-            rep['image'] = instance.image.url
+            rep["image"] = instance.image.url
 
-        avatar = rep.get('avatar', None)
+        avatar = rep.get("avatar", None)
         if avatar:
-            rep['avatar'] = instance.avatar.url
+            rep["avatar"] = instance.avatar.url
 
         return rep

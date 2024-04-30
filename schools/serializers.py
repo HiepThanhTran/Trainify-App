@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, DeficiencyReport, Activity, StudentActivity
+from users.models import Specialist
+from users.serializers import StudentSerializer, SpecialistSerializer, AssistantSerializer
 
 
 class EducationalSystemSerializer(serializers.ModelSerializer):
@@ -12,7 +14,7 @@ class EducationalSystemSerializer(serializers.ModelSerializer):
 
 
 class FacultySerializer(serializers.ModelSerializer):
-    # educational_system = serializers.CharField(source='educational_system.name')
+    educational_system = serializers.CharField(source='educational_system.name')
 
     class Meta:
         model = Faculty
@@ -22,7 +24,7 @@ class FacultySerializer(serializers.ModelSerializer):
 
 
 class MajorSerializer(serializers.ModelSerializer):
-    # faculty = serializers.CharField(source='faculty.name')
+    faculty = serializers.CharField(source='faculty.name')
 
     class Meta:
         model = Major
@@ -32,12 +34,13 @@ class MajorSerializer(serializers.ModelSerializer):
 class AcademicYearSerializer(serializers.ModelSerializer):
     class Meta:
         model = AcademicYear
-        fields = ["id", "academic_year", "start_date", "end_date"]
+        fields = ["id", "name", "start_date", "end_date"]
 
 
 class ClassSerializer(serializers.ModelSerializer):
-    # academic_year = AcademicYearSerializer()
-    # major = serializers.CharField(source='major.name')
+    major = serializers.CharField(source='major.name')
+
+    academic_year = AcademicYearSerializer()
 
     class Meta:
         model = Class
@@ -45,7 +48,7 @@ class ClassSerializer(serializers.ModelSerializer):
 
 
 class SemesterSerializer(serializers.ModelSerializer):
-    # academic_year = AcademicYearSerializer()
+    academic_year = AcademicYearSerializer()
 
     class Meta:
         model = Semester
@@ -59,10 +62,9 @@ class CriterionSerializer(serializers.ModelSerializer):
 
 
 class TrainingPointSerializer(serializers.ModelSerializer):
-    # import users.serializers as users_serializers
-    # criterion = CriterionSerializer()
-    # semester = SemesterSerializer()
-    # student = users_serializers.StudentSerializer()
+    criterion = CriterionSerializer()
+    semester = SemesterSerializer()
+    student = StudentSerializer()
 
     class Meta:
         model = TrainingPoint
@@ -70,12 +72,18 @@ class TrainingPointSerializer(serializers.ModelSerializer):
 
 
 class ActivitySerializer(serializers.ModelSerializer):
-    # faculty = serializers.CharField(source='faculty.name')
-    #
-    # semester = SemesterSerializer()
-    # criterion = CriterionSerializer()
-    # created_by = AssistantSerializer()
-    # list_of_participants = StudentSerializer(many=True)
+    faculty = serializers.CharField(source='faculty.name')
+    created_by = serializers.SerializerMethodField()
+
+    list_of_participants = StudentSerializer(many=True)
+    criterion = CriterionSerializer()
+    semester = SemesterSerializer()
+
+    def get_created_by(self, obj):
+        if isinstance(obj.created_by, Specialist):
+            return SpecialistSerializer(obj.created_by).data
+
+        return AssistantSerializer(obj.created_by).data
 
     class Meta:
         model = Activity
@@ -83,8 +91,8 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 
 class StudentActivitySerializer(serializers.ModelSerializer):
-    # student = StudentSerializer()
-    # activity = ActivitySerializer()
+    activity = ActivitySerializer()
+    student = StudentSerializer()
 
     class Meta:
         model = StudentActivity
@@ -92,8 +100,8 @@ class StudentActivitySerializer(serializers.ModelSerializer):
 
 
 class DeficiencyReportSerializer(serializers.ModelSerializer):
-    # activity = ActivitySerializer()
-    # student = StudentSerializer()
+    activity = ActivitySerializer()
+    student = StudentSerializer()
 
     class Meta:
         model = DeficiencyReport

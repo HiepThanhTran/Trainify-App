@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Permission, Group
 
 
 class MyAdminSite(admin.AdminSite):
@@ -8,3 +9,6 @@ class MyAdminSite(admin.AdminSite):
 
 
 my_admin_site = MyAdminSite(name='Training Point Management')
+
+my_admin_site.register(Group)
+my_admin_site.register(Permission)

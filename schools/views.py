@@ -2,6 +2,7 @@ from rest_framework import viewsets, generics, permissions
 
 from schools import serializers, paginators
 from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, DeficiencyReport, Activity, StudentActivity
+from tpm import perms as base_perms
 
 
 class EducationalSystemViewSet(viewsets.ViewSet):
@@ -44,14 +45,14 @@ class TrainingPointViewSet(viewsets.ViewSet, generics.CreateAPIView):
     serializer_class = serializers.TrainingPointSerializer
 
 
-class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects \
         .select_related('semester', 'created_by', 'criterion') \
         .prefetch_related('list_of_participants') \
         .filter(is_active=True)
     serializer_class = serializers.ActivitySerializer
     pagination_class = paginators.ActivityPagination
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [base_perms.HasActivitiesGroupPermission]
 
 
 class StudentActivityViewSet(viewsets.ViewSet):
@@ -59,7 +60,7 @@ class StudentActivityViewSet(viewsets.ViewSet):
         .select_related('student', 'activity') \
         .filter(is_active=True)
     serializer_class = serializers.StudentActivitySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [base_perms.HasActivitiesGroupPermission]
 
 
 class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListCreateAPIView):

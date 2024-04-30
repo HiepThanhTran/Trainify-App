@@ -1,4 +1,5 @@
 from cloudinary.models import CloudinaryField
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
@@ -7,6 +8,10 @@ from tpm.models import BaseModel
 
 
 class EducationalSystem(BaseModel):
+    class Meta:
+        verbose_name = _("Educational System")
+        verbose_name_plural = _("Educational Systems")
+
     name = models.CharField(max_length=30)
 
     def __str__(self):
@@ -15,8 +20,8 @@ class EducationalSystem(BaseModel):
 
 class Faculty(BaseModel):
     class Meta:
-        verbose_name = _("faculty")
-        verbose_name_plural = _("faculties")
+        verbose_name = _("Faculty")
+        verbose_name_plural = _("Faculties")
 
     name = models.CharField(max_length=30)
 
@@ -27,6 +32,10 @@ class Faculty(BaseModel):
 
 
 class Major(BaseModel):
+    class Meta:
+        verbose_name = _("Major")
+        verbose_name_plural = _("Majors")
+
     name = models.CharField(max_length=30)
 
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name="majors")
@@ -36,18 +45,22 @@ class Major(BaseModel):
 
 
 class AcademicYear(BaseModel):
-    academic_year = models.CharField(max_length=20)
+    class Meta:
+        verbose_name = _("Academic Year")
+        verbose_name_plural = _("Academic Years")
+
+    name = models.CharField(max_length=20)
     start_date = models.DateField()
     end_date = models.DateField()
 
     def __str__(self):
-        return self.academic_year
+        return self.name
 
 
 class Class(BaseModel):
     class Meta:
-        verbose_name = _("class")
-        verbose_name_plural = _("classes")
+        verbose_name = _("Class")
+        verbose_name_plural = _("Classes")
 
     name = models.CharField(max_length=20)
 
@@ -59,6 +72,10 @@ class Class(BaseModel):
 
 
 class Semester(BaseModel):
+    class Meta:
+        verbose_name = _("Semester")
+        verbose_name_plural = _("Semesters")
+
     name = models.CharField(max_length=10)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -70,6 +87,10 @@ class Semester(BaseModel):
 
 
 class Criterion(BaseModel):
+    class Meta:
+        verbose_name = _("Criterion")
+        verbose_name_plural = _("Criterions")
+
     name = models.CharField(max_length=20)
     max_point = models.SmallIntegerField()
     description = CKEditor5Field("Text", config_name="extends")
@@ -79,6 +100,10 @@ class Criterion(BaseModel):
 
 
 class TrainingPoint(BaseModel):
+    class Meta:
+        verbose_name = _("Training Point")
+        verbose_name_plural = _("Training Points")
+
     point = models.SmallIntegerField()
 
     # Thuộc học kỳ nào?
@@ -94,12 +119,12 @@ class TrainingPoint(BaseModel):
 
 class Activity(BaseModel):
     class Meta:
-        verbose_name = _('Activity')
-        verbose_name_plural = _('Activities')
+        verbose_name = _("Activity")
+        verbose_name_plural = _("Activities")
 
     class Type(models.TextChoices):
-        ONLINE = 'Onl', _('Online')
-        OFFLINE = 'Off', _('Offline')
+        ONLINE = "Onl", _("Online")
+        OFFLINE = "Off", _("Offline")
 
     # Hình thức tổ chức
     organizational_form = models.CharField(max_length=3, choices=Type, default=Type.OFFLINE)
@@ -110,19 +135,22 @@ class Activity(BaseModel):
     end_date = models.DateField()
     location = models.CharField(max_length=255)
     point = models.SmallIntegerField()  # Điểm được cộng
-    description = CKEditor5Field('Text', config_name='extends')
+    description = CKEditor5Field("Text", config_name="extends")
 
     # Danh sách sinh viên tham gia
-    list_of_participants = models.ManyToManyField('users.Student', related_name='activities', through='StudentActivity')
+    list_of_participants = models.ManyToManyField("users.Student", related_name="activities", through="StudentActivity")
 
     # Thuộc khoa nào?
-    faculty = models.ForeignKey('schools.Faculty', on_delete=models.CASCADE, related_name='activities')
+    faculty = models.ForeignKey("schools.Faculty", on_delete=models.CASCADE, related_name="activities")
     # Thuộc học kỳ nào?
-    semester = models.ForeignKey('schools.Semester', on_delete=models.CASCADE, related_name='activities')
+    semester = models.ForeignKey("schools.Semester", on_delete=models.CASCADE, related_name="activities")
     # Người tạo là ai?
-    created_by = models.ForeignKey('users.Assistant', null=True, on_delete=models.SET_NULL, related_name='activities')
+    # created_by = models.ForeignKey("users.Officer", null=True, on_delete=models.SET_NULL, related_name="activities")
+    created_by_type = models.ForeignKey(to="contenttypes.ContentType", on_delete=models.CASCADE, related_name="activities")
+    created_by_id = models.PositiveIntegerField()
+    created_by = GenericForeignKey("created_by_type", "created_by_id")
     # Cộng điểm rèn luyện điều mấy?
-    criterion = models.ForeignKey('schools.Criterion', null=True, on_delete=models.SET_NULL, related_name='activities')
+    criterion = models.ForeignKey("schools.Criterion", null=True, on_delete=models.SET_NULL, related_name="activities")
 
     def __str__(self):
         return self.name
@@ -130,15 +158,15 @@ class Activity(BaseModel):
 
 class StudentActivity(BaseModel):
     class Meta:
-        verbose_name = _('Student Activity')
-        verbose_name_plural = _('Student Activities')
-        unique_together = ('student', 'activity')  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
+        verbose_name = _("Student Activity")
+        verbose_name_plural = _("Student Activities")
+        unique_together = ("student", "activity")  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
 
     is_joined = models.BooleanField(default=False)
     is_point_added = models.BooleanField(default=False)
 
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.student.code} - {self.activity}"
@@ -146,6 +174,8 @@ class StudentActivity(BaseModel):
 
 class DeficiencyReport(BaseModel):
     class Meta:
+        verbose_name = _("Deficiency Report")
+        verbose_name_plural = _("Deficiency Reports")
         unique_together = ("student", "activity")
 
     is_resolved = models.BooleanField(default=False)  # Đã giải quyết chưa?

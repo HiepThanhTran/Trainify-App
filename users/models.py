@@ -1,15 +1,17 @@
 from cloudinary.models import CloudinaryField
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Permission, Group
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from schools.models import Activity
 from tpm.models import BaseModel
 
 
 class Account(AbstractUser):
     class Meta:
-        verbose_name = _("account")
-        verbose_name_plural = _("accounts")
+        verbose_name = _("Account")
+        verbose_name_plural = _("Accounts")
 
     class Role(models.TextChoices):
         ADMIN = "AD", _("Administrator")
@@ -17,22 +19,31 @@ class Account(AbstractUser):
         ASSISTANT = "ASST", _("Trợ lý sinh viên")
         SPECIALIST = "SPC", _("Chuyên viên cộng tác sinh viên")
 
-    role = models.CharField(max_length=4, choices=Role, default=Role.STUDENT)
+    role = models.CharField(max_length=4, choices=Role, null=True)
 
     email = models.EmailField(unique=True)
     avatar = CloudinaryField(null=True, blank=True)
+    username = models.CharField(max_length=150, null=True, unique=True)
 
     first_name = None
     last_name = None
 
-    from users.managers import CustomUserManager
-    objects = CustomUserManager()
+    from users.managers import AccountManager
+    objects = AccountManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.email
+        super().save(*args, **kwargs)
+
+    def has_in_activities_group(self):
+        return self.groups.filter(name="activities").exists()
 
 
 class User(BaseModel):
@@ -46,64 +57,81 @@ class User(BaseModel):
 
     gender = models.CharField(max_length=1, choices=Gender, default=Gender.UNKNOWN)
 
-    first_name = models.CharField(max_length=50, blank=True)  # Tên
-    middle_name = models.CharField(max_length=50, blank=True)  # Tên đệm
-    last_name = models.CharField(max_length=50, blank=True)  # Họ
-    date_of_birth = models.DateField(null=True, blank=True)
+    first_name = models.CharField(max_length=50)  # Tên
+    middle_name = models.CharField(max_length=50)  # Tên đệm
+    last_name = models.CharField(max_length=50)  # Họ
+    date_of_birth = models.DateField()
     address = models.CharField(max_length=255, blank=True)
     phone_number = models.CharField(max_length=11, null=True, unique=True)
-    code = models.CharField(max_length=10, null=True, unique=True, db_index=True, editable=False)
 
-    account = models.OneToOneField(Account, null=True, on_delete=models.SET_NULL)
+    account = models.OneToOneField(Account, null=True, blank=True, on_delete=models.SET_NULL)
 
     faculty = models.ForeignKey("schools.Faculty", null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.code} - {self.get_full_name()}" if self.code else self.get_full_name()
 
-    def generate_code(self):
-        return self.code
-
     def get_full_name(self):
         return f"{self.last_name} {self.middle_name} {self.first_name}"
 
 
-class Administrator(User):
+class Officer(User):
     class Meta:
-        verbose_name = _("administrator")
-        verbose_name_plural = _("administrators")
+        abstract = True
 
-    def generate_code(self):
-        return f"{self.account.role}-{self.id:06d}"
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if not self.account.has_in_activities_group():
+            group, created = Group.objects.get_or_create(name="activities")
+
+            if created:
+                content_type = ContentType.objects.get_for_model(Activity)
+                all_permissions_activity = Permission.objects.filter(content_type=content_type)
+                group.permissions.set(all_permissions_activity)
+
+            self.account.groups.add(group)
 
 
-class Assistant(User):
+class Administrator(Officer):
     class Meta:
-        verbose_name = _("assistant")
-        verbose_name_plural = _("assistants")
-
-    def generate_code(self):
-        return f"{self.account.role}-{self.faculty.id:02d}{self.id:03d}"
+        verbose_name = _("Administrator")
+        verbose_name_plural = _("Administrators")
 
 
-class Specialist(Assistant):
+class Specialist(Officer):
     class Meta:
-        verbose_name = _("specialist")
-        verbose_name_plural = _("specialists")
+        verbose_name = _("Specialist")
+        verbose_name_plural = _("Specialists")
 
     job_title = models.CharField(max_length=50, null=True, blank=True)
     academic_degree = models.CharField(max_length=50, null=True, blank=True)
 
 
+class Assistant(Officer):
+    class Meta:
+        verbose_name = _("Assistant")
+        verbose_name_plural = _("Assistants")
+
+
 class Student(User):
     class Meta:
-        verbose_name = _("student")
-        verbose_name_plural = _("students")
+        verbose_name = _("Student")
+        verbose_name_plural = _("Students")
+
+    code = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
 
     major = models.ForeignKey("schools.Major", null=True, on_delete=models.SET_NULL, related_name="students")
     class_name = models.ForeignKey("schools.Class", null=True, on_delete=models.SET_NULL, related_name="students")
     academic_year = models.ForeignKey("schools.AcademicYear", null=True, on_delete=models.SET_NULL, related_name="students")
     educational_system = models.ForeignKey("schools.EducationalSystem", null=True, on_delete=models.SET_NULL, related_name="students")
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.code is None:
+            self.code = self.generate_code()
+            self.save()
+
     def generate_code(self):
-        return f"{self.academic_year.start_date.year[-2:]:02d}{self.faculty.id:02d}{self.id:06d}"
+        return f"{str(self.academic_year.start_date.year)[-2:]}{self.faculty.id:02d}{self.id:06d}"

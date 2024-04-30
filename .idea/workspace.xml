@@ -4,7 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="fix: combine activities app and schools app" />
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="models: Convert office model to assistant model and specialist model">
+      <change afterPath="$PROJECT_DIR$/static/data/student_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/perms.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/perms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/perms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/perms.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/perms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/signals.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,9 +81,10 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/devlin/Documents/Workspace/python/Training-Point-Management/tpm/imports.py",
+    "last_opened_file_path": "/home/devlin/Documents",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
@@ -64,7 +92,7 @@
     "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.general",
+    "settings.editor.selected.configurable": "com.nasller.CodeGlancePro",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -120,7 +148,7 @@
       <workItem from="1714352527275" duration="8722000" />
       <workItem from="1714365622026" duration="17463000" />
       <workItem from="1714421749070" duration="1168000" />
-      <workItem from="1714422963305" duration="6044000" />
+      <workItem from="1714422963305" duration="52376000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -162,7 +190,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714429979991</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="models: Convert office model to assistant model and specialist model">
+      <option name="closed" value="true" />
+      <created>1714446312322</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1714446312322</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -175,6 +211,7 @@
     <MESSAGE value="models: add signal post save for code of User model" />
     <MESSAGE value="feat: serializers interacts app, update README.md" />
     <MESSAGE value="fix: combine activities app and schools app" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: combine activities app and schools app" />
+    <MESSAGE value="models: Convert office model to assistant model and specialist model" />
+    <option name="LAST_COMMIT_MESSAGE" value="models: Convert office model to assistant model and specialist model" />
   </component>
 </project>

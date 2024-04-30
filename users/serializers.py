@@ -1,30 +1,39 @@
 from rest_framework import serializers
 
 from tpm.serializers import BaseSerializer
-from users.models import Account, Student, Administrator, Specialist, Assistant
+from users.models import Account, Student, Specialist, Assistant
 
 
 class AccountSerializer(BaseSerializer):
+    user = serializers.SerializerMethodField(required=False)
+
+    def get_user(self, account):
+        role_serializer_map = {
+            Account.Role.SPECIALIST: (SpecialistSerializer, 'specialist'),
+            Account.Role.ASSISTANT: (AssistantSerializer, 'assistant'),
+            Account.Role.STUDENT: (StudentSerializer, 'student'),
+        }
+
+        serializer_class, user_attr = role_serializer_map.get(account.role, (None, None))
+        if serializer_class and user_attr:
+            user_instance = getattr(account, user_attr, None)
+            if user_instance:
+                serializer = serializer_class(user_instance)
+                return serializer.data
+        return None
+
     class Meta:
         model = Account
-        fields = ["id", "email", "username", "password", "role", "avatar", ]
+        fields = ["id", "email", "password", "avatar", "user"]
         extra_kwargs = {
             "password": {
                 "write_only": "true"
             }
         }
 
-    def create(self, validated_data):
-        data = validated_data.copy()
-        account = Account(**data)
-        account.set_password(account.password)
-        account.save()
-
-        return account
-
 
 class UserSerializer(serializers.Serializer):
-    id = serializers.CharField()
+    id = serializers.IntegerField()
     code = serializers.CharField()
     gender = serializers.CharField()
     address = serializers.CharField()
@@ -34,34 +43,51 @@ class UserSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     date_of_birth = serializers.DateField()
 
-    faculty = serializers.CharField(source="faculty.name")
+    faculty = serializers.SerializerMethodField()
+
+    def get_faculty(self, obj):
+        return obj.faculty.name if obj.faculty else None
 
     class Meta:
         fields = [
-            "id", 'code', "first_name", "middle_name", "last_name", "gender",
+            "id", "first_name", "middle_name", "last_name", "gender",
             "date_of_birth", "faculty", "address", "phone_number",
         ]
 
 
-class AdministratorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Administrator
-        fields = UserSerializer.Meta.fields
+class OfficerSerializer(serializers.Serializer):
+    faculty = serializers.SerializerMethodField()
 
+    def get_faculty(self, obj):
+        return obj.faculty.name if obj.faculty else None
 
-class AssistantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Assistant
         fields = UserSerializer.Meta.fields
 
 
 class SpecialistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialist
-        fields = AssistantSerializer.Meta.fields + ["job_title", "academic_degree", ]
+        fields = OfficerSerializer.Meta.fields + ["job_title", "academic_degree"]
+
+
+class AssistantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Assistant
+        fields = OfficerSerializer.Meta.fields
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    educational_system = serializers.CharField(source='educational_system.name')
+    academic_year = serializers.CharField(source='academic_year.name')
+    class_name = serializers.CharField(source='class_name.name')
+    major = serializers.CharField(source='major.name')
+
+    faculty = serializers.SerializerMethodField()
+
+    def get_faculty(self, obj):
+        return obj.faculty.name if obj.faculty else None
+
     class Meta:
         model = Student
-        fields = UserSerializer.Meta.fields + ["major", "class_name", "academic_year", "educational_system", ]
+        fields = UserSerializer.Meta.fields + ["code", "major", "class_name", "academic_year", "educational_system"]
