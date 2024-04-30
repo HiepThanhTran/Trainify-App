@@ -9,7 +9,9 @@ class UsersConfig(AppConfig):
         from django.db.models.signals import post_save
 
         from users import signals
-        from users.models import Officer, Student
+        from users.models import Administrator, Specialist, Assistant, Student
 
-        post_save.connect(signals.generate_code, sender=Officer)
+        post_save.connect(signals.generate_code, sender=Administrator)
+        post_save.connect(signals.generate_code, sender=Specialist)
+        post_save.connect(signals.generate_code, sender=Assistant)
         post_save.connect(signals.generate_code, sender=Student)

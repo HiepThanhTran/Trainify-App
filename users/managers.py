@@ -15,9 +15,9 @@ class CustomUserManager(BaseUserManager):
         account.set_password(password)
         account.save()
 
-        from users.models import Officer
-        officer = Officer(first_name='Administrator', account=account)
-        officer.save()
+        from users.models import Administrator
+        administrator = Administrator(first_name='Administrator', account=account)
+        administrator.save()
 
         return account
 

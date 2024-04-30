@@ -68,19 +68,31 @@ class User(BaseModel):
         return f"{self.last_name} {self.middle_name} {self.first_name}"
 
 
-class Officer(User):
+class Administrator(User):
     class Meta:
-        verbose_name = _("officer")
-        verbose_name_plural = _("officers")
+        verbose_name = _("administrator")
+        verbose_name_plural = _("administrators")
+
+    def generate_code(self):
+        return f"{self.account.role}-{self.id:06d}"
+
+
+class Assistant(User):
+    class Meta:
+        verbose_name = _("assistant")
+        verbose_name_plural = _("assistants")
+
+    def generate_code(self):
+        return f"{self.account.role}-{self.faculty.id:02d}{self.id:03d}"
+
+
+class Specialist(Assistant):
+    class Meta:
+        verbose_name = _("specialist")
+        verbose_name_plural = _("specialists")
 
     job_title = models.CharField(max_length=50, null=True, blank=True)
     academic_degree = models.CharField(max_length=50, null=True, blank=True)
-
-    def generate_code(self):
-        if self.faculty:
-            return f"{self.account.role}-{self.faculty.id:02d}{self.id:03d}"
-
-        return f"{self.account.role}-{self.id:03d}"
 
 
 class Student(User):

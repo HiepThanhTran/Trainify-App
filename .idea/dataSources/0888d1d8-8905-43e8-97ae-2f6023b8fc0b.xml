@@ -1076,7 +1076,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </schema>
     <schema id="293" parent="1" name="training_point_db">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-04-29.09:44:38</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-04-29.23:05:45</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_unicode_520_ci</CollationName>
     </schema>
     <schema id="294" parent="1" name="career_consulting_db">

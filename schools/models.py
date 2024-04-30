@@ -81,8 +81,11 @@ class Criterion(BaseModel):
 class TrainingPoint(BaseModel):
     point = models.SmallIntegerField()
 
+    # Thuộc học kỳ nào?
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="points")
+    # Thuộc tiêu chí rèn luyện nào?
     criterion = models.ForeignKey(Criterion, on_delete=models.CASCADE, related_name="points")
+    # Của sinh viên nào?
     student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="points")
 
     def __str__(self):
@@ -117,7 +120,7 @@ class Activity(BaseModel):
     # Thuộc học kỳ nào?
     semester = models.ForeignKey('schools.Semester', on_delete=models.CASCADE, related_name='activities')
     # Người tạo là ai?
-    created_by = models.ForeignKey('users.Officer', null=True, on_delete=models.SET_NULL, related_name='activities')
+    created_by = models.ForeignKey('users.Assistant', null=True, on_delete=models.SET_NULL, related_name='activities')
     # Cộng điểm rèn luyện điều mấy?
     criterion = models.ForeignKey('schools.Criterion', null=True, on_delete=models.SET_NULL, related_name='activities')
 
@@ -145,11 +148,13 @@ class DeficiencyReport(BaseModel):
     class Meta:
         unique_together = ("student", "activity")
 
-    is_resolved = models.BooleanField(default=False)
-    image = CloudinaryField(null=True, blank=True)
+    is_resolved = models.BooleanField(default=False)  # Đã giải quyết chưa?
+    image = CloudinaryField(null=True, blank=True)  # Hình ảnh minh chứng
     content = CKEditor5Field("Text", config_name="extends", null=True, blank=True)
 
+    # Của sinh viên nào?
     student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="deficiency_reports")
+    # Thuộc hoạt động nào?
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="deficiency_reports")
 
     def __str__(self):
