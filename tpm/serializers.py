@@ -3,14 +3,10 @@ from rest_framework import serializers
 
 class BaseSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
-        rep = super().to_representation(instance)
+        data = super().to_representation(instance)
 
-        image = rep.get("image", None)
-        if image:
-            rep["image"] = instance.image.url
+        filtered_data = {
+            key: value for key, value in data.items() if value is not None
+        }
 
-        avatar = rep.get("avatar", None)
-        if avatar:
-            rep["avatar"] = instance.avatar.url
-
-        return rep
+        return filtered_data

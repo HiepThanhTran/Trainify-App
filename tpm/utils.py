@@ -1,6 +1,19 @@
+import csv
+
 from django.core.exceptions import ObjectDoesNotExist
 
+from schools.models import Participation
 from users.models import Administrator, Account, Specialist, Assistant, Student
+
+
+def handle_csv_upload(file):
+    csv_data = csv.reader(file)
+    for row in csv_data:
+        student_code, activity_id, is_attendance = row
+        student = Student.objects.get(code=student_code)
+        Participation.objects.update_or_create(
+            student=student, activity_id=activity_id, defaults={'is_attendance': is_attendance}
+        )
 
 
 def set_role(instance):

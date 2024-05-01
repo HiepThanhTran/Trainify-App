@@ -138,15 +138,14 @@ class Activity(BaseModel):
     description = CKEditor5Field("Text", config_name="extends")
 
     # Danh sách sinh viên tham gia
-    list_of_participants = models.ManyToManyField("users.Student", related_name="activities", through="StudentActivity")
+    list_of_participants = models.ManyToManyField("users.Student", related_name="activities", through="Participation")
 
     # Thuộc khoa nào?
     faculty = models.ForeignKey("schools.Faculty", on_delete=models.CASCADE, related_name="activities")
     # Thuộc học kỳ nào?
     semester = models.ForeignKey("schools.Semester", on_delete=models.CASCADE, related_name="activities")
     # Người tạo là ai?
-    # created_by = models.ForeignKey("users.Officer", null=True, on_delete=models.SET_NULL, related_name="activities")
-    created_by_type = models.ForeignKey(to="contenttypes.ContentType", on_delete=models.CASCADE, related_name="activities")
+    created_by_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE, related_name="activities")
     created_by_id = models.PositiveIntegerField()
     created_by = GenericForeignKey("created_by_type", "created_by_id")
     # Cộng điểm rèn luyện điều mấy?
@@ -156,20 +155,31 @@ class Activity(BaseModel):
         return self.name
 
 
-class StudentActivity(BaseModel):
+class Participation(BaseModel):
     class Meta:
-        verbose_name = _("Student Activity")
-        verbose_name_plural = _("Student Activities")
+        verbose_name = _("participation")
+        verbose_name_plural = _("participations")
         unique_together = ("student", "activity")  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
 
-    is_joined = models.BooleanField(default=False)
+    is_attendance = models.BooleanField(default=False)
     is_point_added = models.BooleanField(default=False)
 
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    student = models.ForeignKey("users.Student", on_delete=models.CASCADE)
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="participation")
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="participation")
 
     def __str__(self):
         return f"{self.student.code} - {self.activity}"
+
+    def save(self, *args, **kwargs):
+        if self.is_attendance and not self.is_point_added:
+            self.student.points.add(TrainingPoint.objects.create(
+                point=self.activity.point,
+                semester=self.activity.semester,
+                criterion=self.activity.criterion,
+                student=self.student
+            ))
+            self.is_point_added = True
+        super().save(*args, **kwargs)
 
 
 class DeficiencyReport(BaseModel):

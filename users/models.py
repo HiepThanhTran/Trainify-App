@@ -69,7 +69,7 @@ class User(BaseModel):
     faculty = models.ForeignKey("schools.Faculty", null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return f"{self.code} - {self.get_full_name()}" if self.code else self.get_full_name()
+        return f"{self.id} - {self.get_full_name()}"
 
     def get_full_name(self):
         return f"{self.last_name} {self.middle_name} {self.first_name}"
@@ -125,6 +125,9 @@ class Student(User):
     class_name = models.ForeignKey("schools.Class", null=True, on_delete=models.SET_NULL, related_name="students")
     academic_year = models.ForeignKey("schools.AcademicYear", null=True, on_delete=models.SET_NULL, related_name="students")
     educational_system = models.ForeignKey("schools.EducationalSystem", null=True, on_delete=models.SET_NULL, related_name="students")
+
+    def __str__(self):
+        return f"{self.code} - {self.get_full_name()}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

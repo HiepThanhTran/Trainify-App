@@ -1,38 +1,31 @@
-from rest_framework import viewsets, generics, permissions
+from django.db import IntegrityError
+from rest_framework import viewsets, generics, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
-from schools import serializers, paginators
-from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, DeficiencyReport, Activity, StudentActivity
+from schools import serializers, paginators, perms
+from schools.models import Criterion, TrainingPoint, DeficiencyReport, Activity
 from tpm import perms as base_perms
 
 
-class EducationalSystemViewSet(viewsets.ViewSet):
-    queryset = EducationalSystem.objects.filter(is_active=True)
-    serializer_class = serializers.EducationalSystemSerializer
-
-
-class FacultyViewSet(viewsets.ViewSet):
-    queryset = Faculty.objects.filter(is_active=True)
-    serializer_class = serializers.FacultySerializer
-
-
-class MajorViewSet(viewsets.ViewSet):
-    queryset = Major.objects.filter(is_active=True)
-    serializer_class = serializers.MajorSerializer
-
-
-class AcademicYearViewSet(viewsets.ViewSet):
-    queryset = AcademicYear.objects.filter(is_active=True)
-    serializer_class = serializers.AcademicYearSerializer
-
-
-class ClassViewSet(viewsets.ViewSet):
-    queryset = Class.objects.filter(is_active=True)
-    serializer_class = serializers.ClassSerializer
-
-
-class SemesterViewSet(viewsets.ViewSet):
-    queryset = Semester.objects.filter(is_active=True)
-    serializer_class = serializers.SemesterSerializer
+# class EducationalSystemViewSet(viewsets.ViewSet, generics.ListAPIView):
+#     queryset = EducationalSystem.objects.filter(is_active=True)
+#     serializer_class = serializers.EducationalSystemSerializer
+#
+#
+# class FacultyViewSet(viewsets.ViewSet, generics.ListAPIView):
+#     queryset = Faculty.objects.filter(is_active=True)
+#     serializer_class = serializers.FacultySerializer
+#
+#
+# class MajorViewSet(viewsets.ViewSet, generics.ListAPIView):
+#     queryset = Major.objects.filter(is_active=True)
+#     serializer_class = serializers.MajorSerializer
+#
+#
+# class ClassViewSet(viewsets.ViewSet, generics.ListAPIView):
+#     queryset = Class.objects.filter(is_active=True)
+#     serializer_class = serializers.ClassSerializer
 
 
 class CriterionViewSet(viewsets.ViewSet):
@@ -47,20 +40,28 @@ class TrainingPointViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
 class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects \
-        .select_related('semester', 'created_by', 'criterion') \
         .prefetch_related('list_of_participants') \
         .filter(is_active=True)
     serializer_class = serializers.ActivitySerializer
     pagination_class = paginators.ActivityPagination
-    permission_classes = [base_perms.HasActivitiesGroupPermission]
 
+    def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [base_perms.HasActivitiesGroupPermission()]
 
-class StudentActivityViewSet(viewsets.ViewSet):
-    queryset = StudentActivity.objects \
-        .select_related('student', 'activity') \
-        .filter(is_active=True)
-    serializer_class = serializers.StudentActivitySerializer
-    permission_classes = [base_perms.HasActivitiesGroupPermission]
+        if self.action in ["register_activity"]:
+            return [perms.IsStudent()]
+
+        return [permissions.AllowAny()]
+
+    @action(methods=["post"], detail=True, url_path="register-activity")
+    def register_activity(self, request, pk=None):
+        participation, created = self.get_object().participation.get_or_create(student=request.user.student)
+
+        if not created:
+            return Response(data={"message": "Bạn đã đăng ký tham gia hoạt động này rồi!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(data=serializers.ParticipationSerializer(participation).data, status=status.HTTP_201_CREATED)
 
 
 class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
@@ -71,10 +72,10 @@ class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         queryset = self.queryset
 
         if self.action.__eq__('list'):
-            q = self.request.query_params.get('q')
+            query = self.request.query_params.get('q')
 
-            if q:
-                queryset = queryset.filter(student__faculty__name__icontains=q).distinct()
+            if query:
+                queryset = queryset.filter(student__faculty__name__icontains=query).distinct()
 
         return queryset
 
