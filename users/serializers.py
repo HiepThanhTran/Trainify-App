@@ -38,7 +38,7 @@ class AccountSerializer(BaseSerializer):
             error_message = {"message": "Không tìm thấy người dùng."}
             raise serializers.ValidationError(error_message)
 
-        if user.account:
+        if user.account is not None:
             error_message = {"message": "Người dùng này đã đăng ký tài khoản!"}
             raise serializers.ValidationError(error_message)
 

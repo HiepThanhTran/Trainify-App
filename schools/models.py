@@ -104,7 +104,7 @@ class TrainingPoint(BaseModel):
         verbose_name = _("Training Point")
         verbose_name_plural = _("Training Points")
 
-    point = models.SmallIntegerField()
+    point = models.SmallIntegerField(default=0)
 
     # Thuộc học kỳ nào?
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="points")
@@ -164,22 +164,11 @@ class Participation(BaseModel):
     is_attendance = models.BooleanField(default=False)
     is_point_added = models.BooleanField(default=False)
 
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="participation")
-    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="participation")
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="participations")
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="participations")
 
     def __str__(self):
         return f"{self.student.code} - {self.activity}"
-
-    def save(self, *args, **kwargs):
-        if self.is_attendance and not self.is_point_added:
-            self.student.points.add(TrainingPoint.objects.create(
-                point=self.activity.point,
-                semester=self.activity.semester,
-                criterion=self.activity.criterion,
-                student=self.student
-            ))
-            self.is_point_added = True
-        super().save(*args, **kwargs)
 
 
 class DeficiencyReport(BaseModel):
