@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
 
-class IsStudent(permissions.IsAuthenticated):
+class HasActivitiesGroupPermission(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and hasattr(request.user, 'student')
+        return super().has_permission(request, view) and request.user.has_in_activities_group()

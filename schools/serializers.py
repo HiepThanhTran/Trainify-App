@@ -1,10 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
+from interacts.models import Like
 from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, DeficiencyReport, Activity, Participation
 from tpm.serializers import BaseSerializer
-from tpm.utils import find_user
-from users.models import Specialist, Assistant, Account
+from tpm.utils import factory
 
 
 class EducationalSystemSerializer(BaseSerializer):
@@ -98,21 +99,14 @@ class TrainingPointSerializer(BaseSerializer):
 
 
 class ActivitySerializer(BaseSerializer):
-    from users import serializers as user_serializers
-    list_of_participants = user_serializers.StudentSerializer(many=True, required=False)
-
-    created_by = serializers.SerializerMethodField()
-
     class Meta:
         model = Activity
-        exclude = ["created_by_type", "created_by_id"]
+        exclude = [
+            "created_by_type", "created_by_id", "list_of_participants", "is_active", "created_date", "updated_date"
+        ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        request = self.context.get("request")
-
-        if not (request and request.user.is_authenticated and request.user.has_in_activities_group()):
-            data.pop("list_of_participants")
 
         data['criterion'] = instance.criterion.name
         data['semester'] = instance.semester.name
@@ -124,13 +118,8 @@ class ActivitySerializer(BaseSerializer):
         data = validated_data.copy()
         request = self.context.get("request")
 
-        user_mapping = {
-            Account.Role.ADMIN: "administrator",
-            Account.Role.SPECIALIST: "specialist",
-            Account.Role.ASSISTANT: "assistant",
-        }
-        user_attr = user_mapping.get(request.user.role)
-        user_instance = getattr(request.user, user_attr, None)
+        instance, serializer_class = factory.get_instance_by_role(request.user)
+        user_instance = getattr(request.user, instance, None)
 
         if user_instance:
             content_type = ContentType.objects.get_for_model(user_instance)
@@ -141,15 +130,39 @@ class ActivitySerializer(BaseSerializer):
 
         return activity
 
-    def get_created_by(self, activity):
-        user = find_user(activity.created_by_id)
 
-        from users import serializers as user_serializers
-        instance_mapping = {
-            Specialist: user_serializers.SpecialistSerializer,
-            Assistant: user_serializers.AssistantSerializer,
-        }
-        serializer_class = instance_mapping.get(user)
+class AuthenticatedActivitySerializer(ActivitySerializer):
+    liked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ActivitySerializer.Meta.model
+        exclude = ActivitySerializer.Meta.exclude
+
+    def get_liked(self, activity):
+        request = self.context.get("request")
+
+        try:
+            like = Like.objects.get(account=request.user, activity=activity)
+        except ObjectDoesNotExist:
+            return False
+
+        return like.is_active
+
+
+class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
+    from users import serializers as user_serializers
+    list_of_participants = user_serializers.StudentSerializer(many=True, required=False)
+
+    created_by = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ActivitySerializer.Meta.model
+        exclude = ["created_by_type", "created_by_id"]
+
+    def get_created_by(self, activity):
+        user = factory.find_user(activity.created_by_id)
+
+        instance, serializer_class, _ = factory.get_instance(user)
 
         if serializer_class:
             return serializer_class(activity.created_by).data

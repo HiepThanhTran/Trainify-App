@@ -30,7 +30,7 @@ schema_view = get_schema_view(
         title="Training Point Management API",
         default_version="v1",
         description="APIs for Training Point Management project",
-        contact=openapi.Contact(email="linear.team404@gmail.com"),
+        contact=openapi.Contact(email="linearteam.404@gmail.com"),
         license=openapi.License(name="(Trần Thanh Hiệp - Nguyễn Song Hậu)@2024"),
     ),
     public=True,
@@ -55,4 +55,4 @@ urlpatterns = [
                           schema_view.with_ui("redoc", cache_timeout=0),
                           name="schema-redoc"),
                   path("__debug__/", include(debug_toolbar.urls)),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(prefix=settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

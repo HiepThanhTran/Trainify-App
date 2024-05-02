@@ -17,8 +17,8 @@ class AccountManager(BaseUserManager):
         from users.models import Administrator
         administrator = Administrator.objects.create(first_name="Administrator", account=account, date_of_birth=datetime.date.today())
 
-        from tpm.utils import set_role
-        set_role(administrator)
+        from tpm.utils import factory
+        factory.set_role(administrator)
 
         return account
 

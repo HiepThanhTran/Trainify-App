@@ -12,3 +12,8 @@ ACCOUNT_ROLE_ALLOW_CREATED = [
 class AllowedCreateAccount(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         return super().has_permission(request, view) and request.user.role in ACCOUNT_ROLE_ALLOW_CREATED
+
+
+class IsStudent(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == Account.Role.STUDENT
