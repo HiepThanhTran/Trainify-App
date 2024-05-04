@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 
 from schools.forms import ActivityAdminForm
-from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, Activity, Participation, DeficiencyReport
+from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, SemesterOfStudent
+from activities.models import Activity, Participation, DeficiencyReport
 from tpm.admin import my_admin_site
 
 
@@ -22,6 +23,7 @@ my_admin_site.register(Major)
 my_admin_site.register(AcademicYear)
 my_admin_site.register(Class)
 my_admin_site.register(Semester)
+my_admin_site.register(SemesterOfStudent)
 my_admin_site.register(Criterion)
 my_admin_site.register(TrainingPoint)
 my_admin_site.register(Activity, ActivityAdmin)

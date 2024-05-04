@@ -1,10 +1,13 @@
+from django.db.models import Sum
 from rest_framework import viewsets, permissions, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from schools import perms as schools_perms, serializers as schools_serializers
-from users import perms as users_perms, serializers as users_serializers
-from users.models import Account, Student, Assistant, Specialist
+from schools import serializers as schools_serializers
+from schools.models import TrainingPoint
+from tpm import perms
+from users import serializers as users_serializers
+from users.models import Account, Student, Assistant
 
 
 class AccountViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -16,8 +19,8 @@ class AccountViewSet(viewsets.ViewSet, generics.CreateAPIView):
         if self.action in ["current_account"]:
             return [permissions.IsAuthenticated()]
 
-        if self.action in ["create"]:
-            return [users_perms.AllowedCreateAccount()]
+        if self.action.__eq__("create"):
+            return [perms.AllowedCreateAccount()]
 
         return [permissions.IsAdminUser()]
 
@@ -26,20 +29,10 @@ class AccountViewSet(viewsets.ViewSet, generics.CreateAPIView):
         return Response(data=users_serializers.AccountSerializer(request.user).data, status=status.HTTP_200_OK)
 
 
-class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
-    pass
-
-
-class SpecialistViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
-    queryset = Specialist.objects.filter(is_active=True)
-    serializer_class = users_serializers.SpecialistSerializer
-    permission_classes = [schools_perms.HasActivitiesGroupPermission]
-
-
 class AssistantViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Assistant.objects.filter(is_active=True)
     serializer_class = users_serializers.AssistantSerializer
-    permission_classes = [schools_perms.HasActivitiesGroupPermission]
+    permission_classes = [perms.HasInActivitiesGroup]
 
 
 class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -47,26 +40,54 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     serializer_class = users_serializers.StudentSerializer
 
     def get_permissions(self):
-        if self.action in ["current_student", "activities_participated", "activities"]:
-            return [users_perms.IsStudent()]
+        if self.action in ["current_student", "update_current_student", "training_points", "activities"]:
+            return [perms.IsStudent()]
 
-        return [schools_perms.HasActivitiesGroupPermission()]
+        return [perms.HasInActivitiesGroup()]
 
     @action(methods=["get"], detail=False, url_path="current-student")
     def current_student(self, request):
         return Response(data=users_serializers.StudentSerializer(request.user.student).data, status=status.HTTP_200_OK)
 
+    @action(methods=["get"], detail=True, url_path="training-points")
+    def training_points(self, request, pk=None):
+        semester_id = request.query_params.get("semester", None)
+        criterion_id = request.query_params.get("criterion", None)
+
+        semester_points = []
+        student = self.get_object()
+        semesters_of_student = student.semesters.all()
+
+        if semester_id is not None:
+            semesters_of_student = semesters_of_student.filter(id=semester_id)
+
+        for semester in semesters_of_student:
+            training_points = TrainingPoint.objects.filter(student=student, semester=semester)
+            total_point_dict = training_points.values("semester_id").annotate(total_point=Sum("point")).order_by('semester_id').first()
+
+            if criterion_id is not None:
+                training_points = training_points.filter(criterion_id=criterion_id)
+
+            semester_points.append({
+                'semester': semester.name,
+                'total_point': total_point_dict.get('total_point') if total_point_dict is not None else 0,
+                'training_points': training_points
+            })
+
+        serializer = schools_serializers.TrainingPointBySemesterSerializer(semester_points, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @action(methods=["get"], detail=True, url_path="activities")
     def activities(self, request, pk=None):
         participations = self.get_object().participations.prefetch_related("activity").filter(is_active=True)
 
-        query = self.request.query_params.get('filter', None)
-        if query:
-            if query.lower() == "participated":
-                participations = participations.filter(is_attendance=True)
-            elif query.lower() == "registered":
-                participations = participations.filter(is_attendance=False)
+        query = self.request.query_params.get('q', None)
+        if query is not None:
+            # Danh sách các hoạt động đã tham gia
+            participations = participations.filter(is_attendance=True) if query.lower().__eq__("partd") else participations
+            # Danh sách các hoạt động đã đăng ký (Chưa tham gia và điểm danh)
+            participations = participations.filter(is_attendance=False) if query.lower().__eq__("regd") else participations
 
         activities = [participation.activity for participation in participations]
 
-        return Response(data=schools_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
+        return Response(data=activities.serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)

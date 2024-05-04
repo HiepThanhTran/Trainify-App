@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "interacts.apps.InteractsConfig",
+    "activities.apps.ActivitiesConfig",
     "schools.apps.SchoolsConfig",
     "users.apps.UsersConfig",
 
@@ -160,6 +161,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 pymysql.install_as_MySQLdb()

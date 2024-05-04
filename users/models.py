@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from schools.models import Activity
+from activities.models import Activity
 from tpm.models import BaseModel
 
 

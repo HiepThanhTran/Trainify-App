@@ -35,7 +35,6 @@ class AccountSerializer(BaseSerializer):
         key = validated_data.pop("key")
 
         user = factory.find_user(key)
-
         if user is None:
             raise serializers.ValidationError({"message": "Không tìm thấy người dùng."})
 
@@ -55,7 +54,7 @@ class AccountSerializer(BaseSerializer):
     def get_user(self, account):
         instance, serializer_class = factory.get_instance_by_role(account)
         user_instance = getattr(account, instance, None)
-        
+
         if user_instance:
             return serializer_class(user_instance).data
 
@@ -65,7 +64,7 @@ class UserSerializer(BaseSerializer):
         model = User
         fields = [
             "id", "first_name", "middle_name", "last_name", "gender",
-            "date_of_birth", "faculty", "address", "phone_number",
+            "date_of_birth", "faculty", "address", "phone_number"
         ]
 
     def to_representation(self, instance):
