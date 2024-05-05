@@ -75,7 +75,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
         instance, serializer_class, _ = factory.get_instance(user)
 
         if serializer_class:
-            return serializer_class(instance.created_by).data
+            return serializer_class(user).data
 
 
 class ParticipationSerializer(BaseSerializer):
@@ -89,9 +89,6 @@ class ParticipationSerializer(BaseSerializer):
 
 
 class DeficiencyReportSerializer(BaseSerializer):
-    image = serializers.ImageField(required=False)
-    content = serializers.CharField(required=False)
-
     from users import serializers as user_serializers
     student = user_serializers.StudentSerializer()
     activity = ActivitySerializer()
@@ -111,15 +108,5 @@ class DeficiencyReportSerializer(BaseSerializer):
         image = data.get("image", None)
         if image:
             data["image"] = instance.image.url
-
-        return data
-
-    def validate(self, data):
-        image = data.get("image")
-        content = data.get("content")
-
-        if not image and not content:
-            data["image"] = None
-            data["content"] = None
 
         return data

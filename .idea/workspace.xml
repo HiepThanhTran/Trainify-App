@@ -4,48 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="refactor: migrations">
-      <change afterPath="$PROJECT_DIR$/activities/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/migrations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tpm/paginators.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tpm/perms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" afterDir="false" />
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="API: get training points of student, create deficiency report activity">
+      <change afterPath="$PROJECT_DIR$/tpm/filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0002_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/migrations/0003_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0003_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/paginators.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/perms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/paginators.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/perms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/data/attendance.csv" beforeDir="false" afterPath="$PROJECT_DIR$/static/data/attendance.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/paginators.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/perms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -181,7 +160,7 @@
       <workItem from="1714421749070" duration="1168000" />
       <workItem from="1714422963305" duration="131574000" />
       <workItem from="1714644383508" duration="16264000" />
-      <workItem from="1714814689178" duration="25311000" />
+      <workItem from="1714814689178" duration="47953000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -271,7 +250,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714633418459</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="API: get training points of student, create deficiency report activity">
+      <option name="closed" value="true" />
+      <created>1714845932624</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1714845932624</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -301,6 +288,7 @@
     <MESSAGE value="feat: upload csv file to take student attendance" />
     <MESSAGE value="API:&#10;+ activities participated and registered of student&#10;+ like activity" />
     <MESSAGE value="refactor: migrations" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: migrations" />
+    <MESSAGE value="API: get training points of student, create deficiency report activity" />
+    <option name="LAST_COMMIT_MESSAGE" value="API: get training points of student, create deficiency report activity" />
   </component>
 </project>

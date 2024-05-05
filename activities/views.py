@@ -1,31 +1,33 @@
 import csv
 
+from django.core.exceptions import ObjectDoesNotExist
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import activities.serializers
+from activities import serializers as activities_serializers
 from activities.models import Activity, Participation, DeficiencyReport
-from interacts import serializers
+from interacts import serializers as interacts_serializers
 from interacts.models import Like
 from schools.models import TrainingPoint
 from tpm import paginators, perms
+from tpm.filters import DeficiencyReportFilter
 from users.models import Student
 
 
-# Create your views here.
 class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveAPIView):
     queryset = Activity.objects.prefetch_related("list_of_participants").filter(is_active=True)
-    serializer_class = activities.serializers.ActivitySerializer
+    serializer_class = activities_serializers.ActivitySerializer
     pagination_class = paginators.ActivityPagination
 
     def get_serializer_class(self):
         if self.request.user.is_authenticated:
             if self.request.user.has_in_activities_group():
-                return activities.serializers.AuthenticatedActivityDetailsSerializer
+                return activities_serializers.AuthenticatedActivityDetailsSerializer
 
-            return activities.serializers.AuthenticatedActivitySerializer
+            return activities_serializers.AuthenticatedActivitySerializer
 
         return self.serializer_class
 
@@ -47,25 +49,34 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         if not created:
             return Response(data={"message": "Bạn đã đăng ký tham gia hoạt động này rồi!"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(data=activities.serializers.ParticipationSerializer(participation).data, status=status.HTTP_201_CREATED)
+        return Response(data=activities_serializers.ParticipationSerializer(participation).data, status=status.HTTP_201_CREATED)
 
     @action(methods=["post"], detail=True, url_path="report-deficiency")
     def report_deficiency(self, request, pk=None):
         activity = self.get_object()
         student = request.user.student
-        image = request.data.get("image", None)
-        content = request.data.get("content", None)
+
+        try:
+            participation = self.get_object().participations.get(student=request.user.student)
+        except ObjectDoesNotExist:
+            return Response(data={"message": "Bạn chưa đăng ký tham gia hoạt động này"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if participation.is_attendance and participation.is_point_added:
+            return Response(data={"message": "Bạn không thể báo thiếu hoạt động đã được cộng điểm"}, status=status.HTTP_400_BAD_REQUEST)
 
         report, created = DeficiencyReport.objects.get_or_create(student=student, activity=activity)
 
         if not created:
             return Response(data={"message": "Bạn đã báo thiếu điểm cho hoạt động này rồi!"}, status=status.HTTP_400_BAD_REQUEST)
 
+        image = request.data.get("image", None)
+        content = request.data.get("content", None)
+
         report.image = image
         report.content = content
         report.save()
 
-        return Response(data=activities.serializers.DeficiencyReportSerializer(report).data, status=status.HTTP_201_CREATED)
+        return Response(data=activities_serializers.DeficiencyReportSerializer(report).data, status=status.HTTP_201_CREATED)
 
     @action(methods=["get"], detail=True, url_path="comments")
     def get_comments(self, request, pk=None):
@@ -74,16 +85,16 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         paginator = paginators.CommentPaginators()
         page = paginator.paginate_queryset(comments, request)
         if page is not None:
-            serializer = serializers.CommentSerializer(page, many=True)
+            serializer = interacts_serializers.CommentSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        return Response(data=serializers.CommentSerializer(comments, many=True).data, status=status.HTTP_200_OK)
+        return Response(data=interacts_serializers.CommentSerializer(comments, many=True).data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=True, url_path="add-comment")
     def add_comment(self, request, pk=None):
         comment = self.get_object().comment_set.create(content=request.data["content"], account=request.user)
 
-        return Response(serializers.CommentSerializer(comment).data, status=status.HTTP_201_CREATED)
+        return Response(interacts_serializers.CommentSerializer(comment).data, status=status.HTTP_201_CREATED)
 
     @action(methods=["post"], detail=True, url_path="like")
     def like(self, request, pk=None):
@@ -94,27 +105,52 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
             like.is_active = not like.is_active
             like.save()
 
-        serializer = activities.serializers.AuthenticatedActivitySerializer(activity, context={"request": request})
+        serializer = activities_serializers.AuthenticatedActivitySerializer(activity, context={"request": request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = DeficiencyReport.objects.filter(is_active=True)
-    serializer_class = activities.serializers.DeficiencyReportSerializer
+    serializer_class = activities_serializers.DeficiencyReportSerializer
     permission_classes = [perms.HasInActivitiesGroup]
-
-    def get_queryset(self):
-        queryset = self.queryset
-        query = self.request.query_params.get("faculty", None)
-        if query is None:
-            return Response(data={"message": "Vui lòng cung cấp tên khoa!"}, status=status.HTTP_400_BAD_REQUEST)
-        queryset = queryset.filter(activity__faculty__name__icontains=query).distinct()
-
-        return queryset
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DeficiencyReportFilter
 
     @action(methods=["post"], detail=True, url_path="confirm")
     def confirm_deficiency_report(self, request, pk=None):
-        pass
+        report = self.get_object()
+
+        if report.is_resolved is True:
+            return Response(data={"message": "Báo thiếu này đã được giải quyết!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        participation = Participation.objects.get(student=report.student, activity=report.activity)
+
+        training_point, _ = TrainingPoint.objects.get_or_create(
+            student=participation.student,
+            semester=participation.activity.semester,
+            criterion=participation.activity.criterion,
+        )
+        training_point.point += participation.activity.point
+        training_point.save()
+
+        participation.is_point_added = True
+        participation.is_attendance = True
+        participation.save()
+
+        report.is_resolved = True
+        report.save()
+
+        return Response(data=activities_serializers.DeficiencyReportSerializer(report).data, status=status.HTTP_200_OK)
+
+    @action(methods=["delete"], detail=True, url_path="refuse")
+    def refuse_deficiency_report(self, request, pk=None):
+        report = self.get_object()
+        if report.is_resolved is False:
+            report.delete()
+            return Response(data=activities_serializers.DeficiencyReportSerializer(report).data, status=status.HTTP_200_OK)
+
+        return Response(data={}, status=status.HTTP_204_NO_CONTENT)
+
 
 
 class AttendanceViewSet(APIView):

@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from activities import serializers as activities_serializers
 from schools import serializers as schools_serializers
 from schools.models import TrainingPoint
 from tpm import perms
@@ -51,6 +52,10 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
     @action(methods=["get"], detail=True, url_path="training-points")
     def training_points(self, request, pk=None):
+        """
+        Lấy danh sách điểm rèn luyện của sinh viên lọc theo học kỳ và tiêu chí
+        Nhận vào 2 tham số là id của học kỳ và id của tiêu chí
+        """
         semester_id = request.query_params.get("semester", None)
         criterion_id = request.query_params.get("criterion", None)
 
@@ -79,15 +84,19 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
     @action(methods=["get"], detail=True, url_path="activities")
     def activities(self, request, pk=None):
+        """
+        Lấy danh sách hoạt động mà sinh viên đã tham gia hoặc đã đăng ký
+        Nhận vào 1 tham số là q:
+            Nếu q là "partd" thì lấy danh sách hoạt động mà sinh viên đã tham gia
+            Nếu q là "regd" thì lấy danh sách hoạt động mà sinh viên đã đăng ký
+        """
         participations = self.get_object().participations.prefetch_related("activity").filter(is_active=True)
 
         query = self.request.query_params.get('q', None)
         if query is not None:
-            # Danh sách các hoạt động đã tham gia
             participations = participations.filter(is_attendance=True) if query.lower().__eq__("partd") else participations
-            # Danh sách các hoạt động đã đăng ký (Chưa tham gia và điểm danh)
             participations = participations.filter(is_attendance=False) if query.lower().__eq__("regd") else participations
 
         activities = [participation.activity for participation in participations]
 
-        return Response(data=activities.serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
+        return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
