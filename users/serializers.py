@@ -105,7 +105,7 @@ class StudentSerializer(UserSerializer):
     class Meta:
         model = Student
         fields = UserSerializer.Meta.fields + [
-            "code", "major", "class_name", "academic_year", "educational_system",
+            "student_id", "major", "class_name", "academic_year", "educational_system",
         ]
 
     def to_representation(self, instance):

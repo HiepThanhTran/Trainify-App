@@ -119,7 +119,7 @@ class Student(User):
         verbose_name = _("Student")
         verbose_name_plural = _("Students")
 
-    code = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
+    student_id = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
 
     major = models.ForeignKey("schools.Major", null=True, on_delete=models.SET_NULL, related_name="students")
     class_name = models.ForeignKey("schools.Class", null=True, on_delete=models.SET_NULL, related_name="students")
@@ -127,13 +127,13 @@ class Student(User):
     educational_system = models.ForeignKey("schools.EducationalSystem", null=True, on_delete=models.SET_NULL, related_name="students")
 
     def __str__(self):
-        return f"{self.code} - {self.get_full_name()}"
+        return f"{self.student_id} - {self.get_full_name()}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if self.code is None:
-            self.code = self.generate_code()
+        if self.student_id is None:
+            self.student_id = self.generate_code()
             self.save()
 
     def generate_code(self):

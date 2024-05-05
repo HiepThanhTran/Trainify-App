@@ -127,4 +127,4 @@ class TrainingPoint(BaseModel):
     student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="points")
 
     def __str__(self):
-        return f"{self.student.code} - {self.point} - {self.criterion} - {self.semester}"
+        return f"{self.student.student_id} - {self.point} - {self.criterion} - {self.semester}"

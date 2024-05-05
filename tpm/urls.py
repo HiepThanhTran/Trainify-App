@@ -21,7 +21,7 @@ from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from rest_framework.routers import DefaultRouter
+from rest_framework import routers
 
 from activities.urls import router as activities_router
 from interacts.urls import router as interacts_router
@@ -41,7 +41,7 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny, ],
 )
 
-router = DefaultRouter()
+router = routers.DefaultRouter()
 router.registry.extend(activities_router.registry)
 router.registry.extend(interacts_router.registry)
 router.registry.extend(users_router.registry)
