@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="refactor: define urlconfs for root">
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="refactor: rename code to student_id field of Student model">
+      <change afterPath="$PROJECT_DIR$/users/migrations/0003_remove_student_student_id_student_student_code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +148,7 @@
       <workItem from="1714421749070" duration="1168000" />
       <workItem from="1714422963305" duration="131574000" />
       <workItem from="1714644383508" duration="16264000" />
-      <workItem from="1714814689178" duration="53708000" />
+      <workItem from="1714814689178" duration="57897000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -263,7 +270,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714908074615</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="refactor: rename code to student_id field of Student model">
+      <option name="closed" value="true" />
+      <created>1714908684813</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1714908684813</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -297,6 +312,7 @@
     <MESSAGE value="API: confirm and refuse deficiency report of student" />
     <MESSAGE value="API: get deficiency report list filter by faculty" />
     <MESSAGE value="refactor: define urlconfs for root" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: define urlconfs for root" />
+    <MESSAGE value="refactor: rename code to student_id field of Student model" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: rename code to student_id field of Student model" />
   </component>
 </project>

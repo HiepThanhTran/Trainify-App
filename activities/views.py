@@ -43,7 +43,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return [permissions.AllowAny()]
 
-    @action(methods=["post"], detail=True, url_path="register-activity")
+    @action(methods=["post"], detail=True, url_path="register")
     def register_activity(self, request, pk=None):
         participation, created = self.get_object().participations.get_or_create(student=request.user.student)
         if not created:
@@ -51,7 +51,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=activities_serializers.ParticipationSerializer(participation).data, status=status.HTTP_201_CREATED)
 
-    @action(methods=["post"], detail=True, url_path="report-deficiency")
+    @action(methods=["post"], detail=True, url_path="report")
     def report_deficiency(self, request, pk=None):
         activity = self.get_object()
         student = request.user.student
@@ -90,7 +90,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=interacts_serializers.CommentSerializer(comments, many=True).data, status=status.HTTP_200_OK)
 
-    @action(methods=["post"], detail=True, url_path="add-comment")
+    @action(methods=["post"], detail=True, url_path="comments/add")
     def add_comment(self, request, pk=None):
         comment = self.get_object().comment_set.create(content=request.data["content"], account=request.user)
 
@@ -156,7 +156,8 @@ class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
 class AttendanceViewSet(viewsets.ViewSet):
     permission_classes = [perms.HasInActivitiesGroup]
 
-    def create(self, request):
+    @action(methods=["post"], detail=False, url_path="upload")
+    def upload_attendaces_csv(self, request):
         file = request.FILES.get("file", None)
         if file is None:
             return Response(data={"message": "Không tìm thấy file!"}, status=status.HTTP_400_BAD_REQUEST)
@@ -168,7 +169,7 @@ class AttendanceViewSet(viewsets.ViewSet):
         next(csv_data)
         for row in csv_data:
             student_code, activity_id = row
-            student = Student.objects.get(code=student_code)
+            student = Student.objects.get(student_code=student_code)
             activity = Activity.objects.get(pk=activity_id)
             if student and activity:
                 participation, _ = Participation.objects.get_or_create(student=student, activity=activity)

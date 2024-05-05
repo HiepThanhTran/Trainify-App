@@ -61,7 +61,7 @@ class Factory:
             pass
 
         try:
-            return Student.objects.get(code=key)
+            return Student.objects.get(student_code=key)
         except ObjectDoesNotExist:
             pass
 

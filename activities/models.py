@@ -58,7 +58,7 @@ class Participation(BaseModel):
     student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="participations")
 
     def __str__(self):
-        return f"{self.student.student_id} - {self.activity}"
+        return f"{self.student.student_code} - {self.activity}"
 
 
 class DeficiencyReport(BaseModel):
@@ -77,4 +77,4 @@ class DeficiencyReport(BaseModel):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="deficiency_reports")
 
     def __str__(self):
-        return f"{self.student.student_id} - {self.activity}"
+        return f"{self.student.student_code} - {self.activity}"
