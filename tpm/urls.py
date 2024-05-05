@@ -14,16 +14,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path("blog/", include("blog.urls"))
 """
+# from django.contrib import admin
 import debug_toolbar
 from django.conf.urls.static import static
-# from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
 
+from activities.urls import router as activities_router
+from interacts.urls import router as interacts_router
 from tpm import settings
 from tpm.admin import my_admin_site
+from users.urls import router as users_router
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -37,13 +41,15 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny, ],
 )
 
+router = DefaultRouter()
+router.registry.extend(activities_router.registry)
+router.registry.extend(interacts_router.registry)
+router.registry.extend(users_router.registry)
+
 urlpatterns = [
                   # path("admin/", admin.site.urls),
                   path("admin/", my_admin_site.urls),
-                  path("api/interacts/", include("interacts.urls")),
-                  path("api/activities/", include("activities.urls")),
-                  # path("api/schools/", include("schools.urls")),
-                  path("api/users/", include("users.urls")),
+                  path("api/", include(router.urls)),
                   path("ckeditor5/", include("django_ckeditor_5.urls"), name="ck_editor_5_upload_file"),
                   path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
                   re_path(r"^swagger(?P<format>\.json|\.yaml)$",

@@ -6,7 +6,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from activities import serializers as activities_serializers
 from activities.models import Activity, Participation, DeficiencyReport
@@ -58,7 +57,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         student = request.user.student
 
         try:
-            participation = self.get_object().participations.get(student=request.user.student)
+            participation = self.get_object().participations.get(student=student)
         except ObjectDoesNotExist:
             return Response(data={"message": "Bạn chưa đăng ký tham gia hoạt động này"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -154,10 +153,10 @@ class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
 
 
-class AttendanceViewSet(APIView):
+class AttendanceViewSet(viewsets.ViewSet):
     permission_classes = [perms.HasInActivitiesGroup]
 
-    def post(self, request):
+    def create(self, request):
         file = request.FILES.get("file", None)
         if file is None:
             return Response(data={"message": "Không tìm thấy file!"}, status=status.HTTP_400_BAD_REQUEST)

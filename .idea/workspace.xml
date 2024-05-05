@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="API: confirm and refuse deficiency report of student">
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="API: get deficiency report list filter by faculty">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +143,7 @@
       <workItem from="1714421749070" duration="1168000" />
       <workItem from="1714422963305" duration="131574000" />
       <workItem from="1714644383508" duration="16264000" />
-      <workItem from="1714814689178" duration="49043000" />
+      <workItem from="1714814689178" duration="52775000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -247,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714902835796</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="API: get deficiency report list filter by faculty">
+      <option name="closed" value="true" />
+      <created>1714903835456</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1714903835456</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -279,6 +289,7 @@
     <MESSAGE value="refactor: migrations" />
     <MESSAGE value="API: get training points of student, create deficiency report activity" />
     <MESSAGE value="API: confirm and refuse deficiency report of student" />
-    <option name="LAST_COMMIT_MESSAGE" value="API: confirm and refuse deficiency report of student" />
+    <MESSAGE value="API: get deficiency report list filter by faculty" />
+    <option name="LAST_COMMIT_MESSAGE" value="API: get deficiency report list filter by faculty" />
   </component>
 </project>
