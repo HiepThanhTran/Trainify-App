@@ -1,6 +1,7 @@
 import csv
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
@@ -125,17 +126,18 @@ class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         participation = Participation.objects.get(student=report.student, activity=report.activity)
 
-        training_point, _ = TrainingPoint.objects.get_or_create(
-            student=participation.student,
-            semester=participation.activity.semester,
-            criterion=participation.activity.criterion,
-        )
-        training_point.point += participation.activity.point
-        training_point.save()
+        if not participation.is_point_added:
+            training_point, _ = TrainingPoint.objects.get_or_create(
+                student=participation.student,
+                semester=participation.activity.semester,
+                criterion=participation.activity.criterion,
+            )
+            training_point.point = F("point") + participation.activity.point
+            training_point.save()
 
-        participation.is_point_added = True
-        participation.is_attendance = True
-        participation.save()
+            participation.is_point_added = True
+            participation.is_attendance = True
+            participation.save()
 
         report.is_resolved = True
         report.save()
@@ -150,7 +152,6 @@ class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
             return Response(data=activities_serializers.DeficiencyReportSerializer(report).data, status=status.HTTP_200_OK)
 
         return Response(data={}, status=status.HTTP_204_NO_CONTENT)
-
 
 
 class AttendanceViewSet(APIView):
@@ -176,7 +177,7 @@ class AttendanceViewSet(APIView):
                     training_point, _ = TrainingPoint.objects.get_or_create(
                         semester=activity.semester, criterion=activity.criterion, student=student
                     )
-                    training_point.point += activity.point
+                    training_point.point = F('point') + activity.point
                     training_point.save()
 
                     participation.is_point_added = True
