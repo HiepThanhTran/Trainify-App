@@ -13,11 +13,11 @@ class BaseSerializer(serializers.ModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        filtered_data = {
-            key: value for key, value in data.items() if value is not None
-        }
-
-        return filtered_data
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+    #
+    #     filtered_data = {
+    #         key: value for key, value in data.items() if value is not None
+    #     }
+    #
+    #     return filtered_data

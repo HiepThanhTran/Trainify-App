@@ -80,7 +80,7 @@ class CriterionSerializer(BaseSerializer):
 class TrainingPointSerializer(BaseSerializer):
     class Meta:
         model = TrainingPoint
-        fields = ["id", "criterion", "point"]
+        fields = ["id", "point", "criterion"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

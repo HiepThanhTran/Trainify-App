@@ -1,9 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 
 from schools import serializers as schools_serializers
 from schools.models import Criterion
 
 
-class CriterionViewSet(viewsets.ViewSet):
+class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Criterion.objects.filter(is_active=True)
     serializer_class = schools_serializers.CriterionSerializer

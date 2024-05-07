@@ -4,7 +4,7 @@ from activities.models import DeficiencyReport
 
 
 class DeficiencyReportFilter(filters.FilterSet):
-    faculty = filters.CharFilter(field_name='activity__faculty__name', lookup_expr='icontains')
+    faculty = filters.CharFilter(field_name='activity__faculty__name', lookup_expr='icontains', required=True)
 
     class Meta:
         model = DeficiencyReport

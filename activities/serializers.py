@@ -1,9 +1,8 @@
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from interacts.models import Like
 from activities.models import Activity, Participation, DeficiencyReport
+from interacts.models import Like
 from tpm.serializers import BaseSerializer
 from tpm.utils import factory
 
@@ -12,7 +11,7 @@ class ActivitySerializer(BaseSerializer):
     class Meta:
         model = Activity
         exclude = [
-            "created_by_type", "created_by_id", "list_of_participants", "is_active", "created_date", "updated_date"
+            "is_active", "list_of_participants", "created_by_type", "created_by_id"
         ]
 
     def to_representation(self, instance):
@@ -28,13 +27,11 @@ class ActivitySerializer(BaseSerializer):
         data = validated_data.copy()
         request = self.context.get("request")
 
-        instance, serializer_class = factory.get_instance_by_role(request.user)
+        instance, _ = factory.get_instance_by_role(request.user)
         user_instance = getattr(request.user, instance, None)
 
         if user_instance:
-            content_type = ContentType.objects.get_for_model(user_instance)
-            data["created_by_type"] = content_type
-            data["created_by_id"] = user_instance.id
+            data["created_by"] = user_instance
 
         activity = Activity.objects.create(**data)
 
@@ -63,6 +60,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
     from users import serializers as user_serializers
     list_of_participants = user_serializers.StudentSerializer(many=True, required=False)
 
+    # list_of_participants = serializers.HyperlinkedRelatedField(many=True, required=False, view_name="students-detail", read_only=True)
     created_by = serializers.SerializerMethodField()
 
     class Meta:
@@ -70,12 +68,9 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
         exclude = ["created_by_type", "created_by_id"]
 
     def get_created_by(self, instance):
-        user = factory.find_user(instance.created_by_id)
+        _, serializer_class, _ = factory.get_instance(instance.created_by)
 
-        instance, serializer_class, _ = factory.get_instance(user)
-
-        if serializer_class:
-            return serializer_class(user).data
+        return serializer_class(instance.created_by).data
 
 
 class ParticipationSerializer(BaseSerializer):
@@ -85,7 +80,7 @@ class ParticipationSerializer(BaseSerializer):
 
     class Meta:
         model = Participation
-        fields = "__all__"
+        exclude = ["is_active"]
 
 
 class DeficiencyReportSerializer(BaseSerializer):

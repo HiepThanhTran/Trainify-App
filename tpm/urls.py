@@ -17,7 +17,7 @@ Including another URLconf
 # from django.contrib import admin
 import debug_toolbar
 from django.conf.urls.static import static
-from django.urls import path, include, re_path
+from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -25,6 +25,7 @@ from rest_framework import routers
 
 from activities.urls import router as activities_router
 from interacts.urls import router as interacts_router
+from schools.urls import router as schools_router
 from tpm import settings
 from tpm.admin import my_admin_site
 from users.urls import router as users_router
@@ -44,6 +45,7 @@ schema_view = get_schema_view(
 router = routers.DefaultRouter()
 router.registry.extend(activities_router.registry)
 router.registry.extend(interacts_router.registry)
+router.registry.extend(schools_router.registry)
 router.registry.extend(users_router.registry)
 
 urlpatterns = [
@@ -52,14 +54,8 @@ urlpatterns = [
                   path("api/", include(router.urls)),
                   path("ckeditor5/", include("django_ckeditor_5.urls"), name="ck_editor_5_upload_file"),
                   path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
-                  re_path(r"^swagger(?P<format>\.json|\.yaml)$",
-                          schema_view.without_ui(cache_timeout=0),
-                          name="schema-json"),
-                  re_path(r"^swagger/$",  # ^swagger/$
-                          schema_view.with_ui("swagger", cache_timeout=0),
-                          name="schema-swagger-ui"),
-                  re_path(r"^redoc/$",
-                          schema_view.with_ui("redoc", cache_timeout=0),
-                          name="schema-redoc"),
+                  path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+                  path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),  # swagger/
+                  path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
                   path("__debug__/", include(debug_toolbar.urls)),
               ] + static(prefix=settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -11,6 +11,7 @@ class Activity(BaseModel):
     class Meta:
         verbose_name = _("Activity")
         verbose_name_plural = _("Activities")
+        indexes = [models.Index(fields=["created_by_type", "created_by_id"], )]
 
     class Type(models.TextChoices):
         ONLINE = "Onl", _("Online")
@@ -35,7 +36,7 @@ class Activity(BaseModel):
     # Thuộc học kỳ nào?
     semester = models.ForeignKey("schools.Semester", on_delete=models.CASCADE, related_name="activities")
     # Người tạo là ai?
-    created_by_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE, related_name="activities")
+    created_by_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
     created_by_id = models.PositiveIntegerField()
     created_by = GenericForeignKey("created_by_type", "created_by_id")
     # Cộng điểm rèn luyện điều mấy?
@@ -58,7 +59,7 @@ class Participation(BaseModel):
     student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="participations")
 
     def __str__(self):
-        return f"{self.student.student_code} - {self.activity}"
+        return f"Participation: {self.student.student_code} - {self.activity}"
 
 
 class DeficiencyReport(BaseModel):
@@ -77,4 +78,4 @@ class DeficiencyReport(BaseModel):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="deficiency_reports")
 
     def __str__(self):
-        return f"{self.student.student_code} - {self.activity}"
+        return f"Deficiency report: {self.student.student_code} - {self.activity}"

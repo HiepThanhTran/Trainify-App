@@ -4,12 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="refactor: rename code to student_id field of Student model">
-      <change afterPath="$PROJECT_DIR$/users/migrations/0003_remove_student_student_id_student_student_code.py" afterDir="false" />
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="refactor: change endpoints">
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0004_activity_activities__created_8d6a54_idx.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0005_alter_activity_created_by_type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/perms.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/perms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
@@ -54,6 +67,11 @@
     &quot;accountId&quot;: &quot;e9c93740-d40f-45b6-9be8-12ed13c1e0d4&quot;
   }
 }</component>
+  <component name="JsbtTreeLayoutManager">
+    <layout place="tools.popupGrunt">
+      <scroll-view-position x="0" y="0" />
+    </layout>
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -148,7 +166,9 @@
       <workItem from="1714421749070" duration="1168000" />
       <workItem from="1714422963305" duration="131574000" />
       <workItem from="1714644383508" duration="16264000" />
-      <workItem from="1714814689178" duration="57897000" />
+      <workItem from="1714814689178" duration="78522000" />
+      <workItem from="1714955736467" duration="2739000" />
+      <workItem from="1715045449686" duration="8616000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -278,7 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714908684813</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="refactor: change endpoints">
+      <option name="closed" value="true" />
+      <created>1714913079869</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1714913079869</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -313,6 +341,7 @@
     <MESSAGE value="API: get deficiency report list filter by faculty" />
     <MESSAGE value="refactor: define urlconfs for root" />
     <MESSAGE value="refactor: rename code to student_id field of Student model" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: rename code to student_id field of Student model" />
+    <MESSAGE value="refactor: change endpoints" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: change endpoints" />
   </component>
 </project>

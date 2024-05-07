@@ -5,7 +5,6 @@ from activities import views
 
 router = routers.DefaultRouter()
 router.register("activities", views.ActivityViewSet, basename="activities")
-router.register("attendances", views.AttendanceViewSet, basename="attendances")
 router.register("reports", views.DeficiencyReportViewSet, basename="deficiency-reports")
 
 urlpatterns = [

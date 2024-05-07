@@ -8,17 +8,17 @@ from users.models import Account, Student, Specialist, Assistant, Administrator,
 class AccountSerializer(BaseSerializer):
     key = serializers.CharField(write_only=True, required=True, allow_blank=False, allow_null=False)
 
-    user = serializers.SerializerMethodField(required=False)
+    user = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Account
         fields = ["id", "role", "email", "password", "avatar", "user", "key"]
         extra_kwargs = {
             "password": {
-                "write_only": "true",
+                "write_only": True,
             },
             "role": {
-                "read_only": "true",
+                "read_only": True,
             }
         }
 
@@ -26,30 +26,10 @@ class AccountSerializer(BaseSerializer):
         data = super().to_representation(instance)
 
         avatar = data.get("avatar", None)
-        if avatar:
+        if avatar is not None:
             data["avatar"] = instance.avatar.url
 
         return data
-
-    def create(self, validated_data):
-        key = validated_data.pop("key")
-
-        user = factory.find_user(key)
-        if user is None:
-            raise serializers.ValidationError({"message": "Không tìm thấy người dùng."})
-
-        if user.account is not None:
-            raise serializers.ValidationError({"message": "Người dùng này đã đăng ký tài khoản!"})
-
-        account = Account.objects.create(**validated_data)
-        account.set_password(validated_data["password"])
-        account.save()
-
-        user.account = account
-        user.save()
-        factory.set_role(user)
-
-        return account
 
     def get_user(self, account):
         instance, serializer_class = factory.get_instance_by_role(account)

@@ -3,21 +3,27 @@ from rest_framework import permissions
 from users.models import Account
 
 
-ROLES_ALLOWED_TO_CREATE_ACCOUNTS = [
-    Account.Role.ADMIN,
-    Account.Role.SPECIALIST,
-    Account.Role.STUDENT,
-]
+class IsRole(permissions.IsAuthenticated):
+    role = None
 
-
-class AllowedCreateAccount(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.role in ROLES_ALLOWED_TO_CREATE_ACCOUNTS
+        return super().has_permission(request, view) and (request.user.role == self.role or getattr(request.user, self.role.lower()))
 
 
-class IsStudent(permissions.IsAuthenticated):
-    def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.role == Account.Role.STUDENT
+class IsAdministrator(IsRole):
+    role = Account.Role.ADMINISTRATOR
+
+
+class IsSpecialist(IsRole):
+    role = Account.Role.SPECIALIST
+
+
+class IsAssistant(IsRole):
+    role = Account.Role.ASSISTANT
+
+
+class IsStudent(IsRole):
+    role = Account.Role.STUDENT
 
 
 class HasInActivitiesGroup(permissions.IsAuthenticated):

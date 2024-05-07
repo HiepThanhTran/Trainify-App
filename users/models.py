@@ -1,5 +1,6 @@
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser, Permission, Group
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +15,7 @@ class Account(AbstractUser):
         verbose_name_plural = _("Accounts")
 
     class Role(models.TextChoices):
-        ADMIN = "AD", _("Administrator")
+        ADMINISTRATOR = "AD", _("Administrator")
         STUDENT = "STU", _("Sinh viên")
         ASSISTANT = "ASST", _("Trợ lý sinh viên")
         SPECIALIST = "SPC", _("Chuyên viên cộng tác sinh viên")
@@ -42,6 +43,7 @@ class Account(AbstractUser):
             self.username = self.email
         super().save(*args, **kwargs)
 
+    @property
     def has_in_activities_group(self):
         return self.groups.filter(name="activities").exists()
 
@@ -98,6 +100,14 @@ class Administrator(Officer):
         verbose_name = _("Administrator")
         verbose_name_plural = _("Administrators")
 
+    activities = GenericRelation(
+        Activity,
+        related_name='administrators',
+        related_query_name='administrators',
+        content_type_field="created_by_type",
+        object_id_field="created_by_id"
+    )
+
 
 class Specialist(Officer):
     class Meta:
@@ -107,11 +117,27 @@ class Specialist(Officer):
     job_title = models.CharField(max_length=50, null=True, blank=True)
     academic_degree = models.CharField(max_length=50, null=True, blank=True)
 
+    activities = GenericRelation(
+        Activity,
+        related_name='specialists',
+        related_query_name='specialists',
+        content_type_field="created_by_type",
+        object_id_field="created_by_id"
+    )
+
 
 class Assistant(Officer):
     class Meta:
         verbose_name = _("Assistant")
         verbose_name_plural = _("Assistants")
+
+    activities = GenericRelation(
+        Activity,
+        related_name='assistants',
+        related_query_name='assistants',
+        content_type_field="created_by_type",
+        object_id_field="created_by_id"
+    )
 
 
 class Student(User):
