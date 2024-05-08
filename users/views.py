@@ -24,7 +24,7 @@ class AccountViewSet(viewsets.ViewSet):
             return [permissions.IsAuthenticated()]
 
         if self.action in ["create_assistant_account"]:
-            return [perms.IsAdministrator(), perms.IsSpecialist()]
+            return [perms.HasInSpeacialistGroup()]
 
         return [permissions.AllowAny()]
 
@@ -37,7 +37,7 @@ class AccountViewSet(viewsets.ViewSet):
         parameter_description="ID của trợ lý sinh viên",
         operation_description="API sử dụng để tạo tài khoản cho trợ lý sinh viên")
     )
-    @action(methods=["post"], detail=False, url_path="assistant")
+    @action(methods=["post"], detail=False, url_path="assistant/add")
     def create_assistant_account(self, request):
         return self._create_account(request, Assistant)
 
@@ -45,7 +45,7 @@ class AccountViewSet(viewsets.ViewSet):
         parameter_description="Mã số sinh viên",
         operation_description="API sử dụng để tạo tài khoản cho sinh viên")
     )
-    @action(methods=["post"], detail=False, url_path="student")
+    @action(methods=["post"], detail=False, url_path="student/add")
     def create_student_account(self, request):
         return self._create_account(request, Student)
 
@@ -65,7 +65,7 @@ class AccountViewSet(viewsets.ViewSet):
 class AssistantViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Assistant.objects.filter(is_active=True)
     serializer_class = users_serializers.AssistantSerializer
-    permission_classes = [perms.HasInActivitiesGroup]
+    permission_classes = [perms.HasInSpeacialistGroup]
 
 
 class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -73,10 +73,13 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     serializer_class = users_serializers.StudentSerializer
 
     def get_permissions(self):
-        if self.action in ["current_student", "training_points", "activities_list", "activities_participated", "activities_registered", "activities_reported"]:
-            return [perms.IsStudent()]
+        if self.action in ["current_student", "activities_list", "activities_participated", "activities_registered", "training_points"]:
+            return [perms.HasInStudentGroup()]
 
-        return [perms.HasInActivitiesGroup()]
+        if self.action in ["activities_reported"]:
+            return [perms.HasInAssistantGroup()]
+
+        return [perms.HasInAssistantGroup()]
 
     @method_decorator(swagger_schema.students_list_schema())
     def list(self, request, *args, **kwargs):
@@ -94,21 +97,17 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     @method_decorator(swagger_schema.activities_list_schema())
     @action(methods=["get"], detail=True, url_path="activities")
     def activities_list(self, request, pk=None):
-        participations = self.get_activities_by_participation_status(pk=pk)
-        activities = [participation.activity for participation in participations]
-        return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
+        return self.get_activities_by_participation_status(pk=pk)
 
     @method_decorator(swagger_schema.activities_participated_schema())
     @action(methods=["get"], detail=True, url_path="activities/participated")
     def activities_participated(self, request, pk=None):
-        activities = self.get_activities_by_participation_status(pk=pk, is_attendance=True)
-        return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
+        return self.get_activities_by_participation_status(pk=pk, is_attendance=True)
 
     @method_decorator(swagger_schema.activities_registered_schema())
     @action(methods=["get"], detail=True, url_path="activities/registered")
     def activities_registered(self, request, pk=None):
-        activities = self.get_activities_by_participation_status(pk=pk, is_attendance=False)
-        return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
+        return self.get_activities_by_participation_status(pk=pk, is_attendance=False)
 
     @method_decorator(swagger_schema.activities_reported_schema())
     @action(methods=["get"], detail=True, url_path="activities/reported")
@@ -123,7 +122,8 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         if is_attendance is not None:
             participations = participations.filter(is_attendance=is_attendance)
         activities = [participation.activity for participation in participations]
-        return activities
+
+        return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
 
     @method_decorator(swagger_schema.training_points_schema())
     @action(methods=["get"], detail=True, url_path="points")

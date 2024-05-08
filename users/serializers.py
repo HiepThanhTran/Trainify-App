@@ -32,7 +32,7 @@ class AccountSerializer(BaseSerializer):
         return data
 
     def get_user(self, account):
-        instance, serializer_class = factory.get_instance_by_role(account)
+        instance, serializer_class = factory.check_account_role(account)
         user_instance = getattr(account, instance, None)
 
         if user_instance:

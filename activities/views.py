@@ -29,7 +29,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
     def get_serializer_class(self):
         if self.request.user.is_authenticated:
-            if self.request.user.has_in_activities_group:
+            if self.request.user.has_in_group(name="assistant"):
                 return activities_serializers.AuthenticatedActivityDetailsSerializer
 
             return activities_serializers.AuthenticatedActivitySerializer
@@ -38,10 +38,10 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
     def get_permissions(self):
         if self.action in ["create", "update", "partial_update", "destroy", "attendace_upload_csv"]:
-            return [perms.HasInActivitiesGroup()]
+            return [perms.HasInAssistantGroup()]
 
         if self.action in ["register_activity", "report_deficiency"]:
-            return [perms.IsStudent()]
+            return [perms.HasInStudentGroup()]
 
         if self.action in ["add_comment", "like"]:
             return [permissions.IsAuthenticated()]
@@ -134,9 +134,9 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=activities_serializers.ParticipationSerializer(participation).data, status=status.HTTP_201_CREATED)
 
-    @method_decorator(swagger_schema.report_deficiency_schema())
+    @method_decorator(swagger_schema.report_activity_schema())
     @action(methods=["post"], detail=True, url_path="report", parser_classes=[parsers.MultiPartParser, ])
-    def report_deficiency(self, request, pk=None):
+    def report_activity(self, request, pk=None):
         activity = self.get_object()
         student = request.user.student
 
@@ -163,8 +163,8 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = DeficiencyReport.objects.select_related("student", "activity").filter(is_active=True)
     serializer_class = activities_serializers.DeficiencyReportSerializer
-    permission_classes = [perms.HasInActivitiesGroup]
     pagination_class = paginators.DeficiencyReportPagination
+    permission_classes = [perms.HasInAssistantGroup]
     filter_backends = [DjangoFilterBackend]
     filterset_class = DeficiencyReportFilter
 
@@ -200,8 +200,9 @@ class DeficiencyReportViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return Response(data=activities_serializers.DeficiencyReportSerializer(report).data, status=status.HTTP_200_OK)
 
-    @action(methods=["delete"], detail=True, url_path="refuse")
-    def refuse_deficiency_report(self, request, pk=None):
+    @method_decorator(swagger_schema.reject_deficiency_report_schema())
+    @action(methods=["delete"], detail=True, url_path="reject")
+    def reject_deficiency_report(self, request, pk=None):
         report = self.get_object()
         if report.is_resolved is False:
             report.delete()

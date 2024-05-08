@@ -153,7 +153,7 @@ def register_activity_schema():
     )
 
 
-def report_deficiency_schema():
+def report_activity_schema():
     return swagger_auto_schema(
         request_body=no_body,
         manual_parameters=[
@@ -235,7 +235,7 @@ def confirm_deficiency_report_schema():
     )
 
 
-def refuse_deficiency_report_schema():
+def reject_deficiency_report_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(

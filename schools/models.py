@@ -116,6 +116,12 @@ class TrainingPoint(BaseModel):
     class Meta:
         verbose_name = _("Training Point")
         verbose_name_plural = _("Training Points")
+        permissions = [
+            ("view_faculty_statistics", "Can view faculty statistics"),
+            ("export_faculty_statistics", "Can export faculty statistics"),
+            ("view_class_statistics", "Can view class statistics"),
+            ("export_class_statistics", "Can export class statistics"),
+        ]
 
     point = models.SmallIntegerField(default=0)
 

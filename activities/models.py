@@ -12,6 +12,14 @@ class Activity(BaseModel):
         verbose_name = _("Activity")
         verbose_name_plural = _("Activities")
         indexes = [models.Index(fields=["created_by_type", "created_by_id"], )]
+        permissions = [
+            ("upload_attendance_csv", "Can upload attendance csv"),
+            ("view_participated_list", "Can view participated list"),
+            ("view_registered_list", "Can view registered list"),
+            ("view_reported_list", "Can view reported list"),
+            ("register_activity", "Can register activity"),
+            ("report_activity", "Can report activity"),
+        ]
 
     class Type(models.TextChoices):
         ONLINE = "Onl", _("Online")
@@ -27,6 +35,7 @@ class Activity(BaseModel):
     location = models.CharField(max_length=255)
     point = models.SmallIntegerField()  # Điểm được cộng
     description = CKEditor5Field("Text", config_name="extends")
+    image = CloudinaryField()
 
     # Danh sách sinh viên tham gia
     list_of_participants = models.ManyToManyField("users.Student", related_name="activities", through="Participation")
@@ -67,6 +76,10 @@ class DeficiencyReport(BaseModel):
         verbose_name = _("Deficiency Report")
         verbose_name_plural = _("Deficiency Reports")
         unique_together = ("student", "activity")  # Sinh viên chỉ báo thiếu một lần cho một hoạt động
+        permissions = [
+            ("resolve_deficiency", "Can resolve deficiency"),
+            ("view_deficiency_list", "Can view deficiency list"),
+        ]
 
     is_resolved = models.BooleanField(default=False)  # Đã giải quyết chưa?
     image = CloudinaryField(null=True, blank=True)  # Hình ảnh minh chứng

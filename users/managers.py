@@ -19,6 +19,7 @@ class AccountManager(BaseUserManager):
 
         from tpm.utils import factory
         factory.set_role(administrator)
+        factory.set_permissions_for_account(account)
 
         return account
 

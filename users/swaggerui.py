@@ -14,7 +14,7 @@ def current_account_schema():
     )
 
 
-def create_account_schema(parameter_description, operation_description):
+def create_account_schema(parameter_description=None, operation_description=None):
     return swagger_auto_schema(
         request_body=users_serializers.AccountSerializer,
         manual_parameters=[

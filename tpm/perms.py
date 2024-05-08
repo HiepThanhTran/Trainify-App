@@ -1,29 +1,23 @@
 from rest_framework import permissions
 
-from users.models import Account
 
-
-class IsRole(permissions.IsAuthenticated):
-    role = None
+class HasInGroup(permissions.IsAuthenticated):
+    group_name = None
 
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and (request.user.role == self.role or getattr(request.user, self.role.lower()))
+        return super().has_permission(request, view) and request.user.has_in_group(name=self.group_name)
 
 
-class IsAdministrator(IsRole):
-    role = Account.Role.ADMINISTRATOR
+class HasInSpeacialistGroup(HasInGroup):
+    group_name = "specialist"
 
 
-class IsSpecialist(IsRole):
-    role = Account.Role.SPECIALIST
+class HasInAssistantGroup(HasInGroup):
+    group_name = "assistant"
 
 
-class IsAssistant(IsRole):
-    role = Account.Role.ASSISTANT
-
-
-class IsStudent(IsRole):
-    role = Account.Role.STUDENT
+class HasInStudentGroup(HasInGroup):
+    group_name = "student"
 
 
 class HasInActivitiesGroup(permissions.IsAuthenticated):

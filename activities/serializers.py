@@ -32,7 +32,7 @@ class ActivitySerializer(BaseSerializer):
         print(data)
         request = self.context.get("request")
 
-        instance, _ = factory.get_instance_by_role(request.user)
+        instance, _ = factory.check_account_role(request.user)
         user_instance = getattr(request.user, instance, None)
 
         if user_instance:
@@ -73,7 +73,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
         exclude = ["is_active", "created_by_type", "created_by_id"]
 
     def get_created_by(self, instance):
-        _, serializer_class, _ = factory.get_instance(instance.created_by)
+        _, serializer_class, _ = factory.check_user_instance(instance.created_by)
 
         return serializer_class(instance.created_by).data
 

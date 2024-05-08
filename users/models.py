@@ -13,6 +13,11 @@ class Account(AbstractUser):
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
+        permissions = [
+            ("create_student_account", "Can create student account"),
+            ("create_assistant_account", "Can create assistant account"),
+            ("create_specialist_account", "Can create specialist account"),
+        ]
 
     class Role(models.TextChoices):
         ADMINISTRATOR = "AD", _("Administrator")
@@ -41,11 +46,10 @@ class Account(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.username:
             self.username = self.email
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
-    @property
-    def has_in_activities_group(self):
-        return self.groups.filter(name="activities").exists()
+    def has_in_group(self, name=None):
+        return self.groups.filter(name=name).exists()
 
 
 class User(BaseModel):
@@ -62,12 +66,11 @@ class User(BaseModel):
     first_name = models.CharField(max_length=50)  # Tên
     middle_name = models.CharField(max_length=50)  # Tên đệm
     last_name = models.CharField(max_length=50)  # Họ
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(blank=True)
     address = models.CharField(max_length=255, blank=True)
-    phone_number = models.CharField(max_length=11, null=True, unique=True)
+    phone_number = models.CharField(max_length=11, blank=True, unique=True)
 
     account = models.OneToOneField(Account, null=True, blank=True, on_delete=models.SET_NULL)
-
     faculty = models.ForeignKey("schools.Faculty", null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
@@ -81,32 +84,18 @@ class Officer(User):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        if not self.account.has_in_activities_group():
-            group, created = Group.objects.get_or_create(name="activities")
-
-            if created:
-                content_type = ContentType.objects.get_for_model(Activity)
-                all_permissions_activity = Permission.objects.filter(content_type=content_type)
-                group.permissions.set(all_permissions_activity)
-
-            self.account.groups.add(group)
+    activities = GenericRelation(
+        Activity,
+        related_query_name='officers',
+        content_type_field="created_by_type",
+        object_id_field="created_by_id"
+    )
 
 
 class Administrator(Officer):
     class Meta:
         verbose_name = _("Administrator")
         verbose_name_plural = _("Administrators")
-
-    activities = GenericRelation(
-        Activity,
-        related_name='administrators',
-        related_query_name='administrators',
-        content_type_field="created_by_type",
-        object_id_field="created_by_id"
-    )
 
 
 class Specialist(Officer):
@@ -117,27 +106,11 @@ class Specialist(Officer):
     job_title = models.CharField(max_length=50, null=True, blank=True)
     academic_degree = models.CharField(max_length=50, null=True, blank=True)
 
-    activities = GenericRelation(
-        Activity,
-        related_name='specialists',
-        related_query_name='specialists',
-        content_type_field="created_by_type",
-        object_id_field="created_by_id"
-    )
-
 
 class Assistant(Officer):
     class Meta:
         verbose_name = _("Assistant")
         verbose_name_plural = _("Assistants")
-
-    activities = GenericRelation(
-        Activity,
-        related_name='assistants',
-        related_query_name='assistants',
-        content_type_field="created_by_type",
-        object_id_field="created_by_id"
-    )
 
 
 class Student(User):
