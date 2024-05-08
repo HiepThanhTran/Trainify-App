@@ -28,7 +28,7 @@ class IsStudent(IsRole):
 
 class HasInActivitiesGroup(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.has_in_activities_group()
+        return super().has_permission(request, view) and request.user.has_in_activities_group
 
 
 class AllowedEditComment(permissions.IsAuthenticated):

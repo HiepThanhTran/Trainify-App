@@ -17,6 +17,10 @@ class ActivitySerializer(BaseSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
+        image = data.get("image", None)
+        if image:
+            data["image"] = instance.image.url
+
         data["criterion"] = instance.criterion.name
         data["semester"] = instance.semester.name
         data["faculty"] = instance.faculty.name
@@ -25,6 +29,7 @@ class ActivitySerializer(BaseSerializer):
 
     def create(self, validated_data):
         data = validated_data.copy()
+        print(data)
         request = self.context.get("request")
 
         instance, _ = factory.get_instance_by_role(request.user)
@@ -65,7 +70,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
 
     class Meta:
         model = ActivitySerializer.Meta.model
-        exclude = ["created_by_type", "created_by_id"]
+        exclude = ["is_active", "created_by_type", "created_by_id"]
 
     def get_created_by(self, instance):
         _, serializer_class, _ = factory.get_instance(instance.created_by)

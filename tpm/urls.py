@@ -51,11 +51,12 @@ router.registry.extend(users_router.registry)
 urlpatterns = [
                   # path("admin/", admin.site.urls),
                   path("admin/", my_admin_site.urls),
-                  path("api/", include(router.urls)),
+                  path("api/v1/", include(router.urls)),
                   path("ckeditor5/", include("django_ckeditor_5.urls"), name="ck_editor_5_upload_file"),
-                  path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
-                  path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-                  path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),  # swagger/
-                  path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
                   path("__debug__/", include(debug_toolbar.urls)),
+                  path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
+                  path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+                  path("swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"),
+                  path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
               ] + static(prefix=settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
