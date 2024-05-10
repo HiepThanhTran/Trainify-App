@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
+from activities import apps
 from tpm.models import BaseModel
 
 
@@ -11,7 +12,7 @@ class Activity(BaseModel):
     class Meta:
         verbose_name = _("Activity")
         verbose_name_plural = _("Activities")
-        indexes = [models.Index(fields=["created_by_type", "created_by_id"], )]
+        indexes = [models.Index(fields=["organizer_type", "organizer_id"], )]
         permissions = [
             ("upload_attendance_csv", "Can upload attendance csv"),
             ("view_participated_list", "Can view participated list"),
@@ -33,48 +34,46 @@ class Activity(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
     location = models.CharField(max_length=255)
-    point = models.SmallIntegerField()  # Điểm được cộng
+    point = models.PositiveSmallIntegerField()  # Điểm được cộng
     description = CKEditor5Field("Text", config_name="extends")
-    image = CloudinaryField()
+    image = CloudinaryField(null=True, blank=True)
 
-    # Danh sách sinh viên tham gia
-    list_of_participants = models.ManyToManyField("users.Student", related_name="activities", through="Participation")
-
-    # Thuộc khoa nào?
-    faculty = models.ForeignKey("schools.Faculty", on_delete=models.CASCADE, related_name="activities")
-    # Thuộc học kỳ nào?
-    semester = models.ForeignKey("schools.Semester", on_delete=models.CASCADE, related_name="activities")
     # Người tạo là ai?
-    created_by_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
-    created_by_id = models.PositiveIntegerField()
-    created_by = GenericForeignKey("created_by_type", "created_by_id")
-    # Cộng điểm rèn luyện điều mấy?
-    criterion = models.ForeignKey("schools.Criterion", null=True, on_delete=models.SET_NULL, related_name="activities")
+    organizer_type = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
+    organizer_id = models.PositiveIntegerField()
+    organizer = GenericForeignKey("organizer_type", "organizer_id")
+
+    faculty = models.ForeignKey("schools.Faculty", on_delete=models.CASCADE, related_name="activities")  # Thuộc khoa nào?
+    semester = models.ForeignKey("schools.Semester", on_delete=models.CASCADE, related_name="activities")  # Thuộc học kỳ nào?
+    criterion = models.ForeignKey("schools.Criterion", null=True, on_delete=models.SET_NULL, related_name="activities")  # Điều bao nhiêu?
+    participants = models.ManyToManyField("users.Student", related_name="activities", through="ActivityRegistration")  # Danh sách sinh viên tham gia
 
     def __str__(self):
         return self.name
 
 
-class Participation(BaseModel):
+class ActivityRegistration(BaseModel):
     class Meta:
-        verbose_name = _("participation")
-        verbose_name_plural = _("participations")
+        db_table = "{}_activity_registration".format(apps.ActivitiesConfig.name)
+        verbose_name = _("Activity Registration")
+        verbose_name_plural = _("Activity Registrations")
         unique_together = ("student", "activity")  # Sinh viên chỉ đăng ký tham gia hoạt động một lần
 
     is_attendance = models.BooleanField(default=False)
     is_point_added = models.BooleanField(default=False)
 
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="participations")
-    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="participations")
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="registrations")
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="registrations")
 
     def __str__(self):
-        return f"Participation: {self.student.student_code} - {self.activity}"
+        return f"{self.student} - {self.activity}"
 
 
-class DeficiencyReport(BaseModel):
+class MissingActivityReport(BaseModel):
     class Meta:
-        verbose_name = _("Deficiency Report")
-        verbose_name_plural = _("Deficiency Reports")
+        db_table = "{}_missing_activity_report".format(apps.ActivitiesConfig.name)
+        verbose_name = _("Missing Activity Report")
+        verbose_name_plural = _("Missing Activity Reports")
         unique_together = ("student", "activity")  # Sinh viên chỉ báo thiếu một lần cho một hoạt động
         permissions = [
             ("resolve_deficiency", "Can resolve deficiency"),
@@ -82,13 +81,11 @@ class DeficiencyReport(BaseModel):
         ]
 
     is_resolved = models.BooleanField(default=False)  # Đã giải quyết chưa?
-    image = CloudinaryField(null=True, blank=True)  # Hình ảnh minh chứng
+    evidence = CloudinaryField(null=True, blank=True)  # Hình ảnh minh chứng
     content = CKEditor5Field("Text", config_name="extends", null=True, blank=True)
 
-    # Của sinh viên nào?
-    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="deficiency_reports")
-    # Thuộc hoạt động nào?
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="deficiency_reports")
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="reports")  # Thuộc hoạt động nào?
+    student = models.ForeignKey("users.Student", on_delete=models.CASCADE, related_name="reports")  # Của sinh viên nào?
 
     def __str__(self):
-        return f"Deficiency report: {self.student.student_code} - {self.activity}"
+        return f"{self.student} - {self.activity}"

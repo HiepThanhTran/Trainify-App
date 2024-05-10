@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Training Point Management Database" uuid="0888d1d8-8905-43e8-97ae-2f6023b8fc0b">
+    <data-source source="LOCAL" name="Local Database" uuid="0888d1d8-8905-43e8-97ae-2f6023b8fc0b">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>

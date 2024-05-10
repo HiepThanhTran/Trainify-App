@@ -5,7 +5,7 @@ class ActivityPagination(pagination.PageNumberPagination):
     page_size = 4
 
 
-class DeficiencyReportPagination(pagination.PageNumberPagination):
+class MissingActivityReportPagination(pagination.PageNumberPagination):
     page_size = 4
 
 

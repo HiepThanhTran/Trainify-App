@@ -1,7 +1,12 @@
+from collections import defaultdict
+
 from django.contrib.auth.models import Permission, Group
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import F, Sum
+from rest_framework import status
+from rest_framework.response import Response
 
+from schools.models import TrainingPoint, Faculty, Class, Semester
 from users.models import Administrator, Account, Specialist, Assistant, Student
 
 SPECIALIST_PERMISSIONS = [
@@ -28,16 +33,18 @@ STUDENT_PERMISSIONS = [
     "view_trainingpoint",
 ]
 
+ACHIEVEMENTS = ["Xuất sắc", "Giỏi", "Khá", "Trung bình", "Yếu", "Kém"]
+
 
 class Factory:
-    def create_user_account(self, data, key, user_model):
+    def create_user_account(self, data, code, user_model):
         try:
-            user = user_model.objects.get(Q(pk=key) | Q(student_code=key))
+            user = user_model.objects.get(code=code)
         except ObjectDoesNotExist:
-            return None
+            return Response(data={"message": "Không tìm thấy người dùng"}, status=status.HTTP_404_NOT_FOUND)
 
         if user.account is not None:
-            return None
+            return Response(data={"message": "Người dùng đã có tài khoản"}, status=status.HTTP_400_BAD_REQUEST)
 
         account = Account.objects.create(**data)
         account.set_password(account.password)
@@ -81,8 +88,7 @@ class Factory:
 
         return account
 
-    @staticmethod
-    def check_user_instance(instance):
+    def check_user_instance(self, instance):
         from users import serializers as users_serializers
         instance_mapping = {
             Administrator: ("administrator", users_serializers.AdministratorSerializer, Account.Role.ADMINISTRATOR),
@@ -93,8 +99,7 @@ class Factory:
 
         return instance_mapping.get(type(instance))
 
-    @staticmethod
-    def check_account_role(instance):
+    def check_account_role(self, instance):
         from users import serializers
         role_mapping = {
             Account.Role.ADMINISTRATOR: ("administrator", serializers.AdministratorSerializer),
@@ -114,4 +119,125 @@ class Factory:
         return user
 
 
+class DAO:
+    def update_training_point(self, registration):
+        training_point, _ = TrainingPoint.objects.get_or_create(
+            student=registration.student,
+            semester=registration.activity.semester,
+            criterion=registration.activity.criterion,
+        )
+        training_point.point = F("point") + registration.activity.point
+        training_point.save()
+
+        registration.is_point_added = True
+        registration.is_attendance = True
+        registration.save()
+
+        return training_point
+
+    def get_achievement(self, total_points):
+        if total_points >= 90:
+            achievement = "Xuất sắc"
+        elif total_points >= 80:
+            achievement = "Giỏi"
+        elif total_points >= 65:
+            achievement = "Khá"
+        elif total_points >= 50:
+            achievement = "Trung bình"
+        elif total_points >= 35:
+            achievement = "Yếu"
+        else:
+            achievement = "Kém"
+
+        return achievement
+
+    def get_student_summary(self, semester=None, student=None):
+        points = student.points.filter(semester=semester) if semester else student.points.all()
+        # student_total_points = points.aggregate(total_points=Sum("point", default=0))["total_points"]
+        student_total_points = points.values("criterion_id").annotate(total_points=Sum("point"))
+        print(student_total_points)
+
+        return points, student_total_points
+
+    def get_faculty_summary(self, semester=None, faculty=None):
+        students = Student.objects.filter(faculty=faculty)
+
+        faculty_total_students = students.count()
+        faculty_total_points = 0
+
+        achievements = {achievement: 0 for achievement in ACHIEVEMENTS}
+        for student in students:
+            _, student_total_points = self.get_student_summary(semester=semester, student=student)
+            faculty_total_points += student_total_points
+            achievement = dao.get_achievement(student_total_points)
+            achievements[achievement] += 1
+
+        faculty_average_points = faculty_total_points / faculty_total_students if faculty_total_students > 0 else 0
+
+        return faculty_total_students, faculty_total_points, faculty_average_points, achievements
+
+    def get_class_summary(self, semester=None, sclass=None):
+        students = Student.objects.filter(sclass=sclass)
+
+        class_total_students = students.count()
+        class_total_points = 0
+
+        achievements = {achievement: 0 for achievement in ACHIEVEMENTS}
+        students_list = defaultdict(dict)
+        for student in students:
+            points, student_total_points = self.get_student_summary(semester=semester, student=student)
+            class_total_points += student_total_points
+            achievement = self.get_achievement(student_total_points)
+            achievements[achievement] += 1
+
+            students_list[student.code] = {
+                "name": student.full_name,
+                "achievement": achievement,
+                **{point.criterion.name: point.point for point in points}
+            }
+
+        class_average_points = class_total_points / class_total_students if class_total_students > 0 else 0
+
+        return class_total_students, class_total_points, class_average_points, achievements, students_list
+
+    def statistics_points_by_faculty(self, semester_code, faculty_name):
+        semester = Semester.objects.get(code=semester_code) if semester_code else None
+        statistics_data = defaultdict(dict)
+
+        faculties = Faculty.objects.filter(name__icontains=faculty_name) if faculty_name else Faculty.objects.all()
+        for faculty in faculties:
+            (faculty_total_students, faculty_total_points,
+             faculty_average_points, achievements) = self.get_faculty_summary(semester=semester, faculty=faculty)
+
+            data = {
+                "total_students": faculty_total_students,
+                "total_points": faculty_total_points,
+                "average_points": faculty_average_points,
+                "achievements": achievements,
+            }
+            statistics_data[faculty.name] = data
+
+        return statistics_data
+
+    def statistics_points_by_class(self, semester_code, class_name):
+        semester = Semester.objects.get(code=semester_code) if semester_code else None
+        statistics_data = defaultdict(dict)
+
+        classes = Class.objects.filter(name__icontains=class_name) if class_name else Class.objects.all()
+        for sclass in classes:
+            (class_total_students, class_total_points,
+             class_average_points, achievements, students_list) = self.get_class_summary(semester=semester, sclass=sclass)
+            data = {
+                "total_students": class_total_students,
+                "total_points": class_total_points,
+                "average_points": class_average_points,
+                "achievements": achievements,
+                "students_list": students_list,
+            }
+            statistics_data[sclass.name] = data
+
+        return statistics_data
+
+
 factory = Factory()
+dao = DAO()

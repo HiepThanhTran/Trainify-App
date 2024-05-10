@@ -1,7 +1,6 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from activities.models import Activity, Participation, DeficiencyReport
+from activities.models import Activity, ActivityRegistration, MissingActivityReport
 from interacts.models import Like
 from tpm.serializers import BaseSerializer
 from tpm.utils import factory
@@ -10,9 +9,7 @@ from tpm.utils import factory
 class ActivitySerializer(BaseSerializer):
     class Meta:
         model = Activity
-        exclude = [
-            "is_active", "list_of_participants", "created_by_type", "created_by_id"
-        ]
+        exclude = ["is_active", "participants", "organizer_type", "organizer_id"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -22,22 +19,19 @@ class ActivitySerializer(BaseSerializer):
             data["image"] = instance.image.url
 
         data["criterion"] = instance.criterion.name
-        data["semester"] = instance.semester.name
+        data["semester"] = instance.semester.full_name
         data["faculty"] = instance.faculty.name
 
         return data
 
     def create(self, validated_data):
         data = validated_data.copy()
-        print(data)
         request = self.context.get("request")
 
         instance, _ = factory.check_account_role(request.user)
-        user_instance = getattr(request.user, instance, None)
+        organizer = getattr(request.user, instance, None)
 
-        if user_instance:
-            data["created_by"] = user_instance
-
+        data["organizer"] = organizer
         activity = Activity.objects.create(**data)
 
         return activity
@@ -55,7 +49,7 @@ class AuthenticatedActivitySerializer(ActivitySerializer):
 
         try:
             like = Like.objects.get(account=request.user, activity=instance)
-        except ObjectDoesNotExist:
+        except Like.DoesNotExist:
             return False
 
         return like.is_active
@@ -65,37 +59,44 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
     from users import serializers as user_serializers
     list_of_participants = user_serializers.StudentSerializer(many=True, required=False)
 
-    # list_of_participants = serializers.HyperlinkedRelatedField(many=True, required=False, view_name="students-detail", read_only=True)
-    created_by = serializers.SerializerMethodField()
+    organizer = serializers.SerializerMethodField()
 
     class Meta:
         model = ActivitySerializer.Meta.model
-        exclude = ["is_active", "created_by_type", "created_by_id"]
+        exclude = ["is_active", "organizer_type", "organizer_id"]
 
-    def get_created_by(self, instance):
-        _, serializer_class, _ = factory.check_user_instance(instance.created_by)
+    def get_organizer(self, instance):
+        _, serializer_class, _ = factory.check_user_instance(instance.organizer)
 
-        return serializer_class(instance.created_by).data
+        return serializer_class(instance.organizer).data
 
 
-class ParticipationSerializer(BaseSerializer):
+class ActivityRegistrationSerializer(BaseSerializer):
     from users import serializers as user_serializers
     student = user_serializers.StudentSerializer()
     activity = ActivitySerializer()
 
     class Meta:
-        model = Participation
+        model = ActivityRegistration
         exclude = ["is_active"]
+        extra_kwargs = {
+            "is_attendance": {
+                "read_only": True,
+            },
+            "is_point_added": {
+                "read_only": True,
+            }
+        }
 
 
-class DeficiencyReportSerializer(BaseSerializer):
+class MissingActivityReportSerializer(BaseSerializer):
     from users import serializers as user_serializers
     student = user_serializers.StudentSerializer()
     activity = ActivitySerializer()
 
     class Meta:
-        model = DeficiencyReport
-        fields = ["id", "is_resolved", "image", "content", "student", "activity", "created_date", "updated_date"]
+        model = MissingActivityReport
+        exclude = ["is_active"]
         extra_kwargs = {
             "is_resolved": {
                 "read_only": "true",
@@ -105,8 +106,8 @@ class DeficiencyReportSerializer(BaseSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        image = data.get("image", None)
-        if image:
-            data["image"] = instance.image.url
+        evidence = data.get("evidence", None)
+        if evidence:
+            data["evidence"] = instance.evidence.url
 
         return data

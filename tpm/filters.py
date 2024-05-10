@@ -1,11 +1,11 @@
 from django_filters import rest_framework as filters
 
-from activities.models import DeficiencyReport
+from activities.models import MissingActivityReport
 
 
-class DeficiencyReportFilter(filters.FilterSet):
-    faculty = filters.CharFilter(field_name='activity__faculty__name', lookup_expr='icontains', required=True)
+class MissingActivityReportFilter(filters.FilterSet):
+    faculty = filters.CharFilter(field_name="activity__faculty__name", lookup_expr="icontains")
 
     class Meta:
-        model = DeficiencyReport
-        fields = ['faculty']
+        model = MissingActivityReport
+        fields = ["faculty"]

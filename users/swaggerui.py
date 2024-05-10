@@ -10,7 +10,7 @@ from users import serializers as users_serializers
 def current_account_schema():
     return swagger_auto_schema(
         responses={status.HTTP_200_OK: users_serializers.AccountSerializer},
-        operation_description="API sử dụng để lấy thông tin tài khoản hiện tại",
+        operation_description="API lấy thông tin tài khoản hiện tại",
     )
 
 
@@ -43,7 +43,7 @@ def students_list_schema():
             description="Danh sách sinh viên",
             schema=users_serializers.StudentSerializer(many=True),
         )},
-        operation_description="API sử dụng để lấy danh sách sinh viên",
+        operation_description="API lấy danh sách sinh viên",
     )
 
 
@@ -62,7 +62,7 @@ def student_details_schema():
             description="Thông tin chi tiết của sinh viên",
             schema=users_serializers.StudentSerializer,
         )},
-        operation_description="API sử dụng để lấy thông tin chi tiết của một sinh viên",
+        operation_description="API lấy thông tin chi tiết của một sinh viên",
     )
 
 
@@ -72,7 +72,7 @@ def current_student_schema():
             description="Thông tin của sinh viên hiện tại đang đăng nhập",
             schema=users_serializers.StudentSerializer,
         )},
-        operation_description="API sử dụng để lấy thông tin của sinh viên hiện tại đang đăng nhập",
+        operation_description="API lấy thông tin của sinh viên hiện tại đang đăng nhập",
     )
 
 
@@ -93,7 +93,7 @@ def activities_list_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description="API sử dụng để lấy danh sách các hoạt động của sinh viên",
+        operation_description="API lấy danh sách các hoạt động của sinh viên",
     )
 
 
@@ -114,7 +114,7 @@ def activities_participated_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description="API sử dụng để lấy danh sách các hoạt động sinh viên đã tham gia",
+        operation_description="API lấy danh sách các hoạt động sinh viên đã tham gia",
     )
 
 
@@ -135,7 +135,7 @@ def activities_registered_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description="API sử dụng để lấy danh sách các hoạt động sinh viên đã đăng ký",
+        operation_description="API lấy danh sách các hoạt động sinh viên đã đăng ký",
     )
 
 
@@ -156,7 +156,7 @@ def activities_reported_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description="API sử dụng để lấy danh sách các hoạt động sinh viên báo thiếu",
+        operation_description="API lấy danh sách các hoạt động sinh viên báo thiếu",
     )
 
 
@@ -167,15 +167,15 @@ def training_points_schema():
                 name="id",
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_INTEGER,
-                description="ID của sinh viên",
+                description="ID sinh viên",
                 required=True,
             ),
             openapi.Parameter(
-                name="semester",
-                in_=openapi.IN_QUERY,
+                name="semester_code",
+                in_=openapi.IN_PATH,
                 type=openapi.TYPE_STRING,
-                description="ID học kỳ cần lọc",
-                required=False,
+                description="ID học kỳ",
+                required=True,
             ),
             openapi.Parameter(
                 name="criterion",
@@ -191,5 +191,5 @@ def training_points_schema():
                 schema=schools_serializers.TrainingPointBySemesterSerializer(many=True),
             )
         },
-        operation_description="API sử dụng để lấy danh sách điểm rèn luyện của sinh viên",
+        operation_description="API lấy danh sách điểm rèn luyện của sinh viên",
     )

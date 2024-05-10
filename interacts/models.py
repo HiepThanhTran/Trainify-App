@@ -8,8 +8,8 @@ class Interaction(BaseModel):
     class Meta:
         abstract = True
 
-    account = models.ForeignKey("users.Account", on_delete=models.CASCADE)
-    activity = models.ForeignKey("activities.Activity", on_delete=models.CASCADE)
+    account = models.ForeignKey("users.Account", on_delete=models.CASCADE, related_name="%(class)ss")
+    activity = models.ForeignKey("activities.Activity", on_delete=models.CASCADE, related_name="%(class)ss")
 
 
 class Comment(Interaction):

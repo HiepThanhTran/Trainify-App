@@ -1,3 +1,5 @@
+import random
+
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser, Permission, Group
 from django.contrib.contenttypes.fields import GenericRelation
@@ -25,10 +27,9 @@ class Account(AbstractUser):
         ASSISTANT = "ASST", _("Trợ lý sinh viên")
         SPECIALIST = "SPC", _("Chuyên viên cộng tác sinh viên")
 
-    role = models.CharField(max_length=4, choices=Role, null=True)
-
     email = models.EmailField(unique=True)
     avatar = CloudinaryField(null=True, blank=True)
+    role = models.CharField(max_length=4, choices=Role, null=True)
     username = models.CharField(max_length=150, null=True, unique=True)
 
     first_name = None
@@ -44,8 +45,9 @@ class Account(AbstractUser):
         return self.username
 
     def save(self, *args, **kwargs):
-        if not self.username:
+        if self.username is None:
             self.username = self.email
+
         return super().save(*args, **kwargs)
 
     def has_in_group(self, name=None):
@@ -61,23 +63,34 @@ class User(BaseModel):
         FEMALE = "F", _("Nữ")
         UNKNOWN = "U", _("Khác")
 
-    gender = models.CharField(max_length=1, choices=Gender, default=Gender.UNKNOWN)
-
     first_name = models.CharField(max_length=50)  # Tên
     middle_name = models.CharField(max_length=50)  # Tên đệm
     last_name = models.CharField(max_length=50)  # Họ
     date_of_birth = models.DateField(blank=True)
     address = models.CharField(max_length=255, blank=True)
-    phone_number = models.CharField(max_length=11, blank=True, unique=True)
+    phone_number = models.CharField(max_length=15, blank=True, unique=True)
+    gender = models.CharField(max_length=1, choices=Gender, default=Gender.UNKNOWN)
+    code = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
 
-    account = models.OneToOneField(Account, null=True, blank=True, on_delete=models.SET_NULL)
-    faculty = models.ForeignKey("schools.Faculty", null=True, on_delete=models.SET_NULL)
+    account = models.OneToOneField(Account, null=True, blank=True, on_delete=models.SET_NULL, related_name="%(class)s")
+    faculty = models.ForeignKey("schools.Faculty", null=True, on_delete=models.SET_NULL, related_name="%(class)ss")
 
     def __str__(self):
-        return f"{self.id} - {self.get_full_name()}"
+        return f"{self.code} - {self.full_name}"
 
-    def get_full_name(self):
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.code is None:
+            self.code = self.generate_code()
+            self.save()
+
+    @property
+    def full_name(self):
         return f"{self.last_name} {self.middle_name} {self.first_name}"
+
+    def generate_code(self):
+        raise NotImplemented()
 
 
 class Officer(User):
@@ -91,11 +104,17 @@ class Officer(User):
         object_id_field="created_by_id"
     )
 
+    def generate_code(self):
+        return f"{self.faculty.id:02d}{random.randint(0, 99):02d}{self.id:06d}"
+
 
 class Administrator(Officer):
     class Meta:
         verbose_name = _("Administrator")
         verbose_name_plural = _("Administrators")
+
+    def generate_code(self):
+        return f"AD{random.randint(0, 99):02d}{self.id:06d}"
 
 
 class Specialist(Officer):
@@ -118,22 +137,10 @@ class Student(User):
         verbose_name = _("Student")
         verbose_name_plural = _("Students")
 
-    student_code = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
-
-    major = models.ForeignKey("schools.Major", null=True, on_delete=models.SET_NULL, related_name="students")
-    class_name = models.ForeignKey("schools.Class", null=True, on_delete=models.SET_NULL, related_name="students")
-    academic_year = models.ForeignKey("schools.AcademicYear", null=True, on_delete=models.SET_NULL, related_name="students")
-    educational_system = models.ForeignKey("schools.EducationalSystem", null=True, on_delete=models.SET_NULL, related_name="students")
-
-    def __str__(self):
-        return f"{self.student_code} - {self.get_full_name()}"
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        if self.student_code is None:
-            self.student_code = self.generate_code()
-            self.save()
+    major = models.ForeignKey("schools.Major", null=True, on_delete=models.SET_NULL, related_name="students")  # Chuyên ngành nào?
+    sclass = models.ForeignKey("schools.Class", null=True, on_delete=models.SET_NULL, related_name="students")  # Lớp nào?
+    academic_year = models.ForeignKey("schools.AcademicYear", null=True, on_delete=models.SET_NULL, related_name="students")  # Khóa bao nhiêu?
+    educational_system = models.ForeignKey("schools.EducationalSystem", null=True, on_delete=models.SET_NULL, related_name="students")  # Hệ đào tạo nào?
 
     def generate_code(self):
         return f"{str(self.academic_year.start_date.year)[-2:]}{self.faculty.id:02d}{self.id:06d}"

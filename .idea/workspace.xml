@@ -5,14 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0002_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0003_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0004_alter_missingactivityreport_options_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interacts/migrations/0003_alter_comment_account_alter_comment_activity_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/schools/swaggerui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/migrations/0002_alter_administrator_account_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users/migrations/0003_alter_administrator_account_alter_assistant_account_and_more.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/swaggerui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/data/attendance.csv" beforeDir="false" afterPath="$PROJECT_DIR$/static/data/attendance.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/filters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/paginators.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/paginators.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/swaggerui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -158,6 +188,9 @@
       <workItem from="1715045449686" duration="8837000" />
       <workItem from="1715061737066" duration="10861000" />
       <workItem from="1715138278517" duration="93000" />
+      <workItem from="1715235915773" duration="11530000" />
+      <workItem from="1715247818647" duration="1534000" />
+      <workItem from="1715250513212" duration="26766000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />

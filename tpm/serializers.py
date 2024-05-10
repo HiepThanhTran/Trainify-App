@@ -3,7 +3,8 @@ from rest_framework import serializers
 
 class BaseSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
-        fields = kwargs.pop('fields', None)
+        fields = kwargs.pop("fields", None)
+        exclude = kwargs.pop("exclude", None)
 
         super().__init__(*args, **kwargs)
 
@@ -11,6 +12,10 @@ class BaseSerializer(serializers.ModelSerializer):
             allowed = set(fields)
             existing = set(self.fields)
             for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+        if exclude:
+            for field_name in exclude:
                 self.fields.pop(field_name)
 
     # def to_representation(self, instance):

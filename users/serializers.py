@@ -42,15 +42,12 @@ class AccountSerializer(BaseSerializer):
 class UserSerializer(BaseSerializer):
     class Meta:
         model = User
-        fields = [
-            "id", "first_name", "middle_name", "last_name", "gender",
-            "date_of_birth", "faculty", "address", "phone_number"
-        ]
+        fields = ["id", "full_name", "faculty", "gender", "date_of_birth", "address", "phone_number"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        if instance.faculty:
+        if "faculty" in self.fields and instance.faculty:
             data["faculty"] = instance.faculty.name
 
         return data
@@ -84,16 +81,21 @@ class AssistantSerializer(OfficerSerializer):
 class StudentSerializer(UserSerializer):
     class Meta:
         model = Student
-        fields = UserSerializer.Meta.fields + [
-            "student_code", "major", "class_name", "academic_year", "educational_system",
-        ]
+        fields = UserSerializer.Meta.fields + ["code", "major", "sclass", "academic_year", "educational_system"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        data["educational_system"] = instance.educational_system.name
-        data["academic_year"] = instance.academic_year.name
-        data["class_name"] = instance.class_name.name
-        data["major"] = instance.major.name
+        if "major" in self.fields:
+            data["major"] = instance.major.name
+
+        if "sclass" in self.fields:
+            data["sclass"] = instance.sclass.name
+
+        if "academic_year" in self.fields:
+            data["academic_year"] = instance.academic_year.name
+
+        if "educational_system" in self.fields:
+            data["educational_system"] = instance.educational_system.name
 
         return data

@@ -6,9 +6,9 @@ from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
 from schools import serializers as schools_serializers
-from schools.models import TrainingPoint
+from schools.models import Semester
 from tpm import perms
-from tpm.utils import factory
+from tpm.utils import factory, dao
 from users import serializers as users_serializers
 from users import swaggerui as swagger_schema
 from users.models import Account, Student, Assistant
@@ -35,7 +35,7 @@ class AccountViewSet(viewsets.ViewSet):
 
     @method_decorator(swagger_schema.create_account_schema(
         parameter_description="ID của trợ lý sinh viên",
-        operation_description="API sử dụng để tạo tài khoản cho trợ lý sinh viên")
+        operation_description="API tạo tài khoản cho trợ lý sinh viên")
     )
     @action(methods=["post"], detail=False, url_path="assistant/add")
     def create_assistant_account(self, request):
@@ -43,7 +43,7 @@ class AccountViewSet(viewsets.ViewSet):
 
     @method_decorator(swagger_schema.create_account_schema(
         parameter_description="Mã số sinh viên",
-        operation_description="API sử dụng để tạo tài khoản cho sinh viên")
+        operation_description="API tạo tài khoản cho sinh viên")
     )
     @action(methods=["post"], detail=False, url_path="student/add")
     def create_student_account(self, request):
@@ -53,11 +53,12 @@ class AccountViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             key = serializer.validated_data.pop("key")
-            account = factory.create_user_account(serializer.validated_data, key, user_model)
-            if account is None:
-                return Response(data={"message": "Tạo tài khoản thất bại"}, status=status.HTTP_400_BAD_REQUEST)
+            response_data = factory.create_user_account(serializer.validated_data, key, user_model)
 
-            return Response(data=users_serializers.AccountSerializer(account).data, status=status.HTTP_201_CREATED)
+            if isinstance(response_data, Response):
+                return response_data
+
+            return Response(data=users_serializers.AccountSerializer(response_data).data, status=status.HTTP_201_CREATED)
 
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -126,30 +127,28 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
 
     @method_decorator(swagger_schema.training_points_schema())
-    @action(methods=["get"], detail=True, url_path="points")
-    def training_points(self, request, pk=None):
-        semester_id = request.query_params.get("semester", None)
-        criterion_id = request.query_params.get("criterion", None)
+    @action(methods=["get"], detail=True, url_path="points/(?P<semester_code>[^/.]+)")
+    def training_points(self, request, pk=None, semester_code=None):
+        student = Student.objects.prefetch_related("semesters", "points").get(pk=pk)
 
-        semester_points = []
-        student = self.get_object()
-        semesters_of_student = student.semesters.all()
+        try:
+            semester = student.semesters.get(code=semester_code)
+        except Semester.DoesNotExist:
+            return Response(data={"message": "Không tìm thấy học kỳ"}, status=status.HTTP_404_NOT_FOUND)
 
-        if semester_id is not None:
-            semesters_of_student = semesters_of_student.filter(id=semester_id)
+        training_points = student.points.filter(semester=semester).order_by("criterion__name")
+        student_total_points = training_points.aggregate(total_points=Sum("point", default=0))["total_points"]
+        achievement = dao.get_achievement(student_total_points)
 
-        for semester in semesters_of_student:
-            training_points = TrainingPoint.objects.filter(student=student, semester=semester)
-            total_point_dict = training_points.values("semester_id").annotate(total_point=Sum("point")).order_by("semester_id").first()
+        criterion_name = request.query_params.get("criterion")
+        if criterion_name:
+            training_points = training_points.filter(criterion__name__icontains=criterion_name)
 
-            if criterion_id is not None:
-                training_points = training_points.filter(criterion_id=criterion_id)
+        semester_points = {
+            "semester": semester,
+            "total_points": student_total_points,
+            "achievement": achievement,
+            "training_points": training_points,
+        }
 
-            semester_points.append({
-                "semester": semester.name,
-                "total_point": total_point_dict.get("total_point") if total_point_dict is not None else 0,
-                "training_points": training_points
-            })
-
-        serializer = schools_serializers.TrainingPointBySemesterSerializer(semester_points, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(schools_serializers.TrainingPointBySemesterSerializer(semester_points).data, status=status.HTTP_200_OK)

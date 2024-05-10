@@ -21,7 +21,7 @@ def activities_list_schema():
             description="Danh sách hoạt động",
             schema=activities_serializers.ActivitySerializer(many=True)
         )},
-        operation_description="API sử dụng để lấy danh sách các hoạt động",
+        operation_description="API lấy danh sách các hoạt động",
     )
 
 
@@ -40,23 +40,7 @@ def activity_detail_schema():
             description="Thông tin chi tiết của hoạt động",
             schema=activities_serializers.ActivitySerializer,
         )},
-        operation_description="API sử dụng để lấy thông tin chi tiết của một hoạt động",
-    )
-
-
-def attendace_upload_csv_schema():
-    return swagger_auto_schema(
-        request_body=no_body,
-        manual_parameters=[
-            openapi.Parameter(
-                name="file",
-                required=True,
-                type=openapi.TYPE_FILE,
-                in_=openapi.IN_FORM,
-                format=openapi.FORMAT_BINARY,
-            )
-        ],
-        responses={status.HTTP_200_OK: "Upload file điểm danh thành công"}
+        operation_description="API lấy thông tin chi tiết của một hoạt động",
     )
 
 
@@ -84,7 +68,7 @@ def get_comments_schema():
                 schema=interacts_serializers.CommentSerializer(many=True),
             )
         },
-        operation_description="API sử dụng để lấy danh sách bình luận của hoạt động",
+        operation_description="API lấy danh sách bình luận của hoạt động",
     )
 
 
@@ -110,7 +94,7 @@ def add_comment_schema():
             description="Thông tin bình luận của hoạt động",
             schema=interacts_serializers.CommentSerializer,
         )},
-        operation_description="API sử dụng để thêm bình luận cho hoạt động",
+        operation_description="API thêm bình luận cho hoạt động",
     )
 
 
@@ -127,7 +111,7 @@ def like_activity_schema():
             ),
         ],
         responses={status.HTTP_200_OK: activities_serializers.AuthenticatedActivitySerializer},
-        operation_description="API sử dụng để thích hoạt động",
+        operation_description="API thích hoạt động",
     )
 
 
@@ -146,10 +130,10 @@ def register_activity_schema():
         responses={
             status.HTTP_201_CREATED: openapi.Response(
                 description="Thông tin phiếu đăng ký tham gia hoạt động của sinh viên",
-                schema=activities_serializers.ParticipationSerializer,
+                schema=activities_serializers.ActivityRegistrationSerializer,
             )
         },
-        operation_description="API sử dụng để đăng ký tham gia hoạt động cho sinh viên",
+        operation_description="API đăng ký tham gia hoạt động cho sinh viên",
     )
 
 
@@ -182,14 +166,14 @@ def report_activity_schema():
         responses={
             status.HTTP_201_CREATED: openapi.Response(
                 description="Thông tin báo thiếu hoạt động của sinh viên",
-                schema=activities_serializers.DeficiencyReportSerializer,
+                schema=activities_serializers.MissingActivityReportSerializer,
             )
         },
-        operation_description="API sử dụng để báo thiếu hoạt động cho sinh viên",
+        operation_description="API báo thiếu hoạt động cho sinh viên",
     )
 
 
-def report_deficiency_list_schema():
+def missing_reports_list_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -209,13 +193,13 @@ def report_deficiency_list_schema():
         ],
         responses={status.HTTP_200_OK: openapi.Response(
             description="Danh sách báo thiếu của sinh viên",
-            schema=activities_serializers.DeficiencyReportSerializer(many=True)
+            schema=activities_serializers.MissingActivityReportSerializer(many=True)
         )},
-        operation_description="API sử dụng để lấy danh sách các báo thiếu của sinh viên (lọc theo khoa)",
+        operation_description="API lấy danh sách các báo thiếu của sinh viên (lọc theo khoa)",
     )
 
 
-def confirm_deficiency_report_schema():
+def confirm_missing_report_schema():
     return swagger_auto_schema(
         request_body=no_body,
         manual_parameters=[
@@ -229,13 +213,13 @@ def confirm_deficiency_report_schema():
         ],
         responses={status.HTTP_200_OK: openapi.Response(
             description="Thông tin báo thiếu vừa xác nhận",
-            schema=activities_serializers.DeficiencyReportSerializer
+            schema=activities_serializers.MissingActivityReportSerializer
         )},
-        operation_description="API sử dụng để xác nhận báo thiếu hoạt động của sinh viên",
+        operation_description="API xác nhận báo thiếu hoạt động của sinh viên",
     )
 
 
-def reject_deficiency_report_schema():
+def reject_missing_report_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -247,5 +231,5 @@ def reject_deficiency_report_schema():
             ),
         ],
         responses={status.HTTP_204_NO_CONTENT: "Từ chối báo thiếu thành công"},
-        operation_description="API sử dụng để từ chối báo thiếu hoạt động của sinh viên",
+        operation_description="API từ chối báo thiếu hoạt động của sinh viên",
     )
