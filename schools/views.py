@@ -9,15 +9,10 @@ from rest_framework.response import Response
 from activities.models import Activity, ActivityRegistration
 from schools import serializers as schools_serializers
 from schools import swaggerui as swagger_schema
-from schools.models import Criterion, Semester, SemesterOfStudent, Faculty
+from schools.models import Criterion, Semester, SemesterOfStudent
 from tpm import perms
 from tpm.utils import dao
 from users.models import Student
-
-
-class FacultyViewSet(viewsets.ViewSet):
-    queryset = Faculty.objects.filter(is_active=True)
-    serializer_class = schools_serializers.FacultySerializer
 
 
 class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -78,14 +73,14 @@ class StatisticsViewSet(viewsets.ViewSet):
     @action(methods=["get"], detail=False, url_path="points/faculties/(?P<semester_code>[^/.]+)")
     def statistics_points_by_faculty(self, request, semester_code=None):
         faculty_name = request.query_params.get("faculty")
-        statistics_data = dao.statistics_points_by_faculty(semester_code=semester_code, faculty_name=faculty_name)
+        statistics_data = dao.get_statistics_points_by_faculty(semester_code=semester_code, faculty_name=faculty_name)
 
         return Response(data=statistics_data, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=False, url_path="points/classes/(?P<semester_code>[^/.]+)")
     def statistics_points_by_class(self, request, semester_code=None):
         class_name = request.query_params.get("class")
-        statistics_data = dao.statistics_points_by_class(semester_code=semester_code, class_name=class_name)
+        statistics_data = dao.get_statistics_points_by_class(semester_code=semester_code, class_name=class_name)
 
         return Response(data=statistics_data, status=status.HTTP_200_OK)
 

@@ -1,4 +1,3 @@
-from django.db.models import Sum
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets, permissions, generics, status, parsers
 from rest_framework.decorators import action
@@ -7,7 +6,7 @@ from rest_framework.response import Response
 from activities import serializers as activities_serializers
 from schools import serializers as schools_serializers
 from schools.models import Semester
-from tpm import perms
+from tpm import perms, paginators
 from tpm.utils import factory, dao
 from users import serializers as users_serializers
 from users import swaggerui as swagger_schema
@@ -72,6 +71,7 @@ class AssistantViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrieve
 class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Student.objects.filter(is_active=True)
     serializer_class = users_serializers.StudentSerializer
+    pagination_class = paginators.StudentPagination
 
     def get_permissions(self):
         if self.action in ["current_student", "activities_list", "activities_participated", "activities_registered", "training_points"]:
@@ -93,7 +93,7 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     @method_decorator(swagger_schema.current_student_schema())
     @action(methods=["get"], detail=False, url_path="current")
     def current_student(self, request):
-        return Response(data=users_serializers.StudentSerializer(request.user.student).data, status=status.HTTP_200_OK)
+        return Response(data=users_serializers.StudentSerializer(request.user.student_summary).data, status=status.HTTP_200_OK)
 
     @method_decorator(swagger_schema.activities_list_schema())
     @action(methods=["get"], detail=True, url_path="activities")
@@ -126,29 +126,21 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
 
-    @method_decorator(swagger_schema.training_points_schema())
     @action(methods=["get"], detail=True, url_path="points/(?P<semester_code>[^/.]+)")
     def training_points(self, request, pk=None, semester_code=None):
-        student = Student.objects.prefetch_related("semesters", "points").get(pk=pk)
+        student = Student.objects.prefetch_related("semesters", "points").only("id", "code").get(pk=pk)
 
         try:
             semester = student.semesters.get(code=semester_code)
         except Semester.DoesNotExist:
             return Response(data={"message": "Không tìm thấy học kỳ"}, status=status.HTTP_404_NOT_FOUND)
 
-        training_points = student.points.filter(semester=semester).order_by("criterion__name")
-        student_total_points = training_points.aggregate(total_points=Sum("point", default=0))["total_points"]
-        achievement = dao.get_achievement(student_total_points)
+        student_summary, training_points = dao.get_student_summary(semester=semester, student=student)
 
         criterion_name = request.query_params.get("criterion")
         if criterion_name:
             training_points = training_points.filter(criterion__name__icontains=criterion_name)
 
-        semester_points = {
-            "semester": semester,
-            "total_points": student_total_points,
-            "achievement": achievement,
-            "training_points": training_points,
-        }
+        student_summary["training_points"] = schools_serializers.TrainingPointSerializer(training_points, many=True).data
 
-        return Response(schools_serializers.TrainingPointBySemesterSerializer(semester_points).data, status=status.HTTP_200_OK)
+        return Response(data=student_summary, status=status.HTTP_200_OK)

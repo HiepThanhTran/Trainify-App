@@ -15,7 +15,7 @@ from tpm.utils import dao
 class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveAPIView):
     queryset = Activity.objects \
         .select_related("faculty", "semester", "criterion", "organizer_type") \
-        .prefetch_related("participants").filter(is_active=True)
+        .prefetch_related("participants").filter(is_active=True).order_by("-updated_date")
     serializer_class = activities_serializers.ActivitySerializer
     pagination_class = paginators.ActivityPagination
 
@@ -51,7 +51,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
     @method_decorator(swagger_schema.get_comments_schema())
     @action(methods=["get"], detail=True, url_path="comments")
     def get_comments(self, request, pk=None):
-        comments = self.get_object().comment_set.select_related("account").all()
+        comments = self.get_object().comment_set.select_related("account").order_by("-updated_date").all()
 
         paginator = paginators.CommentPaginators()
         page = paginator.paginate_queryset(comments, request)
@@ -82,18 +82,18 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
     @method_decorator(swagger_schema.register_activity_schema())
     @action(methods=["post"], detail=True, url_path="register")
     def register_activity(self, request, pk=None):
-        registration, created = self.get_object().registrations.get_or_create(student=request.user.student)
+        registration, created = self.get_object().registrations.get_or_create(student=request.user.student_summary)
         if not created:
             registration.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response(data=activities_serializers.ActivityRegistrationSerializer(registration, exclude=["student"]).data, status=status.HTTP_201_CREATED)
+        return Response(data=activities_serializers.ActivityRegistrationSerializer(registration).data, status=status.HTTP_201_CREATED)
 
     @method_decorator(swagger_schema.report_activity_schema())
     @action(methods=["post"], detail=True, url_path="report", parser_classes=[parsers.MultiPartParser, ])
     def report_missing_activity(self, request, pk=None):
         try:
-            registration = self.get_object().registrations.get(student=request.user.student)
+            registration = self.get_object().registrations.get(student=request.user.student_summary)
         except ActivityRegistration.DoesNotExist:
             return Response(data={"message": "Bạn chưa đăng ký tham gia hoạt động này"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -102,17 +102,17 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         content = request.data.get("content", None)
         evidence = request.data.get("evidence", None)
-        report, created = self.get_object().reports.get_or_create(student=request.user.student, content=content, evidence=evidence)
+        report, created = self.get_object().reports.get_or_create(student=request.user.student_summary, content=content, evidence=evidence)
 
         if not created:
             report.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response(data=activities_serializers.MissingActivityReportSerializer(report, exclude=["student"]).data, status=status.HTTP_201_CREATED)
+        return Response(data=activities_serializers.MissingActivityReportSerializer(report).data, status=status.HTTP_201_CREATED)
 
 
 class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = MissingActivityReport.objects.select_related("student", "activity").filter(is_active=True)
+    queryset = MissingActivityReport.objects.select_related("student", "activity").filter(is_active=True).order_by("-updated_date")
     serializer_class = activities_serializers.MissingActivityReportSerializer
     pagination_class = paginators.MissingActivityReportPagination
     permission_classes = [perms.HasInAssistantGroup]
@@ -130,7 +130,7 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView):
         if missing_report.is_resolved is True:
             return Response(data={"message": "Báo thiếu này đã được giải quyết!"}, status=status.HTTP_400_BAD_REQUEST)
 
-        registration = ActivityRegistration.objects.get(student=missing_report.student, activity=missing_report.activity)
+        registration = ActivityRegistration.objects.get(student=missing_report.student_summary, activity=missing_report.activity)
 
         dao.update_training_point(registration)
 

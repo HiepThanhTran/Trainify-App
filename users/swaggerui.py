@@ -3,7 +3,6 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 
 from activities import serializers as activities_serializers
-from schools import serializers as schools_serializers
 from users import serializers as users_serializers
 
 
@@ -157,39 +156,4 @@ def activities_reported_schema():
             )
         },
         operation_description="API lấy danh sách các hoạt động sinh viên báo thiếu",
-    )
-
-
-def training_points_schema():
-    return swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                name="id",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_INTEGER,
-                description="ID sinh viên",
-                required=True,
-            ),
-            openapi.Parameter(
-                name="semester_code",
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description="ID học kỳ",
-                required=True,
-            ),
-            openapi.Parameter(
-                name="criterion",
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_STRING,
-                description="ID quy chế cần lọc",
-                required=False,
-            ),
-        ],
-        responses={
-            status.HTTP_200_OK: openapi.Response(
-                description="Danh sách điểm rèn luyện (lọc theo học kỳ và quy chế)",
-                schema=schools_serializers.TrainingPointBySemesterSerializer(many=True),
-            )
-        },
-        operation_description="API lấy danh sách điểm rèn luyện của sinh viên",
     )

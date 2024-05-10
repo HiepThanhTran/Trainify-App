@@ -1,8 +1,6 @@
-from collections import defaultdict
-
 from django.contrib.auth.models import Permission, Group
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Count
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -120,9 +118,10 @@ class Factory:
 
 
 class DAO:
+    from schools import serializers as schools_serializers
     def update_training_point(self, registration):
         training_point, _ = TrainingPoint.objects.get_or_create(
-            student=registration.student,
+            student=registration.student_summary,
             semester=registration.activity.semester,
             criterion=registration.activity.criterion,
         )
@@ -152,89 +151,97 @@ class DAO:
         return achievement
 
     def get_student_summary(self, semester=None, student=None):
-        points = student.points.filter(semester=semester) if semester else student.points.all()
-        # student_total_points = points.aggregate(total_points=Sum("point", default=0))["total_points"]
-        student_total_points = points.values("criterion_id").annotate(total_points=Sum("point"))
-        print(student_total_points)
+        training_points = student.points.select_related('criterion').filter(semester=semester).order_by("criterion__name")
+        student_total_points = training_points.aggregate(total_points=Sum("point", default=0))["total_points"]
 
-        return points, student_total_points
+        student_summary = {
+            "id": student.id,
+            "full_name": student.full_name,
+            "code": student.code,
+            "achievement": self.get_achievement(student_total_points),
+            "total_points": student_total_points,
+        }
 
-    def get_faculty_summary(self, semester=None, faculty=None):
-        students = Student.objects.filter(faculty=faculty)
-
-        faculty_total_students = students.count()
-        faculty_total_points = 0
-
-        achievements = {achievement: 0 for achievement in ACHIEVEMENTS}
-        for student in students:
-            _, student_total_points = self.get_student_summary(semester=semester, student=student)
-            faculty_total_points += student_total_points
-            achievement = dao.get_achievement(student_total_points)
-            achievements[achievement] += 1
-
-        faculty_average_points = faculty_total_points / faculty_total_students if faculty_total_students > 0 else 0
-
-        return faculty_total_students, faculty_total_points, faculty_average_points, achievements
+        return student_summary, training_points
 
     def get_class_summary(self, semester=None, sclass=None):
-        students = Student.objects.filter(sclass=sclass)
+        students = sclass.students.all()
 
         class_total_students = students.count()
         class_total_points = 0
 
         achievements = {achievement: 0 for achievement in ACHIEVEMENTS}
-        students_list = defaultdict(dict)
-        for student in students:
-            points, student_total_points = self.get_student_summary(semester=semester, student=student)
-            class_total_points += student_total_points
-            achievement = self.get_achievement(student_total_points)
-            achievements[achievement] += 1
+        students_summary_list = []
 
-            students_list[student.code] = {
-                "name": student.full_name,
-                "achievement": achievement,
-                **{point.criterion.name: point.point for point in points}
-            }
+        for student in students:
+            student_summary, training_points = self.get_student_summary(semester=semester, student=student)
+            class_total_points += student_summary["total_points"]
+            achievements[student_summary["achievement"]] += 1
+            student_summary["training_points"] = self.schools_serializers.TrainingPointSerializer(training_points, many=True).data
+            students_summary_list.append(student_summary)
 
         class_average_points = class_total_points / class_total_students if class_total_students > 0 else 0
 
-        return class_total_students, class_total_points, class_average_points, achievements, students_list
+        class_summary = {
+            "id": sclass.id,
+            "class": sclass.name,
+            "total_students": class_total_students,
+            "total_points": class_total_points,
+            "average_points": class_average_points,
+            "achievements": achievements,
+            "students": students_summary_list,
+        }
 
-    def statistics_points_by_faculty(self, semester_code, faculty_name):
-        semester = Semester.objects.get(code=semester_code) if semester_code else None
-        statistics_data = defaultdict(dict)
+        return class_summary
 
-        faculties = Faculty.objects.filter(name__icontains=faculty_name) if faculty_name else Faculty.objects.all()
-        for faculty in faculties:
-            (faculty_total_students, faculty_total_points,
-             faculty_average_points, achievements) = self.get_faculty_summary(semester=semester, faculty=faculty)
+    def get_statistics_points_by_class(self, semester_code, class_name):
+        classes = Class.objects.filter(name__icontains=class_name) if class_name else Class.objects.all()
+        semester = Semester.objects.get(code=semester_code)
 
-            data = {
-                "total_students": faculty_total_students,
-                "total_points": faculty_total_points,
-                "average_points": faculty_average_points,
-                "achievements": achievements,
-            }
-            statistics_data[faculty.name] = data
+        statistics_data = []
+
+        for sclass in classes:
+            class_summary = self.get_class_summary(semester=semester, sclass=sclass)
+            statistics_data.append(class_summary)
 
         return statistics_data
 
-    def statistics_points_by_class(self, semester_code, class_name):
-        semester = Semester.objects.get(code=semester_code) if semester_code else None
-        statistics_data = defaultdict(dict)
+    def get_faculty_summary(self, semester=None, faculty=None):
+        students = faculty.students.all()
 
-        classes = Class.objects.filter(name__icontains=class_name) if class_name else Class.objects.all()
-        for sclass in classes:
-            (class_total_students, class_total_points,
-             class_average_points, achievements, students_list) = self.get_class_summary(semester=semester, sclass=sclass)
-            data = {
-                "total_students": class_total_students,
-                "total_points": class_total_points,
-                "average_points": class_average_points,
-                "achievements": achievements,
-                "students_list": students_list,
-            }
-            statistics_data[sclass.name] = data
+        faculty_total_classes = faculty.majors.aggregate(total_classes=Count("classes"))["total_classes"]
+        faculty_total_students = students.count()
+        faculty_total_points = 0
+
+        achievements = {achievement: 0 for achievement in ACHIEVEMENTS}
+        for student in students:
+            student_summary, training_points = self.get_student_summary(semester=semester, student=student)
+            faculty_total_points += student_summary["total_points"]
+            achievements[student_summary["achievement"]] += 1
+
+        faculty_average_points = faculty_total_points / faculty_total_students if faculty_total_students > 0 else 0
+
+        faculty_summary = {
+            "id": faculty.id,
+            "faculty": faculty.name,
+            "total_classes": faculty_total_classes,
+            "total_students": faculty_total_students,
+            "total_points": faculty_total_points,
+            "average_points": faculty_average_points,
+            "achievements": achievements,
+        }
+
+        return faculty_summary
+
+    def get_statistics_points_by_faculty(self, semester_code, faculty_name):
+        faculties = Faculty.objects.filter(name__icontains=faculty_name) if faculty_name else Faculty.objects.all()
+        semester = Semester.objects.get(code=semester_code) if semester_code else None
+
+        statistics_data = []
+
+        for faculty in faculties:
+            faculty_summary = self.get_faculty_summary(semester=semester, faculty=faculty)
+            statistics_data.append(faculty_summary)
 
         return statistics_data
 

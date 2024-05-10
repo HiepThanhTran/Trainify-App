@@ -1,62 +1,7 @@
 from rest_framework import serializers
 
-from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint
+from schools.models import Semester, Criterion, TrainingPoint
 from tpm.serializers import BaseSerializer
-from users.serializers import StudentSerializer
-
-
-class EducationalSystemSerializer(BaseSerializer):
-    class Meta:
-        model = EducationalSystem
-        fields = [
-            "id", "name", "is_active", "created_date", "updated_date"
-        ]
-
-
-class FacultySerializer(BaseSerializer):
-    class Meta:
-        model = Faculty
-        fields = ["id", "name", "educational_system", "is_active", "created_date", "updated_date"]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data["educational_system"] = instance.educational_system.name
-
-        return data
-
-
-class MajorSerializer(BaseSerializer):
-    class Meta:
-        model = Major
-        fields = ["id", "name", "faculty", "is_active", "created_date"]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data["faculty"] = instance.faculty.name
-
-        return data
-
-
-class AcademicYearSerializer(BaseSerializer):
-    class Meta:
-        model = AcademicYear
-        fields = ["id", "name", "start_date", "end_date"]
-
-
-class ClassSerializer(BaseSerializer):
-    class Meta:
-        model = Class
-        fields = ["id", "name", "major", "academic_year", "is_active"]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data["academic_year"] = instance.academic_year.name
-        data["major"] = instance.major.name
-
-        return data
 
 
 class SemesterSerializer(BaseSerializer):
@@ -74,9 +19,10 @@ class SemesterSerializer(BaseSerializer):
         return data
 
     def get_students(self, instance):
+        from users import serializers as users_serializers
         students_queryset = instance.students.all()
 
-        student_serializer = StudentSerializer(students_queryset, many=True)
+        student_serializer = users_serializers.StudentSerializer(students_queryset, many=True)
         student_names = [student["code"] for student in student_serializer.data]
 
         return student_names
@@ -101,9 +47,28 @@ class TrainingPointSerializer(BaseSerializer):
 
         return data
 
-
-class TrainingPointBySemesterSerializer(serializers.Serializer):
-    semester = serializers.CharField()
-    achievement = serializers.CharField()
-    total_points = serializers.IntegerField()
-    training_points = TrainingPointSerializer(many=True)
+# class StudentSummarySerializer(serializers.Serializer):
+#     id = serializers.IntegerField()
+#     full_name = serializers.CharField()
+#     code = serializers.CharField()
+#     achievement = serializers.CharField()
+#     total_points = serializers.FloatField()
+#     training_points = TrainingPointSerializer(many=True)
+#
+#
+# class ClassSummarySerializer(serializers.Serializer):
+#     class_name = serializers.CharField()
+#     total_students = serializers.IntegerField()
+#     total_points = serializers.FloatField()
+#     average_points = serializers.FloatField()
+#     achievements = serializers.DictField(child=serializers.IntegerField())
+#     students = StudentSummarySerializer(many=True)
+#
+#
+# class FacultySummarySerializer(serializers.Serializer):
+#     faculty_name = serializers.CharField()
+#     total_classes = serializers.IntegerField()
+#     total_students = serializers.IntegerField()
+#     total_points = serializers.FloatField()
+#     average_points = serializers.FloatField()
+#     achievements = serializers.DictField(child=serializers.IntegerField())
