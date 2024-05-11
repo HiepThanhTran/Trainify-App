@@ -1,4 +1,4 @@
-"""
+'''
 URL configuration for tpm project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -6,14 +6,14 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 Examples:
 Function views
     1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path("", views.home, name="home")
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
     1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path("", Home.as_view(), name="home")
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path("blog/", include("blog.urls"))
-"""
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+'''
 # from django.contrib import admin
 import debug_toolbar
 from django.conf.urls.static import static
@@ -32,11 +32,11 @@ from users.urls import router as users_router
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Training Point Management API",
-        default_version="v1",
-        description="APIs for Training Point Management project",
-        contact=openapi.Contact(email="linearteam.404@gmail.com"),
-        license=openapi.License(name="(Trần Thanh Hiệp - Nguyễn Song Hậu)@2024"),
+        title='Training Point Management API',
+        default_version='v1',
+        description='APIs for Training Point Management project',
+        contact=openapi.Contact(email='linearteam.404@gmail.com'),
+        license=openapi.License(name='(Trần Thanh Hiệp - Nguyễn Song Hậu)@2024'),
     ),
     public=True,
     permission_classes=[permissions.AllowAny, ],
@@ -49,14 +49,14 @@ router.registry.extend(schools_router.registry)
 router.registry.extend(users_router.registry)
 
 urlpatterns = [
-                  # path("admin/", admin.site.urls),
-                  path("admin/", my_admin_site.urls),
-                  path("api/v1/", include(router.urls)),
-                  path("ckeditor5/", include("django_ckeditor_5.urls"), name="ck_editor_5_upload_file"),
-                  path("__debug__/", include(debug_toolbar.urls)),
-                  path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
-                  path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
-                  path("swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"),
-                  path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
+                  # path('admin/', admin.site.urls),
+                  path('admin/', my_admin_site.urls),
+                  path('api/v1/', include(router.urls)),
+                  path('ckeditor5/', include('django_ckeditor_5.urls'), name='ck_editor_5_upload_file'),
+                  path('__debug__/', include(debug_toolbar.urls)),
+                  path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+                  path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+                  path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+                  path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
               ] + static(prefix=settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

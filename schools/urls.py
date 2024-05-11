@@ -4,11 +4,11 @@ from rest_framework import routers
 from schools import views
 
 router = routers.DefaultRouter()
-router.register("semesters", views.SemesterViewSet, basename="semesters")
-router.register("criterions", views.CriterionViewSet, basename="criterions")
-router.register("attendance", views.AttendanceUploadViewSet, basename="attendance")
-router.register("statistics", views.StatisticsViewSet, basename="statistics")
+router.register('semesters', views.SemesterViewSet, basename='semesters')
+router.register('criterions', views.CriterionViewSet, basename='criterions')
+router.register('statistics', views.StatisticsViewSet, basename='statistics')
+router.register('files', views.FileUploadAndExportViewSet, basename='files')
 
 urlpatterns = [
-    path("", include(router.urls))
+    path('', include(router.urls))
 ]

@@ -19,39 +19,39 @@ class AccountViewSet(viewsets.ViewSet):
     parser_classes = [parsers.MultiPartParser, ]
 
     def get_permissions(self):
-        if self.action in ["current_account"]:
+        if self.action in ['current_account']:
             return [permissions.IsAuthenticated()]
 
-        if self.action in ["create_assistant_account"]:
+        if self.action in ['create_assistant_account']:
             return [perms.HasInSpeacialistGroup()]
 
         return [permissions.AllowAny()]
 
     @method_decorator(swagger_schema.current_account_schema())
-    @action(methods=["get"], detail=False, url_path="current")
+    @action(methods=['get'], detail=False, url_path='current')
     def current_account(self, request):
         return Response(data=users_serializers.AccountSerializer(request.user).data, status=status.HTTP_200_OK)
 
     @method_decorator(swagger_schema.create_account_schema(
-        parameter_description="ID của trợ lý sinh viên",
-        operation_description="API tạo tài khoản cho trợ lý sinh viên")
+        parameter_description='ID của trợ lý sinh viên',
+        operation_description='API tạo tài khoản cho trợ lý sinh viên')
     )
-    @action(methods=["post"], detail=False, url_path="assistant/add")
+    @action(methods=['post'], detail=False, url_path='assistants')
     def create_assistant_account(self, request):
         return self._create_account(request, Assistant)
 
     @method_decorator(swagger_schema.create_account_schema(
-        parameter_description="Mã số sinh viên",
-        operation_description="API tạo tài khoản cho sinh viên")
+        parameter_description='Mã số sinh viên',
+        operation_description='API tạo tài khoản cho sinh viên')
     )
-    @action(methods=["post"], detail=False, url_path="student/add")
+    @action(methods=['post'], detail=False, url_path='students')
     def create_student_account(self, request):
         return self._create_account(request, Student)
 
     def _create_account(self, request, user_model):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            key = serializer.validated_data.pop("key")
+            key = serializer.validated_data.pop('key')
             response_data = factory.create_user_account(serializer.validated_data, key, user_model)
 
             if isinstance(response_data, Response):
@@ -74,10 +74,13 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     pagination_class = paginators.StudentPagination
 
     def get_permissions(self):
-        if self.action in ["current_student", "activities_list", "activities_participated", "activities_registered", "training_points"]:
+        if self.action in ['current_student', 'activities_list', 'activities_participated', 'activities_registered']:
             return [perms.HasInStudentGroup()]
 
-        if self.action in ["activities_reported"]:
+        if self.action in ['training_points']:
+            return [perms.HasInStudentGroup(), perms.HasInAssistantGroup()]
+
+        if self.action in ['activities_reported']:
             return [perms.HasInAssistantGroup()]
 
         return [perms.HasInAssistantGroup()]
@@ -91,27 +94,27 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         return super().retrieve(request, *args, **kwargs)
 
     @method_decorator(swagger_schema.current_student_schema())
-    @action(methods=["get"], detail=False, url_path="current")
+    @action(methods=['get'], detail=False, url_path='current')
     def current_student(self, request):
         return Response(data=users_serializers.StudentSerializer(request.user.student_summary).data, status=status.HTTP_200_OK)
 
     @method_decorator(swagger_schema.activities_list_schema())
-    @action(methods=["get"], detail=True, url_path="activities")
+    @action(methods=['get'], detail=True, url_path='activities')
     def activities_list(self, request, pk=None):
         return self.get_activities_by_participation_status(pk=pk)
 
     @method_decorator(swagger_schema.activities_participated_schema())
-    @action(methods=["get"], detail=True, url_path="activities/participated")
+    @action(methods=['get'], detail=True, url_path='activities/participated')
     def activities_participated(self, request, pk=None):
         return self.get_activities_by_participation_status(pk=pk, is_attendance=True)
 
     @method_decorator(swagger_schema.activities_registered_schema())
-    @action(methods=["get"], detail=True, url_path="activities/registered")
+    @action(methods=['get'], detail=True, url_path='activities/registered')
     def activities_registered(self, request, pk=None):
         return self.get_activities_by_participation_status(pk=pk, is_attendance=False)
 
     @method_decorator(swagger_schema.activities_reported_schema())
-    @action(methods=["get"], detail=True, url_path="activities/reported")
+    @action(methods=['get'], detail=True, url_path='activities/reported')
     def activities_reported(self, request, pk=None):
         reports = self.get_object().deficiency_reports.all()
         activities = [report.activity for report in reports]
@@ -119,28 +122,28 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
 
     def get_activities_by_participation_status(self, pk=None, is_attendance=None):
-        participations = self.get_object().participations.prefetch_related("activity").filter(is_active=True)
+        participations = self.get_object().participations.prefetch_related('activity').filter(is_active=True)
         if is_attendance is not None:
             participations = participations.filter(is_attendance=is_attendance)
         activities = [participation.activity for participation in participations]
 
         return Response(data=activities_serializers.ActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
 
-    @action(methods=["get"], detail=True, url_path="points/(?P<semester_code>[^/.]+)")
+    @action(methods=['get'], detail=True, url_path='points/(?P<semester_code>[^/.]+)')
     def training_points(self, request, pk=None, semester_code=None):
-        student = Student.objects.prefetch_related("semesters", "points").only("id", "code").get(pk=pk)
+        student = Student.objects.prefetch_related('semesters', 'points').only('id', 'code').get(pk=pk)
 
         try:
             semester = student.semesters.get(code=semester_code)
         except Semester.DoesNotExist:
-            return Response(data={"message": "Không tìm thấy học kỳ"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data={'message': 'Không tìm thấy học kỳ'}, status=status.HTTP_404_NOT_FOUND)
 
         student_summary, training_points = dao.get_student_summary(semester=semester, student=student)
 
-        criterion_name = request.query_params.get("criterion")
+        criterion_name = request.query_params.get('criterion')
         if criterion_name:
             training_points = training_points.filter(criterion__name__icontains=criterion_name)
 
-        student_summary["training_points"] = schools_serializers.TrainingPointSerializer(training_points, many=True).data
+        student_summary['training_points'] = schools_serializers.TrainingPointSerializer(training_points, many=True).data
 
         return Response(data=student_summary, status=status.HTTP_200_OK)

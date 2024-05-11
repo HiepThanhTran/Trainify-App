@@ -1,49 +1,37 @@
-from rest_framework import serializers
-
 from schools.models import Semester, Criterion, TrainingPoint
 from tpm.serializers import BaseSerializer
 
 
 class SemesterSerializer(BaseSerializer):
-    students = serializers.SerializerMethodField()
-
     class Meta:
         model = Semester
-        fields = "__all__"  # ["id", "name", "start_date", "end_date", "academic_year"]
+        fields = ['id', 'code', 'full_name', 'start_date', 'end_date', 'academic_year']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        data["academic_year"] = instance.academic_year.name
+        if 'academic_year' in self.fields:
+            data['academic_year'] = instance.academic_year.name
 
         return data
-
-    def get_students(self, instance):
-        from users import serializers as users_serializers
-        students_queryset = instance.students.all()
-
-        student_serializer = users_serializers.StudentSerializer(students_queryset, many=True)
-        student_names = [student["code"] for student in student_serializer.data]
-
-        return student_names
 
 
 class CriterionSerializer(BaseSerializer):
     class Meta:
         model = Criterion
-        fields = ["id", "name", "max_point", "description", "is_active", "created_date", "updated_date"]
+        fields = ['id', 'name', 'max_point', 'description']
 
 
 class TrainingPointSerializer(BaseSerializer):
     class Meta:
         model = TrainingPoint
-        fields = ["id", "point", "criterion"]
+        fields = ['id', 'point', 'criterion']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        if "criterion" in self.fields:
-            data["criterion"] = instance.criterion.name
+        if 'criterion' in self.fields:
+            data['criterion'] = instance.criterion.name
 
         return data
 

@@ -8,12 +8,12 @@ def attendace_upload_csv_schema():
         request_body=no_body,
         manual_parameters=[
             openapi.Parameter(
-                name="file",
+                name='file',
                 required=True,
                 type=openapi.TYPE_FILE,
                 in_=openapi.IN_FORM,
                 format=openapi.FORMAT_BINARY,
             )
         ],
-        responses={status.HTTP_200_OK: "Upload file điểm danh thành công"}
+        responses={status.HTTP_200_OK: 'Upload file điểm danh thành công'}
     )

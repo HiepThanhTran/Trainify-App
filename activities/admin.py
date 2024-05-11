@@ -10,8 +10,8 @@ class ActivityAdmin(admin.ModelAdmin):
     form = ActivityAdminForm
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "organizer_type":
-            kwargs["queryset"] = ContentType.objects.filter(app_label="users", model__in=["administrator", "assistant", "specialist"])
+        if db_field.name == 'organizer_type':
+            kwargs['queryset'] = ContentType.objects.filter(app_label='users', model__in=['administrator', 'assistant', 'specialist'])
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 

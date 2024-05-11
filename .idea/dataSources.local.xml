@@ -12,12 +12,7 @@
       <user-name>root</user-name>
       <schema-mapping>
         <introspection-scope>
-          <node kind="schema">
-            <name qname="career_consulting_db" />
-            <name qname="ecourseapp" />
-            <name qname="private_clinic_db" />
-            <name qname="training_point_db" />
-          </node>
+          <node kind="schema" qname="training_point_db" />
         </introspection-scope>
       </schema-mapping>
     </data-source>

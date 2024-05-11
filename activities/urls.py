@@ -4,9 +4,9 @@ from rest_framework import routers
 from activities import views
 
 router = routers.DefaultRouter()
-router.register("activities", views.ActivityViewSet, basename="activities")
-router.register("reports", views.MissingActivityReportViewSet, basename="deficiency-reports")
+router.register('activities', views.ActivityViewSet, basename='activities')
+router.register('reports', views.MissingActivityReportViewSet, basename='reports')
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path('', include(router.urls)),
 ]

@@ -9,15 +9,15 @@ class HasInGroup(permissions.IsAuthenticated):
 
 
 class HasInSpeacialistGroup(HasInGroup):
-    group_name = "specialist"
+    group_name = 'specialist'
 
 
 class HasInAssistantGroup(HasInGroup):
-    group_name = "assistant"
+    group_name = 'assistant'
 
 
 class HasInStudentGroup(HasInGroup):
-    group_name = "student"
+    group_name = 'student'
 
 
 class HasInActivitiesGroup(permissions.IsAuthenticated):

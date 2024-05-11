@@ -9,18 +9,21 @@
       <change afterPath="$PROJECT_DIR$/activities/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/activities/migrations/0003_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/activities/migrations/0004_alter_missingactivityreport_options_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0005_alter_activity_name_bulletin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/activities/migrations/0006_bulletin_cover_bulletinactivity_bulletin_activities.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/interacts/migrations/0003_alter_comment_account_alter_comment_activity_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/schools/swaggerui.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/users/migrations/0002_alter_administrator_account_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/users/migrations/0003_alter_administrator_account_alter_assistant_account_and_more.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/sys.zb4BAA.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/sys.zb4BAA.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/sys.zb4BAA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/sys.zb4BAA.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/forms.py" afterDir="false" />
@@ -29,20 +32,30 @@
       <change beforePath="$PROJECT_DIR$/activities/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/swaggerui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/apps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interacts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/forms.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/swaggerui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/data/attendance.csv" beforeDir="false" afterPath="$PROJECT_DIR$/static/data/attendance.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/filters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/paginators.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/paginators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/perms.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/perms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/swaggerui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +64,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="useSoftWraps" value="true" />
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="DjangoStructureOptions">
@@ -66,6 +80,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -119,7 +134,7 @@
     &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.ApplicationConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -190,7 +205,8 @@
       <workItem from="1715138278517" duration="93000" />
       <workItem from="1715235915773" duration="11530000" />
       <workItem from="1715247818647" duration="1534000" />
-      <workItem from="1715250513212" duration="26766000" />
+      <workItem from="1715250513212" duration="61241000" />
+      <workItem from="1715361832001" duration="4903000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -336,7 +352,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715054813010</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="refactor: improve performance training point statistics, edit the table names">
+      <option name="closed" value="true" />
+      <created>1715324133848</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1715324133848</updated>
+    </task>
+    <task id="LOCAL-00020" summary="feat: statistics training point by faculty, class, student">
+      <option name="closed" value="true" />
+      <created>1715340352572</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1715340352572</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -357,8 +389,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="models: fix model User, add model Account" />
@@ -379,7 +410,9 @@
     <MESSAGE value="refactor: rename code to student_id field of Student model" />
     <MESSAGE value="refactor: change endpoints" />
     <MESSAGE value="refactor: fix GenericRelation between officer and activity" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: fix GenericRelation between officer and activity" />
+    <MESSAGE value="refactor: improve performance training point statistics, edit the table names" />
+    <MESSAGE value="feat: statistics training point by faculty, class, student" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: statistics training point by faculty, class, student" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
