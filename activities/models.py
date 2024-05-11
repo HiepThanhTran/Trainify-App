@@ -8,6 +8,24 @@ from activities import apps
 from tpm.models import BaseModel
 
 
+class Bulletin(BaseModel):
+    class Meta:
+        verbose_name = _('Bulletin')
+        verbose_name_plural = _('Bulletins')
+        indexes = [models.Index(fields=['poster_type', 'poster_id'], )]
+
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    cover = CloudinaryField(null=True, blank=True)
+
+    poster_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
+    poster_id = models.PositiveIntegerField()
+    poster = GenericForeignKey('poster_type', 'poster_id')
+
+    def __str__(self):
+        return self.title
+
+
 class Activity(BaseModel):
     class Meta:
         verbose_name = _('Activity')
@@ -45,7 +63,8 @@ class Activity(BaseModel):
 
     faculty = models.ForeignKey('schools.Faculty', on_delete=models.CASCADE, related_name='activities')  # Thuộc khoa nào?
     semester = models.ForeignKey('schools.Semester', on_delete=models.CASCADE, related_name='activities')  # Thuộc học kỳ nào?
-    criterion = models.ForeignKey('schools.Criterion', null=True, on_delete=models.SET_NULL, related_name='activities')  # Điều bao nhiêu?
+    bulletin = models.ForeignKey(Bulletin, blank=True, null=True, on_delete=models.SET_NULL, related_name='activities')  # Thuộc bản tin nào?
+    criterion = models.ForeignKey('schools.Criterion', blank=True, null=True, on_delete=models.SET_NULL, related_name='activities')  # Điều bao nhiêu?
     participants = models.ManyToManyField('users.Student', related_name='activities', through='ActivityRegistration')  # Danh sách sinh viên tham gia
 
     def __str__(self):
@@ -89,36 +108,3 @@ class MissingActivityReport(BaseModel):
 
     def __str__(self):
         return f'{self.student} - {self.activity}'
-
-
-class Bulletin(BaseModel):
-    class Meta:
-        verbose_name = _('Bulletin')
-        verbose_name_plural = _('Bulletins')
-        indexes = [models.Index(fields=['poster_type', 'poster_id'], )]
-
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    cover = CloudinaryField(null=True, blank=True)
-
-    poster_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
-    poster_id = models.PositiveIntegerField()
-    poster = GenericForeignKey('poster_type', 'poster_id')
-    activities = models.ManyToManyField(Activity, related_name='bulletins', through='BulletinActivity')
-
-    def __str__(self):
-        return self.title
-
-
-class BulletinActivity(BaseModel):
-    class Meta:
-        db_table = '{}_bulletin_activity'.format(apps.ActivitiesConfig.name)
-        verbose_name = _('Bulletin Activity')
-        verbose_name_plural = _('Bulletin Activities')
-        unique_together = ('bulletin', 'activity')
-
-    bulletin = models.ForeignKey(Bulletin, on_delete=models.CASCADE, related_name='bulletin_activities')
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name='bulletin_activities')
-
-    def __str__(self):
-        return f'{self.bulletin} - {self.activity}'

@@ -15,19 +15,28 @@ from tpm.utils import dao
 from users.models import Student
 
 
-class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Criterion.objects.filter(is_active=True)
     serializer_class = schools_serializers.CriterionSerializer
+
+    @method_decorator(swagger_schema.criterion_list_schema())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class SemesterViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Semester.objects.filter(is_active=True)
     serializer_class = schools_serializers.SemesterSerializer
 
+    @method_decorator(swagger_schema.semester_list_schema())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class StatisticsViewSet(viewsets.ViewSet):
     permission_classes = [perms.HasInAssistantGroup]
 
+    @method_decorator(swagger_schema.statistics_by_class_schema())
     @action(methods=['get'], detail=False, url_path='points/classes/(?P<semester_code>[^/.]+)')
     def statistics_points_by_class(self, request, semester_code=None):
         class_name = request.query_params.get('class')
@@ -35,6 +44,7 @@ class StatisticsViewSet(viewsets.ViewSet):
 
         return Response(data=statistics_data, status=status.HTTP_200_OK)
 
+    @method_decorator(swagger_schema.statistics_by_faculty_schema())
     @action(methods=['get'], detail=False, url_path='points/faculties/(?P<semester_code>[^/.]+)')
     def statistics_points_by_faculty(self, request, semester_code=None):
         faculty_name = request.query_params.get('faculty')
@@ -42,6 +52,7 @@ class StatisticsViewSet(viewsets.ViewSet):
 
         return Response(data=statistics_data, status=status.HTTP_200_OK)
 
+    @method_decorator(swagger_schema.statistics_by_school_schema())
     @action(methods=['get'], detail=False, url_path='points/school')
     def statistics_points_by_school(self, request):
         statistics_data = dao.get_statistics_points_by_school()

@@ -1,7 +1,8 @@
 from django.contrib.auth.models import Permission, Group
-from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from django.db.models import F, Sum, Count
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from schools.models import TrainingPoint, Faculty, Class, Semester
@@ -37,23 +38,21 @@ ACHIEVEMENTS = ['Xuất sắc', 'Giỏi', 'Khá', 'Trung bình', 'Yếu', 'Kém'
 
 class Factory:
     def create_user_account(self, data, code, user_model):
-        try:
-            user = user_model.objects.get(code=code)
-        except ObjectDoesNotExist:
-            return Response(data={'message': 'Không tìm thấy người dùng'}, status=status.HTTP_404_NOT_FOUND)
+        user = get_object_or_404(user_model, code=code)
 
         if user.account is not None:
             return Response(data={'message': 'Người dùng đã có tài khoản'}, status=status.HTTP_400_BAD_REQUEST)
 
-        account = Account.objects.create(**data)
-        account.set_password(account.password)
-        account.save()
+        with transaction.atomic():
+            account = Account.objects.create(**data)
+            account.set_password(account.password)
+            account.save()
 
-        user.account = account
-        user.save()
+            user.account = account
+            user.save()
 
-        self.set_role(user)
-        self.set_permissions_for_account(account)
+            self.set_role(user)
+            self.set_permissions_for_account(account)
 
         return account
 
@@ -186,7 +185,7 @@ class DAO:
 
         class_summary = {
             'id': sclass.id,
-            'class': sclass.name,
+            'class_name': sclass.name,
             'total_students': class_total_students,
             'total_points': class_total_points,
             'average_points': class_average_points,
@@ -206,7 +205,7 @@ class DAO:
             class_summary = self.get_class_summary(semester=semester, sclass=sclass)
             statistics_data.append(class_summary)
 
-        return [statistics_data]
+        return statistics_data
 
     def get_faculty_summary(self, semester=None, faculty=None):
         students = faculty.students.all()
@@ -227,7 +226,7 @@ class DAO:
 
         faculty_summary = {
             'id': faculty.id,
-            'faculty': faculty.name,
+            'faculty_name': faculty.name,
             'total_classes': faculty_total_classes,
             'total_students': faculty_total_students,
             'total_points': faculty_total_points,
@@ -247,7 +246,7 @@ class DAO:
             faculty_summary = self.get_faculty_summary(semester=semester, faculty=faculty)
             statistics_data.append(faculty_summary)
 
-        return [statistics_data]
+        return statistics_data
 
     def get_statistics_points_by_school(self):
         faculties = Faculty.objects.all()
@@ -281,7 +280,7 @@ class DAO:
             "achievements": achievements,
         }
 
-        return [school_summary]
+        return school_summary
 
 
 factory = Factory()

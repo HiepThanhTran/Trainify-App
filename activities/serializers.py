@@ -117,22 +117,40 @@ class MissingActivityReportSerializer(BaseSerializer):
 
 
 class BulletinSerializer(BaseSerializer):
+    class Meta:
+        model = Bulletin
+        fields = ['id', 'title', 'content', 'cover', 'created_date', 'updated_date']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        cover = data.get('cover', None)
+        if 'cover' in self.fields and cover:
+            data['cover'] = instance.cover.url
+
+        return data
+
+
+class BulletinDetailsSerialzer(BulletinSerializer):
     activities = ActivitySerializer(many=True, required=False)
 
     poster = serializers.SerializerMethodField()
 
     class Meta:
-        model = Bulletin
-        fields = ['id', 'title', 'content', 'cover', 'poster', 'created_date', 'updated_date', 'activities']
+        model = BulletinSerializer.Meta.model
+        fields = BulletinSerializer.Meta.fields + ['poster', 'activities']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
+    def create(self, validated_data):
+        data = validated_data.copy()
+        request = self.context.get('request')
 
-        image = data.get('image', None)
-        if 'image' in self.fields and image:
-            data['image'] = instance.image.url
+        instance, _ = factory.check_account_role(request.user)
+        poster = getattr(request.user, instance, None)
 
-        return data
+        data['poster'] = poster
+        bulletin = Bulletin.objects.create(**data)
+
+        return bulletin
 
     def get_poster(self, instance):
         _, serializer_class, _ = factory.check_user_instance(instance.poster)

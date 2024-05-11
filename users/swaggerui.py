@@ -3,17 +3,25 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 
 from activities import serializers as activities_serializers
+from schools import serializers as schools_serializers
 from users import serializers as users_serializers
 
 
-def current_account_schema():
+def get_current_account_schema():
     return swagger_auto_schema(
         responses={status.HTTP_200_OK: users_serializers.AccountSerializer},
-        operation_description='API lấy thông tin tài khoản hiện tại',
+        operation_summary='Thông tin tài khoản đang đăng nhập',
     )
 
 
-def create_account_schema(parameter_description=None, operation_description=None):
+def partial_update_current_account_schema():
+    return swagger_auto_schema(
+        responses={status.HTTP_200_OK: users_serializers.AccountSerializer},
+        operation_summary='Cập nhật thông tin tài khoản đang đăng nhập',
+    )
+
+
+def create_account_schema(parameter_description=None, operation_summary=None):
     return swagger_auto_schema(
         request_body=users_serializers.AccountSerializer,
         manual_parameters=[
@@ -32,21 +40,59 @@ def create_account_schema(parameter_description=None, operation_description=None
             ),
         ],
         responses={status.HTTP_201_CREATED: users_serializers.AccountSerializer},
-        operation_description=operation_description,
+        operation_summary=operation_summary,
+    )
+
+
+def assistants_list_schema():
+    return swagger_auto_schema(
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Danh sách trợ lý sinh viên',
+            schema=users_serializers.AssistantSerializer(many=True),
+        )},
+        operation_summary='Danh sách trợ lý sinh viên',
+    )
+
+
+def assistants_retrieve_schema():
+    return swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_INTEGER,
+                description='ID của trợ lý sinh viên',
+                required=True,
+            ),
+        ],
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Thông tin chi tiết của trợ lý sinh viên',
+            schema=users_serializers.AssistantSerializer,
+        )},
+        operation_summary='Thông tin chi tiết của trợ lý sinh viên',
     )
 
 
 def students_list_schema():
     return swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='page',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description='Số trang',
+                required=False,
+            ),
+        ],
         responses={status.HTTP_200_OK: openapi.Response(
             description='Danh sách sinh viên',
             schema=users_serializers.StudentSerializer(many=True),
         )},
-        operation_description='API lấy danh sách sinh viên',
+        operation_summary='Danh sách sinh viên',
     )
 
 
-def student_details_schema():
+def student_retrieve_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -61,21 +107,11 @@ def student_details_schema():
             description='Thông tin chi tiết của sinh viên',
             schema=users_serializers.StudentSerializer,
         )},
-        operation_description='API lấy thông tin chi tiết của một sinh viên',
+        operation_summary='Thông tin chi tiết của sinh viên',
     )
 
 
-def current_student_schema():
-    return swagger_auto_schema(
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Thông tin của sinh viên hiện tại đang đăng nhập',
-            schema=users_serializers.StudentSerializer,
-        )},
-        operation_description='API lấy thông tin của sinh viên hiện tại đang đăng nhập',
-    )
-
-
-def activities_list_schema():
+def get_activities_of_student_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -92,11 +128,11 @@ def activities_list_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description='API lấy danh sách các hoạt động của sinh viên',
+        operation_summary='Danh sách các hoạt động của sinh viên',
     )
 
 
-def activities_participated_schema():
+def get_activities_participated_of_student_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -113,11 +149,11 @@ def activities_participated_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description='API lấy danh sách các hoạt động sinh viên đã tham gia',
+        operation_summary='Danh sách các hoạt động sinh viên đã tham gia',
     )
 
 
-def activities_registered_schema():
+def get_activities_registered_of_student_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -134,11 +170,11 @@ def activities_registered_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description='API lấy danh sách các hoạt động sinh viên đã đăng ký',
+        operation_summary='Danh sách các hoạt động sinh viên đã đăng ký',
     )
 
 
-def activities_reported_schema():
+def get_activities_reported_of_student_schema():
     return swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -155,5 +191,28 @@ def activities_reported_schema():
                 schema=activities_serializers.ActivitySerializer(many=True),
             )
         },
-        operation_description='API lấy danh sách các hoạt động sinh viên báo thiếu',
+        operation_summary='Danh sách các hoạt động sinh viên báo thiếu',
+    )
+
+
+def get_training_points_statistics_schema():
+    return swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                required=True,
+                type=openapi.TYPE_INTEGER,
+                in_=openapi.IN_PATH,
+                description='ID sinh viên'
+            ),
+            openapi.Parameter(
+                name='semester_code',
+                required=True,
+                type=openapi.TYPE_INTEGER,
+                in_=openapi.IN_PATH,
+                description='Mã học kỳ cần thống kê'
+            ),
+        ],
+        responses={status.HTTP_200_OK: schools_serializers.StudentSummarySerializer()},
+        operation_summary='Xem chi tiết điểm rèn luyện của sinh viên',
     )

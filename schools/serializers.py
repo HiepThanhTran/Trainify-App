@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from schools.models import Semester, Criterion, TrainingPoint
 from tpm.serializers import BaseSerializer
 
@@ -35,28 +37,38 @@ class TrainingPointSerializer(BaseSerializer):
 
         return data
 
-# class StudentSummarySerializer(serializers.Serializer):
-#     id = serializers.IntegerField()
-#     full_name = serializers.CharField()
-#     code = serializers.CharField()
-#     achievement = serializers.CharField()
-#     total_points = serializers.FloatField()
-#     training_points = TrainingPointSerializer(many=True)
-#
-#
-# class ClassSummarySerializer(serializers.Serializer):
-#     class_name = serializers.CharField()
-#     total_students = serializers.IntegerField()
-#     total_points = serializers.FloatField()
-#     average_points = serializers.FloatField()
-#     achievements = serializers.DictField(child=serializers.IntegerField())
-#     students = StudentSummarySerializer(many=True)
-#
-#
-# class FacultySummarySerializer(serializers.Serializer):
-#     faculty_name = serializers.CharField()
-#     total_classes = serializers.IntegerField()
-#     total_students = serializers.IntegerField()
-#     total_points = serializers.FloatField()
-#     average_points = serializers.FloatField()
-#     achievements = serializers.DictField(child=serializers.IntegerField())
+
+class StudentSummarySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    full_name = serializers.CharField()
+    code = serializers.CharField()
+    achievement = serializers.CharField()
+    total_points = serializers.FloatField()
+    training_points = TrainingPointSerializer(many=True)
+
+
+class StatisticsByClassSerializer(serializers.Serializer):
+    class_name = serializers.CharField()
+    total_students = serializers.IntegerField()
+    total_points = serializers.FloatField()
+    average_points = serializers.FloatField()
+    achievements = serializers.DictField(child=serializers.IntegerField())
+    students = StudentSummarySerializer(many=True)
+
+
+class StatisticsByFacultySerializer(serializers.Serializer):
+    faculty_name = serializers.CharField()
+    total_classes = serializers.IntegerField()
+    total_students = serializers.IntegerField()
+    total_points = serializers.FloatField()
+    average_points = serializers.FloatField()
+    achievements = serializers.DictField(child=serializers.IntegerField())
+
+
+class StatisticsBySchoolSerializer(serializers.Serializer):
+    total_faculties = serializers.IntegerField()
+    total_classes = serializers.IntegerField()
+    total_students = serializers.IntegerField()
+    total_points = serializers.IntegerField()
+    average_points = serializers.FloatField()
+    achievements = serializers.DictField(child=serializers.IntegerField())

@@ -19,7 +19,13 @@ class AccountSerializer(BaseSerializer):
             },
             'role': {
                 'read_only': True,
-            }
+            },
+            'date_joined': {
+                'read_only': True,
+            },
+            'last_login': {
+                'read_only': True,
+            },
         }
 
     def to_representation(self, instance):
@@ -35,8 +41,7 @@ class AccountSerializer(BaseSerializer):
         instance, serializer_class = factory.check_account_role(account)
         user_instance = getattr(account, instance, None)
 
-        if user_instance:
-            return serializer_class(user_instance).data
+        return serializer_class(user_instance).data
 
 
 class UserSerializer(BaseSerializer):
@@ -67,9 +72,7 @@ class AdministratorSerializer(OfficerSerializer):
 class SpecialistSerializer(OfficerSerializer):
     class Meta:
         model = Specialist
-        fields = OfficerSerializer.Meta.fields + [
-            'job_title', 'academic_degree',
-        ]
+        fields = OfficerSerializer.Meta.fields + ['job_title', 'academic_degree']
 
 
 class AssistantSerializer(OfficerSerializer):
