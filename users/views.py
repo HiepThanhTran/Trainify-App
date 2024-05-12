@@ -5,10 +5,10 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
+from core import perms, paginators
+from core.utils import factory, dao
 from schools import serializers as schools_serializers
 from schools.models import Semester
-from tpm import perms, paginators
-from tpm.utils import factory, dao
 from users import serializers as users_serializers
 from users import swaggerui as swagger_schema
 from users.models import Account, Student, Assistant

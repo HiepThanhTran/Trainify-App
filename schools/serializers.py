@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
+from core.serializers import BaseSerializer
 from schools.models import Semester, Criterion, TrainingPoint
-from tpm.serializers import BaseSerializer
 
 
 class SemesterSerializer(BaseSerializer):

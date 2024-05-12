@@ -1,5 +1,5 @@
 '''
-URL configuration for tpm project.
+URL configuration for core project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -24,10 +24,10 @@ from rest_framework import permissions
 from rest_framework import routers
 
 from activities.urls import router as activities_router
+from core import settings
+from core.admin import my_admin_site
 from interacts.urls import router as interacts_router
 from schools.urls import router as schools_router
-from tpm import settings
-from tpm.admin import my_admin_site
 from users.urls import router as users_router
 
 schema_view = get_schema_view(

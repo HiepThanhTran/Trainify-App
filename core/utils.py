@@ -1,3 +1,6 @@
+import csv
+import json
+
 from django.contrib.auth.models import Permission, Group
 from django.db import transaction
 from django.db.models import F, Sum, Count
@@ -115,6 +118,17 @@ class Factory:
         user.account.save()
 
         return user
+
+    def process_csv_file(self, file):
+        csv_data = csv.reader(file.read().decode('utf-8').splitlines())
+        next(csv_data)
+        return list(csv_data)
+
+    def process_json_file(self, file):
+        f = open(file)
+        data = json.load(f)
+
+        return data
 
 
 class DAO:

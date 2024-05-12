@@ -2,8 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
 
+from core.models import BaseModel
 from schools import apps
-from tpm.models import BaseModel
 
 
 class EducationalSystem(BaseModel):
@@ -23,7 +23,7 @@ class Faculty(BaseModel):
         verbose_name = _('Faculty')
         verbose_name_plural = _('Faculties')
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=50)
 
     educational_system = models.ForeignKey(EducationalSystem, on_delete=models.CASCADE, related_name='faculties')
 
@@ -36,7 +36,7 @@ class Major(BaseModel):
         verbose_name = _('Major')
         verbose_name_plural = _('Majors')
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=50)
 
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='majors')
 
@@ -63,7 +63,7 @@ class Class(BaseModel):
         verbose_name = _('Class')
         verbose_name_plural = _('Classes')
 
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=50)
 
     major = models.ForeignKey(Major, on_delete=models.CASCADE, related_name='classes')
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='classes')

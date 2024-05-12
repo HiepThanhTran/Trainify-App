@@ -1,14 +1,13 @@
 import random
 
 from cloudinary.models import CloudinaryField
-from django.contrib.auth.models import AbstractUser, Permission, Group
+from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from activities.models import Activity
-from tpm.models import BaseModel
+from core.models import BaseModel
 
 
 class Account(AbstractUser):

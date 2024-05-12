@@ -4,35 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="feat: statistics by school">
+    <list default="true" id="fea7f559-ec17-4462-84c5-0da345484bd6" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/activities/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/activities/migrations/0002_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/activities/migrations/0003_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/migrations/0004_alter_missingactivityreport_options_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/migrations/0005_alter_activity_name_bulletin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/activities/migrations/0006_bulletin_cover_bulletinactivity_bulletin_activities.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interacts/migrations/0003_alter_comment_account_alter_comment_activity_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/academic_year_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/class_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/criterion_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/educational_system_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/faculty_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/major_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/semester_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/data/schools/training_point_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/statistics.html" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/migrations/0002_alter_administrator_account_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/migrations/0003_alter_administrator_account_alter_assistant_account_and_more.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/swaggerui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/swaggerui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/admin/stats.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/admin/statistics.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin/stats.html" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/initial_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tpm/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tpm/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/swaggerui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,8 +52,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="JavaScript File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -101,8 +98,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "django.template.preview.state": "SHOW_EDITOR",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/devlin/Documents",
+    "last_opened_file_path": "/home/devlin/Downloads/soft-ui-dashboard-django-main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
@@ -121,6 +119,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/data/schools" />
       <recent name="$PROJECT_DIR$/tpm" />
       <recent name="$PROJECT_DIR$/../../.." />
     </key>
@@ -182,7 +181,7 @@
       <workItem from="1715235915773" duration="11530000" />
       <workItem from="1715247818647" duration="1534000" />
       <workItem from="1715250513212" duration="61241000" />
-      <workItem from="1715361832001" duration="9922000" />
+      <workItem from="1715361832001" duration="51398000" />
     </task>
     <task id="LOCAL-00001" summary="models: fix model User, add model Account">
       <option name="closed" value="true" />
@@ -352,7 +351,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715399979105</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="feat: API for bulletin, API update account, collect static file">
+      <option name="closed" value="true" />
+      <created>1715424898328</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1715424898328</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -397,7 +404,8 @@
     <MESSAGE value="refactor: improve performance training point statistics, edit the table names" />
     <MESSAGE value="feat: statistics training point by faculty, class, student" />
     <MESSAGE value="feat: statistics by school" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: statistics by school" />
+    <MESSAGE value="feat: API for bulletin, API update account, collect static file" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: API for bulletin, API update account, collect static file" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

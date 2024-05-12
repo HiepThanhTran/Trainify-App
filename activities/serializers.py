@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
 from activities.models import Activity, ActivityRegistration, MissingActivityReport, Bulletin
+from core.serializers import BaseSerializer
+from core.utils import factory
 from interacts.models import Like
-from tpm.serializers import BaseSerializer
-from tpm.utils import factory
 
 
 class ActivitySerializer(BaseSerializer):

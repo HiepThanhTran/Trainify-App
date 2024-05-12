@@ -1,6 +1,6 @@
 # from django.contrib import admin
 
-from tpm.admin import my_admin_site
+from core.admin import my_admin_site
 from users.models import Account, Student, Administrator, Specialist, Assistant
 
 my_admin_site.register(Account)

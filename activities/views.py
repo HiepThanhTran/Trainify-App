@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from activities import serializers as activities_serializers
 from activities import swaggerui as swagger_schema
 from activities.models import Activity, ActivityRegistration, MissingActivityReport, Bulletin
+from core import paginators, perms
+from core.filters import MissingActivityReportFilter
+from core.utils import dao
 from interacts import serializers as interacts_serializers
-from tpm import paginators, perms
-from tpm.filters import MissingActivityReportFilter
-from tpm.utils import dao
 
 
 class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):

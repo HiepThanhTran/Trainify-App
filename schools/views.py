@@ -1,5 +1,3 @@
-import csv
-
 from django.db import transaction
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets, generics, status, parsers
@@ -7,11 +5,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from activities.models import Activity, ActivityRegistration
+from core import perms
+from core.utils import dao, factory
 from schools import serializers as schools_serializers
 from schools import swaggerui as swagger_schema
 from schools.models import Criterion, Semester, SemesterOfStudent
-from tpm import perms
-from tpm.utils import dao
 from users.models import Student
 
 
@@ -74,7 +72,7 @@ class FileUploadAndExportViewSet(viewsets.ViewSet):
         if not file.name.endswith('.csv'):
             return Response(data={'message': 'Vui lòng upload file có định dạng là csv'}, status=status.HTTP_400_BAD_REQUEST)
 
-        csv_data = self.process_csv_file(file)
+        csv_data = factory.process_csv_file(file)
 
         with transaction.atomic():
             for row in csv_data:
@@ -108,9 +106,3 @@ class FileUploadAndExportViewSet(viewsets.ViewSet):
     #         return FileResponse(csv_file, as_attachment=True, filename='statistics.csv')
     #
     #     return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    @staticmethod
-    def process_csv_file(file):
-        csv_data = csv.reader(file.read().decode('utf-8').splitlines())
-        next(csv_data)
-        return list(csv_data)

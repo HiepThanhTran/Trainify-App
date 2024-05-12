@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from tpm.serializers import BaseSerializer
-from tpm.utils import factory
+from core.serializers import BaseSerializer
+from core.utils import factory
 from users.models import Account, Student, Specialist, Assistant, Administrator, User
 
 

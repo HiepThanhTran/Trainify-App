@@ -1,5 +1,5 @@
+from core.admin import my_admin_site
 from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, SemesterOfStudent
-from tpm.admin import my_admin_site
 
 my_admin_site.register(EducationalSystem)
 my_admin_site.register(Faculty)
