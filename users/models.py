@@ -28,9 +28,9 @@ class Account(AbstractUser):
 
     email = models.EmailField(unique=True)
     avatar = CloudinaryField(null=True, blank=True)
-    role = models.CharField(max_length=4, choices=Role, null=True)
-    username = models.CharField(max_length=150, null=True, unique=True)
+    role = models.CharField(max_length=4, choices=Role, null=True, default=Role.STUDENT)
 
+    username = None
     first_name = None
     last_name = None
 
@@ -41,16 +41,13 @@ class Account(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.username
-
-    def save(self, *args, **kwargs):
-        if self.username is None:
-            self.username = self.email
-
-        return super().save(*args, **kwargs)
+        return f'{self.email} - {self.get_role_display()}'
 
     def has_in_group(self, name=None):
         return self.groups.filter(name=name).exists()
+
+    def get_role_display(self):
+        return self.Role.labels[self.Role.values.index(self.role)]
 
 
 class User(BaseModel):
@@ -65,9 +62,9 @@ class User(BaseModel):
     first_name = models.CharField(max_length=50)  # Tên
     middle_name = models.CharField(max_length=50)  # Tên đệm
     last_name = models.CharField(max_length=50)  # Họ
-    date_of_birth = models.DateField(blank=True)
-    address = models.CharField(max_length=255, blank=True)
-    phone_number = models.CharField(max_length=15, blank=True, unique=True)
+    date_of_birth = models.DateField()
+    address = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15, null=True)
     gender = models.CharField(max_length=1, choices=Gender, default=Gender.UNKNOWN)
     code = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
 
@@ -103,9 +100,6 @@ class Officer(User):
         object_id_field='created_by_id'
     )
 
-    def generate_code(self):
-        return f'{self.faculty.id:02d}{random.randint(0, 99):02d}{self.id:06d}'
-
 
 class Administrator(Officer):
     class Meta:
@@ -124,11 +118,17 @@ class Specialist(Officer):
     job_title = models.CharField(max_length=50, null=True, blank=True)
     academic_degree = models.CharField(max_length=50, null=True, blank=True)
 
+    def generate_code(self):
+        return f'{self.faculty.id:02d}{self.id:05d}spc'
+
 
 class Assistant(Officer):
     class Meta:
         verbose_name = _('Assistant')
         verbose_name_plural = _('Assistants')
+
+    def generate_code(self):
+        return f'{self.faculty.id:02d}{self.id:04d}asst'
 
 
 class Student(User):

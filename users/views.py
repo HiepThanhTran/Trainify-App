@@ -1,3 +1,4 @@
+from cloudinary import uploader
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets, permissions, generics, status, parsers
 from rest_framework.decorators import action
@@ -20,7 +21,7 @@ class AccountViewSet(viewsets.ViewSet):
     parser_classes = [parsers.MultiPartParser, ]
 
     def get_permissions(self):
-        if self.action in ['get_current_account']:
+        if self.action in ['get_current_account', 'partial_update_current_account']:
             return [permissions.IsAuthenticated()]
 
         if self.action in ['create_assistant_account']:
@@ -43,6 +44,8 @@ class AccountViewSet(viewsets.ViewSet):
         fields_is_validated = ['password', 'avatar']
         for field in fields_is_validated:
             if field in data:
+                if field.__eq__('avatar'):
+                    data[field] = uploader.upload_resource(file=data[field], public_id=account.email, unique_filename=False, overwrite=True)
                 setattr(account, field, data[field])
         account.save()
 

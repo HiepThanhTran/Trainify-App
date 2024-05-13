@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Local Database" uuid="0888d1d8-8905-43e8-97ae-2f6023b8fc0b">
+    <data-source source="LOCAL" name="locahost" uuid="d6be90ca-5367-447e-9ae2-635de176f858">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/tpm/settings.py</remarks>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/training_point_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>

@@ -29,13 +29,12 @@ form .aligned .ck ul {
     margin-left: 1.5em;
     padding-left: inherit;
 }
-
-.ck-word-count {
+.ck-word-count{
     display: flex;
     margin-top: 10px;
 }
 
-.ck-word-count__words {
+.ck-word-count__words{
     margin-right: 10px;
 }
 
@@ -43,7 +42,6 @@ form .aligned .ck ul {
     position: relative;
     width: 100%;
 }
-
-.ck-editor-container {
+.ck-editor-container{
     width: 100%;
 }

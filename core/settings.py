@@ -24,6 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-6*^0g#i2%(w@-d(!f$aylqv89yht0!_4f$=$%0%d#fk8%uh6*g'
 
+DEFAULT_AVATAR = 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715504153/default-avatar.png'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
     'activities.apps.ActivitiesConfig',
     'schools.apps.SchoolsConfig',
     'users.apps.UsersConfig',
+    'commands.apps.CommandsConfig',
 
     'drf_yasg',
     'corsheaders',

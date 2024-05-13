@@ -1,6 +1,8 @@
 import csv
-import json
+import re
 
+import unidecode
+from cloudinary import uploader, api, CloudinaryResource
 from django.contrib.auth.models import Permission, Group
 from django.db import transaction
 from django.db.models import F, Sum, Count
@@ -43,12 +45,19 @@ class Factory:
     def create_user_account(self, data, code, user_model):
         user = get_object_or_404(user_model, code=code)
 
+        if not self.is_valid_email(code=code, first_name=user.first_name, email=data['email']):
+            return Response(data={'message': 'Email không hợp lệ'}, status=status.HTTP_400_BAD_REQUEST)
+
         if user.account is not None:
             return Response(data={'message': 'Người dùng đã có tài khoản'}, status=status.HTTP_400_BAD_REQUEST)
 
+        avatar_file = data.pop('avatar', None)
         with transaction.atomic():
             account = Account.objects.create(**data)
             account.set_password(account.password)
+
+            avatar = uploader.upload_resource(file=avatar_file, public_id=account.email, unique_filename=False, overwrite=True) if avatar_file else self.get_image()
+            account.avatar = avatar
             account.save()
 
             user.account = account
@@ -69,27 +78,39 @@ class Factory:
             ]
             account.groups.set(groups)
         else:
-            group, created = Group.objects.get_or_create(name=group_name)
+            group, _ = Group.objects.get_or_create(name=group_name)
             groups = [group, ]
 
-            if created:
-                if group_name.__eq__('student'):
-                    permissions = Permission.objects.filter(codename__in=STUDENT_PERMISSIONS)
-                    group.permissions.set(permissions)
-                elif group_name.__eq__('assistant'):
-                    permissions = Permission.objects.filter(codename__in=ASSISTANT_PERMISSIONS)
-                    group.permissions.set(permissions)
-                elif group_name.__eq__('specialist'):
-                    permissions = Permission.objects.filter(codename__in=SPECIALIST_PERMISSIONS)
-                    group.permissions.set(permissions)
-                    assistant_group, _ = Group.objects.get_or_create(name='assistant')
-                    groups.append(assistant_group)
+            permissions = Permission.objects.filter(codename__in=STUDENT_PERMISSIONS)
+            if group_name.__eq__('assistant'):
+                permissions = Permission.objects.filter(codename__in=ASSISTANT_PERMISSIONS)
+            elif group_name.__eq__('specialist'):
+                permissions = Permission.objects.filter(codename__in=SPECIALIST_PERMISSIONS)
+                assistant_group = Group.objects.get_or_create(name='assistant')[0]
+                groups.append(assistant_group)
 
+            group.permissions.set(permissions)
             account.groups.set(groups)
 
         return account
 
-    def check_user_instance(self, instance):
+    def set_role(self, user):
+        _, _, role = self.check_user_instance(user)
+
+        user.account.role = role
+        user.account.save()
+
+        return user
+
+    @staticmethod
+    def is_valid_email(code, first_name, email):
+        first_name = re.escape(unidecode.unidecode(first_name).lower().replace(' ', ''))
+        pattern = f"^{code}{first_name}@ou\.edu\.vn$"
+
+        return bool(re.match(pattern, email))
+
+    @staticmethod
+    def check_user_instance(instance):
         from users import serializers as users_serializers
         instance_mapping = {
             Administrator: ('administrator', users_serializers.AdministratorSerializer, Account.Role.ADMINISTRATOR),
@@ -100,7 +121,8 @@ class Factory:
 
         return instance_mapping.get(type(instance))
 
-    def check_account_role(self, instance):
+    @staticmethod
+    def check_account_role(instance):
         from users import serializers
         role_mapping = {
             Account.Role.ADMINISTRATOR: ('administrator', serializers.AdministratorSerializer),
@@ -111,28 +133,29 @@ class Factory:
 
         return role_mapping.get(instance.role)
 
-    def set_role(self, user):
-        _, _, role = self.check_user_instance(user)
-
-        user.account.role = role
-        user.account.save()
-
-        return user
-
-    def process_csv_file(self, file):
+    @staticmethod
+    def process_csv_file(file):
         csv_data = csv.reader(file.read().decode('utf-8').splitlines())
         next(csv_data)
         return list(csv_data)
 
-    def process_json_file(self, file):
-        f = open(file)
-        data = json.load(f)
+    @staticmethod
+    def get_image(public_id=None):
+        response = api.resource(public_id if public_id else 'default-avatar')
+        cloudinary_resource_data = {
+            'public_id': response['public_id'],
+            'format': response['format'],
+            'version': response['version'],
+            'type': response['type'],
+            'resource_type': response['resource_type']
+        }
 
-        return data
+        return CloudinaryResource(**cloudinary_resource_data)
 
 
 class DAO:
     from schools import serializers as schools_serializers
+
     def update_training_point(self, registration):
         training_point, _ = TrainingPoint.objects.get_or_create(
             student=registration.student_summary,

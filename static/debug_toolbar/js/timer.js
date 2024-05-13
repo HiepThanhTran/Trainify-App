@@ -1,10 +1,9 @@
-import {$$} from "./utils.js";
+import { $$ } from "./utils.js";
 
 function insertBrowserTiming() {
     const timingOffset = performance.timing.navigationStart,
         timingEnd = performance.timing.loadEventEnd,
         totalTime = timingEnd - timingOffset;
-
     function getLeft(stat) {
         if (totalTime !== 0) {
             return (
@@ -14,7 +13,6 @@ function insertBrowserTiming() {
             return 0;
         }
     }
-
     function getCSSWidth(stat, endStat) {
         let width = 0;
         if (totalTime !== 0) {
@@ -32,7 +30,6 @@ function insertBrowserTiming() {
         }
         return width < 1 ? "2px" : width + "%";
     }
-
     function addRow(tbody, stat, endStat) {
         const row = document.createElement("tr");
         if (endStat) {

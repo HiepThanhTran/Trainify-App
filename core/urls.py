@@ -24,10 +24,10 @@ from rest_framework import permissions
 from rest_framework import routers
 
 from activities.urls import router as activities_router
-from core import settings
-from core.admin import my_admin_site
 from interacts.urls import router as interacts_router
 from schools.urls import router as schools_router
+from core import settings
+from core.admin import my_admin_site
 from users.urls import router as users_router
 
 schema_view = get_schema_view(
@@ -57,6 +57,5 @@ urlpatterns = [
                   path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
                   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
                   path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-                  path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+                  path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),  # swagger/
               ] + static(prefix=settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
