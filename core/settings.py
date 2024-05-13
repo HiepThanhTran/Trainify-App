@@ -14,9 +14,12 @@ from pathlib import Path
 
 import cloudinary
 import pymysql
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv('.env.development.local')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -31,6 +34,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
+    '.vercel.app',
+    '.now.sh',
     'trainingpoint.pythonanywhere.com',
 ]
 
@@ -98,16 +103,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'training_point_db',
-        'USER': 'root',
-        'PASSWORD': '29012003',
-        'HOST': ''
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('POSTGRES_DATABASE'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
     },
-    'sqlite3': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'training_point_db',
+    #     'USER': 'root',
+    #     'PASSWORD': '29012003',
+    #     'HOST': ''
+    # },
+    # 'sqlite3': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
 }
 
 AUTH_USER_MODEL = 'users.Account'
@@ -146,7 +158,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 
 MEDIA_URL = '/media/'
 

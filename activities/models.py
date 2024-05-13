@@ -44,9 +44,6 @@ class Activity(BaseModel):
         ONLINE = 'Onl', _('Online')
         OFFLINE = 'Off', _('Offline')
 
-    # Hình thức tổ chức
-    organizational_form = models.CharField(max_length=3, choices=Type, default=Type.OFFLINE)
-
     name = models.CharField(max_length=100)
     participant = models.CharField(max_length=20)  # Đối tượng tham gia
     start_date = models.DateField()
@@ -55,6 +52,7 @@ class Activity(BaseModel):
     point = models.PositiveSmallIntegerField()  # Điểm được cộng
     description = CKEditor5Field('Text', config_name='extends')
     image = CloudinaryField(null=True, blank=True)
+    organizational_form = models.CharField(max_length=3, choices=Type.choices, default=Type.OFFLINE)  # Hình thức tổ chức
 
     # Người tạo là ai?
     organizer_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)

@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "Công nghệ thông tin",
+    "faculty_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Khoa học máy tính",
+    "faculty_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Hệ thống thông tin quản lý",
+    "faculty_id": 1
+  },
+  {
+    "id": 4,
+    "name": "Trí tuệ nhân tạo",
+    "faculty_id": 1
+  },
+  {
+    "id": 5,
+    "name": "Du lịch",
+    "faculty_id": 2
+  },
+  {
+    "id": 6,
+    "name": "Marketing",
+    "faculty_id": 2
+  },
+  {
+    "id": 7,
+    "name": "Quản trị nhân lực",
+    "faculty_id": 2
+  },
+  {
+    "id": 8,
+    "name": "Kinh doanh quốc tế",
+    "faculty_id": 2
+  },
+  {
+    "id": 9,
+    "name": "Quản trị kinh doanh",
+    "faculty_id": 2
+  },
+  {
+    "id": 10,
+    "name": "Logistics & Quản lý chuỗi cung ứng",
+    "faculty_id": 2
+  },
+  {
+    "id": 11,
+    "name": "Công nghệ sinh học",
+    "faculty_id": 3
+  },
+  {
+    "id": 12,
+    "name": "Công nghệ thực phẩm",
+    "faculty_id": 3
+  },
+  {
+    "id": 13,
+    "name": "Tâm lý học",
+    "faculty_id": 4
+  },
+  {
+    "id": 14,
+    "name": "Xã hội học",
+    "faculty_id": 4
+  },
+  {
+    "id": 15,
+    "name": "Đông Nam Á học",
+    "faculty_id": 4
+  },
+  {
+    "id": 16,
+    "name": "Công tác xã hội",
+    "faculty_id": 4
+  },
+  {
+    "id": 17,
+    "name": "Công nghệ kỹ thuật Công trình xây dựng",
+    "faculty_id": 5
+  },
+  {
+    "id": 18,
+    "name": "Quản lý xây dựng",
+    "faculty_id": 5
+  }
+]

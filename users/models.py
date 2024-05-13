@@ -28,7 +28,7 @@ class Account(AbstractUser):
 
     email = models.EmailField(unique=True)
     avatar = CloudinaryField(null=True, blank=True)
-    role = models.CharField(max_length=4, choices=Role, null=True, default=Role.STUDENT)
+    role = models.CharField(max_length=4, choices=Role.choices, null=True, default=Role.STUDENT)
 
     username = None
     first_name = None
@@ -65,7 +65,7 @@ class User(BaseModel):
     date_of_birth = models.DateField()
     address = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15, null=True)
-    gender = models.CharField(max_length=1, choices=Gender, default=Gender.UNKNOWN)
+    gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.UNKNOWN)
     code = models.CharField(max_length=10, null=True, blank=True, unique=True, db_index=True, editable=False)
 
     account = models.OneToOneField(Account, null=True, blank=True, on_delete=models.SET_NULL, related_name='%(class)s')

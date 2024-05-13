@@ -84,7 +84,7 @@ class Semester(BaseModel):
 
     start_date = models.DateField()
     end_date = models.DateField()
-    short_name = models.PositiveSmallIntegerField(choices=Semesters)
+    short_name = models.PositiveSmallIntegerField(choices=Semesters.choices)
     code = models.CharField(max_length=3, null=True, blank=True, unique=True, db_index=True, editable=False)
 
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='semesters')

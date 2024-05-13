@@ -5,145 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="initial data for activities, interacts, users app">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/d6be90ca-5367-447e-9ae2-635de176f858.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/d6be90ca-5367-447e-9ae2-635de176f858/storage_v2/_src_/schema/training_point_db.Uu8wuQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jsLinters/jshint.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bulletin.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/management/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/management/commands/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/management/commands/collectdata.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/migrations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/views.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/activities/activity_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/activities/bulletin_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/interacts/comment_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/interacts/like_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/users/assistant_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/users/specialist_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/data/users/student_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Training-Point-Management.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Training-Point-Management.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/career_consulting_db.5nWoQg.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/ecourseapp.YYFYuA.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/mysql.osA4Bg.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/private_clinic_db.eauukw.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/sys.zb4BAA.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/sys.zb4BAA.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0888d1d8-8905-43e8-97ae-2f6023b8fc0b/storage_v2/_src_/schema/training_point_db.Uu8wuQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env.development.local" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build_files.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vercel.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0002_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/activities/migrations/0003_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/migrations/0003_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/migrations/0002_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/wsgi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/migrations/0002_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/migrations/0002_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schools/migrations/initial_data.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/base.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/changelists.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/changelists.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/dark_mode.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/dark_mode.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/responsive.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/responsive.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/responsive_rtl.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/responsive_rtl.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/rtl.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/rtl.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/vendor/select2/select2.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/vendor/select2/select2.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/widgets.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/widgets.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/calendar-icons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/calendar-icons.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/gis/move_vertex_off.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/gis/move_vertex_off.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/gis/move_vertex_on.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/gis/move_vertex_on.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-addlink.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-addlink.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-alert.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-alert.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-calendar.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-calendar.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-changelink.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-changelink.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-clock.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-clock.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-deletelink.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-deletelink.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-hidelink.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-hidelink.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-no.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-no.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-unknown-alt.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-unknown-alt.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-unknown.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-unknown.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-viewlink.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-viewlink.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/icon-yes.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/icon-yes.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/inline-delete.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/inline-delete.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/search.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/search.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/selector-icons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/selector-icons.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/sorting-icons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/sorting-icons.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/tooltag-add.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/tooltag-add.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/img/tooltag-arrowright.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/img/tooltag-arrowright.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/SelectBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/SelectBox.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/SelectFilter2.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/SelectFilter2.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/admin/DateTimeShortcuts.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/admin/DateTimeShortcuts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/admin/RelatedObjectLookups.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/admin/RelatedObjectLookups.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/autocomplete.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/autocomplete.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/calendar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/cancel.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/cancel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/collapse.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/collapse.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/core.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/core.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/inlines.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/inlines.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/nav_sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/nav_sidebar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/popup_response.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/popup_response.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/prepopulate.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/prepopulate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/prepopulate_init.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/prepopulate_init.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/theme.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/urlify.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/urlify.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/vendor/jquery/jquery.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/vendor/jquery/jquery.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/vendor/select2/select2.full.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/vendor/select2/select2.full.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/vendor/xregexp/xregexp.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/vendor/xregexp/xregexp.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/data/schools/semester_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/static/data/schools/semester_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/debug_toolbar/css/toolbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/debug_toolbar/css/toolbar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/debug_toolbar/js/history.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/debug_toolbar/js/history.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/debug_toolbar/js/timer.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/debug_toolbar/js/timer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/debug_toolbar/js/toolbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/debug_toolbar/js/toolbar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/debug_toolbar/js/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/debug_toolbar/js/utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/django_ckeditor_5/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/django_ckeditor_5/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/django_ckeditor_5/src/ckeditor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/django_ckeditor_5/src/ckeditor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/django_ckeditor_5/src/override-django.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/django_ckeditor_5/src/override-django.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/immutable.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/immutable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/redoc-init.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/redoc-init.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/absolute-path.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/absolute-path.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/oauth2-redirect.html" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/oauth2-redirect.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/swagger-initializer.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/swagger-initializer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/swagger-ui.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/drf-yasg/swagger-ui-dist/swagger-ui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/admin/statistics.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/admin/statistics.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-tweaks.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-tweaks.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/default.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/css/default.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/font-awesome-4.0.3.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/css/font-awesome-4.0.3.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/prettify.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/css/prettify.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/docs/css/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/docs/css/base.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/docs/css/highlight.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/docs/css/highlight.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/docs/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/docs/js/api.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/fonts/fontawesome-webfont.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/fonts/fontawesome-webfont.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/fonts/glyphicons-halflings-regular.svg" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/fonts/glyphicons-halflings-regular.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/ajax-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/js/ajax-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/coreapi-0.1.1.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/js/coreapi-0.1.1.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/csrf.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/js/csrf.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/default.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/js/default.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/load-ajax-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/rest_framework/js/load-ajax-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,8 +144,17 @@
       <workItem from="1715499934207" duration="647000" />
       <workItem from="1715500611301" duration="35848000" />
       <workItem from="1715544511443" duration="9433000" />
-      <workItem from="1715576191908" duration="5222000" />
+      <workItem from="1715576191908" duration="9971000" />
     </task>
+    <task id="LOCAL-00001" summary="initial data for activities, interacts, users app">
+      <option name="closed" value="true" />
+      <created>1715581543695</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715581543695</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
