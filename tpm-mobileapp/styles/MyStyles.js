@@ -18,6 +18,11 @@ const MyStyles = StyleSheet.create({
     },
     Italic:{
         fontFamily:"OpenSansItalic"
+    },
+    Container:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 

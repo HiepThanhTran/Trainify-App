@@ -4,7 +4,7 @@ import OnboardingStyles from "./OnboardingStyles";
 import React, { useEffect, useRef } from 'react';
 import AppIntroSlider from "react-native-app-intro-slider";
 import LottieView from "lottie-react-native";
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 
 // Animations
 const animations = [
@@ -29,11 +29,16 @@ const animations = [
 ]
 
 const Onboarding = () => {
-     //Navigation Home Page
-     const navigation = useNavigation();
-     const handleDone = () => {
-         navigation.navigate('Home');
-     };
+    //Navigation Home Page
+    const navigation = useNavigation();
+    const handleDone = () => {
+        navigation.dispatch(
+            CommonActions.reset({
+                index:0,
+                routes: [{name: 'Home'}]
+            })
+        )
+    };
 
     //Button Label
     const buttonLabel = (label) => {
