@@ -1,40 +1,36 @@
-import {ActivityIndicator, View} from "react-native";
-import {useEffect, useState} from "react";
-import Fonts from "./assets/fonts/Fonts";
-import Login from "./components/LoginAndRegister/Login";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { View, ActivityIndicator } from "react-native";
 import MyStyles from "./styles/MyStyles";
+import useFonts from "./configs/Fonts";
+import Home from "./components/Home/Home";
+import Onboarding from "./components/Onboarding/Onboarding";
+import Login from "./components/LoginAndSignup/Login";
+import Signup from "./components/LoginAndSignup/Signup";
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-    //Loading Fonts
-    const [fontsLoaded, setFontsLoaded] = useState(false);
-
-    useEffect(() => {
-        const loadAsyncFonts = async () => {
-            await Fonts();
-            setFontsLoaded(true);
-        };
-
-        loadAsyncFonts();
-    }, []);
-
+    const fontsLoaded = useFonts();
     if (!fontsLoaded) {
         return (
             <View style={MyStyles.Container}>
-                <ActivityIndicator size="100" color="#1873bc"/>
+                <ActivityIndicator size="large" color="#3e9ae4" />
             </View>
         );
     }
-    return (
-        // <NavigationContainer>
-        //   <Stack.Navigator initialRouteName="Onboarding">
-        //     <Stack.Screen name="Onboarding" options={{ headerShown: false }} component={Onboarding} />
-        //     <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
-        //   </Stack.Navigator>
-        // </NavigationContainer>
-
-        <Login/>
-    )
+    else
+    {
+        return (
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="Login">
+                {/* <Stack.Screen name="Onboarding" options={{ headerShown: false }} component={Onboarding} />
+                <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} /> */}
+                <Stack.Screen name="Login" options={{ headerShown: false }} component={Login} />
+                <Stack.Screen name="Signup" options={{ headerShown: false }} component={Signup} />
+              </Stack.Navigator>
+            </NavigationContainer>
+        )
+    }
 }

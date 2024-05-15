@@ -11,7 +11,7 @@ const OnboardingStyles = StyleSheet.create({
         paddingTop: 200
     },
     OnboardingImage: {
-        width: width - 80,
+        width: width + 50,
         height: 330,
         resizeMode: 'contain'
     },

@@ -74,7 +74,7 @@ const Onboarding = () => {
                 )
             }}
             activeDotStyle={{
-                backgroundColor: '#1973bb',
+                backgroundColor: '#3e9ae4',
                 width: 20
             }}
             showSkipButton
