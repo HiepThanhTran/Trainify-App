@@ -4,38 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="commit">
-      <change afterPath="$PROJECT_DIR$/mobileapp/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/debug.keystore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/proguard-rules.pro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/java/com/tpmmobileapp/MainActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/java/com/tpmmobileapp/MainApplication.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/drawable/splashscreen_image.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/android/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/Podfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp.xcodeproj/xcshareddata/xcschemes/tpmmobileapp.xcscheme" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/AppDelegate.mm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreen.imageset/splashscreen.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreenBackground.imageset/background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/SplashScreen.storyboard" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Supporting/Expo.plist" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/main.m" afterDir="false" />
-    </list>
+    <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="rename mobileapp" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,7 +69,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "django.template.preview.state": "SHOW_EDITOR",
-    "git-widget-placeholder": "#3 on Hau",
+    "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -222,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715767471937</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="rename mobileapp">
+      <option name="closed" value="true" />
+      <created>1715767609178</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1715767609178</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -254,7 +231,8 @@
     <MESSAGE value="postgres database" />
     <MESSAGE value="merge to master" />
     <MESSAGE value="commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit" />
+    <MESSAGE value="rename mobileapp" />
+    <option name="LAST_COMMIT_MESSAGE" value="rename mobileapp" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
