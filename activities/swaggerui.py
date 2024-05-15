@@ -6,10 +6,17 @@ from activities import serializers as activities_serializers
 from interacts import serializers as interacts_serializers
 
 
-def activities_list_schema():
+def get_activities_of_bulletin_schema():
     return swagger_auto_schema(
         request_body=no_body,
         manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_INTEGER,
+                description='ID bản tin',
+                required=True,
+            ),
             openapi.Parameter(
                 name='page',
                 in_=openapi.IN_QUERY,
@@ -18,100 +25,77 @@ def activities_list_schema():
                 required=False,
             ),
         ],
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Danh sách hoạt động',
-            schema=activities_serializers.ActivitySerializer(many=True)
-        )},
-        operation_summary="Danh sách các hoạt động ngoại khóa",
+        responses={status.HTTP_200_OK: activities_serializers.BulletinDetailsSerialzer},
+        operation_summary='Danh sách hoạt động trong bản tin',
     )
 
 
-def activity_retrieve_schema():
+def activity_of_bulletin_schema(method):
+    if method == 'delete':
+        return remove_activity_from_bulletin_schema()
+
+    return add_activity_to_bulletin_schema()
+
+
+def add_activity_to_bulletin_schema():
     return swagger_auto_schema(
+        method='post',
         request_body=no_body,
         manual_parameters=[
             openapi.Parameter(
                 name='id',
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_INTEGER,
-                description='ID hoạt động',
+                description='ID bản tin',
                 required=True,
             ),
-        ],
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Thông tin chi tiết của hoạt động',
-            schema=activities_serializers.ActivitySerializer,
-        )},
-        operation_summary="Xem thông tin chi tiết của một hoạt động ngoại khóa",
-    )
-
-
-def activity_create_schema():
-    return swagger_auto_schema(
-        request_body=activities_serializers.ActivitySerializer,
-        manual_parameters=[
             openapi.Parameter(
-                name='image',
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                required=False,
-                description='Hình ảnh hoạt động',
-            ),
-        ],
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Thông tin của hoạt động vừa tạo',
-            schema=activities_serializers.ActivitySerializer,
-        )},
-        operation_summary="Tạo hoạt động ngoại khóa mới",
-    )
-
-
-def activity_partial_update_schema():
-    return swagger_auto_schema(
-        request_body=activities_serializers.ActivitySerializer,
-        manual_parameters=[
-            openapi.Parameter(
-                name='id',
-                in_=openapi.IN_PATH,
+                name='activity_id',
+                in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
                 description='ID hoạt động',
                 required=True,
             ),
-            openapi.Parameter(
-                name='image',
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                required=False,
-                description='Hình ảnh hoạt động',
-            ),
         ],
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Thông tin chi tiết của hoạt động sau khi cập nhật',
-            schema=activities_serializers.ActivitySerializer,
-        )},
-        operation_summary="Cập nhật một phần thông tin của hoạt động ngoại khóa",
+        responses={status.HTTP_200_OK: activities_serializers.BulletinDetailsSerialzer},
+        operation_summary='Thêm hoạt động vào bản tin',
     )
 
 
-def activity_destroy_schema():
+def remove_activity_from_bulletin_schema():
     return swagger_auto_schema(
+        method='delete',
         request_body=no_body,
         manual_parameters=[
             openapi.Parameter(
                 name='id',
                 in_=openapi.IN_PATH,
+                type=openapi.TYPE_INTEGER,
+                description='ID bản tin',
+                required=True,
+            ),
+            openapi.Parameter(
+                name='activity_id',
+                in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
                 description='ID hoạt động',
                 required=True,
             ),
         ],
         responses={status.HTTP_204_NO_CONTENT: ''},
-        operation_summary='Xóa hoạt động ngoại khóa',
+        operation_summary='Xóa hoạt động khỏi bản tin',
     )
+
+
+def comments_of_activity_schema(method):
+    if method == 'post':
+        return add_comment_to_activity_schema()
+    return get_comments_of_activity_schema()
 
 
 def get_comments_of_activity_schema():
     return swagger_auto_schema(
+        method='get',
         request_body=no_body,
         manual_parameters=[
             openapi.Parameter(
@@ -141,20 +125,20 @@ def get_comments_of_activity_schema():
 
 def add_comment_to_activity_schema():
     return swagger_auto_schema(
-        request_body=no_body,
+        method='post',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'content': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=['content'],
+        ),
         manual_parameters=[
             openapi.Parameter(
                 name='id',
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_INTEGER,
                 description='ID hoạt động',
-                required=True,
-            ),
-            openapi.Parameter(
-                name='content',
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Nội dung bình luận',
                 required=True,
             ),
         ],
@@ -241,53 +225,6 @@ def report_activity_schema():
     )
 
 
-def missing_reports_list_schema():
-    return swagger_auto_schema(
-        request_body=no_body,
-        manual_parameters=[
-            openapi.Parameter(
-                name='faculty',
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_STRING,
-                description='Tên khoa cần lọc',
-                required=False,
-            ),
-            openapi.Parameter(
-                name='page',
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_INTEGER,
-                description='Số trang',
-                required=False,
-            ),
-        ],
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Danh sách báo thiếu của sinh viên',
-            schema=activities_serializers.MissingActivityReportSerializer(many=True)
-        )},
-        operation_summary="Danh sách báo thiếu của sinh viên theo khoa",
-    )
-
-
-def missing_reports_retrieve_schema():
-    return swagger_auto_schema(
-        request_body=no_body,
-        manual_parameters=[
-            openapi.Parameter(
-                name='id',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_INTEGER,
-                description='ID phiếu báo thiếu',
-                required=True,
-            ),
-        ],
-        responses={status.HTTP_200_OK: openapi.Response(
-            description='Danh sách báo thiếu của sinh viên',
-            schema=activities_serializers.MissingActivityReportSerializer(many=True)
-        )},
-        operation_summary="Xem thông tin chi tiết báo thiếu của sinh viên",
-    )
-
-
 def confirm_missing_report_schema():
     return swagger_auto_schema(
         request_body=no_body,
@@ -367,16 +304,6 @@ def bulletin_retrieve_schema():
 
 def bulletin_create_schema():
     return swagger_auto_schema(
-        request_body=activities_serializers.BulletinSerializer,
-        manual_parameters=[
-            openapi.Parameter(
-                name='cover',
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                required=False,
-                description='Hình ảnh bản tin',
-            ),
-        ],
         responses={status.HTTP_200_OK: openapi.Response(
             description='Thông tin bản tin vừa tạo',
             schema=activities_serializers.BulletinDetailsSerialzer,
@@ -386,7 +313,6 @@ def bulletin_create_schema():
 
 def bulletin_partial_update_schema():
     return swagger_auto_schema(
-        request_body=activities_serializers.BulletinSerializer,
         manual_parameters=[
             openapi.Parameter(
                 name='id',
@@ -394,13 +320,6 @@ def bulletin_partial_update_schema():
                 type=openapi.TYPE_INTEGER,
                 description='ID bản tin',
                 required=True,
-            ),
-            openapi.Parameter(
-                name='cover',
-                in_=openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                required=False,
-                description='Hình ảnh bản tin',
             ),
         ],
         responses={status.HTTP_200_OK: openapi.Response(
@@ -428,7 +347,7 @@ def bulletin_destroy_schema():
     )
 
 
-def get_activities_of_bulletin_schema():
+def activities_list_schema():
     return swagger_auto_schema(
         request_body=no_body,
         manual_parameters=[
@@ -440,54 +359,122 @@ def get_activities_of_bulletin_schema():
                 required=False,
             ),
         ],
-        responses={status.HTTP_200_OK: activities_serializers.BulletinDetailsSerialzer},
-        operation_summary='Danh sách hoạt động trong bản tin',
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Danh sách hoạt động',
+            schema=activities_serializers.ActivitySerializer(many=True)
+        )},
+        operation_summary="Danh sách các hoạt động ngoại khóa",
     )
 
 
-def add_activity_to_bulletin_schema():
+def activity_retrieve_schema():
     return swagger_auto_schema(
         request_body=no_body,
         manual_parameters=[
             openapi.Parameter(
                 name='id',
                 in_=openapi.IN_PATH,
-                type=openapi.TYPE_INTEGER,
-                description='ID bản tin',
-                required=True,
-            ),
-            openapi.Parameter(
-                name='activity_id',
-                in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
                 description='ID hoạt động',
                 required=True,
             ),
         ],
-        responses={status.HTTP_200_OK: activities_serializers.BulletinDetailsSerialzer},
-        operation_summary='Thêm hoạt động vào bản tin',
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Thông tin chi tiết của hoạt động',
+            schema=activities_serializers.ActivitySerializer,
+        )},
+        operation_summary="Xem thông tin chi tiết của một hoạt động ngoại khóa",
     )
 
 
-def remove_activity_from_bulletin_schema():
+def activity_create_schema():
+    return swagger_auto_schema(
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Thông tin của hoạt động vừa tạo',
+            schema=activities_serializers.ActivitySerializer,
+        )},
+        operation_summary="Tạo hoạt động ngoại khóa mới",
+    )
+
+
+def activity_partial_update_schema():
+    return swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_INTEGER,
+                description='ID hoạt động',
+                required=True,
+            ),
+        ],
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Thông tin chi tiết của hoạt động sau khi cập nhật',
+            schema=activities_serializers.ActivitySerializer,
+        )},
+        operation_summary="Cập nhật một phần thông tin của hoạt động ngoại khóa",
+    )
+
+
+def activity_destroy_schema():
     return swagger_auto_schema(
         request_body=no_body,
         manual_parameters=[
             openapi.Parameter(
                 name='id',
                 in_=openapi.IN_PATH,
-                type=openapi.TYPE_INTEGER,
-                description='ID bản tin',
-                required=True,
-            ),
-            openapi.Parameter(
-                name='activity_id',
-                in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
                 description='ID hoạt động',
                 required=True,
             ),
         ],
         responses={status.HTTP_204_NO_CONTENT: ''},
-        operation_summary='Xóa hoạt động khỏi bản tin',
+        operation_summary='Xóa hoạt động ngoại khóa',
+    )
+
+
+def missing_reports_list_schema():
+    return swagger_auto_schema(
+        request_body=no_body,
+        manual_parameters=[
+            openapi.Parameter(
+                name='faculty',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description='Tên khoa cần lọc',
+                required=False,
+            ),
+            openapi.Parameter(
+                name='page',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description='Số trang',
+                required=False,
+            ),
+        ],
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Danh sách báo thiếu của sinh viên',
+            schema=activities_serializers.MissingActivityReportSerializer(many=True)
+        )},
+        operation_summary="Danh sách báo thiếu của sinh viên theo khoa",
+    )
+
+
+def missing_reports_retrieve_schema():
+    return swagger_auto_schema(
+        request_body=no_body,
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_INTEGER,
+                description='ID phiếu báo thiếu',
+                required=True,
+            ),
+        ],
+        responses={status.HTTP_200_OK: openapi.Response(
+            description='Danh sách báo thiếu của sinh viên',
+            schema=activities_serializers.MissingActivityReportSerializer(many=True)
+        )},
+        operation_summary="Xem thông tin chi tiết báo thiếu của sinh viên",
     )

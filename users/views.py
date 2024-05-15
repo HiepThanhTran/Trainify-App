@@ -1,13 +1,12 @@
-from cloudinary import uploader
-from django.utils.decorators import method_decorator
 from rest_framework import viewsets, permissions, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
-from core import perms, paginators
-from core.utils import factory, dao
+from core.utils import perms, paginators
+from core.utils.dao import dao
+from core.utils.factory import factory
 from schools import serializers as schools_serializers
 from schools.models import Semester
 from users import serializers as users_serializers
@@ -21,7 +20,7 @@ class AccountViewSet(viewsets.ViewSet):
     parser_classes = [parsers.MultiPartParser, ]
 
     def get_permissions(self):
-        if self.action in ['get_current_account', 'partial_update_current_account']:
+        if self.action in ['get_authenticated_account', 'update_authenticated_account']:
             return [permissions.IsAuthenticated()]
 
         if self.action in ['create_assistant_account']:
@@ -29,142 +28,115 @@ class AccountViewSet(viewsets.ViewSet):
 
         return [permissions.AllowAny()]
 
-    @method_decorator(swagger_schema.get_current_account_schema())
-    @action(methods=['get'], detail=False, url_path='current')
-    def get_current_account(self, request):
+    @swagger_schema.get_authenticated_account_schema()
+    @action(methods=['get'], detail=False, url_path='me')
+    def get_authenticated_account(self, request):
         serializer = self.serializer_class(request.user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @method_decorator(swagger_schema.partial_update_current_account_schema())
-    @action(methods=['patch'], detail=False, url_path='current/update')
-    def partial_update_current_account(self, request):
-        data = request.data
-        account = request.user
+    @swagger_schema.update_authenticated_account_schema()
+    @action(methods=['patch'], detail=False, url_path='me/update')
+    def update_authenticated_account(self, request):
+        serializer = users_serializers.AccountUpdateSerializer(instance=request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        fields_is_validated = ['password', 'avatar']
-        for field in fields_is_validated:
-            if field in data:
-                if field.__eq__('avatar'):
-                    data[field] = uploader.upload_resource(file=data[field], public_id=account.email, unique_filename=False, overwrite=True)
-                setattr(account, field, data[field])
-        account.save()
+        return Response(data=self.serializer_class(request.user).data, status=status.HTTP_200_OK)
 
-        serializer = self.serializer_class(account)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-    @method_decorator(swagger_schema.create_account_schema(
-        parameter_description='Mã trợ lý sinh viên',
-        operation_summary='Tạo tài khoản cho trợ lý sinh viên')
-    )
-    @action(methods=['post'], detail=False, url_path='assistants')
-    def create_assistant_account(self, request):
-        return self._create_account(request, Assistant)
-
-    @method_decorator(swagger_schema.create_account_schema(
-        parameter_description='Mã số sinh viên',
-        operation_summary='Tạo tài khoản cho sinh viên')
-    )
-    @action(methods=['post'], detail=False, url_path='students')
+    @swagger_schema.create_account_schema(operation_summary='Tạo tài khoản cho sinh viên')
+    @action(methods=['post'], detail=False, url_path='auth/students/register')
     def create_student_account(self, request):
-        return self._create_account(request, Student)
+        return self._create_account(request=request)
 
-    def _create_account(self, request, user_model):
+    @swagger_schema.create_account_schema(operation_summary='Tạo tài khoản cho trợ lý sinh viên')
+    @action(methods=['post'], detail=False, url_path='auth/assistants/register')
+    def create_assistant_account(self, request):
+        return self._create_account(request=request)
+
+    def _create_account(self, request):
         serializer = self.serializer_class(data=request.data)
-        if not serializer.is_valid():
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        key = serializer.validated_data.pop('key')
-        response_data = factory.create_user_account(serializer.validated_data, key, user_model)
-
-        if isinstance(response_data, Response):
-            return response_data
-
-        serializer = self.serializer_class(response_data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
 class AssistantViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
-    queryset = Assistant.objects.filter(is_active=True)
+    queryset = Assistant.objects.select_related('faculty').filter(is_active=True)
     serializer_class = users_serializers.AssistantSerializer
     permission_classes = [perms.HasInSpeacialistGroup]
 
-    @method_decorator(swagger_schema.assistants_list_schema())
+    @swagger_schema.assistants_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @method_decorator(swagger_schema.assistants_retrieve_schema())
+    @swagger_schema.assistants_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
 
 class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
-    queryset = Student.objects.filter(is_active=True)
+    queryset = Student.objects.select_related('faculty', 'major', 'sclass', 'academic_year', 'educational_system').filter(is_active=True)
     serializer_class = users_serializers.StudentSerializer
     pagination_class = paginators.StudentPagination
 
-    STUDENT_ACTION = [
-        'get_current_student',
-        'get_activities',
-        'get_activities_participated',
-        'get_activities_registered',
-        'get_training_points_statistics'
-    ]
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action.__eq__('get_reports'):
+            return queryset.prefetch_related('reports')
+
+        if self.action.__eq__('get_activities'):
+            return queryset.prefetch_related('registrations')
+
+        if self.action.__eq__('get_points'):
+            return queryset.prefetch_related('points')
+
+        return queryset
 
     def get_permissions(self):
-        if self.action in self.STUDENT_ACTION:
+        if self.action in ['get_activities', 'get_points']:
             return [perms.HasInStudentGroup()]
 
-        if self.action in ['get_activities_reported']:
+        if self.action in ['get_reports']:
             return [perms.HasInAssistantGroup()]
 
         return [perms.HasInAssistantGroup()]
 
-    @method_decorator(swagger_schema.get_activities_of_student_schema())
-    @action(methods=['get'], detail=True, url_path='activities')
-    def get_activities(self, request, pk=None):
-        return self.get_activities_by_registrations_status(request=request, pk=pk)
-
-    @method_decorator(swagger_schema.get_activities_participated_of_student_schema())
-    @action(methods=['get'], detail=True, url_path='activities/participated')
-    def get_activities_participated(self, request, pk=None):
-        return self.get_activities_by_registrations_status(request=request, pk=pk, is_attendance=True)
-
-    @method_decorator(swagger_schema.get_activities_registered_of_student_schema())
-    @action(methods=['get'], detail=True, url_path='activities/registered')
-    def get_activities_registered(self, request, pk=None):
-        return self.get_activities_by_registrations_status(request=request, pk=pk, is_attendance=False)
-
-    def get_activities_by_registrations_status(self, request, pk=None, is_attendance=None):
-        registrations = self.get_object().registrations.select_related('activity').filter(is_active=True)
-        if is_attendance is not None:
-            registrations = registrations.filter(is_attendance=is_attendance)
-        activities = [registration.activity for registration in registrations]
-
-        paginator = paginators.ActivityPagination()
-        page = paginator.paginate_queryset(activities, request)
-        if page is not None:
-            serializer = activities_serializers.ActivitySerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        serializer = activities_serializers.ActivitySerializer(activities, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-    @method_decorator(swagger_schema.get_activities_reported_of_student_schema())
-    @action(methods=['get'], detail=True, url_path='activities/reported')
-    def get_activities_reported(self, request, pk=None):
-        reports = self.get_object().reports.select_related('activity').all()
+    @swagger_schema.get_reports_of_student_schema()
+    @action(methods=['get'], detail=True, url_path='reports')
+    def get_reports(self, request, pk=None):
+        reports = self.get_object().reports.select_related('activity').filter(is_active=True)
         activities = [report.activity for report in reports]
 
-        serializer = activities_serializers.ActivitySerializer(activities, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return factory.get_paginators_response(
+            paginator=paginators.ActivityPagination(), request=request,
+            serializer_class=activities_serializers.ActivitySerializer, data=activities
+        )
 
-    @method_decorator(swagger_schema.get_training_points_statistics_schema())
+    @swagger_schema.get_activities_of_student_schema()
+    @action(methods=['get'], detail=True, url_path='activities')
+    def get_activities(self, request, pk=None):
+        activity_status = request.query_params.get('status')
+        registrations = self.get_object().registrations.select_related('activity').filter(is_active=True)
+
+        if activity_status and activity_status.__eq__('partd'):
+            registrations = registrations.filter(is_attendance=True)
+
+        activities = [registration.activity for registration in registrations]
+
+        return factory.get_paginators_response(
+            paginator=paginators.ActivityPagination(), request=request,
+            serializer_class=activities_serializers.ActivitySerializer, data=activities
+        )
+
+    @swagger_schema.get_points_schema()
     @action(methods=['get'], detail=True, url_path='points/(?P<semester_code>[^/.]+)')
-    def get_training_points_statistics(self, request, pk=None, semester_code=None):
-        semester = get_object_or_404(Semester, code=semester_code)
-        student = Student.objects.prefetch_related('points').only('id', 'code').get(pk=pk)
+    def get_points(self, request, pk=None, semester_code=None):
+        semester = get_object_or_404(queryset=Semester, code=semester_code)
+        student = self.get_object()
 
-        student_summary, training_points = dao.get_student_summary(semester=semester, student=student)
+        student_summary, training_points = dao.get_statistics_student(semester=semester, student=student)
 
         criterion_name = request.query_params.get('criterion')
         if criterion_name:
@@ -173,10 +145,10 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         return Response(data=student_summary, status=status.HTTP_200_OK)
 
-    @method_decorator(swagger_schema.students_list_schema())
+    @swagger_schema.students_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @method_decorator(swagger_schema.student_retrieve_schema())
+    @swagger_schema.student_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)

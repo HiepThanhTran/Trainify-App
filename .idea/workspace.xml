@@ -4,16 +4,318 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="initial data for activities, interacts, users app">
-      <change afterPath="$PROJECT_DIR$/.env.development.local" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build_files.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vercel.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/mobileapp/assets/images/a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/configs/APIs.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/configs/Contexts.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/screens/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/d6be90ca-5367-447e-9ae2-635de176f858.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/d6be90ca-5367-447e-9ae2-635de176f858.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/swaggerui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/activities/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_files.sh" beforeDir="false" afterPath="$PROJECT_DIR$/build_files.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/management/commands/collectdata.py" beforeDir="false" afterPath="$PROJECT_DIR$/commands/management/commands/collectdata.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/paginators.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/paginators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/perms.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/perms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interacts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/interacts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/swaggerui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schools/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/schools/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/autocomplete.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/base.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/changelists.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/dark_mode.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/dashboard.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/forms.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/login.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/nav_sidebar.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/responsive.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/responsive_rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/rtl.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/vendor/select2/LICENSE-SELECT2.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/vendor/select2/select2.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/vendor/select2/select2.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/css/widgets.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/calendar-icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/gis/move_vertex_off.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/gis/move_vertex_on.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-addlink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-alert.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-calendar.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-changelink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-clock.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-deletelink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-no.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-unknown-alt.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-unknown.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-viewlink.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/icon-yes.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/inline-delete.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/search.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/selector-icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/sorting-icons.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/tooltag-add.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/img/tooltag-arrowright.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/SelectBox.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/SelectFilter2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/actions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/admin/DateTimeShortcuts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/admin/RelatedObjectLookups.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/autocomplete.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/calendar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/cancel.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/change_form.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/collapse.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/core.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/filters.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/inlines.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/jquery.init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/nav_sidebar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/popup_response.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/prepopulate.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/prepopulate_init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/theme.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/urlify.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/jquery/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/jquery/jquery.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/jquery/jquery.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/LICENSE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/af.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/az.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/bg.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/bn.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/bs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ca.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/cs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/da.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/de.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/dsb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/el.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/en.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/es.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/et.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/eu.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/fa.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/fi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/fr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/gl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/he.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/hi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/hr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/hsb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/hu.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/hy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/id.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/is.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/it.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ja.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ka.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/km.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ko.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/lt.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/lv.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/mk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ms.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/nb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ne.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/nl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/pl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ps.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/pt-BR.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/pt.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ro.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/ru.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/sk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/sl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/sq.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/sr-Cyrl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/sr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/sv.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/th.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/tk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/tr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/uk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/vi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/zh-CN.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/i18n/zh-TW.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/select2.full.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/select2/select2.full.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/xregexp/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/xregexp/xregexp.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/admin/js/vendor/xregexp/xregexp.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/activities/activity_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/activities/bulletin_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/interacts/comment_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/interacts/like_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/academic_year_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/class_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/criterion_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/educational_system_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/faculty_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/major_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/semester_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/schools/training_point_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/users/assistant_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/users/specialist_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/data/users/student_data.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/css/print.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/css/toolbar.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/js/history.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/js/redirect.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/js/timer.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/js/toolbar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/debug_toolbar/js/utils.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/django_ckeditor_5/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/django_ckeditor_5/src/ckeditor.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/django_ckeditor_5/src/override-django.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/immutable.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/immutable.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/insQ.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/insQ.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc-init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc-old/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc-old/redoc.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc-old/redoc.min.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc/redoc-logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc/redoc.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/redoc/redoc.standalone.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/NOTICE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/absolute-path.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/favicon-32x32.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/oauth2-redirect.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-initializer.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-bundle.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-bundle.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-es-bundle-core.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-es-bundle-core.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-es-bundle.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-es-bundle.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-dist/swagger-ui.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/drf-yasg/swagger-ui-init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/js/admin/statistics.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/bootstrap-theme.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/bootstrap-theme.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/bootstrap-tweaks.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/bootstrap.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/default.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/font-awesome-4.0.3.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/css/prettify.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/css/base.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/css/highlight.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/css/jquery.json-view.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/img/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/img/grid.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/js/api.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/js/highlight.pack.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/docs/js/jquery.json-view.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/fontawesome-webfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/fontawesome-webfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/fontawesome-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/fontawesome-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/glyphicons-halflings-regular.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/glyphicons-halflings-regular.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/glyphicons-halflings-regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/glyphicons-halflings-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/fonts/glyphicons-halflings-regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/img/glyphicons-halflings-white.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/img/glyphicons-halflings.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/img/grid.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/ajax-form.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/bootstrap.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/coreapi-0.1.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/csrf.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/default.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/jquery-3.7.1.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/load-ajax-form.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staticfiles_build/static/rest_framework/js/prettify-min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/debug.keystore" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/debug.keystore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/debug/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/java/com/tpmmobileapp/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/java/com/tpmmobileapp/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/java/com/tpmmobileapp/MainApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/java/com/tpmmobileapp/MainApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/drawable/rn_edit_text_material.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/drawable/rn_edit_text_material.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/drawable/splashscreen.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/drawable/splashscreen.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/drawable/splashscreen_image.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/drawable/splashscreen_image.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/gradlew.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/android/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/assets/images/a" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/babel.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/babel.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/configs/APIs.js" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/dao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/configs/Contexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/factory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/.xcode.env" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/.xcode.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/Podfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/Podfile.properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/Podfile.properties.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp.xcodeproj/xcshareddata/xcschemes/tpmmobileapp.xcscheme" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp.xcodeproj/xcshareddata/xcschemes/tpmmobileapp.xcscheme" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/AppDelegate.h" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/AppDelegate.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/AppDelegate.mm" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/AppDelegate.mm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Images.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/AppIcon.appiconset/Contents.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Images.xcassets/Contents.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/Contents.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreen.imageset/Contents.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreen.imageset/Contents.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreen.imageset/splashscreen.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreen.imageset/splashscreen.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreenBackground.imageset/Contents.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreenBackground.imageset/Contents.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreenBackground.imageset/background.png" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreenBackground.imageset/background.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/SplashScreen.storyboard" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/SplashScreen.storyboard" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/Supporting/Expo.plist" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Supporting/Expo.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/ios/tpmmobileapp/main.m" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/main.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/metro.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/metro.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/screens/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/core/utils/validations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tpm-mobileapp/styles/MyStyles.js" beforeDir="false" afterPath="$PROJECT_DIR$/mobileapp/styles/MyStyles.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/managers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/managers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/swaggerui.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/swaggerui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,29 +365,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;PyConsoleConfigurable.Django Console&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Django Server.Training-Point-Management.executor": "Debug",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "django.template.preview.state": "SHOW_EDITOR",
+    "git-widget-placeholder": "master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "com.nasller.CodeGlancePro",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="Training-Point-Management" is-module-sdk="true">
@@ -96,6 +399,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/core/utils" />
+      <recent name="$PROJECT_DIR$/core" />
       <recent name="$PROJECT_DIR$/static/data" />
     </key>
   </component>
@@ -107,6 +412,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="core.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -145,6 +451,8 @@
       <workItem from="1715500611301" duration="35848000" />
       <workItem from="1715544511443" duration="9433000" />
       <workItem from="1715576191908" duration="9971000" />
+      <workItem from="1715631478607" duration="7612000" />
+      <workItem from="1715689311028" duration="43025000" />
     </task>
     <task id="LOCAL-00001" summary="initial data for activities, interacts, users app">
       <option name="closed" value="true" />
@@ -160,9 +468,20 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="initial data for activities, interacts, users app" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial data for activities, interacts, users app" />
+    <MESSAGE value="deployment to vercel" />
+    <MESSAGE value="test commit" />
+    <MESSAGE value="revoke .env" />
+    <option name="LAST_COMMIT_MESSAGE" value="revoke .env" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>

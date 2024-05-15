@@ -2,7 +2,7 @@ from django.utils.decorators import method_decorator
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 
-from core import paginators, perms
+from core.utils import perms, paginators
 from interacts import serializers
 from interacts import swaggerui as swagger_schema
 from interacts.models import Comment
