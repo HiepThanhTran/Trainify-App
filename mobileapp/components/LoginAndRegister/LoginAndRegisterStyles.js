@@ -41,7 +41,7 @@ const LoginAndRegisterStyles = StyleSheet.create({
     Title: {
         color: 'white',
         fontSize: 45,
-        marginTop: 100
+        marginTop: 60
     },
     Form: {
         flex: 1,
