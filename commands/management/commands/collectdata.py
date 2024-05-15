@@ -17,7 +17,7 @@ from interacts.models import *
 from schools.models import *
 from users.models import *
 
-DB_DATA_PATH = os.path.join(settings.STATIC_ROOT, 'data/db.json'),
+DB_DATA_PATH = os.path.join(settings.BASE_DIR, 'static/data/db.json'),
 
 MODEL_DATA_PATH = {
     'EducationalSystem': os.path.join(settings.BASE_DIR, 'static/data/schools/educational_system_data.json'),
@@ -41,14 +41,12 @@ MODEL_DATA_PATH = {
 
 
 class Command(BaseCommand):
-    default_password = make_password('user@123')
     bulletin_cover = factory.get_or_upload(ftype='bulletin')
     activity_image = factory.get_or_upload(ftype='activity')
     default_avatar = factory.get_or_upload(ftype='avatar')
+    default_password = make_password('user@123')
 
     def handle(self, *args, **kwargs):
-        Account.objects.create_superuser(email='admin@gmail.com', password='admin@123')
-
         date_fields = ['start_date', 'end_date', 'date_of_birth']
         collect_data_list = []
         total_time = time.time()
@@ -69,6 +67,13 @@ class Command(BaseCommand):
             'Activity': Activity,
         }
         with transaction.atomic():
+            if self.is_collected_data(app_labels=Administrator._meta.app_label, model_names=['administrator']):
+                self.stdout.write(f'Data for Administrator already exists {self.style.ERROR("SKIP")}')
+            else:
+                Account.objects.create_superuser(email='admin@gmail.com', password='admin@123')
+                collect_data_list.append(CollectData(app_label=Administrator._meta.app_label, model_name='administrator', applied=True))
+                self.stdout.write(f'Created account for Student successfully... {self.style.SUCCESS(f"OK")}')
+
             for model_name, model_instance in models_list.items():
                 if self.is_collected_data(app_labels=[model_instance._meta.app_label], model_names=[model_name.lower()]):
                     self.stdout.write(f'Data for {model_name} already exists {self.style.ERROR("SKIP")}')

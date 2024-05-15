@@ -6,25 +6,25 @@ const VERSION = 'v1'
 const API_URL = `${BASE_URL}/${TYPE}/${VERSION}/`
 
 export const endpoints = {
-    // Accounts
+    //// Accounts
     me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
     login: 'acconuts/auth/login/', // POST: Đăng nhập
     studentRegister: 'accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
     assistantRegister: 'accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
     meUpdate: '/accounts/me/update/', // PATCH: Cập nhật tài khoản đang đăng nhập
 
-    // Students
+    //// Students
     students: '/students/', // GET: Lấy danh sách sinh viên
     studentDetails: (studentID) => `/students/${studentID}/`, // GET: Lấy thông tin chi tiết của sinh viên
     studentActivities: (studentID) => `/students/${studentID}/activities/`, // GET: Lấy danh sách hoạt động của sinh viên
     studentReports: (studentID) => `/students/${studentID}/reports/`, // GET: Lấy danh sách hoạt động sinh viên báo thiếu
     studentPoints: (studentID, semesterCode) => `/students${studentID}/points/${semesterCode}`, // GET: Thống kê điểm rèn luyện của sinh viên
 
-    // Assistant
+    //// Assistant
     assistants: '/assistants/', // GET: Lấy danh sách trợ lý sinh viên
     assistantDetails: (assistantID) => `/assistants/${assistantID}/`, // GET: Lấy thông tin chi tiết trợ lý sinh viên
 
-    // Bulletins
+    //// Bulletins
     // GET: Lấy danh sách bản tin
     // POST: Tạo bản tin mới
     bulletins: '/bulletins/', // GET, POST
@@ -37,7 +37,7 @@ export const endpoints = {
     // DELETE: Xóa hoạt động khỏi bản tin
     activityOfBulletin: (bulletinID, activityID) => `/bulletins/${bulletinID}/activites/${activityID}/`, // POST, DELETE
 
-    // Activities
+    //// Activities
     // GET: Lấy danh sách hoạt động
     // POST: Tạo hoạt động mới
     activities: '/activities/', // GET, POST
@@ -52,28 +52,28 @@ export const endpoints = {
     activityRegister: (activityID) => `/activities/${activityID}/register/`, // POST: Sinh viên đăng ký hoạt động
     activityReport: (activityID) => `/activities/${activityID}/report/`, // POST: Sinh viên báo thiếu hoạt động
 
-    // Reports
+    //// Reports
     reports: '/reports/', // GET: Lấy danh sách báo thiếu
     reportDetails: (reportID) => `/reports/${reportID}/`, // GET: Lấy thông tin chi tiết của báo thiếu
     confirmReport: (reportID) => `/reports/${reportID}/confirm/`, // POST: Xác nhận báo thiếu
     rejectReport: (reportID) => `/reports/${reportID}/reject/`, // POST: Từ chối báo thiếu
 
-    // Comments
+    //// Comments
     // PUT: Cập nhật bình luận
     // DELETE: Xóa bình luận
     commentDetails: (commentID) => `/comments/${commentID}/`, // PUT, DELETE
 
-    // Semesters
+    //// Semesters
     semesters: '/semesters/', // GET: Lấy danh sách học kỳ
 
-    // Criterions
+    //// Criterions
     criterions: '/criterions/', // GET: Lấy danh sách quy chế điểm rèn luyện
 
-    // Statistics
+    //// Statistics
     statisticsSchools: '/statistics/school/', // GET: Thống kê toàn trường
     statisticsFilter: (semesterCode) => `/statistics/points/${semesterCode}/`, // GET: Thống kê theo khoa hoặc lớp hoặc cả 2
 
-    // Files
+    //// Files
     attendanceUpload: '/files/attendance/upload/csv/', // POST: Upload file điểm danh
 };
 

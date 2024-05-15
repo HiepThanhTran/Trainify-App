@@ -97,20 +97,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DATABASE'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST'),
-    },
     # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'training_point_db',
-    #     'USER': 'root',
-    #     'PASSWORD': '29012003',
-    #     'HOST': ''  # localhost
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': os.getenv('POSTGRES_DATABASE'),
+    #     'USER': os.getenv('POSTGRES_USER'),
+    #     'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+    #     'HOST': os.getenv('POSTGRES_HOST'),
     # },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'training_point_db',
+        'USER': 'root',
+        'PASSWORD': '29012003',
+        'HOST': ''  # localhost
+    },
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
@@ -179,10 +179,11 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
+    'TAGS_SORTER': 'alpha',
     'OPERATIONS_SORTER': 'method',
     'DEFAULT_MODEL_RENDERING': 'example',
     'DISPLAY_OPERATION_ID': False,
-    'DEEP_LINKING': True,
+    'VALIDATOR_URL': None,
     'DEFAULT_FIELD_INSPECTORS': [
         'drf_yasg.inspectors.CamelCaseJSONFilter',
         'drf_yasg.inspectors.InlineSerializerInspector',

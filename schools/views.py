@@ -12,7 +12,6 @@ from core.utils import perms
 from core.utils.dao import dao
 from core.utils.validations import validate_file_with_format
 from schools import serializers as schools_serializers
-from schools import swaggerui as swagger_schema
 from schools.models import Criterion, Semester, Class, Faculty
 from users.models import Student
 
@@ -21,7 +20,6 @@ class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Criterion.objects.filter(is_active=True)
     serializer_class = schools_serializers.CriterionSerializer
 
-    @swagger_schema.criterion_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -30,7 +28,6 @@ class SemesterViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Semester.objects.filter(is_active=True)
     serializer_class = schools_serializers.SemesterSerializer
 
-    @swagger_schema.semester_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -69,7 +66,6 @@ class FileViewSet(viewsets.ViewSet):
     permission_classes = [perms.HasInAssistantGroup]
     parser_classes = [parsers.MultiPartParser, ]
 
-    @swagger_schema.attendace_upload_csv_schema()
     @action(methods=['post'], detail=False, url_path='attendance/upload/csv')
     def attendace_upload_csv(self, request):
         file = request.FILES.get('file', None)

@@ -6,7 +6,6 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
-from activities import swaggerui as swagger_schema
 from activities.models import Activity, ActivityRegistration, MissingActivityReport, Bulletin
 from core.utils import perms, paginators, filters
 from core.utils.dao import dao
@@ -39,7 +38,6 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return [perms.HasInAssistantGroup()]
 
-    @swagger_schema.get_activities_of_bulletin_schema()
     @action(methods=['get'], detail=True, url_path='activities')
     def get_activities(self, request, pk=None):
         activities = self.get_object().activities.select_related('faculty', 'semester', 'criterion', 'bulletin').all()
@@ -49,8 +47,6 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
             serializer_class=activities_serializers.ActivitySerializer, data=activities
         )
 
-    @swagger_schema.activity_of_bulletin_schema(method='post')
-    @swagger_schema.activity_of_bulletin_schema(method='delete')
     @action(methods=['post', 'delete'], detail=True, url_path='activities/(?P<activity_id>[^/.]+)')
     def activity_of_bulletin(self, request, pk=None, activity_id=None):
         activity = get_object_or_404(Activity, pk=activity_id)
@@ -70,7 +66,6 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         serializer = activities_serializers.AuthenticatedActivityDetailsSerializer(activity)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_schema.bulletin_partial_update_schema()
     def partial_update(self, request, pk=None):
         serializer = self.get_serializer_class()(instance=self.get_object(), data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -78,19 +73,15 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_schema.bulletin_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_schema.bulletin_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
-    @swagger_schema.bulletin_create_schema()
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-    @swagger_schema.bulletin_destroy_schema()
     def destroy(self, request, *args, **kwargs):
         api.delete_resources(self.get_object().cover.public_id)
         return super().destroy(request, *args, **kwargs)
@@ -135,8 +126,6 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return [permissions.AllowAny()]
 
-    @swagger_schema.comments_of_activity_schema(method='get')
-    @swagger_schema.comments_of_activity_schema(method='post')
     @action(methods=['get', 'post'], detail=True, url_path='comments')
     def comments_of_activity(self, request, pk=None):
         if request.method.__eq__('POST'):
@@ -155,7 +144,6 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
             serializer_class=interacts_serializers.CommentSerializer, data=comments
         )
 
-    @swagger_schema.like_activity_schema()
     @action(methods=['post'], detail=True, url_path='like')
     def like_activity(self, request, pk=None):
         like, created = self.get_object().likes.get_or_create(account=request.user)
@@ -165,7 +153,6 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         serializer = activities_serializers.AuthenticatedActivitySerializer(self.get_object(), context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_schema.register_activity_schema()
     @action(methods=['post'], detail=True, url_path='register')
     def register_activity(self, request, pk=None):
         registration, created = self.get_object().registrations.get_or_create(student=request.user.student)
@@ -176,7 +163,6 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         serializer = activities_serializers.ActivityRegistrationSerializer(registration)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    @swagger_schema.report_activity_schema()
     @action(methods=['post'], detail=True, url_path='report', parser_classes=[parsers.MultiPartParser, ])
     def report_activity(self, request, pk=None):
         registration = get_object_or_404(self.get_object().registrations, student=request.user.student)
@@ -197,7 +183,6 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         serializer = activities_serializers.MissingActivityReportSerializer(report)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    @swagger_schema.activity_partial_update_schema()
     def partial_update(self, request, pk=None):
         serializer = self.get_serializer_class()(self.get_object(), data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -205,19 +190,15 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_schema.activities_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_schema.activity_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
-    @swagger_schema.activity_create_schema()
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-    @swagger_schema.activity_destroy_schema()
     def destroy(self, request, *args, **kwargs):
         api.delete_resources(self.get_object().image.public_id)
         return super().destroy(request, *args, **kwargs)
@@ -230,7 +211,6 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
     permission_classes = [perms.HasInAssistantGroup]
     filterset_class = filters.MissingActivityReportFilter
 
-    @swagger_schema.confirm_missing_report_schema()
     @action(methods=['post'], detail=True, url_path='confirm')
     def confirm_missing_report(self, request, pk=None):
         missing_report = self.get_object()
@@ -247,7 +227,6 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
         serializer = activities_serializers.MissingActivityReportSerializer(missing_report)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_schema.reject_missing_report_schema()
     @action(methods=['delete'], detail=True, url_path='reject')
     def reject_missing_report(self, request, pk=None):
         report = self.get_object()
@@ -257,10 +236,8 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
         report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @swagger_schema.missing_reports_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_schema.missing_reports_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)

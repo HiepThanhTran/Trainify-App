@@ -10,7 +10,6 @@ from core.utils.factory import factory
 from schools import serializers as schools_serializers
 from schools.models import Semester
 from users import serializers as users_serializers
-from users import swaggerui as swagger_schema
 from users.models import Account, Student, Assistant
 
 
@@ -28,13 +27,11 @@ class AccountViewSet(viewsets.ViewSet):
 
         return [permissions.AllowAny()]
 
-    @swagger_schema.get_authenticated_account_schema()
     @action(methods=['get'], detail=False, url_path='me')
     def get_authenticated_account(self, request):
         serializer = self.serializer_class(request.user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_schema.update_authenticated_account_schema()
     @action(methods=['patch'], detail=False, url_path='me/update')
     def update_authenticated_account(self, request):
         serializer = users_serializers.AccountUpdateSerializer(instance=request.user, data=request.data, partial=True)
@@ -43,12 +40,10 @@ class AccountViewSet(viewsets.ViewSet):
 
         return Response(data=self.serializer_class(request.user).data, status=status.HTTP_200_OK)
 
-    @swagger_schema.create_account_schema(operation_summary='Tạo tài khoản cho sinh viên')
     @action(methods=['post'], detail=False, url_path='auth/students/register')
     def create_student_account(self, request):
         return self._create_account(request=request)
 
-    @swagger_schema.create_account_schema(operation_summary='Tạo tài khoản cho trợ lý sinh viên')
     @action(methods=['post'], detail=False, url_path='auth/assistants/register')
     def create_assistant_account(self, request):
         return self._create_account(request=request)
@@ -66,11 +61,9 @@ class AssistantViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrieve
     serializer_class = users_serializers.AssistantSerializer
     permission_classes = [perms.HasInSpeacialistGroup]
 
-    @swagger_schema.assistants_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_schema.assistants_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -103,7 +96,6 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         return [perms.HasInAssistantGroup()]
 
-    @swagger_schema.get_reports_of_student_schema()
     @action(methods=['get'], detail=True, url_path='reports')
     def get_reports(self, request, pk=None):
         reports = self.get_object().reports.select_related('activity').filter(is_active=True)
@@ -114,7 +106,6 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
             serializer_class=activities_serializers.ActivitySerializer, data=activities
         )
 
-    @swagger_schema.get_activities_of_student_schema()
     @action(methods=['get'], detail=True, url_path='activities')
     def get_activities(self, request, pk=None):
         activity_status = request.query_params.get('status')
@@ -130,7 +121,6 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
             serializer_class=activities_serializers.ActivitySerializer, data=activities
         )
 
-    @swagger_schema.get_points_schema()
     @action(methods=['get'], detail=True, url_path='points/(?P<semester_code>[^/.]+)')
     def get_points(self, request, pk=None, semester_code=None):
         semester = get_object_or_404(queryset=Semester, code=semester_code)
@@ -145,10 +135,8 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         return Response(data=student_summary, status=status.HTTP_200_OK)
 
-    @swagger_schema.students_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_schema.student_retrieve_schema()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
