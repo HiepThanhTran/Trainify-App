@@ -10,10 +10,8 @@ class ActivitySerializer(BaseSerializer):
     class Meta:
         model = Activity
         fields = [
-            'id', 'name', 'participant', 'start_date', 'end_date', 'location', 'point',
-            'bulletin', 'faculty', 'semester', 'criterion',
-            'image', 'organizational_form', 'description',
-            'updated_date', 'created_date',
+            'id', 'name', 'participant', 'start_date', 'end_date', 'location', 'point', 'updated_date', 'created_date',
+            'bulletin', 'faculty', 'semester', 'criterion', 'image', 'organizational_form', 'description',
         ]
 
     def to_representation(self, activity):
@@ -76,13 +74,11 @@ class AuthenticatedActivitySerializer(ActivitySerializer):
 
 
 class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
-    from users import serializers as user_serializers
-    participants = user_serializers.StudentSerializer(many=True, required=False, fields=['id', 'full_name', 'code'])
     organizer = serializers.SerializerMethodField()
 
     class Meta:
         model = ActivitySerializer.Meta.model
-        fields = ActivitySerializer.Meta.fields + ['organizer', 'participants']
+        fields = AuthenticatedActivitySerializer.Meta.fields + ['organizer']
 
     def get_organizer(self, activity):
         _, serializer_class, _ = factory.check_user_instance(activity.organizer)
@@ -93,7 +89,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
 class BulletinSerializer(BaseSerializer):
     class Meta:
         model = Bulletin
-        fields = ['id', 'title', 'content', 'cover', 'created_date', 'updated_date']
+        fields = ['id', 'title', 'cover', 'created_date', 'updated_date', 'content']
 
     def to_representation(self, bulletin):
         data = super().to_representation(bulletin)
@@ -129,12 +125,11 @@ class BulletinSerializer(BaseSerializer):
 
 
 class BulletinDetailsSerialzer(BulletinSerializer):
-    activities = ActivitySerializer(many=True, required=False)
     poster = serializers.SerializerMethodField()
 
     class Meta:
         model = BulletinSerializer.Meta.model
-        fields = BulletinSerializer.Meta.fields + ['poster', 'activities']
+        fields = BulletinSerializer.Meta.fields + ['poster']
 
     def get_poster(self, bulletin):
         _, serializer_class, _ = factory.check_user_instance(bulletin.poster)
@@ -149,7 +144,7 @@ class ActivityRegistrationSerializer(BaseSerializer):
 
     class Meta:
         model = ActivityRegistration
-        fields = ['id', 'is_attendance', 'is_point_added', 'student', 'activity', 'created_date', 'updated_date']
+        fields = ['id', 'is_attendance', 'is_point_added', 'created_date', 'updated_date', 'student', 'activity']
 
 
 class MissingActivityReportSerializer(BaseSerializer):
@@ -159,7 +154,7 @@ class MissingActivityReportSerializer(BaseSerializer):
 
     class Meta:
         model = MissingActivityReport
-        fields = ['id', 'is_resolved', 'content', 'evidence', 'student', 'activity', 'created_date', 'updated_date']
+        fields = ['id', 'is_resolved', 'evidence', 'created_date', 'updated_date', 'content', 'student', 'activity']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

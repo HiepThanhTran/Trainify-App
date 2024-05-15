@@ -1,8 +1,9 @@
 from django.db.models import Case, When, F, IntegerField, Sum, Count
 
-from core.utils.factory import ACHIEVEMENTS
 from schools.models import Faculty, Class, TrainingPoint
 from users.models import Student
+
+ACHIEVEMENTS = ['Xuất sắc', 'Giỏi', 'Khá', 'Trung bình', 'Yếu', 'Kém']
 
 
 class DAO:

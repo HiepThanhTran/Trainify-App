@@ -39,7 +39,6 @@ DEFAULT_PUBLIC_ID = {
     'bulletin': 'bulletin-cover',
     'activity': 'activity-image'
 }
-ACHIEVEMENTS = ['Xuất sắc', 'Giỏi', 'Khá', 'Trung bình', 'Yếu', 'Kém']
 
 
 class Factory:
@@ -84,28 +83,28 @@ class Factory:
         raise ValidationError({'detail': 'Không tìm thấy người dùng'})
 
     @staticmethod
-    def check_user_instance(instance):
+    def check_user_instance(user):
         from users import serializers
-        instance_mapping = {
+        user_mapping = {
             Administrator: ('administrator', serializers.AdministratorSerializer, Account.Role.ADMINISTRATOR),
             Specialist: ('specialist', serializers.SpecialistSerializer, Account.Role.SPECIALIST),
             Assistant: ('assistant', serializers.AssistantSerializer, Account.Role.ASSISTANT),
             Student: ('student', serializers.StudentSerializer, Account.Role.STUDENT),
         }
 
-        return instance_mapping.get(type(instance))
+        return user_mapping.get(type(user))
 
     @staticmethod
-    def check_account_role(instance):
+    def check_account_role(account):
         from users import serializers
         role_mapping = {
-            Account.Role.ADMINISTRATOR: ('administrator', serializers.AdministratorSerializer),
+            Account.Role.ADMINISTRATOR: ('administrator', serializers.AdministratorSerializer, account.administrator),
             Account.Role.SPECIALIST: ('specialist', serializers.SpecialistSerializer),
             Account.Role.ASSISTANT: ('assistant', serializers.AssistantSerializer),
             Account.Role.STUDENT: ('student', serializers.StudentSerializer),
         }
 
-        return role_mapping.get(instance.role)
+        return role_mapping.get(account.role)
 
     @staticmethod
     def get_or_upload(file=None, public_id=None, ftype=None):
