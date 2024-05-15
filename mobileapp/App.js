@@ -1,21 +1,40 @@
-import {StatusBar} from 'expo-status-bar';
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, View} from "react-native";
+import {useEffect, useState} from "react";
+import Fonts from "./assets/fonts/Fonts";
+import Login from "./components/LoginAndRegister/Login";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import MyStyles from "./styles/MyStyles";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello Word</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  //Loading Fonts
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  useEffect(() => {
+    const loadAsyncFonts = async () => {
+      await Fonts();
+      setFontsLoaded(true);
+    };
+
+    loadAsyncFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={MyStyles.Container}>
+        <ActivityIndicator size="100" color="#1873bc" />
+      </View>
+    );
+  }
+  return (
+    // <NavigationContainer>
+    //   <Stack.Navigator initialRouteName="Onboarding">
+    //     <Stack.Screen name="Onboarding" options={{ headerShown: false }} component={Onboarding} />
+    //     <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
+
+    <Login/>
+  )
+}
