@@ -4,9 +4,37 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="postgres database">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="b2b16215-4161-4b2f-9fe5-6d27c310d279" name="Changes" comment="commit">
+      <change afterPath="$PROJECT_DIR$/mobileapp/.gitattributes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/debug.keystore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/java/com/tpmmobileapp/MainActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/java/com/tpmmobileapp/MainApplication.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/drawable/splashscreen_image.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/android/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/Podfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp.xcodeproj/xcshareddata/xcschemes/tpmmobileapp.xcscheme" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/AppDelegate.mm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreen.imageset/splashscreen.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Images.xcassets/SplashScreenBackground.imageset/background.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/SplashScreen.storyboard" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/Supporting/Expo.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobileapp/ios/tpmmobileapp/main.m" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +55,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Hau" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -67,7 +100,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "django.template.preview.state": "SHOW_EDITOR",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "#3 on Hau",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -173,7 +206,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715766283371</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="merge to master">
+      <option name="closed" value="true" />
+      <created>1715767318586</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1715767318586</updated>
+    </task>
+    <task id="LOCAL-00005" summary="commit">
+      <option name="closed" value="true" />
+      <created>1715767471937</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1715767471937</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -181,6 +230,17 @@
   </component>
   <component name="UpdateCopyrightCheckinHandler">
     <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
@@ -192,7 +252,9 @@
     <MESSAGE value="revoke .env" />
     <MESSAGE value="performance query" />
     <MESSAGE value="postgres database" />
-    <option name="LAST_COMMIT_MESSAGE" value="postgres database" />
+    <MESSAGE value="merge to master" />
+    <MESSAGE value="commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
