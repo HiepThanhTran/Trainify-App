@@ -1,15 +1,19 @@
+import csv
+
 from django.db import transaction
-from django.utils.decorators import method_decorator
 from rest_framework import viewsets, generics, status, parsers
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities.models import Activity, ActivityRegistration
-from core import perms
-from core.utils import dao, factory
+from core.utils import perms
+from core.utils.dao import dao
+from core.utils.validations import validate_file_with_format
 from schools import serializers as schools_serializers
 from schools import swaggerui as swagger_schema
-from schools.models import Criterion, Semester, SemesterOfStudent
+from schools.models import Criterion, Semester, Class, Faculty
 from users.models import Student
 
 
@@ -17,7 +21,7 @@ class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Criterion.objects.filter(is_active=True)
     serializer_class = schools_serializers.CriterionSerializer
 
-    @method_decorator(swagger_schema.criterion_list_schema())
+    @swagger_schema.criterion_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -26,7 +30,7 @@ class SemesterViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Semester.objects.filter(is_active=True)
     serializer_class = schools_serializers.SemesterSerializer
 
-    @method_decorator(swagger_schema.semester_list_schema())
+    @swagger_schema.semester_list_schema()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -34,45 +38,44 @@ class SemesterViewSet(viewsets.ViewSet, generics.ListAPIView):
 class StatisticsViewSet(viewsets.ViewSet):
     permission_classes = [perms.HasInAssistantGroup]
 
-    @method_decorator(swagger_schema.statistics_by_class_schema())
-    @action(methods=['get'], detail=False, url_path='points/classes/(?P<semester_code>[^/.]+)')
-    def statistics_points_by_class(self, request, semester_code=None):
-        class_name = request.query_params.get('class')
-        statistics_data = dao.get_statistics_points_by_class(semester_code=semester_code, class_name=class_name)
-
+    @action(methods=['get'], detail=False, url_path='school')
+    def statistics_points_of_school(self, request):
+        statistics_data = dao.get_statistics_points_of_school()
         return Response(data=statistics_data, status=status.HTTP_200_OK)
 
-    @method_decorator(swagger_schema.statistics_by_faculty_schema())
-    @action(methods=['get'], detail=False, url_path='points/faculties/(?P<semester_code>[^/.]+)')
-    def statistics_points_by_faculty(self, request, semester_code=None):
-        faculty_name = request.query_params.get('faculty')
-        statistics_data = dao.get_statistics_points_by_faculty(semester_code=semester_code, faculty_name=faculty_name)
+    @action(methods=['get'], detail=False, url_path='points/(?P<semester_code>[^/.]+)')
+    def statistics_points(self, request, semester_code=None):
+        semester = get_object_or_404(queryset=Semester, code=semester_code)
+        faculty_id = request.query_params.get('faculty_id')
+        class_id = request.query_params.get('class_id')
+        faculty, sclass = None, None
 
+        if not faculty_id and not class_id:
+            raise ValidationError({'detail': 'Vui lòng thống kê theo khoa hoặc lớp học hoặc cả 2'})
+
+        if faculty_id and not class_id:
+            faculty = get_object_or_404(Faculty, pk=faculty_id)
+        elif not faculty_id and class_id:
+            sclass = get_object_or_404(Class, pk=class_id)
+        else:
+            faculty = get_object_or_404(Faculty, pk=faculty_id)
+            sclass = get_object_or_404(Class, pk=class_id, major__faculty=faculty)
+
+        statistics_data = dao.get_statistics(semester=semester, faculty=faculty, sclass=sclass)
         return Response(data=statistics_data, status=status.HTTP_200_OK)
 
-    @method_decorator(swagger_schema.statistics_by_school_schema())
-    @action(methods=['get'], detail=False, url_path='points/school')
-    def statistics_points_by_school(self, request):
-        statistics_data = dao.get_statistics_points_by_school()
 
-        return Response(data=statistics_data, status=status.HTTP_200_OK)
-
-
-class FileUploadAndExportViewSet(viewsets.ViewSet):
+class FileViewSet(viewsets.ViewSet):
     permission_classes = [perms.HasInAssistantGroup]
     parser_classes = [parsers.MultiPartParser, ]
 
-    @method_decorator(swagger_schema.attendace_upload_csv_schema())
+    @swagger_schema.attendace_upload_csv_schema()
     @action(methods=['post'], detail=False, url_path='attendance/upload/csv')
     def attendace_upload_csv(self, request):
         file = request.FILES.get('file', None)
-        if file is None:
-            return Response(data={'message': 'Không tìm thấy file!'}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not file.name.endswith('.csv'):
-            return Response(data={'message': 'Vui lòng upload file có định dạng là csv'}, status=status.HTTP_400_BAD_REQUEST)
-
-        csv_data = factory.process_csv_file(file)
+        validate_file_with_format(file=file, fformat='.csv')
+        csv_data = csv.reader(file.read().decode('utf-8').splitlines())
+        next(csv_data)
 
         with transaction.atomic():
             for row in csv_data:
@@ -80,17 +83,14 @@ class FileUploadAndExportViewSet(viewsets.ViewSet):
                 try:
                     student = Student.objects.get(code=student_code)
                     activity = Activity.objects.get(pk=activity_id)
-                except (Student.DoesNotExist, Activity.DoesNotExist):
+                    registration = ActivityRegistration.objects.select_related('student', 'activity').get(student=student, activity=activity)
+                    if registration.is_point_added:
+                        continue
+                    dao.update_registration(registration)
+                except (Student.DoesNotExist, Activity.DoesNotExist, ActivityRegistration.DoesNotExist):
                     continue
 
-                registration, _ = ActivityRegistration.objects.get_or_create(student=student, activity=activity)
-                if registration.is_attendance and registration.is_point_added:
-                    continue
-
-                SemesterOfStudent.objects.get_or_create(semester=activity.semester, student=student)
-                dao.update_training_point(registration)
-
-        return Response(data={'message': 'Upload file điểm danh thành công'}, status=status.HTTP_200_OK)
+        return Response(data={'detail': 'Upload file điểm danh thành công'}, status=status.HTTP_200_OK)
 
     # @action(detail=False, methods=['get'])
     # def export_statistics(self, request):

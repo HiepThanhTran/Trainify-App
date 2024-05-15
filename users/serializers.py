@@ -1,18 +1,18 @@
 from rest_framework import serializers
 
 from core.serializers import BaseSerializer
-from core.utils import factory
+from core.utils.factory import factory
+from core.utils.validations import validate_email, validate_user_account
 from users.models import Account, Student, Specialist, Assistant, Administrator, User
 
 
 class AccountSerializer(BaseSerializer):
-    key = serializers.CharField(write_only=True, required=True, allow_blank=False, allow_null=False)
-
+    code = serializers.CharField(write_only=True, required=True, allow_blank=False, allow_null=False)
     user = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Account
-        fields = ['id', 'role', 'email', 'password', 'avatar', 'date_joined', 'last_login', 'user', 'key']
+        fields = ['id', 'role', 'code', 'email', 'password', 'avatar', 'date_joined', 'last_login', 'user']
         extra_kwargs = {
             'password': {
                 'write_only': True,
@@ -28,14 +28,30 @@ class AccountSerializer(BaseSerializer):
             },
         }
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
+    def to_representation(self, account):
+        data = super().to_representation(account)
+        avatar = data.get('avatar')
 
-        avatar = data.get('avatar', None)
         if 'avatar' in self.fields and avatar:
-            data['avatar'] = instance.avatar.url
+            data['avatar'] = account.avatar.url
 
         return data
+
+    def create(self, validated_data):
+        user = factory.find_user_by_code(code=validated_data.pop('code'))
+
+        validate_email(code=user.code, first_name=user.first_name, email=validated_data['email'])
+        validate_user_account(user)
+
+        avatar = validated_data.get('avatar', None)
+        validated_data['avatar'] = factory.get_or_upload(file=avatar, public_id=f'user-{user.code}' if avatar else None, ftype='avatar')
+
+        account = Account.objects.create_account(email=validated_data.pop('email'), password=validated_data.pop('password'), **validated_data)
+        user.account = account
+        user.save()
+        factory.set_role(user=user, account=account)
+
+        return account
 
     def get_user(self, account):
         instance, serializer_class = factory.check_account_role(account)
@@ -44,16 +60,44 @@ class AccountSerializer(BaseSerializer):
         return serializer_class(user_instance).data
 
 
+class AccountUpdateSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True, required=False)
+    avatar = serializers.ImageField(required=False)
+    first_name = serializers.CharField(required=False, max_length=50)
+    middle_name = serializers.CharField(required=False, max_length=50)
+    last_name = serializers.CharField(required=False, max_length=50)
+    date_of_birth = serializers.DateField(required=False)
+    address = serializers.CharField(required=False, max_length=255)
+    phone_number = serializers.CharField(required=False, max_length=15)
+    gender = serializers.CharField(required=False, max_length=1)
+
+    def update(self, account, validated_data):
+        instance, _ = factory.check_account_role(account)
+        user = getattr(account, instance, None)
+
+        if 'password' in validated_data:
+            account.set_password(validated_data.pop('password'))
+        if 'avatar' in validated_data:
+            account.avatar = factory.get_or_upload(file=validated_data.pop('avatar'), public_id=f'user-{user.code}')
+        account.save()
+
+        for attr, value in validated_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        return account
+
+
 class UserSerializer(BaseSerializer):
     class Meta:
         model = User
-        fields = ['id', 'full_name', 'faculty', 'gender', 'date_of_birth', 'address', 'phone_number']
+        fields = ['id', 'first_name', 'middle_name', 'last_name', 'faculty', 'gender', 'date_of_birth', 'address', 'phone_number']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
+    def to_representation(self, user):
+        data = super().to_representation(user)
 
-        if 'faculty' in self.fields and instance.faculty:
-            data['faculty'] = instance.faculty.name
+        if 'faculty' in self.fields and user.faculty:
+            data['faculty'] = user.faculty.name
 
         return data
 
@@ -86,19 +130,16 @@ class StudentSerializer(UserSerializer):
         model = Student
         fields = UserSerializer.Meta.fields + ['code', 'major', 'sclass', 'academic_year', 'educational_system']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
+    def to_representation(self, student):
+        data = super().to_representation(student)
 
-        if 'major' in self.fields:
-            data['major'] = instance.major.name
-
-        if 'sclass' in self.fields:
-            data['sclass'] = instance.sclass.name
-
-        if 'academic_year' in self.fields:
-            data['academic_year'] = instance.academic_year.name
-
-        if 'educational_system' in self.fields:
-            data['educational_system'] = instance.educational_system.name
+        if 'major' in self.fields and student.major:
+            data['major'] = student.major.name
+        if 'sclass' in self.fields and student.sclass:
+            data['sclass'] = student.sclass.name
+        if 'academic_year' in self.fields and student.academic_year:
+            data['academic_year'] = student.academic_year.name
+        if 'educational_system' in self.fields and student.educational_system:
+            data['educational_system'] = student.educational_system.name
 
         return data

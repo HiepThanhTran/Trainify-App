@@ -7,8 +7,8 @@ router = routers.DefaultRouter()
 router.register('semesters', views.SemesterViewSet, basename='semesters')
 router.register('criterions', views.CriterionViewSet, basename='criterions')
 router.register('statistics', views.StatisticsViewSet, basename='statistics')
-router.register('files', views.FileUploadAndExportViewSet, basename='files')
+router.register('files', views.FileViewSet, basename='files')
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]

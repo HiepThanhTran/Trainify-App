@@ -93,12 +93,24 @@ class Officer(User):
     class Meta:
         abstract = True
 
+    bulletins = GenericRelation(
+        Activity,
+        related_name='officers',
+        related_query_name='officers',
+        content_type_field='poster_type',
+        object_id_field='poster_id'
+    )
+
     activities = GenericRelation(
         Activity,
+        related_name='officers',
         related_query_name='officers',
-        content_type_field='created_by_type',
-        object_id_field='created_by_id'
+        content_type_field='organizer_type',
+        object_id_field='organizer_id'
     )
+
+    def generate_code(self):
+        return f'{self.faculty.id:02d}{random.randint(0, 99):02d}{self.id:06d}'
 
 
 class Administrator(Officer):
@@ -118,17 +130,11 @@ class Specialist(Officer):
     job_title = models.CharField(max_length=50, null=True, blank=True)
     academic_degree = models.CharField(max_length=50, null=True, blank=True)
 
-    def generate_code(self):
-        return f'{self.faculty.id:02d}{self.id:05d}spc'
-
 
 class Assistant(Officer):
     class Meta:
         verbose_name = _('Assistant')
         verbose_name_plural = _('Assistants')
-
-    def generate_code(self):
-        return f'{self.faculty.id:02d}{self.id:04d}asst'
 
 
 class Student(User):

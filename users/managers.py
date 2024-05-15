@@ -1,39 +1,38 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.db import transaction
+from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
 class AccountManager(BaseUserManager):
-    def create_user(self, email=None, password=None, **extra_fields):
-        from core.utils import factory
+    def create_account(self, email=None, password=None, **extra_fields):
+        from core.utils.factory import factory
         if not email:
             raise ValueError(_('Email must be set'))
 
-        with transaction.atomic():
-            account, created = self.get_or_create(email=self.normalize_email(email), **extra_fields)
+        if not password:
+            raise ValueError(_('Password must be set'))
 
-            if not created:
-                return account
-
-            account.set_password(password)
-            account.avatar = factory.get_image()
-            account.save(using=self._db)
-
-            from users.models import Administrator
-            administrator = Administrator.objects.create(
-                account=account,
-                first_name=f'Administrator {account.id}',
-                date_of_birth=timezone.now(),
-            )
-
-            factory.set_role(administrator)
-            factory.set_permissions_for_account(account)
+        account = self.create(email=self.normalize_email(email), password=make_password(password), **extra_fields)
+        factory.set_permissions_for_account(account)
 
         return account
 
     def create_superuser(self, email=None, password=None, **extra_fields):
+        from core.utils.factory import factory
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', self.model.Role.ADMINISTRATOR)
+        extra_fields.setdefault('avatar', factory.get_or_upload())
+        account = self.create_account(email=email, password=password, **extra_fields)
 
-        return self.create_user(email=email, password=password, **extra_fields)
+        from users.models import Administrator
+        administrator = Administrator.objects.create(
+            account=account,
+            first_name=f'Administrator {account.id}',
+            date_of_birth=timezone.now(),
+        )
+
+        factory.set_role(user=administrator, account=account)
+
+        return account
