@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "tpm-mobileapp",
+    "slug": "tpm-mobileapp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "tpm-mobileapp"
+}
