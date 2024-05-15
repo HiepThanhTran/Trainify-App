@@ -1,10 +1,10 @@
-import { View, Text, Dimensions } from "react-native";
+import {Text, View} from "react-native";
 import MyStyles from "../../styles/MyStyles";
 import OnboardingStyles from "./OnboardingStyles";
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import AppIntroSlider from "react-native-app-intro-slider";
 import LottieView from "lottie-react-native";
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 
 // Animations
 const animations = [
@@ -34,7 +34,7 @@ const Onboarding = () => {
     const handleDone = () => {
         navigation.dispatch(
             CommonActions.reset({
-                index:0,
+                index: 0,
                 routes: [{name: 'Home'}]
             })
         )
@@ -43,7 +43,7 @@ const Onboarding = () => {
     //Button Label
     const buttonLabel = (label) => {
         return (
-            <View style={{ padding: 12 }}>
+            <View style={{padding: 12}}>
                 <Text style={[MyStyles.SemiBold, OnboardingStyles.NextButton]}>
                     {label}
                 </Text>
@@ -57,15 +57,15 @@ const Onboarding = () => {
     return (
         <AppIntroSlider
             data={animations}
-            renderItem={({ item }) => {
+            renderItem={({item}) => {
                 return (
                     <View style={OnboardingStyles.OnboardingContainer}>
                         {item.image && (
                             <LottieView style={OnboardingStyles.OnboardingImage}
-                                source={item.image}
-                                ref={animation}
-                                autoPlay
-                                loop
+                                        source={item.image}
+                                        ref={animation}
+                                        autoPlay
+                                        loop
                             />
                         )}
                         <Text style={[MyStyles.Bold, OnboardingStyles.OnboardingTitle]}>{item.title}</Text>

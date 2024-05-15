@@ -1,25 +1,25 @@
-import { StyleSheet } from "react-native";
+import {StyleSheet} from "react-native";
 
 const MyStyles = StyleSheet.create({
-    Bold:{
+    Bold: {
         fontFamily: 'OpenSansBold'
     },
-    SemiBold:{
+    SemiBold: {
         fontFamily: 'OpenSansSemiBold'
     },
-    Light:{
-        fontFamily:'OpenSansLight'
+    Light: {
+        fontFamily: 'OpenSansLight'
     },
-    Medium:{
+    Medium: {
         fontFamily: 'OpenSansMedium'
     },
-    Regular:{
+    Regular: {
         fontFamily: "OpenSansRegular"
     },
-    Italic:{
-        fontFamily:"OpenSansItalic"
+    Italic: {
+        fontFamily: "OpenSansItalic"
     },
-    Container:{
+    Container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'

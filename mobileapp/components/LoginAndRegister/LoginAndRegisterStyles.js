@@ -1,5 +1,4 @@
-import { StyleSheet } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import {StyleSheet} from "react-native";
 
 const LoginAndRegisterStyles = StyleSheet.create({
     LoginContainer: {
@@ -42,7 +41,7 @@ const LoginAndRegisterStyles = StyleSheet.create({
     Title: {
         color: 'white',
         fontSize: 45,
-        marginTop: 100
+        marginTop: 60
     },
     Form: {
         flex: 1,

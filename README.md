@@ -33,10 +33,11 @@ pip install -r requirements.txt
 ```shell
 python manage.py collectdata
 ```
+
 - This command also run makemigrations and migrate
 - This command will create a superuser with:
-  - **username**: admin@gmail.com
-  - **password**: admin@123
+    - **username**: admin@gmail.com
+    - **password**: admin@123
 
 - If you want to use your database, you can run makemigrations and migrate and create superuser
 
