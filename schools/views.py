@@ -20,16 +20,10 @@ class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Criterion.objects.filter(is_active=True)
     serializer_class = schools_serializers.CriterionSerializer
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
 
 class SemesterViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Semester.objects.filter(is_active=True)
     serializer_class = schools_serializers.SemesterSerializer
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
 
 class StatisticsViewSet(viewsets.ViewSet):
@@ -51,12 +45,12 @@ class StatisticsViewSet(viewsets.ViewSet):
             raise ValidationError({'detail': 'Vui lòng thống kê theo khoa hoặc lớp học hoặc cả 2'})
 
         if faculty_id and not class_id:
-            faculty = get_object_or_404(Faculty, pk=faculty_id)
+            faculty = get_object_or_404(queryset=Faculty, pk=faculty_id)
         elif not faculty_id and class_id:
-            sclass = get_object_or_404(Class, pk=class_id)
+            sclass = get_object_or_404(queryset=Class, pk=class_id)
         else:
-            faculty = get_object_or_404(Faculty, pk=faculty_id)
-            sclass = get_object_or_404(Class, pk=class_id, major__faculty=faculty)
+            faculty = get_object_or_404(queryset=Faculty, pk=faculty_id)
+            sclass = get_object_or_404(queryset=Class, pk=class_id, major__faculty=faculty)
 
         statistics_data = dao.get_statistics(semester=semester, faculty=faculty, sclass=sclass)
         return Response(data=statistics_data, status=status.HTTP_200_OK)

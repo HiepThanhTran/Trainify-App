@@ -12,13 +12,10 @@ class AccountSerializer(BaseSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'role', 'code', 'email', 'password', 'avatar', 'date_joined', 'last_login', 'user']
+        fields = ['id', 'original_role', 'code', 'email', 'password', 'avatar', 'date_joined', 'last_login', 'user']
         extra_kwargs = {
             'password': {
                 'write_only': True,
-            },
-            'role': {
-                'read_only': True,
             },
             'date_joined': {
                 'read_only': True,
@@ -54,10 +51,9 @@ class AccountSerializer(BaseSerializer):
         return account
 
     def get_user(self, account):
-        instance, serializer_class = factory.check_account_role(account)
-        user_instance = getattr(account, instance, None)
-
-        return serializer_class(user_instance).data
+        instance_name, serializer_class = factory.check_account_role(account)
+        user = getattr(account, instance_name, None)
+        return serializer_class(user).data
 
 
 class AccountUpdateSerializer(serializers.Serializer):
@@ -72,8 +68,7 @@ class AccountUpdateSerializer(serializers.Serializer):
     gender = serializers.CharField(required=False, max_length=1)
 
     def update(self, account, validated_data):
-        instance, _ = factory.check_account_role(account)
-        user = getattr(account, instance, None)
+        user = getattr(account, factory.check_account_role(account)[0], None)
 
         if 'password' in validated_data:
             account.set_password(validated_data.pop('password'))

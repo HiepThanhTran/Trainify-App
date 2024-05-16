@@ -19,7 +19,7 @@ class AccountViewSet(viewsets.ViewSet):
     parser_classes = [parsers.MultiPartParser, ]
 
     def get_permissions(self):
-        if self.action in ['get_authenticated_account', 'update_authenticated_account']:
+        if self.action in ['get_authenticated_account', 'partial_update_authenticated_account']:
             return [permissions.IsAuthenticated()]
 
         if self.action in ['create_assistant_account']:
@@ -33,7 +33,7 @@ class AccountViewSet(viewsets.ViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['patch'], detail=False, url_path='me/update')
-    def update_authenticated_account(self, request):
+    def partial_update_authenticated_account(self, request):
         serializer = users_serializers.AccountUpdateSerializer(instance=request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -61,12 +61,6 @@ class AssistantViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrieve
     serializer_class = users_serializers.AssistantSerializer
     permission_classes = [perms.HasInSpeacialistGroup]
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
 
 class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Student.objects.select_related('faculty', 'major', 'sclass', 'academic_year', 'educational_system').filter(is_active=True)
@@ -75,9 +69,6 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
     def get_queryset(self):
         queryset = self.queryset
-
-        if self.action.__eq__('get_reports'):
-            return queryset.prefetch_related('reports')
 
         if self.action.__eq__('get_activities'):
             return queryset.prefetch_related('registrations')
@@ -91,29 +82,14 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         if self.action in ['get_activities', 'get_points']:
             return [perms.HasInStudentGroup()]
 
-        if self.action in ['get_reports']:
-            return [perms.HasInAssistantGroup()]
-
         return [perms.HasInAssistantGroup()]
-
-    @action(methods=['get'], detail=True, url_path='reports')
-    def get_reports(self, request, pk=None):
-        reports = self.get_object().reports.select_related('activity').filter(is_active=True)
-        activities = [report.activity for report in reports]
-
-        return factory.get_paginators_response(
-            paginator=paginators.ActivityPagination(), request=request,
-            serializer_class=activities_serializers.ActivitySerializer, data=activities
-        )
 
     @action(methods=['get'], detail=True, url_path='activities')
     def get_activities(self, request, pk=None):
-        activity_status = request.query_params.get('status')
+        partd = request.query_params.get('partd')
+
         registrations = self.get_object().registrations.select_related('activity').filter(is_active=True)
-
-        if activity_status and activity_status.__eq__('partd'):
-            registrations = registrations.filter(is_attendance=True)
-
+        registrations = registrations.filter(is_attendance=partd) if partd and partd.__eq__('True') or partd.__eq__('False') else registrations
         activities = [registration.activity for registration in registrations]
 
         return factory.get_paginators_response(
@@ -134,9 +110,3 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
             student_summary['training_points'] = schools_serializers.TrainingPointSerializer(training_points, many=True).data
 
         return Response(data=student_summary, status=status.HTTP_200_OK)
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)

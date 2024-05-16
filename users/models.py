@@ -41,13 +41,18 @@ class Account(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return f'{self.email} - {self.get_role_display()}'
+        return f'{self.email} - {self.original_role}'
+
+    @property
+    def original_role(self):
+        return self.Role.labels[self.Role.values.index(self.role)]
 
     def has_in_group(self, name=None):
         return self.groups.filter(name=name).exists()
 
-    def get_role_display(self):
-        return self.Role.labels[self.Role.values.index(self.role)]
+    @staticmethod
+    def get_roles():
+        return dict(Account.Role.choices)
 
 
 class User(BaseModel):

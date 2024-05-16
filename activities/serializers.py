@@ -20,14 +20,14 @@ class ActivitySerializer(BaseSerializer):
 
         if 'image' in self.fields and image:
             data['image'] = activity.image.url
-        if 'criterion' in self.fields and activity.criterion:
-            data['criterion'] = activity.criterion.name
-        if 'semester' in self.fields and activity.semester:
-            data['semester'] = activity.semester.full_name
-        if 'faculty' in self.fields and activity.faculty:
-            data['faculty'] = activity.faculty.name
         if 'bulletin' in self.fields and activity.bulletin:
             data['bulletin'] = activity.bulletin.title
+        if 'faculty' in self.fields and activity.faculty:
+            data['faculty'] = activity.faculty.name
+        if 'semester' in self.fields and activity.semester:
+            data['semester'] = activity.semester.original_name
+        if 'criterion' in self.fields and activity.criterion:
+            data['criterion'] = activity.criterion.name
 
         return data
 
@@ -35,8 +35,7 @@ class ActivitySerializer(BaseSerializer):
         request = self.context.get('request')
         image = validated_data.pop('image', None)
 
-        instance, _ = factory.check_account_role(request.user)
-        validated_data['organizer'] = getattr(request.user, instance, None)
+        validated_data['organizer'] = getattr(request.user, factory.check_account_role(request.user)[0], None)
         activity = Activity.objects.create(**validated_data)
 
         activity.image = factory.get_or_upload(file=image, public_id=f'activity-{activity.id}' if image else image, ftype='activity')
@@ -81,8 +80,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
         fields = AuthenticatedActivitySerializer.Meta.fields + ['organizer']
 
     def get_organizer(self, activity):
-        _, serializer_class, _ = factory.check_user_instance(activity.organizer)
-
+        serializer_class, _ = factory.check_user_instance(activity.organizer)
         return serializer_class(activity.organizer).data
 
 
@@ -104,8 +102,7 @@ class BulletinSerializer(BaseSerializer):
         request = self.context.get('request')
         cover = validated_data.pop('cover', None)
 
-        instance, _ = factory.check_account_role(request.user)
-        validated_data['poster'] = getattr(request.user, instance, None)
+        validated_data['poster'] = getattr(request.user, factory.check_account_role(request.user)[0], None)
         bulletin = Bulletin.objects.create(**validated_data)
 
         bulletin.cover = factory.get_or_upload(file=cover, public_id=f'bulletin-{bulletin.id}' if cover else None, ftype='bulletin')
@@ -132,7 +129,7 @@ class BulletinDetailsSerialzer(BulletinSerializer):
         fields = BulletinSerializer.Meta.fields + ['poster']
 
     def get_poster(self, bulletin):
-        _, serializer_class, _ = factory.check_user_instance(bulletin.poster)
+        serializer_class, _ = factory.check_user_instance(bulletin.poster)
 
         return serializer_class(bulletin.poster).data
 

@@ -65,9 +65,7 @@ class Factory:
         return account
 
     def set_role(self, user, account):
-        _, _, role = self.check_user_instance(user)
-
-        account.role = role
+        account.role = self.check_user_instance(user)[1]
         account.save()
 
         return user, account
@@ -85,20 +83,20 @@ class Factory:
     @staticmethod
     def check_user_instance(user):
         from users import serializers
-        user_mapping = {
-            Administrator: ('administrator', serializers.AdministratorSerializer, Account.Role.ADMINISTRATOR),
-            Specialist: ('specialist', serializers.SpecialistSerializer, Account.Role.SPECIALIST),
-            Assistant: ('assistant', serializers.AssistantSerializer, Account.Role.ASSISTANT),
-            Student: ('student', serializers.StudentSerializer, Account.Role.STUDENT),
+        instance_mapping = {
+            Administrator: (serializers.AdministratorSerializer, Account.Role.ADMINISTRATOR),
+            Specialist: (serializers.SpecialistSerializer, Account.Role.SPECIALIST),
+            Assistant: (serializers.AssistantSerializer, Account.Role.ASSISTANT),
+            Student: (serializers.StudentSerializer, Account.Role.STUDENT),
         }
 
-        return user_mapping.get(type(user))
+        return instance_mapping.get(type(user))
 
     @staticmethod
     def check_account_role(account):
         from users import serializers
         role_mapping = {
-            Account.Role.ADMINISTRATOR: ('administrator', serializers.AdministratorSerializer, account.administrator),
+            Account.Role.ADMINISTRATOR: ('administrator', serializers.AdministratorSerializer),
             Account.Role.SPECIALIST: ('specialist', serializers.SpecialistSerializer),
             Account.Role.ASSISTANT: ('assistant', serializers.AssistantSerializer),
             Account.Role.STUDENT: ('student', serializers.StudentSerializer),

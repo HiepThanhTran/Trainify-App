@@ -14,6 +14,6 @@ class ActivityAdminForm(forms.ModelForm):
         for user_content_type in user_content_types:
             user_instances.extend(user_content_type.model_class().objects.all())
 
-        choices = [(instance.id, f'{instance.id} - {instance.full_name}') for instance in user_instances]
+        choices = [(instance.id, f'{instance.id} - {instance.original_name}') for instance in user_instances]
 
         self.fields['organizer_id'].choices = choices

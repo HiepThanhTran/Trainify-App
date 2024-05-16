@@ -7,7 +7,7 @@ from schools.models import Semester, Criterion, TrainingPoint
 class SemesterSerializer(BaseSerializer):
     class Meta:
         model = Semester
-        fields = ['id', 'code', 'full_name', 'start_date', 'end_date', 'academic_year']
+        fields = ['id', 'original_name', 'code', 'academic_year', 'start_date', 'end_date']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

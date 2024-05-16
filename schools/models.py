@@ -91,7 +91,7 @@ class Semester(BaseModel):
     students = models.ManyToManyField('users.Student', related_name='semesters', through='SemesterOfStudent')
 
     def __str__(self):
-        return f'{self.full_name} - {self.academic_year}'
+        return f'{self.original_name} - {self.academic_year}'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -101,7 +101,7 @@ class Semester(BaseModel):
             self.save()
 
     @property
-    def full_name(self):
+    def original_name(self):
         return self.Semesters.labels[self.Semesters.values.index(self.short_name)]
 
     def generate_code(self):

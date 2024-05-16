@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 import unidecode
 from rest_framework.exceptions import ValidationError
@@ -22,6 +23,14 @@ def validate_email(code, first_name, email):
 def validate_password(password):
     if not password or len(password) < 8:
         raise ValidationError({'password': 'Mật khẩu phải có ít nhất 8 ký tự'})
+    return True
+
+
+def validate_date_format(date):
+    try:
+        datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        return False
     return True
 
 

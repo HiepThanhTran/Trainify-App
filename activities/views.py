@@ -1,4 +1,3 @@
-from cloudinary import api
 from rest_framework import viewsets, generics, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -7,9 +6,10 @@ from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
 from activities.models import Activity, ActivityRegistration, MissingActivityReport, Bulletin
-from core.utils import perms, paginators, filters
+from core.utils import perms, paginators
 from core.utils.dao import dao
 from core.utils.factory import factory
+from core.utils.validations import validate_date_format
 from interacts import serializers as interacts_serializers
 
 
@@ -21,8 +21,10 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
     def get_queryset(self):
         queryset = self.queryset
 
-        if self.action.__eq__('get_activities'):
-            return queryset.prefetch_related('activities')
+        if self.action.__eq__('list'):
+            title = self.request.query_params.get('title')
+            if title:
+                queryset = queryset.filter(title__icontains=title)
 
         return queryset
 
@@ -33,23 +35,14 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'get_activities']:
+        if self.action in ['list', 'retrieve']:
             return [permissions.AllowAny()]
 
         return [perms.HasInAssistantGroup()]
 
-    @action(methods=['get'], detail=True, url_path='activities')
-    def get_activities(self, request, pk=None):
-        activities = self.get_object().activities.select_related('faculty', 'semester', 'criterion', 'bulletin').all()
-
-        return factory.get_paginators_response(
-            paginator=paginators.ActivityPagination(), request=request,
-            serializer_class=activities_serializers.ActivitySerializer, data=activities
-        )
-
     @action(methods=['post', 'delete'], detail=True, url_path='activities/(?P<activity_id>[^/.]+)')
-    def activity_of_bulletin(self, request, pk=None, activity_id=None):
-        activity = get_object_or_404(Activity, pk=activity_id)
+    def add_or_remove_activity_of_bulletin(self, request, pk=None, activity_id=None):
+        activity = get_object_or_404(queryset=Activity, pk=activity_id)
         bulletin = self.get_object()
         activity_exists = bulletin.activities.filter(pk=activity.pk).exists()
         if request.method.__eq__('DELETE'):
@@ -73,37 +66,35 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        api.delete_resources(self.get_object().cover.public_id)
-        return super().destroy(request, *args, **kwargs)
-
 
 class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
-    queryset = Activity.objects.select_related('faculty', 'semester', 'criterion', 'bulletin').filter(is_active=True).order_by('-created_date')
+    queryset = Activity.objects.select_related('bulletin', 'faculty', 'semester', 'criterion').filter(is_active=True).order_by('-created_date')
     serializer_class = activities_serializers.ActivitySerializer
     pagination_class = paginators.ActivityPagination
+
+    filter_params = ['form', 'bulletin_id', 'faculty_id', 'semester_code', 'criterion_id']
 
     def get_queryset(self):
         queryset = self.queryset
 
-        if self.request.user.is_authenticated:
-            if self.request.user.has_in_group(name='assistant'):
-                return queryset.prefetch_related('participants')
+        if self.action.__eq__('list'):
+            for param in self.filter_params:
+                value = self.request.query_params.get(param)
+                queryset = queryset.filter(**{param: value}) if value else queryset
 
-        if self.action.__eq__('comments_of_activity'):
-            return queryset.prefetch_related('comments')
+            name = self.request.query_params.get('name')
+            queryset = queryset.filter(name__icontains=name) if name else queryset
 
-        if self.action.__eq__('like_activity'):
-            return queryset.prefetch_related('likes')
+            start_date = self.request.query_params.get('start_date', '')
+            queryset = queryset.filter(start_date__gte=start_date) if validate_date_format(start_date) else queryset
+
+            end_date = self.request.query_params.get('end_date', '')
+            queryset = queryset.filter(end_date__lte=end_date) if validate_date_format(start_date) else queryset
+
+        queryset = queryset.prefetch_related('comments') if self.action.__eq__('comments') else queryset
+        queryset = queryset.prefetch_related('likes') if self.action.__eq__('like') else queryset
+        queryset = queryset.prefetch_related('registrations') if self.action.__eq__('register_activity') else queryset
+        queryset = queryset.prefetch_related('registrations', 'reports') if self.action.__eq__('report_activity') else queryset
 
         return queryset
 
@@ -121,13 +112,13 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         if self.action in ['register_activity', 'report_activity']:
             return [perms.HasInStudentGroup()]
 
-        if self.action in ['comments_of_activity', 'like_activity'] and self.request.method.__eq__('POST'):
+        if self.action in ['comments', 'like_activity'] and self.request.method.__eq__('POST'):
             return [permissions.IsAuthenticated()]
 
         return [permissions.AllowAny()]
 
     @action(methods=['get', 'post'], detail=True, url_path='comments')
-    def comments_of_activity(self, request, pk=None):
+    def comments(self, request, pk=None):
         if request.method.__eq__('POST'):
             content = request.data.get('content')
             if not content:
@@ -135,7 +126,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
             comment = self.get_object().comments.create(content=content, account=request.user)
 
             serializer = interacts_serializers.CommentSerializer(comment)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
         comments = self.get_object().comments.select_related('account').order_by('-created_date').all()
 
@@ -165,20 +156,20 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
     @action(methods=['post'], detail=True, url_path='report', parser_classes=[parsers.MultiPartParser, ])
     def report_activity(self, request, pk=None):
-        registration = get_object_or_404(self.get_object().registrations, student=request.user.student)
-
+        activity = self.get_object()
+        registration = get_object_or_404(queryset=activity.registrations, student=request.user.student)
         if registration.is_point_added:
             raise ValidationError({'detail': 'Bạn không thể báo thiếu hoạt động đã được cộng điểm'})
 
-        content = request.data.get('content', None)
+        content = request.data.get('content', '')
         evidence = request.data.get('evidence', None)
 
         try:
-            report = self.get_object().reports.get(student=request.user.student)
+            report = activity.reports.get(student=request.user.student)
             report.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except MissingActivityReport.DoesNotExist:
-            report = self.get_object().reports.create(student=request.user.student, content=content, evidence=evidence)
+            report = activity.reports.create(student=request.user.student, content=content, evidence=evidence)
 
         serializer = activities_serializers.MissingActivityReportSerializer(report)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
@@ -190,32 +181,33 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        api.delete_resources(self.get_object().image.public_id)
-        return super().destroy(request, *args, **kwargs)
-
 
 class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = MissingActivityReport.objects.select_related('student', 'activity').filter(is_active=True).order_by('-updated_date')
     serializer_class = activities_serializers.MissingActivityReportSerializer
     pagination_class = paginators.MissingActivityReportPagination
     permission_classes = [perms.HasInAssistantGroup]
-    filterset_class = filters.MissingActivityReportFilter
+
+    filter_params = ['student_id', 'activity_id', 'activity__faculty_id']
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action.__eq__('list'):
+            for param in self.filter_params:
+                value = self.request.query_params.get(param)
+                queryset = queryset.filter(**{param: value}) if value else queryset
+
+            resolved = self.request.query_params.get('resolved')
+            queryset = queryset.filter(is_resolved=resolved) if resolved and resolved.__eq__('True') or resolved.__eq__('False') else queryset
+
+        return queryset
 
     @action(methods=['post'], detail=True, url_path='confirm')
     def confirm_missing_report(self, request, pk=None):
         missing_report = self.get_object()
 
-        if missing_report.is_resolved is True:
+        if missing_report.is_resolved:
             raise ValidationError({'detail': 'Báo thiếu này đã được giải quyết'})
 
         registration = ActivityRegistration.objects.get(student=missing_report.student, activity=missing_report.activity)
@@ -235,9 +227,3 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
 
         report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)

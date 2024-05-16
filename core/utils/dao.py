@@ -114,7 +114,11 @@ class DAO:
 
     @staticmethod
     def update_registration(registration):
-        training_point = TrainingPoint.objects.get_or_create(student=registration.student, semester=registration.activity.semester, criterion=registration.activity.criterion)[0]
+        training_point, _ = TrainingPoint.objects.get_or_create(
+            student=registration.student,
+            semester=registration.activity.semester,
+            criterion=registration.activity.criterion
+        )
         training_point.point = F('point') + registration.activity.point
         training_point.save()
 
