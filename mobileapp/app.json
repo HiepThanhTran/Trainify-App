@@ -12,6 +12,5 @@
     "android": {
       "package": "com.anonymous.tpmmobileapp"
     }
-  },
-  "name": "tpm-mobileapp"
+  } 
 }

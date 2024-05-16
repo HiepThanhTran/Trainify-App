@@ -41,14 +41,14 @@ const LoginAndRegisterStyles = StyleSheet.create({
     Title: {
         color: 'white',
         fontSize: 45,
-        marginTop: 140
+        marginTop: 115
     },
     Form: {
         flex: 1,
         alignItems: 'center',
         marginLeft: 16,
         marginRight: 16,
-        marginTop: 16
+        marginTop: -60
     },
     DropdownSelector: {
         width: '100%',
