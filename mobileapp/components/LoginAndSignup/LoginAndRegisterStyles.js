@@ -31,8 +31,8 @@ const LoginAndRegisterStyles = StyleSheet.create({
         width: '100%',
         flex: 1,
         justifyContent: 'space-around',
-        paddingTop: 160,
-        paddingBottom: 40
+        paddingTop: 120,
+        paddingBottom: 40,
     },
     TitleContainer: {
         flex: 1,
@@ -41,7 +41,7 @@ const LoginAndRegisterStyles = StyleSheet.create({
     Title: {
         color: 'white',
         fontSize: 45,
-        marginTop: 60
+        marginTop: 140
     },
     Form: {
         flex: 1,
@@ -62,18 +62,18 @@ const LoginAndRegisterStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingLeft: 15,
-        paddingRight: 12
+        paddingRight: 12,
     },
     DropdownArea: {
         width: '100%',
         height: 160,
         borderRadius: 16,
-        marginTop: 65,
+        marginTop: 70,
         backgroundColor: 'white',
         elevation: 5,
         alignSelf: 'center',
         position: 'absolute',
-        zIndex: 1
+        zIndex: 1000
     },
     RoleItem: {
         width: '92%',
@@ -89,7 +89,7 @@ const LoginAndRegisterStyles = StyleSheet.create({
         width: '100%',
         marginBottom: 20,
         borderColor: '#3e9ae4',
-        borderWidth: 1,
+        borderWidth: 1
     },
     Button: {
         width: '100%',
@@ -103,6 +103,18 @@ const LoginAndRegisterStyles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         padding: 10
+    },
+    Detail:{
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 5
+    },
+    Password:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        justifyContent: 'space-between'
     }
 })
 
