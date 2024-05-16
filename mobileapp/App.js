@@ -25,10 +25,10 @@ export default function App() {
         return (
             <NavigationContainer>
               <Stack.Navigator initialRouteName="Login">
-                {/* <Stack.Screen name="Onboarding" options={{ headerShown: false }} component={Onboarding} />
-                <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} /> */}
-                <Stack.Screen name="Login" options={{ headerShown: false }} component={Login} />
-                <Stack.Screen name="Signup" options={{ headerShown: false }} component={Signup} />
+                <Stack.Screen name="Onboarding" options={{ headerShown: false }} component={Onboarding} />
+                <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
+                {/* <Stack.Screen name="Login" options={{ headerShown: false }} component={Login} /> */}
+                {/* <Stack.Screen name="Signup" options={{ headerShown: false }} component={Signup} /> */}
               </Stack.Navigator>
             </NavigationContainer>
         )
