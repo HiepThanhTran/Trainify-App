@@ -1,30 +1,29 @@
-import axios from 'axios';
+import axios from "axios";
 
-const BASE_URL = 'https://trainingpoint.vercel.app';
-const TYPE = 'api';
-const VERSION = 'v1';
+const BASE_URL = "https://trainingpoint.vercel.app";
+const TYPE = "api";
+const VERSION = "v1";
 const URL = `${BASE_URL}/${TYPE}/${VERSION}/`;
 
 export const endpoints = {
     //// Accounts
-    roles: 'accounts/roles', // GET: Lấy danh sách vai trò
-    me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
-    token: 'o/applications', // POST: Lấy token
-    login: 'acconuts/auth/login/', // POST: Đăng nhập
-    studentRegister: 'accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
-    assistantRegister: 'accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
-    meUpdate: '/accounts/me/update/', // PATCH: Cập nhật tài khoản đang đăng nhập
+    "roles": "accounts/roles", // GET: Lấy danh sách vai trò
+    "me": "/accounts/me/", // GET: Xem thông tin tài khoản đang đăng nhập
+    "token": "o/applications", // POST: Lấy token
+    "login": "acconuts/auth/login/", // POST: Đăng nhập
+    "student-register": "accounts/auth/student/register/", // POST: Đăng ký tài khoản cho sinh viên
+    "assistant-register": "accounts/auth/assistant/register/", // POST: Đăng ký tài khoản cho trợ lý sinh viên
+    "me-update": "/accounts/me/update/", // PATCH: Cập nhật tài khoản đang đăng nhập
 
     //// Students
-    students: '/students/', // GET: Lấy danh sách sinh viên
-    studentDetails: (studentID) => `/students/${studentID}/`, // GET: Lấy thông tin chi tiết của sinh viên
-    studentActivities: (studentID) => `/students/${studentID}/activities/`, // GET: Lấy danh sách hoạt động của sinh viên
-    studentReports: (studentID) => `/students/${studentID}/reports/`, // GET: Lấy danh sách hoạt động sinh viên báo thiếu
-    studentPoints: (studentID, semesterCode) => `/students${studentID}/points/${semesterCode}`, // GET: Thống kê điểm rèn luyện của sinh viên
+    "students": "/students/", // GET: Lấy danh sách sinh viên
+    "student-details": (studentID) => `/students/${studentID}/`, // GET: Lấy thông tin chi tiết của sinh viên
+    "student-activities": (studentID) => `/students/${studentID}/activities/`, // GET: Lấy danh sách hoạt động của sinh viên
+    "student-points": (studentID, semesterCode) => `/students${studentID}/points/${semesterCode}`, // GET: Thống kê điểm rèn luyện của sinh viên
 
     //// Assistant
-    assistants: '/assistants/', // GET: Lấy danh sách trợ lý sinh viên
-    assistantDetails: (assistantID) => `/assistants/${assistantID}/`, // GET: Lấy thông tin chi tiết trợ lý sinh viên
+    "assistants": "/assistants/", // GET: Lấy danh sách trợ lý sinh viên
+    "assistant-details": (assistantID) => `/assistants/${assistantID}/`, // GET: Lấy thông tin chi tiết trợ lý sinh viên
 
     //// Bulletins
     /*
@@ -36,9 +35,9 @@ export const endpoints = {
     * DELETE: /bulletins/{bulletinID}/ - Xóa bản tin
     * DELETE: /bulletins/{bulletinID}/activites/{activityID}/ - Xóa hoạt động khỏi bản tin
      */
-    bulletins: '/bulletins/', // GET, POST
-    bulletinDetails: (bulletinID) => `/bulletins/${bulletinID}/`, // GET, PATCH, DELETE
-    activityOfBulletin: (bulletinID, activityID) => `/bulletins/${bulletinID}/activites/${activityID}/`, // POST, DELETE
+    "bulletins": "/bulletins/", // GET, POST
+    "bulletin-details": (bulletinID) => `/bulletins/${bulletinID}/`, // GET, PATCH, DELETE
+    "bulletin-activity": (bulletinID, activityID) => `/bulletins/${bulletinID}/activites/${activityID}/`, // POST, DELETE
 
     //// Activities
     /*
@@ -53,39 +52,49 @@ export const endpoints = {
     * PATCH: /activities/{activityID}/ - Cập nhật hoạt động
     * DELETE: /activities/{activityID}/ - Xóa hoạt động
      */
-    activities: '/activities/', // GET, POST
-    activityDetails: (activityID) => `/activities/${activityID}/`, // GET, PATCH, DELETE
-    activityComments: (activityID) => `/activities/${activityID}/comments/`, // GET, POST
-    activityLike: (activityID) => `/activities/${activityID}/like/`, // POST
-    activityRegister: (activityID) => `/activities/${activityID}/register/`, // POST
-    activityReport: (activityID) => `/activities/${activityID}/report/`, // POST
+    "activities": "/activities/", // GET, POST
+    "activity-details": (activityID) => `/activities/${activityID}/`, // GET, PATCH, DELETE
+    "activity-comments": (activityID) => `/activities/${activityID}/comments/`, // GET, POST
+    "activity-like": (activityID) => `/activities/${activityID}/like/`, // POST
+    "activity-register": (activityID) => `/activities/${activityID}/register/`, // POST
+    "activity-report": (activityID) => `/activities/${activityID}/report/`, // POST
 
-    //// Reports
-    reports: '/reports/', // GET: Lấy danh sách báo thiếu (có thể lọc theo sinh viên, hoạt động, khoa)
-    reportDetails: (reportID) => `/reports/${reportID}/`, // GET: Lấy thông tin chi tiết của báo thiếu
-    confirmReport: (reportID) => `/reports/${reportID}/confirm/`, // POST: Xác nhận báo thiếu
-    rejectReport: (reportID) => `/reports/${reportID}/reject/`, // POST: Từ chối báo thiếu
+    //// Missing Reports
+    "reports": "/reports/", // GET: Lấy danh sách báo thiếu (có thể lọc theo sinh viên, hoạt động, khoa)
+    "report-details": (reportID) => `/reports/${reportID}/`, // GET: Lấy thông tin chi tiết của báo thiếu
+    "confirm-report": (reportID) => `/reports/${reportID}/confirm/`, // POST: Xác nhận báo thiếu
+    "reject-report": (reportID) => `/reports/${reportID}/reject/`, // POST: Từ chối báo thiếu
 
     //// Comments
     /*
-
+    * PUT: Cập nhật bình luận
+    * DELETE: Xóa bình luận
      */
-    // PUT: Cập nhật bình luận
-    // DELETE: Xóa bình luận
-    commentDetails: (commentID) => `/comments/${commentID}/`, // PUT, DELETE
+    "comment-details": (commentID) => `/comments/${commentID}/`, // PUT, DELETE
+
+    //// Classes
+    "classes": "/classes/", // GET: Lấy danh sách lớp (có thể lọc theo khoa)
 
     //// Semesters
-    semesters: '/semesters/', // GET: Lấy danh sách học kỳ
+    "semesters": "/semesters/", // GET: Lấy danh sách học kỳ
 
     //// Criterions
-    criterions: '/criterions/', // GET: Lấy danh sách quy chế điểm rèn luyện
+    "criterions": "/criterions/", // GET: Lấy danh sách quy chế điểm rèn luyện
 
     //// Statistics
-    statisticsSchools: '/statistics/school/', // GET: Thống kê toàn trường
-    statisticsFilter: (semesterCode) => `/statistics/points/${semesterCode}/`, // GET: Thống kê theo khoa hoặc lớp hoặc cả 2
+    "statistics": (semesterCode) => `/statistics/points/${semesterCode}/`, // GET: Thống kê theo khoa hoặc lớp hoặc cả 2
 
     //// Files
-    attendanceUpload: '/files/attendance/upload/csv/', // POST: Upload file điểm danh
+    "attendance-upload": "/files/attendance/upload/csv/", // POST: Upload file điểm danh
 };
+
+export const authAPI = (accessToken) => {
+    return axios.create({
+        baseURL: BASE_URL,
+        headers: {
+            "Authorization": `Bearer ${accessToken}`
+        }
+    })
+}
 
 export default axios.create({baseURL: URL});

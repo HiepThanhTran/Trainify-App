@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useNavigation } from '@react-navigation/native';
 import MyStyles from "../../styles/MyStyles";
-import LoginAndRegisterStyles from "./LoginAndRegisterStyles";
+import LoginAndRegisterStyles from "./Auth";
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut } from 'react-native-reanimated';
 import Signup from './Signup';
 

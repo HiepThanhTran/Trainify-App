@@ -11,9 +11,6 @@
     ],
     "android": {
       "package": "com.anonymous.tpmmobileapp"
-    },
-    "ios": {
-      "bundleIdentifier": "com.anonymous.tpmmobileapp"
     }
-  }
+  } 
 }
