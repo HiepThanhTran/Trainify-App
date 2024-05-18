@@ -8,10 +8,10 @@ class AccountManager(BaseUserManager):
     def create_account(self, email=None, password=None, **extra_fields):
         from core.utils.factory import factory
         if not email:
-            raise ValueError(_('Email must be set'))
+            raise ValueError(_("Email must be set"))
 
         if not password:
-            raise ValueError(_('Password must be set'))
+            raise ValueError(_("Password must be set"))
 
         account = self.create(email=self.normalize_email(email), password=make_password(password), **extra_fields)
         factory.set_permissions_for_account(account)
@@ -20,18 +20,14 @@ class AccountManager(BaseUserManager):
 
     def create_superuser(self, email=None, password=None, **extra_fields):
         from core.utils.factory import factory
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('role', self.model.Role.ADMINISTRATOR)
-        extra_fields.setdefault('avatar', factory.get_or_upload())
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", self.model.Role.ADMINISTRATOR)
+        extra_fields.setdefault("avatar", factory.get_or_upload())
         account = self.create_account(email=email, password=password, **extra_fields)
 
         from users.models import Administrator
-        administrator = Administrator.objects.create(
-            account=account,
-            first_name=f'Administrator {account.id}',
-            date_of_birth=timezone.now(),
-        )
+        administrator = Administrator.objects.create(account=account, first_name=f"Administrator {account.id}", date_of_birth=timezone.now(), )
 
         factory.set_role(user=administrator, account=account)
 

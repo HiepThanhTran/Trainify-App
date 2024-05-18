@@ -1,5 +1,3 @@
-# from django.contrib import admin
-
 from core.admin import my_admin_site
 from users.models import Account, Student, Administrator, Specialist, Assistant
 

@@ -3,11 +3,13 @@ import axios from 'axios';
 const BASE_URL = 'https://trainingpoint.vercel.app';
 const TYPE = 'api';
 const VERSION = 'v1';
-const API_URL = `${BASE_URL}/${TYPE}/${VERSION}/`;
+const URL = `${BASE_URL}/${TYPE}/${VERSION}/`;
 
 export const endpoints = {
     //// Accounts
+    roles: 'accounts/roles', // GET: Lấy danh sách vai trò
     me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
+    token: 'o/applications', // POST: Lấy token
     login: 'acconuts/auth/login/', // POST: Đăng nhập
     studentRegister: 'accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
     assistantRegister: 'accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
@@ -26,7 +28,6 @@ export const endpoints = {
 
     //// Bulletins
     /*
-    * Bản tin là nơi chứa các hoạt động, sinh viên có thể xem và tham gia hoạt động
     * GET: /bulletins/ - Lấy danh sách bản tin (có thể lọc theo tiêu đề bản tin)
     * GET: /bulletins/{bulletinID}/ - Lấy thông tin chi tiết của bản tin
     * POST: /bulletins/ - Tạo bản tin mới
@@ -41,7 +42,6 @@ export const endpoints = {
 
     //// Activities
     /*
-    * Hoạt động là nơi sinh viên có thể đăng ký, xem và tham gia bình luận
     * GET: /activities/ - Lấy danh sách hoạt động (có thể lọc theo tên, bản tin, khoa, học kỳ, tiêu chí, hình thức, ngày bắt đầu, ngày kết thúc)
     * GET: /activities/{activityID}/comments/ - Lấy danh sách bình luận của hoạt động
     * GET: /activities/{activityID}/ - Lấy thông tin chi tiết của hoạt động
@@ -61,12 +61,15 @@ export const endpoints = {
     activityReport: (activityID) => `/activities/${activityID}/report/`, // POST
 
     //// Reports
-    reports: '/reports/', // GET: Lấy danh sách báo thiếu
+    reports: '/reports/', // GET: Lấy danh sách báo thiếu (có thể lọc theo sinh viên, hoạt động, khoa)
     reportDetails: (reportID) => `/reports/${reportID}/`, // GET: Lấy thông tin chi tiết của báo thiếu
     confirmReport: (reportID) => `/reports/${reportID}/confirm/`, // POST: Xác nhận báo thiếu
     rejectReport: (reportID) => `/reports/${reportID}/reject/`, // POST: Từ chối báo thiếu
 
     //// Comments
+    /*
+
+     */
     // PUT: Cập nhật bình luận
     // DELETE: Xóa bình luận
     commentDetails: (commentID) => `/comments/${commentID}/`, // PUT, DELETE
@@ -85,4 +88,4 @@ export const endpoints = {
     attendanceUpload: '/files/attendance/upload/csv/', // POST: Upload file điểm danh
 };
 
-export default axios.create({baseURL: API_URL});
+export default axios.create({baseURL: URL});

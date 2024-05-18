@@ -8,7 +8,12 @@
     ],
     "plugins": [
       "expo-font"
-    ]
-  },
-  "name": "tpm-mobileapp"
+    ],
+    "android": {
+      "package": "com.anonymous.tpmmobileapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.tpmmobileapp"
+    }
+  }
 }

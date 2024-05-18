@@ -3,7 +3,7 @@ from rest_framework import serializers
 from core.serializers import BaseSerializer
 from core.utils.factory import factory
 from core.utils.validations import validate_email, validate_user_account
-from users.models import Account, Student, Specialist, Assistant, Administrator, User
+from users.models import Account, Administrator, Assistant, Specialist, Student, User
 
 
 class AccountSerializer(BaseSerializer):
@@ -12,38 +12,32 @@ class AccountSerializer(BaseSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'original_role', 'code', 'email', 'password', 'avatar', 'date_joined', 'last_login', 'user']
+        fields = ["id", "original_role", "code", "email", "password", "avatar", "date_joined", "last_login", "user"]
         extra_kwargs = {
-            'password': {
-                'write_only': True,
-            },
-            'date_joined': {
-                'read_only': True,
-            },
-            'last_login': {
-                'read_only': True,
-            },
+            "password": {"write_only": True, },
+            "date_joined": {"read_only": True, },
+            "last_login": {"read_only": True, },
         }
 
     def to_representation(self, account):
         data = super().to_representation(account)
-        avatar = data.get('avatar')
+        avatar = data.get("avatar")
 
-        if 'avatar' in self.fields and avatar:
-            data['avatar'] = account.avatar.url
+        if "avatar" in self.fields and avatar:
+            data["avatar"] = account.avatar.url
 
         return data
 
     def create(self, validated_data):
-        user = factory.find_user_by_code(code=validated_data.pop('code'))
+        user = factory.find_user_by_code(code=validated_data.pop("code"))
 
-        validate_email(code=user.code, first_name=user.first_name, email=validated_data['email'])
+        validate_email(code=user.code, first_name=user.first_name, email=validated_data["email"])
         validate_user_account(user)
 
-        avatar = validated_data.get('avatar', None)
-        validated_data['avatar'] = factory.get_or_upload(file=avatar, public_id=f'user-{user.code}' if avatar else None, ftype='avatar')
+        avatar = validated_data.get("avatar", None)
+        validated_data["avatar"] = factory.get_or_upload(file=avatar, public_id=f"user-{user.code}" if avatar else avatar, ftype="avatar")
 
-        account = Account.objects.create_account(email=validated_data.pop('email'), password=validated_data.pop('password'), **validated_data)
+        account = Account.objects.create_account(email=validated_data.pop("email"), password=validated_data.pop("password"), **validated_data)
         user.account = account
         user.save()
         factory.set_role(user=user, account=account)
@@ -68,12 +62,13 @@ class AccountUpdateSerializer(serializers.Serializer):
     gender = serializers.CharField(required=False, max_length=1)
 
     def update(self, account, validated_data):
-        user = getattr(account, factory.check_account_role(account)[0], None)
+        instance_name, _ = factory.check_account_role(account)
+        user = getattr(account, instance_name, None)
 
-        if 'password' in validated_data:
-            account.set_password(validated_data.pop('password'))
-        if 'avatar' in validated_data:
-            account.avatar = factory.get_or_upload(file=validated_data.pop('avatar'), public_id=f'user-{user.code}')
+        if "password" in validated_data:
+            account.set_password(validated_data.pop("password"))
+        if "avatar" in validated_data:
+            account.avatar = factory.get_or_upload(file=validated_data.pop("avatar"), public_id=f"user-{user.code}")
         account.save()
 
         for attr, value in validated_data.items():
@@ -86,55 +81,50 @@ class AccountUpdateSerializer(serializers.Serializer):
 class UserSerializer(BaseSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'middle_name', 'last_name', 'faculty', 'gender', 'date_of_birth', 'address', 'phone_number']
+        fields = ["id", "first_name", "middle_name", "last_name", "gender", "date_of_birth", "address", "phone_number", "faculty"]
 
     def to_representation(self, user):
         data = super().to_representation(user)
 
-        if 'faculty' in self.fields and user.faculty:
-            data['faculty'] = user.faculty.name
+        if "faculty" in self.fields and user.faculty:
+            data["faculty"] = user.faculty.name
 
         return data
 
 
-class OfficerSerializer(UserSerializer):
+class AdministratorSerializer(UserSerializer):
     class Meta:
+        model = Administrator
         fields = UserSerializer.Meta.fields
 
 
-class AdministratorSerializer(OfficerSerializer):
-    class Meta:
-        model = Administrator
-        fields = OfficerSerializer.Meta.fields
-
-
-class SpecialistSerializer(OfficerSerializer):
+class SpecialistSerializer(UserSerializer):
     class Meta:
         model = Specialist
-        fields = OfficerSerializer.Meta.fields + ['job_title', 'academic_degree']
+        fields = UserSerializer.Meta.fields + ["job_title", "academic_degree"]
 
 
-class AssistantSerializer(OfficerSerializer):
+class AssistantSerializer(UserSerializer):
     class Meta:
         model = Assistant
-        fields = OfficerSerializer.Meta.fields
+        fields = UserSerializer.Meta.fields
 
 
 class StudentSerializer(UserSerializer):
     class Meta:
         model = Student
-        fields = UserSerializer.Meta.fields + ['code', 'major', 'sclass', 'academic_year', 'educational_system']
+        fields = UserSerializer.Meta.fields + ["code", "major", "sclass", "academic_year", "educational_system"]
 
     def to_representation(self, student):
         data = super().to_representation(student)
 
-        if 'major' in self.fields and student.major:
-            data['major'] = student.major.name
-        if 'sclass' in self.fields and student.sclass:
-            data['sclass'] = student.sclass.name
-        if 'academic_year' in self.fields and student.academic_year:
-            data['academic_year'] = student.academic_year.name
-        if 'educational_system' in self.fields and student.educational_system:
-            data['educational_system'] = student.educational_system.name
+        if "major" in self.fields and student.major:
+            data["major"] = student.major.name
+        if "sclass" in self.fields and student.sclass:
+            data["sclass"] = student.sclass.name
+        if "academic_year" in self.fields and student.academic_year:
+            data["academic_year"] = f"{student.academic_year.start_date.year}-{student.academic_year.end_date.year}"
+        if "educational_system" in self.fields and student.educational_system:
+            data["educational_system"] = student.educational_system.name
 
         return data

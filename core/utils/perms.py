@@ -9,20 +9,15 @@ class HasInGroup(permissions.IsAuthenticated):
 
 
 class HasInSpeacialistGroup(HasInGroup):
-    group_name = 'specialist'
+    group_name = "specialist"
 
 
 class HasInAssistantGroup(HasInGroup):
-    group_name = 'assistant'
+    group_name = "assistant"
 
 
 class HasInStudentGroup(HasInGroup):
-    group_name = 'student'
-
-
-class HasInActivitiesGroup(permissions.IsAuthenticated):
-    def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.has_in_activities_group
+    group_name = "student"
 
 
 class AllowedEditComment(permissions.IsAuthenticated):
