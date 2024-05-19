@@ -46,12 +46,12 @@ async function updateStatistics(chartClass, chartFaculty = null) {
     const classId = classSelect.value;
 
     if (chartFaculty !== null) {
-        const statisticsFaculty = await fetchApiToGetStatistics(`/api/v1/statistics/points/${semesterCode}/?faculty_id=${facultyId}`);
+        const statisticsFaculty = await fetchApiToGetStatistics(`/api/v1/statistics/${semesterCode}/points/?faculty_id=${facultyId}`);
         updateChart(chartFaculty, statisticsFaculty);
         updateStatisticsFaculty(statisticsFaculty);
     }
 
-    const statisticsClass = await fetchApiToGetStatistics(`/api/v1/statistics/points/${semesterCode}/?faculty_id=${facultyId}&class_id=${classId}`);
+    const statisticsClass = await fetchApiToGetStatistics(`/api/v1/statistics/${semesterCode}/points/?faculty_id=${facultyId}&class_id=${classId}`);
     updateChart(chartClass, statisticsClass);
     updateStatisticsClass(statisticsClass);
 }

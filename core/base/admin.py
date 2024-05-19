@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.template.response import TemplateResponse
 from django.urls import path
 
-from core.utils.dao import dao
+from core.utils import dao
 from schools.models import Faculty, Semester
 
 
@@ -26,8 +26,8 @@ class MyAdminSite(admin.AdminSite):
                 for sclass in major.classes.order_by("name"):
                     classes.append(sclass)
 
-        statistics_faculty = dao.get_statistics(semester=semesters[0], faculty=faculties[0])
-        statistics_class = dao.get_statistics(semester=semesters[0], sclass=classes[0])
+        statistics_faculty, _ = dao.statistics_points(semester=semesters[0], faculty=faculties[0])
+        statistics_class, _ = dao.statistics_points(semester=semesters[0], sclass=classes[0])
 
         return TemplateResponse(
             request=request,

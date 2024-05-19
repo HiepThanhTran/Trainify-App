@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from activities.models import Activity, ActivityRegistration, Bulletin, MissingActivityReport
-from core.serializers import BaseSerializer
-from core.utils.factory import factory
+from core.base.serializers import BaseSerializer
+from core.utils import factory, validations
 from interacts.models import Like
 
 
@@ -10,7 +10,8 @@ class ActivitySerializer(BaseSerializer):
     class Meta:
         model = Activity
         fields = [
-            "id", "name", "participant", "start_date", "end_date", "location", "point", "updated_date", "created_date",
+            "id", "name", "participant", "start_date", "end_date",
+            "location", "point", "updated_date", "created_date",
             "bulletin", "faculty", "semester", "criterion",
             "image", "organizational_form", "description"
         ]
@@ -22,31 +23,33 @@ class ActivitySerializer(BaseSerializer):
         if "image" in self.fields and image:
             data["image"] = activity.image.url
         if "bulletin" in self.fields and activity.bulletin:
-            data["bulletin"] = activity.bulletin.title
+            data["bulletin"] = f"{activity.bulletin}"
         if "faculty" in self.fields and activity.faculty:
-            data["faculty"] = activity.faculty.name
+            data["faculty"] = f"{activity.faculty}"
         if "semester" in self.fields and activity.semester:
-            data["semester"] = activity.semester.original_name
+            data["semester"] = f"{activity.semester}"
         if "criterion" in self.fields and activity.criterion:
-            data["criterion"] = activity.criterion.name
+            data["criterion"] = f"{activity.criterion}"
 
         return data
 
     def create(self, validated_data):
         request = self.context.get("request")
 
-        image = validated_data.get("image", None)
-        validated_data["image"] = factory.get_or_upload(file=image, public_id=f"activity-{activity.id}" if image else image, ftype="activity", )
-
-        instance = factory.check_account_role(request.user)[0]
-        validated_data["organizer"] = getattr(request.user, instance, None)
+        instance_name = validations.check_account_role(request.user)[0]
+        validated_data["organizer"] = getattr(request.user, instance_name, None)
         activity = Activity.objects.create(**validated_data)
+
+        image = validated_data.get("image", None)
+        activity.image = factory.get_or_upload_image(file=image, public_id=f"activity-{activity.id}" if image else None, ftype="activity")
+        activity.save()
 
         return activity
 
     def update(self, activity, validated_data):
-        if "image" in validated_data:
-            validated_data["image"] = factory.get_or_upload(file=validated_data["image"], public_id=f"activity-{activity.id}")
+        image = validated_data.get("image", None)
+        if image:
+            validated_data["image"] = factory.get_or_upload_image(file=image, public_id=f"activity-{activity.id}", ftype="activity")
 
         for key, value in validated_data.items():
             setattr(activity, key, value)
@@ -81,7 +84,7 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
         fields = AuthenticatedActivitySerializer.Meta.fields + ["organizer"]
 
     def get_organizer(self, activity):
-        serializer_class, _ = factory.check_user_instance(activity.organizer)
+        serializer_class = validations.check_user_instance(activity.organizer)[0]
         return serializer_class(activity.organizer).data
 
 
@@ -101,19 +104,21 @@ class BulletinSerializer(BaseSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
-        cover = validated_data.pop("cover", None)
 
-        instance_name, _ = factory.check_account_role(request.user)
+        instance_name = validations.check_account_role(request.user)[0]
         validated_data["poster"] = getattr(request.user, instance_name, None)
         bulletin = Bulletin.objects.create(**validated_data)
-        bulletin.cover = factory.get_or_upload(file=cover, public_id=f"bulletin-{bulletin.id}" if cover else cover, ftype="bulletin")
+
+        cover = validated_data.pop("cover", None)
+        bulletin.cover = factory.get_or_upload_image(file=cover, public_id=f"bulletin-{bulletin.id}" if cover else None, ftype="bulletin")
         bulletin.save()
 
         return bulletin
 
     def update(self, bulletin, validated_data):
-        if "cover" in validated_data:
-            validated_data["cover"] = factory.get_or_upload(file=validated_data["cover"], public_id=f"bulletin-{bulletin.id}")
+        cover = validated_data.get("cover", None)
+        if cover:
+            validated_data["cover"] = factory.get_or_upload_image(file=cover, public_id=f"bulletin-{bulletin.id}")
 
         for key, value in validated_data.items():
             setattr(bulletin, key, value)
@@ -130,8 +135,7 @@ class BulletinDetailsSerialzer(BulletinSerializer):
         fields = BulletinSerializer.Meta.fields + ["poster"]
 
     def get_poster(self, bulletin):
-        serializer_class, _ = factory.check_user_instance(bulletin.poster)
-
+        serializer_class = validations.check_user_instance(bulletin.poster)[0]
         return serializer_class(bulletin.poster).data
 
 

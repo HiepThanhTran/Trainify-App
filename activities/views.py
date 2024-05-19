@@ -1,16 +1,16 @@
+import csv
+
 from rest_framework import generics, parsers, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
 from activities.models import Activity, ActivityRegistration, Bulletin, MissingActivityReport
-from core.utils import paginators, perms
-from core.utils.dao import dao
-from core.utils.factory import factory
-from core.utils.validations import validate_date_format
+from core.utils import dao, validations
+from core.base import paginators, perms
 from interacts import serializers as interacts_serializers
+from users.models import Student
 
 
 class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
@@ -39,23 +39,25 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return [perms.HasInAssistantGroup()]
 
-    @action(methods=["post", "delete"], detail=True, url_path="activities/(?P<activity_id>[^/.]+)")
-    def add_or_remove_activity_of_bulletin(self, request, pk=None, activity_id=None):
+    @action(methods=["post", "delete"], detail=True, url_path="activities")
+    def add_or_remove_activity_of_bulletin(self, request, pk=None):
+        activity_id = request.data.get("activity_id")
         activity = get_object_or_404(queryset=Activity, pk=activity_id)
         bulletin = self.get_object()
         activity_exists = bulletin.activities.filter(pk=activity.pk).exists()
         if request.method.__eq__("DELETE"):
             if not activity_exists:
-                raise ValidationError({"detail": "Hoạt động không có trong bản tin"})
-            bulletin.activities.remove(activity)
+                return Response(data={"detail": "Hoạt động không có trong bản tin"}, status=status.HTTP_400_BAD_REQUEST)
 
+            bulletin.activities.remove(activity)
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         if activity_exists:
-            raise ValidationError({"detail": "Hoạt động đã có trong bản tin"})
-        bulletin.activities.add(activity)
+            return Response(data={"detail": "Hoạt động đã có trong bản tin"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = activities_serializers.AuthenticatedActivityDetailsSerializer(activity)
+        bulletin.activities.add(activity)
+        serializer = activities_serializers.ActivitySerializer(activity)
+
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, pk=None):
@@ -88,10 +90,12 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
             queryset = queryset.filter(organizational_form__iexact=form) if form else queryset
 
             start_date = self.request.query_params.get("start_date", "")
-            queryset = (queryset.filter(start_date__gte=start_date) if validate_date_format(start_date) else queryset)
+            if validations.validate_date_format(start_date):
+                queryset = queryset.filter(start_date__gte=start_date)
 
             end_date = self.request.query_params.get("end_date", "")
-            queryset = queryset.filter(end_date__lte=end_date) if validate_date_format(end_date) else queryset
+            if validations.validate_date_format(end_date):
+                queryset = queryset.filter(end_date__lte=end_date)
 
         queryset = queryset.prefetch_related("comments") if self.action.__eq__("comments") else queryset
         queryset = queryset.prefetch_related("likes") if self.action.__eq__("like_activity") else queryset
@@ -104,11 +108,13 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         if self.request.user.is_authenticated:
             if self.request.user.has_in_group(name="assistant"):
                 return activities_serializers.AuthenticatedActivityDetailsSerializer
+
             return activities_serializers.AuthenticatedActivitySerializer
+
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action in ["create", "update", "partial_update", "destroy"]:
+        if self.action in ["create", "update", "partial_update", "destroy", "attendace"]:
             return [perms.HasInAssistantGroup()]
 
         if self.action in ["register_activity", "report_activity"]:
@@ -124,26 +130,32 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         if request.method.__eq__("POST"):
             content = request.data.get("content")
             if not content:
-                raise ValidationError({"content": "Nội dung bình luận không được trống"})
-            comment = self.get_object().comments.create(content=content, account=request.user)
+                return Response(data={"content": "Nội dung bình luận không được trống"}, status=status.HTTP_400_BAD_REQUEST)
 
+            comment = self.get_object().comments.create(content=content, account=request.user)
             serializer = interacts_serializers.CommentSerializer(comment)
+
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-        comments = self.get_object().comments.select_related("account").order_by("-created_date").all()
+        comments = self.get_object().comments.select_related("account").order_by("-created_date")
 
-        return factory.get_paginators_response(
-            paginator=paginators.CommentPaginators(), request=request,
-            serializer_class=interacts_serializers.CommentSerializer, data=comments
-        )
+        paginator = paginators.CommentPaginators()
+        page = paginator.paginate_queryset(queryset=comments, request=request)
+        if page is not None:
+            serializer = interacts_serializers.CommentSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = interacts_serializers.CommentSerializer(comments, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=True, url_path="like")
     def like_activity(self, request, pk=None):
         like, created = self.get_object().likes.get_or_create(account=request.user)
-        like.is_active = not like.is_active if not created else True
-        like.save()
+        if not created:
+            like.is_active = not like.is_active
+            like.save()
 
-        serializer = activities_serializers.AuthenticatedActivitySerializer(self.get_object(), context={"request": request})
+        serializer = self.get_serializer_class()(self.get_object(), context={"request": request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=True, url_path="register")
@@ -161,7 +173,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         activity = self.get_object()
         registration = get_object_or_404(queryset=activity.registrations, student=request.user.student)
         if registration.is_point_added:
-            raise ValidationError({"detail": "Bạn không thể báo thiếu hoạt động đã được cộng điểm"})
+            return Response(data={"detail": "Không thể báo thiếu hoạt động đã được cộng điểm"}, status=status.HTTP_400_BAD_REQUEST)
 
         content = request.data.get("content", "")
         evidence = request.data.get("evidence", None)
@@ -183,6 +195,29 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    @action(methods=["post"], detail=False, url_path="attendance/upload/csv")
+    def attendace(self, request):
+        file = request.FILES.get("file", None)
+        if not file or not file.name.endswith(".csv"):
+            return Response(data={"detail": "Vui lòng upload file có định dạng là csv"}, status=status.HTTP_400_BAD_REQUEST)
+
+        csv_data = csv.reader(file.read().decode("utf-8").splitlines())
+        next(csv_data)
+        for row in csv_data:
+            student_code, activity_id = row
+
+            try:
+                registration = ActivityRegistration.objects.select_related("student", "activity") \
+                    .get(student__code=student_code, activity_id=activity_id)
+            except (Student.DoesNotExist, Activity.DoesNotExist, ActivityRegistration.DoesNotExist):
+                continue
+            if registration.is_point_added:
+                continue
+
+            dao.update_point_for_student(registration)
+
+        return Response(data={"detail": "Upload file điểm danh thành công"}, status=status.HTTP_200_OK)
+
 
 class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = MissingActivityReport.objects.select_related("student", "activity").filter(is_active=True).order_by("-updated_date")
@@ -201,19 +236,19 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
                 queryset = queryset.filter(**{param: value}) if value else queryset
 
             resolved = self.request.query_params.get("resolved")
-            queryset = queryset.filter(is_resolved=resolved) if resolved and (resolved.__eq__("True") or resolved.__eq__("False")) else queryset
+            if resolved and resolved.capitalize() in ["True", "False"]:
+                queryset = queryset.filter(is_resolved=resolved.capitalize())
 
         return queryset
 
     @action(methods=["post"], detail=True, url_path="confirm")
     def confirm_missing_report(self, request, pk=None):
         missing_report = self.get_object()
-
         if missing_report.is_resolved:
-            raise ValidationError({"detail": "Báo thiếu này đã được giải quyết"})
+            return Response(data={"detail": "Báo thiếu đã được giải quyết"}, status=status.HTTP_400_BAD_REQUEST)
 
         registration = ActivityRegistration.objects.get(student=missing_report.student, activity=missing_report.activity)
-        dao.update_registration(registration)
+        dao.update_point_for_student(registration)
 
         missing_report.is_resolved = True
         missing_report.save()
@@ -225,7 +260,7 @@ class MissingActivityReportViewSet(viewsets.ViewSet, generics.ListAPIView, gener
     def reject_missing_report(self, request, pk=None):
         missing_report = self.get_object()
         if missing_report.is_resolved is True:
-            raise ValidationError({"detail": "Không thể xóa báo thiếu đã được giải quyết"})
+            return Response(data={"detail": "Không thể xóa báo thiếu đã được giải quyết"}, status=status.HTTP_400_BAD_REQUEST)
 
         missing_report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

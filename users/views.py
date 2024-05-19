@@ -4,9 +4,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
-from core.utils import paginators, perms
-from core.utils.dao import dao
-from core.utils.factory import factory
+from core.utils import dao
+from core.base import paginators, perms
 from schools.models import Semester
 from users import serializers as users_serializers
 from users.models import Account, Assistant, Student
@@ -93,13 +92,20 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         partd = request.query_params.get("partd")
 
         registrations = self.get_object().registrations.select_related("activity").filter(is_active=True)
-        registrations = registrations.filter(is_attendance=partd) if partd and (partd.__eq__("True") or partd.__eq__("False")) else registrations
+
+        if partd and partd.capitalize() in ["True", "False"]:
+            registrations = registrations.filter(is_attendance=partd.capitalize())
+
         activities = [registration.activity for registration in registrations]
 
-        return factory.get_paginators_response(
-            paginator=paginators.ActivityPagination(), request=request,
-            serializer_class=activities_serializers.ActivitySerializer, data=activities
-        )
+        paginator = paginators.ActivityPagination()
+        page = paginator.paginate_queryset(queryset=activities, request=request)
+        if page is not None:
+            serializer = activities_serializers.ActivitySerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = activities_serializers.ActivitySerializer(activities, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=True, url_path="points/(?P<semester_code>[^/.]+)")
     def get_points(self, request, pk=None, semester_code=None):
@@ -108,7 +114,6 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         criterion_name = request.query_params.get("criterion")
         if criterion_name:
-            training_points = training_points.filter(criterion__icontains=criterion_name)
-            student_summary["training_points"] = training_points
+            student_summary["training_points"] = training_points.filter(criterion__icontains=criterion_name)
 
         return Response(data=student_summary, status=status.HTTP_200_OK)

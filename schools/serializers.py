@@ -1,4 +1,4 @@
-from core.serializers import BaseSerializer
+from core.base.serializers import BaseSerializer
 from schools.models import Criterion, Semester, Class
 
 
@@ -11,9 +11,9 @@ class ClassSerializer(BaseSerializer):
         data = super().to_representation(sclass)
 
         if "major" in self.fields and sclass.major:
-            data["major"] = sclass.major.name
+            data["major"] = f"{sclass.major}"
         if "academic_year" in self.fields and sclass.academic_year:
-            data["academic_year"] = f"{sclass.academic_year.start_date.year}-{sclass.academic_year.end_date.year}"
+            data["academic_year"] = f"{sclass.academic_year}"
 
         return data
 
@@ -27,7 +27,7 @@ class SemesterSerializer(BaseSerializer):
         data = super().to_representation(semester)
 
         if "academic_year" in self.fields and semester.academic_year:
-            data["academic_year"] = f"{semester.academic_year.start_date.year}-{semester.academic_year.end_date.year}"
+            data["academic_year"] = f"{semester.academic_year}"
 
         return data
 

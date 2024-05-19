@@ -1,4 +1,4 @@
-from core.admin import my_admin_site
+from core.base.admin import my_admin_site
 from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Semester, Criterion, TrainingPoint, SemesterOfStudent
 
 my_admin_site.register(EducationalSystem)

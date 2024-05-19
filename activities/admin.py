@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from activities.forms import ActivityAdminForm
 from activities.models import Activity, ActivityRegistration, MissingActivityReport
-from core.admin import my_admin_site
+from core.base.admin import my_admin_site
 
 
 class ActivityAdmin(admin.ModelAdmin):

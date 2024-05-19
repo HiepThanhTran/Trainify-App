@@ -4,10 +4,9 @@ from rest_framework import routers
 from schools import views
 
 router = routers.DefaultRouter()
-router.register("classes", views.ClassViewSet, basename="classes")
-router.register("semesters", views.SemesterViewSet, basename="semesters")
-router.register("criterions", views.CriterionViewSet, basename="criterions")
-router.register("statistics", views.StatisticsViewSet, basename="statistics")
-router.register("files", views.FileViewSet, basename="files")
+router.register(prefix="classes", viewset=views.ClassViewSet, basename="classes")
+router.register(prefix="semesters", viewset=views.SemesterViewSet, basename="semesters")
+router.register(prefix="criterions", viewset=views.CriterionViewSet, basename="criterions")
+router.register(prefix="statistics/(?P<semester_code>[1-9]+)", viewset=views.StatisticsViewSet, basename="statistics")
 
 urlpatterns = [path("", include(router.urls))]
