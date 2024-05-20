@@ -1,145 +1,132 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
-from core.serializers import BaseSerializer
-from core.utils.factory import factory
-from core.utils.validations import validate_email, validate_user_account
-from users.models import Account, Student, Specialist, Assistant, Administrator, User
+from core.base.serializers import BaseSerializer
+from core.utils import factory, validations
+from users.models import Account, Administrator, Assistant, Specialist, Student, User
 
 
 class AccountSerializer(BaseSerializer):
-    code = serializers.CharField(write_only=True, required=True, allow_blank=False, allow_null=False)
-    user = serializers.SerializerMethodField(read_only=True)
+	code = serializers.CharField(write_only=True, required=True, allow_blank=False, allow_null=False)
+	user = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-        model = Account
-        fields = ['id', 'role', 'code', 'email', 'password', 'avatar', 'date_joined', 'last_login', 'user']
-        extra_kwargs = {
-            'password': {
-                'write_only': True,
-            },
-            'role': {
-                'read_only': True,
-            },
-            'date_joined': {
-                'read_only': True,
-            },
-            'last_login': {
-                'read_only': True,
-            },
-        }
+	class Meta:
+		model = Account
+		fields = ["id", "original_role", "code", "email", "password", "avatar", "date_joined", "last_login", "user"]
+		extra_kwargs = {
+			"password": {"write_only": True},
+			"original_role": {"read_only": True},
+			"date_joined": {"read_only": True},
+			"last_login": {"read_only": True},
+		}
 
-    def to_representation(self, account):
-        data = super().to_representation(account)
-        avatar = data.get('avatar')
+	def to_representation(self, account):
+		data = super().to_representation(account)
+		avatar = data.get("avatar")
 
-        if 'avatar' in self.fields and avatar:
-            data['avatar'] = account.avatar.url
+		if "avatar" in self.fields and avatar:
+			data["avatar"] = account.avatar.url
 
-        return data
+		return data
 
-    def create(self, validated_data):
-        user = factory.find_user_by_code(code=validated_data.pop('code'))
+	def create(self, validated_data):
+		user = factory.find_user_by_code(code=validated_data.pop("code"))
 
-        validate_email(code=user.code, first_name=user.first_name, email=validated_data['email'])
-        validate_user_account(user)
+		validations.validate_email(code=user.code, first_name=user.first_name, email=validated_data["email"])
+		if user.account:
+			raise ValidationError({"detail": "Người dùng đã có tài khoản"})
 
-        avatar = validated_data.get('avatar', None)
-        validated_data['avatar'] = factory.get_or_upload(file=avatar, public_id=f'user-{user.code}' if avatar else None, ftype='avatar')
+		avatar = validated_data.get("avatar", None)
+		validated_data["avatar"] = factory.get_or_upload_image(file=avatar, public_id=f"user-{user.code}" if avatar else avatar, ftype="avatar")
 
-        account = Account.objects.create_account(email=validated_data.pop('email'), password=validated_data.pop('password'), **validated_data)
-        user.account = account
-        user.save()
-        factory.set_role(user=user, account=account)
+		account = Account.objects.create_account(email=validated_data.pop("email"), password=validated_data.pop("password"), **validated_data)
+		user.account = account
+		user.save()
+		factory.set_role_for_account(user=user, account=account)
 
-        return account
+		return account
 
-    def get_user(self, account):
-        instance, serializer_class = factory.check_account_role(account)
-        user_instance = getattr(account, instance, None)
-
-        return serializer_class(user_instance).data
+	def get_user(self, account):
+		serializer_class, instance_name = validations.check_account_role(account)
+		user = getattr(account, instance_name, None)
+		return serializer_class(user).data
 
 
 class AccountUpdateSerializer(serializers.Serializer):
-    password = serializers.CharField(write_only=True, required=False)
-    avatar = serializers.ImageField(required=False)
-    first_name = serializers.CharField(required=False, max_length=50)
-    middle_name = serializers.CharField(required=False, max_length=50)
-    last_name = serializers.CharField(required=False, max_length=50)
-    date_of_birth = serializers.DateField(required=False)
-    address = serializers.CharField(required=False, max_length=255)
-    phone_number = serializers.CharField(required=False, max_length=15)
-    gender = serializers.CharField(required=False, max_length=1)
+	password = serializers.CharField(write_only=True, required=False)
+	avatar = serializers.ImageField(required=False)
+	first_name = serializers.CharField(required=False, max_length=50)
+	middle_name = serializers.CharField(required=False, max_length=50)
+	last_name = serializers.CharField(required=False, max_length=50)
+	date_of_birth = serializers.DateField(required=False)
+	address = serializers.CharField(required=False, max_length=255)
+	phone_number = serializers.CharField(required=False, max_length=15)
+	gender = serializers.CharField(required=False, max_length=1)
 
-    def update(self, account, validated_data):
-        instance, _ = factory.check_account_role(account)
-        user = getattr(account, instance, None)
+	def update(self, account, validated_data):
+		instance_name = validations.check_account_role(account)[1]
+		user = getattr(account, instance_name, None)
 
-        if 'password' in validated_data:
-            account.set_password(validated_data.pop('password'))
-        if 'avatar' in validated_data:
-            account.avatar = factory.get_or_upload(file=validated_data.pop('avatar'), public_id=f'user-{user.code}')
-        account.save()
+		if "password" in validated_data:
+			account.set_password(validated_data.pop("password"))
+		if "avatar" in validated_data:
+			account.avatar = factory.get_or_upload_image(file=validated_data.pop("avatar"), public_id=f"user-{user.code}")
+		account.save()
 
-        for attr, value in validated_data.items():
-            setattr(user, attr, value)
-        user.save()
+		for attr, value in validated_data.items():
+			setattr(user, attr, value)
+		user.save()
 
-        return account
+		return account
 
 
 class UserSerializer(BaseSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'middle_name', 'last_name', 'faculty', 'gender', 'date_of_birth', 'address', 'phone_number']
+	class Meta:
+		model = User
+		fields = ["id", "first_name", "middle_name", "last_name", "gender", "date_of_birth", "address", "phone_number", "faculty"]
 
-    def to_representation(self, user):
-        data = super().to_representation(user)
+	def to_representation(self, user):
+		data = super().to_representation(user)
 
-        if 'faculty' in self.fields and user.faculty:
-            data['faculty'] = user.faculty.name
+		if "faculty" in self.fields and user.faculty:
+			data["faculty"] = f"{user.faculty}"
 
-        return data
-
-
-class OfficerSerializer(UserSerializer):
-    class Meta:
-        fields = UserSerializer.Meta.fields
+		return data
 
 
-class AdministratorSerializer(OfficerSerializer):
-    class Meta:
-        model = Administrator
-        fields = OfficerSerializer.Meta.fields
+class AdministratorSerializer(UserSerializer):
+	class Meta:
+		model = Administrator
+		fields = UserSerializer.Meta.fields
 
 
-class SpecialistSerializer(OfficerSerializer):
-    class Meta:
-        model = Specialist
-        fields = OfficerSerializer.Meta.fields + ['job_title', 'academic_degree']
+class SpecialistSerializer(UserSerializer):
+	class Meta:
+		model = Specialist
+		fields = UserSerializer.Meta.fields + ["job_title", "academic_degree"]
 
 
-class AssistantSerializer(OfficerSerializer):
-    class Meta:
-        model = Assistant
-        fields = OfficerSerializer.Meta.fields
+class AssistantSerializer(UserSerializer):
+	class Meta:
+		model = Assistant
+		fields = UserSerializer.Meta.fields
 
 
 class StudentSerializer(UserSerializer):
-    class Meta:
-        model = Student
-        fields = UserSerializer.Meta.fields + ['code', 'major', 'sclass', 'academic_year', 'educational_system']
+	class Meta:
+		model = Student
+		fields = UserSerializer.Meta.fields + ["code", "major", "sclass", "academic_year", "educational_system"]
 
-    def to_representation(self, student):
-        data = super().to_representation(student)
+	def to_representation(self, student):
+		data = super().to_representation(student)
 
-        if 'major' in self.fields and student.major:
-            data['major'] = student.major.name
-        if 'sclass' in self.fields and student.sclass:
-            data['sclass'] = student.sclass.name
-        if 'academic_year' in self.fields and student.academic_year:
-            data['academic_year'] = student.academic_year.name
-        if 'educational_system' in self.fields and student.educational_system:
-            data['educational_system'] = student.educational_system.name
+		if "major" in self.fields and student.major:
+			data["major"] = f"{student.major}"
+		if "sclass" in self.fields and student.sclass:
+			data["sclass"] = f"{student.sclass}"
+		if "academic_year" in self.fields and student.academic_year:
+			data["academic_year"] = f"{student.academic_year}"
+		if "educational_system" in self.fields and student.educational_system:
+			data["educational_system"] = f"{student.educational_system}"
 
-        return data
+		return data
