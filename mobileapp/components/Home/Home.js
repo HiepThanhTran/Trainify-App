@@ -1,11 +1,14 @@
-import {Text, View} from "react-native";
+import {ScrollView, Text, View} from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Home = () => {
-    return (
-        <View>
-            <Text>Hello</Text>
-        </View>
-    );
+    // return (
+    //     <ScrollView>
+    //         <TouchableOpacity>
+    //             <Text>Hello</Text>
+    //         </TouchableOpacity>
+    //     </ScrollView>
+    // );
 }
 
 export default Home;

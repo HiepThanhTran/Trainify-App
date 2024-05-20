@@ -31,7 +31,7 @@ const LoginAndRegisterStyles = StyleSheet.create({
         width: '100%',
         flex: 1,
         justifyContent: 'space-around',
-        paddingTop: 120,
+        paddingTop: 140,
         paddingBottom: 40,
     },
     TitleContainer: {
@@ -48,7 +48,7 @@ const LoginAndRegisterStyles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 16,
         marginRight: 16,
-        marginTop: -60
+        marginTop: -45
     },
     DropdownSelector: {
         width: '100%',
