@@ -31,7 +31,7 @@ const AuthStyle = StyleSheet.create({
         width: '100%',
         flex: 1,
         justifyContent: 'space-around',
-        paddingTop: 140,
+        paddingTop: 120,
         paddingBottom: 40,
     },
     TitleContainer: {
