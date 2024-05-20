@@ -1,7 +1,7 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 //Size Image
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const OnboardingStyles = StyleSheet.create({
     OnboardingContainer: {

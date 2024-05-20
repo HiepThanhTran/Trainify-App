@@ -5,14 +5,13 @@ const BASE_URL = `${URL}/${TYPE}/${VERSION}/`;
 
 export const endPoints = {
     //// Auth
-    login: 'o/token/', // POST: Lấy access token đăng nhập
+    login: '/o/token/', // POST: Lấy access token đăng nhập
 
     //// Accounts
     me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
-    roles: 'accounts/roles', // GET: Lấy danh sách vai trò
     'me-update': '/accounts/me/update/', // PATCH: Cập nhật tài khoản đang đăng nhập
-    'student-register': 'accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
-    'assistant-register': 'accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
+    'student-register': '/accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
+    'assistant-register': '/accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
 
     //// Students
     students: '/students/', // GET: Lấy danh sách sinh viên
@@ -91,4 +90,4 @@ export const authAPI = (accessToken) => {
     });
 };
 
-export default axios.create({baseURL: URL});
+export default axios.create({ baseURL: BASE_URL });

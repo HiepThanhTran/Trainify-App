@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
-const LoginAndRegisterStyles = StyleSheet.create({
+const AuthStyle = StyleSheet.create({
     LoginContainer: {
         height: '100%',
         width: '100%',
@@ -118,4 +118,4 @@ const LoginAndRegisterStyles = StyleSheet.create({
     },
 });
 
-export default LoginAndRegisterStyles;
+export default AuthStyle;

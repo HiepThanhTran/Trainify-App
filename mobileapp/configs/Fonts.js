@@ -1,5 +1,5 @@
 import * as Font from 'expo-font';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 const loadFonts = async () => {
     await Font.loadAsync({

@@ -38,11 +38,6 @@ class AccountViewSet(viewsets.ViewSet):
 
         return Response(data=self.serializer_class(request.user).data, status=status.HTTP_200_OK)
 
-    @action(methods=["get"], detail=False, url_path="roles")
-    def get_roles(self, request):
-        roles = dict(Account.Role.choices)
-        return Response(data=roles, status=status.HTTP_200_OK)
-
     @action(methods=["post"], detail=False, url_path="auth/students/register")
     def create_student_account(self, request):
         return self._create_account(request=request)

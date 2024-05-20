@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
-const MyStyles = StyleSheet.create({
+const GlobalStyle = StyleSheet.create({
     Bold: {
         fontFamily: 'OpenSansBold',
     },
@@ -26,4 +26,4 @@ const MyStyles = StyleSheet.create({
     },
 });
 
-export default MyStyles;
+export default GlobalStyle;
