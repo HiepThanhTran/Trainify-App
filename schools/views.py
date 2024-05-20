@@ -40,13 +40,13 @@ class StatisticsViewSet(viewsets.ViewSet):
 	@action(methods=["get"], detail=False, url_path="points")
 	def get_statistics(self, request, semester_code=None):
 		faculty_id, class_id = request.query_params.get("faculty_id"), request.query_params.get("class_id")
-		semester, faculty, sclass = factory.find_semester_faculty_class_by_id(
+		semester, faculty, sclass = factory.find_sfc_by_id(
 			semester_code=semester_code,
 			faculty_id=faculty_id,
 			class_id=class_id
 		)
 
-		statistics_data = dao.statistics_points(semester=semester, faculty=faculty, sclass=sclass)[0]
+		statistics_data = dao.get_statistics(semester=semester, faculty=faculty, sclass=sclass)[0]
 		return Response(data=statistics_data, status=status.HTTP_200_OK)
 
 	@action(methods=["get"], detail=False, url_path="export")
@@ -57,7 +57,7 @@ class StatisticsViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 		faculty_id, class_id = request.query_params.get("faculty_id"), request.query_params.get("class_id")
-		semester, faculty, sclass = factory.find_semester_faculty_class_by_id(
+		semester, faculty, sclass = factory.find_sfc_by_id(
 			semester_code=semester_code,
 			faculty_id=faculty_id,
 			class_id=class_id

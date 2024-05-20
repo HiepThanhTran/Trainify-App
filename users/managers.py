@@ -14,7 +14,7 @@ class AccountManager(BaseUserManager):
 			raise ValueError(_("Password must be set"))
 
 		account = self.create(email=self.normalize_email(email), password=make_password(password), **extra_fields)
-		factory.set_account_permissions(account)
+		factory.set_permissions_for_account(account)
 
 		return account
 
@@ -28,6 +28,6 @@ class AccountManager(BaseUserManager):
 		from users.models import Administrator
 		account = self.create_account(email=email, password=password, **extra_fields)
 		administrator = Administrator.objects.create(account=account, first_name=f"Administrator {account.id}", date_of_birth=timezone.now(), )
-		factory.set_account_role(user=administrator, account=account)
+		factory.set_role_for_account(user=administrator, account=account)
 
 		return account

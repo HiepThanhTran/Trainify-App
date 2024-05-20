@@ -9,13 +9,23 @@ from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from activities.models import Bulletin, Activity, ActivityRegistration
-from core.utils.configs import MODEL_DATA_PATH
+from activities.models import Activity, ActivityRegistration, Bulletin
 from commands.models import CollectData
 from core.utils import factory
+from core.utils.configs import MODEL_DATA_PATH
 from interacts.models import Comment, Like
-from schools.models import EducationalSystem, Faculty, Major, AcademicYear, Class, Criterion, Semester, SemesterOfStudent, TrainingPoint
-from users.models import Student, Assistant, Specialist, Administrator, Account
+from schools.models import (
+	AcademicYear,
+	Class,
+	Criterion,
+	EducationalSystem,
+	Faculty,
+	Major,
+	Semester,
+	SemesterOfStudent,
+	TrainingPoint,
+)
+from users.models import Account, Administrator, Assistant, Specialist, Student
 
 
 class Command(BaseCommand):
@@ -170,14 +180,14 @@ class Command(BaseCommand):
 
 	def create_accounts_for_users(self, users, password, role):
 		for user in users:
-			first_name = re.escape(unidecode.unidecode(user.first_name).lower().replace(__old=" ", __new=""))
+			first_name = re.escape(unidecode.unidecode(user.first_name).lower().replace(" ", ""))
 			account_data = {"email": f"{user.code}{first_name}@ou.edu.vn", "password": password, "role": role, "avatar": self.default_avatar}
 
 			account = Account.objects.create(**account_data)
 			user.account = account
 			user.save()
 
-			factory.set_account_permissions(account)
+			factory.set_permissions_for_account(account)
 
 	@staticmethod
 	def create_activity_registrations(activities, classes):

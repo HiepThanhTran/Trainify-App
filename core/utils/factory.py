@@ -5,13 +5,17 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
 from core.utils import validations
-from core.utils.configs import PERMISSIONS, DEFAULT_PUBLIC_ID
+from core.utils.configs import DEFAULT_PUBLIC_ID, PERMISSIONS
 from schools.models import Class, Faculty, Semester
 from users.models import User
 
 
-def set_account_permissions(account):
-    group_name = validations.check_account_role(account)[0]
+def set_permissions_for_account(account):
+    group_name = validations.check_account_role(account)[1]
+
+    if not group_name:
+        raise ValidationError({"detail": "Tài khoản chưa được gán vai trò"})
+    
     if group_name.__eq__("administrator"):
         specialist_group = Group.objects.get_or_create(name="specialist")[0]
         assistant_group = Group.objects.get_or_create(name="assistant")[0]
@@ -32,14 +36,19 @@ def set_account_permissions(account):
     return account
 
 
-def set_account_role(user, account):
-    account.role = validations.check_user_instance(user)[1]
+def set_role_for_account(user, account):
+    role = validations.check_user_instance(user)[1]
+
+    if not role:
+        raise ValidationError({"detail": "Người dùng không hợp lệ"})
+
+    account.role = role
     account.save()
 
     return user, account
 
 
-def find_semester_faculty_class_by_id(semester_code, faculty_id, class_id):
+def find_sfc_by_id(semester_code=None, faculty_id=None, class_id=None):
     semester = get_object_or_404(queryset=Semester, code=semester_code)
 
     if not faculty_id and not class_id:

@@ -110,7 +110,7 @@ DATABASES = {
 		"NAME": "training_point_db",
 		"USER": "root",
 		"PASSWORD": "29012003",
-		"HOST": "",  # localhost
+		"HOST": "localhost",
 	},
 	# "default": {
 	#     "ENGINE": "django.db.backends.sqlite3",

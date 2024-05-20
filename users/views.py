@@ -4,8 +4,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
-from core.utils import dao
 from core.base import paginators, perms
+from core.utils import dao
 from schools.models import Semester
 from users import serializers as users_serializers
 from users.models import Account, Assistant, Student
@@ -110,7 +110,7 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     @action(methods=["get"], detail=True, url_path="points/(?P<semester_code>[^/.]+)")
     def get_points(self, request, pk=None, semester_code=None):
         semester = get_object_or_404(queryset=Semester, code=semester_code)
-        student_summary, training_points = dao.statistics_student(semester=semester, student=self.get_object())
+        student_summary, training_points = dao.statistics_by_student(semester=semester, student=self.get_object())
 
         criterion_name = request.query_params.get("criterion")
         if criterion_name:

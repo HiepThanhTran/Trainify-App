@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from "react-native";
+import {Dimensions, StyleSheet} from 'react-native';
 
 //Size Image
 const {width, height} = Dimensions.get('screen');
@@ -8,16 +8,16 @@ const OnboardingStyles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         padding: 15,
-        paddingTop: 200
+        paddingTop: 200,
     },
     OnboardingImage: {
         width: width + 50,
         height: 330,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
     },
     OnboardingTitle: {
         fontSize: 28,
-        marginTop: 60
+        marginTop: 60,
     },
     OnboardingDescription: {
         fontSize: 16,
@@ -27,8 +27,8 @@ const OnboardingStyles = StyleSheet.create({
     },
     NextButton: {
         fontWeight: '600',
-        fontSize: 16
-    }
-})
+        fontSize: 16,
+    },
+});
 
 export default OnboardingStyles;

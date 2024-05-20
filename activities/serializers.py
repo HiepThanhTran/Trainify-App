@@ -36,7 +36,7 @@ class ActivitySerializer(BaseSerializer):
     def create(self, validated_data):
         request = self.context.get("request")
 
-        instance_name = validations.check_account_role(request.user)[0]
+        instance_name = validations.check_account_role(request.user)[1]
         validated_data["organizer"] = getattr(request.user, instance_name, None)
         activity = Activity.objects.create(**validated_data)
 
@@ -105,7 +105,7 @@ class BulletinSerializer(BaseSerializer):
     def create(self, validated_data):
         request = self.context.get("request")
 
-        instance_name = validations.check_account_role(request.user)[0]
+        instance_name = validations.check_account_role(request.user)[1]
         validated_data["poster"] = getattr(request.user, instance_name, None)
         bulletin = Bulletin.objects.create(**validated_data)
 

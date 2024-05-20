@@ -8,6 +8,9 @@ from users.models import Account, Administrator, Assistant, Specialist, Student
 
 
 def check_user_instance(user):
+	if not isinstance(user, (Administrator, Specialist, Assistant, Student)):
+		raise ValidationError({"detail": "Người dùng không hợp lệ"})
+
 	from users import serializers
 	instance_mapping = {
 		Administrator: (serializers.AdministratorSerializer, Account.Role.ADMINISTRATOR),
@@ -19,12 +22,15 @@ def check_user_instance(user):
 
 
 def check_account_role(account):
+	if not isinstance(account, Account):
+		raise ValidationError({"detail": "Tài khoản không hợp lệ"})
+
 	from users import serializers
 	role_mapping = {
-		Account.Role.ADMINISTRATOR: ("administrator", serializers.AdministratorSerializer),
-		Account.Role.SPECIALIST: ("specialist", serializers.SpecialistSerializer),
-		Account.Role.ASSISTANT: ("assistant", serializers.AssistantSerializer),
-		Account.Role.STUDENT: ("student", serializers.StudentSerializer),
+		Account.Role.ADMINISTRATOR: (serializers.AdministratorSerializer, "administrator"),
+		Account.Role.SPECIALIST: (serializers.SpecialistSerializer, "specialist"),
+		Account.Role.ASSISTANT: (serializers.AssistantSerializer, "assistant"),
+		Account.Role.STUDENT: (serializers.StudentSerializer, "student"),
 	}
 	return role_mapping.get(account.role)
 
@@ -35,6 +41,7 @@ def validate_email(code, first_name, email):
 
 	if not email or not bool(re.match(pattern, email.strip())):
 		raise ValidationError({"email": "Vui lòng nhập email trường cấp"})
+
 	return email
 
 
@@ -43,4 +50,5 @@ def validate_date_format(date):
 		datetime.strptime(date, "%Y-%m-%d")
 	except ValueError:
 		return False
+
 	return date

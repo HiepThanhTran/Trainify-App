@@ -4,7 +4,7 @@ from core.utils.configs import ACHIEVEMENTS
 from schools.models import TrainingPoint
 
 
-def statistics_points(semester=None, faculty=None, sclass=None):
+def get_statistics(semester=None, faculty=None, sclass=None):
     if faculty and not sclass:
         return statistics_by_entity(semester=semester, entity=faculty, entity_type="faculty")
 
@@ -18,14 +18,14 @@ def statistics_by_entity(semester=None, entity=None, entity_type="class"):
 
     students = entity.students.prefetch_related("points").all()
     for student in students:
-        student_summary = statistics_student(semester=semester, student=student)[0]
+        student_summary = statistics_by_student(semester=semester, student=student)[0]
         total_students += 1
         total_points += student_summary["total_points"]
         achievements[student_summary["achievement"]] += 1
         students_summary_list.append(student_summary)
     average_points = round(total_points / total_students if total_students > 0 else 0, 2)
 
-    summary = {
+    statistics_data = {
         "id": entity.id,
         "name": entity.name,
         "total_students": total_students,
@@ -35,12 +35,12 @@ def statistics_by_entity(semester=None, entity=None, entity_type="class"):
     }
 
     if entity_type == "faculty":
-        summary["total_classes"] = entity.majors.aggregate(total_classes=Count("classes"))["total_classes"]
+        statistics_data["total_classes"] = entity.majors.aggregate(total_classes=Count("classes"))["total_classes"]
 
-    return summary, students_summary_list
+    return statistics_data, students_summary_list
 
 
-def statistics_student(semester=None, student=None):
+def statistics_by_student(semester=None, student=None):
     training_points = (
         student.points.filter(semester=semester)
         .select_related("criterion")
@@ -56,21 +56,21 @@ def statistics_student(semester=None, student=None):
         )
         .order_by("criterion__name")
     )
-    student_total_points = training_points.aggregate(total_points=Sum("adjusted_point", default=0))["total_points"]
+    total_points = training_points.aggregate(total_points=Sum("adjusted_point", default=0))["total_points"]
 
-    student_summary = {
+    statistics_data = {
         "id": student.id,
         "full_name": student.full_name,
         "code": student.code,
-        "total_points": student_total_points,
-        "achievement": calculate_achievement(student_total_points),
+        "total_points": total_points,
+        "achievement": get_achievement_by_points(total_points),
         "training_points": training_points,
     }
 
-    return student_summary, training_points
+    return statistics_data, training_points
 
 
-def calculate_achievement(total_points):
+def get_achievement_by_points(total_points):
     if total_points >= 90:
         return "Xuất sắc"
     if total_points >= 80:

@@ -26,12 +26,11 @@ class MyAdminSite(admin.AdminSite):
                 for sclass in major.classes.order_by("name"):
                     classes.append(sclass)
 
-        statistics_faculty, _ = dao.statistics_points(semester=semesters[0], faculty=faculties[0])
-        statistics_class, _ = dao.statistics_points(semester=semesters[0], sclass=classes[0])
+        statistics_faculty, _ = dao.get_statistics(semester=semesters[0], faculty=faculties[0])
+        statistics_class, _ = dao.get_statistics(semester=semesters[0], sclass=classes[0])
 
         return TemplateResponse(
-            request=request,
-            template="admin/statistics.html",
+            request=request, template="admin/statistics.html",
             context={
                 "faculties": faculties,
                 "classes": classes,

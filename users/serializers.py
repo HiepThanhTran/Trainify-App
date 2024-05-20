@@ -42,12 +42,12 @@ class AccountSerializer(BaseSerializer):
 		account = Account.objects.create_account(email=validated_data.pop("email"), password=validated_data.pop("password"), **validated_data)
 		user.account = account
 		user.save()
-		factory.set_account_role(user=user, account=account)
+		factory.set_role_for_account(user=user, account=account)
 
 		return account
 
 	def get_user(self, account):
-		instance_name, serializer_class = validations.check_account_role(account)
+		serializer_class, instance_name = validations.check_account_role(account)
 		user = getattr(account, instance_name, None)
 		return serializer_class(user).data
 
@@ -64,7 +64,7 @@ class AccountUpdateSerializer(serializers.Serializer):
 	gender = serializers.CharField(required=False, max_length=1)
 
 	def update(self, account, validated_data):
-		instance_name = validations.check_account_role(account)[0]
+		instance_name = validations.check_account_role(account)[1]
 		user = getattr(account, instance_name, None)
 
 		if "password" in validated_data:
