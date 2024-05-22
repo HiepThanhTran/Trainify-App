@@ -6,7 +6,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import GlobalStyle from '../../styles/Style';
 import OnboardingStyle from './Style';
 
-// Animations
+// Animation
 const animations = [
     {
         id: 1,
@@ -35,7 +35,7 @@ const Onboarding = () => {
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'Home' }],
+                routes: [{ name: 'Signin' }],
             }),
         );
     };
@@ -50,9 +50,9 @@ const Onboarding = () => {
     };
     //Load animations
     const animation = useRef(null);
-    useEffect(() => {}, []);
+    useEffect(() => { }, []);
     return (
-        <AppIntroSlider
+        <AppIntroSlider style={GlobalStyle.BackGround}
             data={animations}
             renderItem={({ item }) => {
                 return (

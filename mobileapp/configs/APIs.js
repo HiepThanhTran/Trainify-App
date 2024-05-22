@@ -4,12 +4,10 @@ const [URL, TYPE, VERSION] = ['https://trainingpoint.vercel.app', 'api', 'v1'];
 const BASE_URL = `${URL}/${TYPE}/${VERSION}/`;
 
 export const endPoints = {
-    //// Auth
-    login: '/o/token/', // POST: Lấy access token đăng nhập
-
     //// Accounts
     me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
     'me-update': '/accounts/me/update/', // PATCH: Cập nhật tài khoản đang đăng nhập
+    login: '/o/token/', // POST: Lấy access token đăng nhập
     'student-register': '/accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
     'assistant-register': '/accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
 
@@ -81,11 +79,11 @@ export const endPoints = {
     'export-statistics': (semesterCode) => `/statistics/${semesterCode}/export/`, // GET: Xuất file thống kê dạng pdf hoặc csv
 };
 
-export const authAPI = (accessToken) => {
+export const authAPI = (token) => {
     return axios.create({
         baseURL: BASE_URL,
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
         },
     });
 };
