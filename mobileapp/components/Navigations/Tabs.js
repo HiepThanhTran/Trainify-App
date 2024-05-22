@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-paper';
 import { HomeStack, NotificationStack, ProfileStack } from './Stacks';
+import { HomeStack, NotificationStack, ProfileStack } from './Stacks';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +14,7 @@ const MainTab = () => {
             })}
         >
             <Tab.Screen
-                name="Home"
+                name="HomeTab"
                 component={HomeStack}
                 options={{
                     headerShown: false,
@@ -30,7 +31,7 @@ const MainTab = () => {
                 }}
             ></Tab.Screen>
             <Tab.Screen
-                name="Profile"
+                name="ProfileTab"
                 component={ProfileStack}
                 options={{
                     headerShown: false,
