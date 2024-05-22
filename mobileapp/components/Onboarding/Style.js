@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet } from 'react-native';
 //Size Image
 const { width, height } = Dimensions.get('screen');
 
-const OnboardingStyles = StyleSheet.create({
+const OnboardingStyle = StyleSheet.create({
     OnboardingContainer: {
         flex: 1,
         alignItems: 'center',
@@ -31,4 +31,4 @@ const OnboardingStyles = StyleSheet.create({
     },
 });
 
-export default OnboardingStyles;
+export default OnboardingStyle;
