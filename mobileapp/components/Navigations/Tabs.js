@@ -8,7 +8,7 @@ const MainTab = () => {
     return (
         <Tab.Navigator
             screenOptions={() => ({
-                tabBarActiveTintColor: 'navy',
+                tabBarActiveTintColor: '#3e9ae4',
                 tabBarInactiveTintColor: 'black',
               
             })}
@@ -17,26 +17,23 @@ const MainTab = () => {
                 name="HomeTab"
                 component={HomeStack}
                 options={{
-                    title: 'Trang chủ',
                     headerShown: false,
                     tabBarIcon: () => <Icon color="gray" size={35} source="home" />,
                 }}
             ></Tab.Screen>
             <Tab.Screen
-                name="NotificationTab"
+                name="Notification"
                 component={NotificationStack}
                 options={{
-                    title: 'Thông báo',
+                    tabBarBadge: 3,
                     headerShown: false,
                     tabBarIcon: () => <Icon color="gray" size={35} source="bell" />,
-                    tabBarBadge: 3,
                 }}
             ></Tab.Screen>
             <Tab.Screen
                 name="ProfileTab"
                 component={ProfileStack}
                 options={{
-                    title: 'Profile',
                     headerShown: false,
                     tabBarIcon: () => <Icon color="gray" size={35} source="account" />,
                 }}
