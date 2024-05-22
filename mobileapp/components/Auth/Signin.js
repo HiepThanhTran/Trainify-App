@@ -13,7 +13,7 @@ const Roles = [
     { key: 'SPC', role: 'Chuyên viên cộng tác sinh viên' },
 ];
 
-const Login = () => {
+const Signin = () => {
     const [role, setRole] = useState('Chọn vai trò');
     const [click, setClick] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -160,4 +160,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Signin;
