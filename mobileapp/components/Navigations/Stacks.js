@@ -1,12 +1,14 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Profile from '../Auth/Profile';
 import Home from '../Home/Home';
+import Notification from '../Home/Notification';
 
 const Stack = createNativeStackNavigator();
 
 export const HomeStack = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
+            <Stack.Screen name="HomeStack" options={{ headerShown: false }} component={Home} />
         </Stack.Navigator>
     );
 };
@@ -14,7 +16,7 @@ export const HomeStack = () => {
 export const NotificationStack = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Notification" options={{ headerShown: false }} />
+            <Stack.Screen name="NotificationStack" options={{ headerShown: false }} component={Notification} />
         </Stack.Navigator>
     );
 };
@@ -22,9 +24,7 @@ export const NotificationStack = () => {
 export const ProfileStack = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" options={{ headerShown: false }} component={Home} />
-            {/* <Stack.Screen name="Login" options={{ headerShown: false }} component={Signin} />
-            <Stack.Screen name="Signup" options={{ headerShown: false }} component={Signup} /> */}
+            <Stack.Screen name="ProfileStack" options={{ headerShown: false }} component={Profile} />
         </Stack.Navigator>
     );
 };
