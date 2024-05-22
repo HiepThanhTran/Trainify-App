@@ -1,91 +1,60 @@
-import { StyleSheet } from 'react-native';
+import { ImageBackground, StyleSheet } from 'react-native';
+import { IMGElement } from 'react-native-render-html';
 
 const AuthStyle = StyleSheet.create({
-    LoginContainer: {
-        height: '100%',
-        width: '100%',
-        backgroundColor: 'white',
+    Container:{
+        flex: 1
     },
-    ImageBackground: {
-        height: '100%',
-        width: '100%',
-        position: 'absolute',
-    },
-    LightContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        position: 'absolute',
-    },
-    Light1: {
-        height: 220,
-        width: 90,
-    },
-    Light2: {
-        height: 160,
-        width: 65,
-    },
-    TitleAndForm: {
-        height: '100%',
-        width: '100%',
-        flex: 1,
-        justifyContent: 'space-around',
-        paddingTop: 120,
-        paddingBottom: 40,
-    },
-    TitleContainer: {
-        flex: 1,
+    Header:{
+        flex: 2,
+        justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingBottom: 4
     },
-    Title: {
+    HeaderTitle:{
+        fontSize: 30,
+        marginTop: 30,
         color: 'white',
-        fontSize: 45,
-        marginTop: 100,
+        marginBottom: 20
     },
-    Form: {
-        flex: 1,
-        alignItems: 'center',
-        marginLeft: 16,
-        marginRight: 16,
-        marginTop: 140,
+    SubTitle:{
+        fontSize: 20,
+        textAlign: 'center',
+        color: 'white',
+        lineHeight: 30
     },
-    InputWrap: {
-        padding: 4,
-        borderRadius: 16,
-        width: '100%',
-        marginBottom: 20,
+    Footer:{
+        flex: 3,
+        backgroundColor: 'white',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        paddingHorizontal: 22,
+        paddingVertical: 30
+    },
+    Input:{
+        backgroundColor: '#f1f4ff',
+        borderWidth: 2,
         borderColor: '#3e9ae4',
-        borderWidth: 1,
+        marginBottom: 20
     },
-    Input: {
-        backgroundColor: 'white'
-    },
-    Button: {
+    Button:{
         width: '100%',
         backgroundColor: '#3e9ae4',
         borderRadius: 16,
         marginBottom: 12,
-        padding: 5,
+        padding: 8,
     },
-    ButtonText: {
-        fontSize: 20,
-        textAlign: 'center',
+    ButtonText:{
         color: 'white',
-        padding: 10,
+        fontSize: 20
     },
-    Detail: {
+    Detail:{
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 5,
-    },
-    Password: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        justifyContent: 'space-between',
-    },
+    }
 });
 
 export default AuthStyle;

@@ -10,6 +10,7 @@ const MainTab = () => {
             screenOptions={() => ({
                 tabBarActiveTintColor: 'navy',
                 tabBarInactiveTintColor: 'black',
+              
             })}
         >
             <Tab.Screen

@@ -1,126 +1,88 @@
 import React, { useState } from 'react';
-import { Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { TextInput } from 'react-native-paper';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
-import GlobalStyle from '../../styles/Style';
+import { View, Text, TouchableOpacity } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { TextInput, Button } from 'react-native-paper';
 import AuthStyle from './Style';
+import GlobalStyle from '../../styles/Style';
+import { useNavigation } from '@react-navigation/native';
 
-const Signup = ({ navigation }) => {
-    const [showPassword, setShowPassword] = useState(false);
-    const fields = [
-        {
-            label: 'Mã số sinh viên',
-            name: 'code',
-            icon: 'account',
-            entering: FadeInDown.delay(200).duration(1000).springify(),
-        },
-        {
-            label: 'Email',
-            name: 'email',
-            icon: 'email',
-            entering: FadeInDown.delay(400).duration(1000).springify(),
-        },
-        {
-            label: 'Mật khẩu',
-            name: 'password',
-            icon: showPassword ? 'eye-off' : 'eye',
-            entering: FadeInDown.delay(600).duration(1000).springify(),
-        },
-        {
-            label: 'Xác nhận mật khẩu',
-            name: 'confirm',
-            icon: showPassword ? 'eye-off' : 'eye',
-            entering: FadeInDown.delay(800).duration(1000).springify(),
-        },
-    ];
-
-    // Hide keyboard
-    const dismissKeyboard = () => {
-        Keyboard.dismiss();
-    };
-
+const Signup = () => {
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const navigation = useNavigation();
     return (
-        <View style={AuthStyle.LoginContainer}>
-            <ScrollView>
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                    <Image style={AuthStyle.ImageBackground} source={require('../../assets/images/background.png')} />
-                    {/* Light */}
-                    <View style={AuthStyle.LightContainer}>
-                        <Animated.Image
-                            entering={FadeInUp.delay(200).duration(1000).springify()}
-                            style={AuthStyle.Light1}
-                            source={require('../../assets/images/light.png')}
-                        />
-                        <Animated.Image
-                            entering={FadeInUp.delay(400).duration(1000).springify()}
-                            style={AuthStyle.Light2}
-                            source={require('../../assets/images/light.png')}
-                        />
+        <View style={AuthStyle.Container}>
+            <LinearGradient
+                colors={["rgba(62,154,228,1)", "rgba(62,154,228,0.8)"]}
+                style={{ flex: 1 }}
+            >
+                <View style={AuthStyle.Header}>
+                    <Text style={[AuthStyle.HeaderTitle, GlobalStyle.Bold]}>Đăng ký</Text>
+                    <Text style={[AuthStyle.SubTitle, GlobalStyle.Bold]}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
+                </View>
+
+                <View style={AuthStyle.Footer}>
+                    <TextInput
+                        style={AuthStyle.Input}
+                        keyboardType='numeric' // Added keyboardType prop here
+                        placeholder='Mã số sinh viên'
+                        autoCapitalize='none'
+                        underlineColor="transparent"
+                        activeUnderlineColor="transparent"
+                        cursorColor="#3e9ae4"
+                        right={<TextInput.Icon icon="badge-account" />}
+                    />
+
+                    <TextInput
+                        style={AuthStyle.Input}
+                        keyboardType='email-address'
+                        placeholder='Email'
+                        autoCapitalize='none'
+                        underlineColor="transparent"
+                        activeUnderlineColor="transparent"
+                        cursorColor="#3e9ae4"
+                        right={<TextInput.Icon icon="email" />}
+                    />
+
+                    <TextInput
+                        style={AuthStyle.Input}
+                        secureTextEntry={!passwordVisible}
+                        placeholder='Mật khẩu'
+                        autoCapitalize='none'
+                        underlineColor="transparent"
+                        activeUnderlineColor="transparent"
+                        cursorColor="#3e9ae4"
+                        right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setPasswordVisible(!passwordVisible)} />}
+                    />
+
+                    <TextInput
+                        style={AuthStyle.Input}
+                        secureTextEntry={!passwordVisible}
+                        placeholder='Xác nhận mật khẩu'
+                        autoCapitalize='none'
+                        underlineColor="transparent"
+                        activeUnderlineColor="transparent"
+                        cursorColor="#3e9ae4"
+                        right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setPasswordVisible(!passwordVisible)} />}
+                    />
+
+                    <TouchableOpacity style={AuthStyle.Button}>
+                        <Button>
+                            <Text style={[AuthStyle.ButtonText, GlobalStyle.Bold]}>Đăng ký</Text>
+                        </Button>
+                    </TouchableOpacity>
+
+                    <View style={AuthStyle.Detail}>
+                        <Text style={GlobalStyle.Bold}>Bạn đã có tài khoản?</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+                            <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
+                                Đăng nhập
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-
-                    {/* Title And Form */}
-                    <View style={AuthStyle.TitleAndForm}>
-                        {/* Title */}
-                        <View style={AuthStyle.TitleContainer}>
-                            <Animated.Text
-                                entering={FadeInUp.duration(1000).springify()}
-                                style={[GlobalStyle.Bold, AuthStyle.Title]}
-                            >
-                                Đăng ký
-                            </Animated.Text>
-                        </View>
-
-                        {/* Form */}
-                        <View style={AuthStyle.Form}>
-                            {fields.map((f) => (
-                                <Animated.View entering={f.entering} style={AuthStyle.InputWrap}>
-                                    <TextInput
-                                        key={f.name}
-                                        placeholder={f.label}
-                                        cursorColor="#3e9ae4"
-                                        underlineColor="white"
-                                        activeUnderlineColor="white"
-                                        secureTextEntry={!showPassword}
-                                        style={(GlobalStyle.Regular, AuthStyle.Input)}
-                                        right={
-                                            <TextInput.Icon
-                                                onPress={() => setShowPassword(!showPassword)}
-                                                icon={f.icon}
-                                            />
-                                        }
-                                    />
-                                </Animated.View>
-                            ))}
-
-                            <Animated.View
-                                entering={FadeInDown.delay(800).duration(1000).springify()}
-                                style={{ width: '100%' }}
-                            >
-                                <TouchableOpacity style={AuthStyle.Button}>
-                                    <Text style={[GlobalStyle.Bold, AuthStyle.ButtonText, { letterSpacing: 1 }]}>
-                                        Đăng ký
-                                    </Text>
-                                </TouchableOpacity>
-                            </Animated.View>
-
-                            {/* Login */}
-                            <Animated.View
-                                entering={FadeInDown.delay(800).duration(1000).springify()}
-                                style={AuthStyle.Detail}
-                            >
-                                <Text style={GlobalStyle.SemiBold}>Bạn đã có tài khoản?</Text>
-                                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-                                    <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
-                                        Đăng nhập
-                                    </Text>
-                                </TouchableOpacity>
-                            </Animated.View>
-                        </View>
-                    </View>
-                </KeyboardAvoidingView>
-            </ScrollView>
+                </View>
+            </LinearGradient>
         </View>
     );
-};
+}
 
 export default Signup;
