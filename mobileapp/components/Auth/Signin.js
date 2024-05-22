@@ -1,22 +1,35 @@
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { FlatList, Image, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { TextInput } from 'react-native-paper';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
 
-const Roles = [
-    { key: 'STU', role: 'Sinh viên' },
-    { key: 'ASST', role: 'Trợ lý sinh viên' },
-    { key: 'SPC', role: 'Chuyên viên cộng tác sinh viên' },
-];
-
-const Signin = () => {
-    const [role, setRole] = useState('Chọn vai trò');
-    const [click, setClick] = useState(false);
+const Signin = ({ navigation }) => {
     const [showPassword, setShowPassword] = useState(false);
-    const navigation = useNavigation();
+    const fields = [
+        {
+            label: 'Email',
+            name: 'email',
+            icon: 'email',
+            entering: FadeInDown.delay(200).duration(1000).springify(),
+        },
+        {
+            label: 'Mật khẩu',
+            name: 'password',
+            icon: showPassword ? 'eye-off' : 'eye',
+            entering: FadeInDown.delay(400).duration(1000).springify(),
+        },
+    ];
 
     // Function to hide keyboard
     const dismissKeyboard = () => {
@@ -24,136 +37,86 @@ const Signin = () => {
     };
 
     return (
+        <View style={AuthStyle.LoginContainer}>
+            <ScrollView>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                    <Image style={AuthStyle.ImageBackground} source={require('../../assets/images/background.png')} />
 
-        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }} onPress={dismissKeyboard}>
-            <View style={AuthStyle.LoginContainer}>
-                <Image style={AuthStyle.ImageBackground} source={require('../../assets/images/background.png')} />
-
-                {/* Light */}
-                <View style={AuthStyle.LightContainer}>
-                    <Animated.Image
-                        entering={FadeInUp.delay(200).duration(1000).springify()}
-                        style={AuthStyle.Light1}
-                        source={require('../../assets/images/light.png')}
-                    />
-                    <Animated.Image
-                        entering={FadeInUp.delay(400).duration(1000).springify()}
-                        style={AuthStyle.Light2}
-                        source={require('../../assets/images/light.png')}
-                    />
-                </View>
-
-                {/* Title And Form */}
-                <View style={AuthStyle.TitleAndForm}>
-                    {/* Title */}
-                    <View style={AuthStyle.TitleContainer}>
-                        <Animated.Text
-                            entering={FadeInUp.duration(1000).springify()}
-                            style={[GlobalStyle.Bold, AuthStyle.Title]}
-                        >
-                            Đăng nhập
-                        </Animated.Text>
+                    {/* Light */}
+                    <View style={AuthStyle.LightContainer}>
+                        <Animated.Image
+                            entering={FadeInUp.delay(200).duration(1000).springify()}
+                            style={AuthStyle.Light1}
+                            source={require('../../assets/images/light.png')}
+                        />
+                        <Animated.Image
+                            entering={FadeInUp.delay(400).duration(1000).springify()}
+                            style={AuthStyle.Light2}
+                            source={require('../../assets/images/light.png')}
+                        />
                     </View>
 
-                    {/* Form */}
-                    <View style={AuthStyle.Form}>
-                        {/* DropDownList */}
-                        <Animated.View
-                            entering={FadeInDown.duration(1000).springify()}
-                            style={{ width: '100%', position: 'relative', zIndex: 1 }}
-                        >
-                            <TouchableOpacity
-                                style={AuthStyle.DropdownSelector}
-                                onPress={() => {
-                                    setClick(!click);
-                                }}
+                    {/* Title And Form */}
+                    <View style={AuthStyle.TitleAndForm}>
+                        {/* Title */}
+                        <View style={AuthStyle.TitleContainer}>
+                            <Animated.Text
+                                entering={FadeInUp.duration(1000).springify()}
+                                style={[GlobalStyle.Bold, AuthStyle.Title]}
                             >
-                                <Text style={[GlobalStyle.Regular, { color: 'black' }]}>{role}</Text>
-                                {click ? (
-                                    <AntDesign name="up" size={20} color="black" />
-                                ) : (
-                                    <AntDesign name="down" size={24} color="black" />
-                                )}
-                            </TouchableOpacity>
-                            {click ? (
-                                <View style={AuthStyle.DropdownArea}>
-                                    <FlatList
-                                        data={Roles}
-                                        renderItem={({ item, index }) => {
-                                            return (
-                                                <TouchableOpacity
-                                                    style={AuthStyle.RoleItem}
-                                                    onPress={() => {
-                                                        setRole(item.role);
-                                                        setClick(false);
-                                                    }}
-                                                >
-                                                    <Text>{item.role}</Text>
-                                                </TouchableOpacity>
-                                            );
-                                        }}
+                                Đăng nhập
+                            </Animated.Text>
+                        </View>
+
+                        {/* Form */}
+                        <View style={AuthStyle.Form}>
+                            {fields.map((f) => (
+                                <Animated.View entering={f.entering} style={AuthStyle.InputWrap}>
+                                    <TextInput
+                                        key={f.name}
+                                        placeholder={f.label}
+                                        cursorColor="#3e9ae4"
+                                        underlineColor="white"
+                                        activeUnderlineColor="white"
+                                        secureTextEntry={!showPassword}
+                                        style={(GlobalStyle.Regular, AuthStyle.Input)}
+                                        right={
+                                            <TextInput.Icon
+                                                onPress={() => setShowPassword(!showPassword)}
+                                                icon={f.icon}
+                                            />
+                                        }
                                     />
-                                </View>
-                            ) : null}
-                        </Animated.View>
-                        {/* Input */}
-                        <Animated.View
-                            entering={FadeInDown.delay(200).duration(1000).springify()}
-                            style={AuthStyle.Input}
-                        >
-                            <TextInput
-                                placeholder="Email"
-                                placeholderTextColor={'gray'}
-                                style={GlobalStyle.Regular}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
-                        </Animated.View>
+                                </Animated.View>
+                            ))}
 
-                        <Animated.View
-                            entering={FadeInDown.delay(400).duration(1000).springify()}
-                            style={AuthStyle.Input}
-                        >
-                            <View style={AuthStyle.Password}>
-                                <TextInput
-                                    placeholder="Mật khẩu"
-                                    placeholderTextColor={'gray'}
-                                    style={[GlobalStyle.Regular, { position: 'relative', width: '90%' }]}
-                                    secureTextEntry={!showPassword}
-                                />
-
-                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                    <AntDesign name={showPassword ? 'eye' : 'eyeo'} size={24} color="black" />
+                            {/* Button Login */}
+                            <Animated.View
+                                entering={FadeInDown.delay(600).duration(1000).springify()}
+                                style={{ width: '100%' }}
+                            >
+                                <TouchableOpacity style={AuthStyle.Button}>
+                                    <Text style={[GlobalStyle.Bold, AuthStyle.ButtonText]}>Đăng nhập</Text>
                                 </TouchableOpacity>
-                            </View>
-                        </Animated.View>
+                            </Animated.View>
 
-                        {/* Button Login */}
-                        <Animated.View
-                            entering={FadeInDown.delay(600).duration(1000).springify()}
-                            style={{ width: '100%' }}
-                        >
-                            <TouchableOpacity style={AuthStyle.Button}>
-                                <Text style={[GlobalStyle.Bold, AuthStyle.ButtonText]}>Đăng nhập</Text>
-                            </TouchableOpacity>
-                        </Animated.View>
-
-                        {/* Register */}
-                        <Animated.View
-                            entering={FadeInDown.delay(800).duration(1000).springify()}
-                            style={AuthStyle.Detail}
-                        >
-                            <Text style={GlobalStyle.SemiBold}>Bạn chưa có tài khoản?</Text>
-                            <TouchableOpacity onPress={() => navigation.push('Signup')}>
-                                <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
-                                    Đăng ký
-                                </Text>
-                            </TouchableOpacity>
-                        </Animated.View>
+                            {/* Register */}
+                            <Animated.View
+                                entering={FadeInDown.delay(800).duration(1000).springify()}
+                                style={AuthStyle.Detail}
+                            >
+                                <Text style={GlobalStyle.SemiBold}>Bạn chưa có tài khoản?</Text>
+                                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                                    <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
+                                        Đăng ký
+                                    </Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </View>
                     </View>
-                </View>
-            </View>
-        </TouchableOpacity>
+                </KeyboardAvoidingView>
+            </ScrollView>
+        </View>
     );
 };
 

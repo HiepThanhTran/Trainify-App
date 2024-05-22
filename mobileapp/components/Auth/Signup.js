@@ -1,17 +1,38 @@
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Image, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
 
-const Signup = () => {
-    const [role, setRole] = useState('Chọn vai trò');
-    const [click, setClick] = useState(false);
+const Signup = ({ navigation }) => {
     const [showPassword, setShowPassword] = useState(false);
-    const navigation = useNavigation();
+    const fields = [
+        {
+            label: 'Mã số sinh viên',
+            name: 'code',
+            icon: 'account',
+            entering: FadeInDown.delay(200).duration(1000).springify(),
+        },
+        {
+            label: 'Email',
+            name: 'email',
+            icon: 'email',
+            entering: FadeInDown.delay(400).duration(1000).springify(),
+        },
+        {
+            label: 'Mật khẩu',
+            name: 'password',
+            icon: showPassword ? 'eye-off' : 'eye',
+            entering: FadeInDown.delay(600).duration(1000).springify(),
+        },
+        {
+            label: 'Xác nhận mật khẩu',
+            name: 'confirm',
+            icon: showPassword ? 'eye-off' : 'eye',
+            entering: FadeInDown.delay(800).duration(1000).springify(),
+        },
+    ];
 
     // Hide keyboard
     const dismissKeyboard = () => {
@@ -19,12 +40,10 @@ const Signup = () => {
     };
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            {/* Add TouchableOpacity to hide keyboard */}
-            <TouchableOpacity activeOpacity={1} style={{ flex: 1 }} onPress={dismissKeyboard}>
-                <View style={AuthStyle.LoginContainer}>
+        <View style={AuthStyle.LoginContainer}>
+            <ScrollView>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                     <Image style={AuthStyle.ImageBackground} source={require('../../assets/images/background.png')} />
-
                     {/* Light */}
                     <View style={AuthStyle.LightContainer}>
                         <Animated.Image
@@ -53,45 +72,26 @@ const Signup = () => {
 
                         {/* Form */}
                         <View style={AuthStyle.Form}>
-                            {/* Input */}
-                            <Animated.View
-                                entering={FadeInDown.delay(200).duration(1000).springify()}
-                                style={AuthStyle.Input}
-                            >
-                                <TextInput
-                                    placeholder="Email"
-                                    placeholderTextColor={'gray'}
-                                    style={GlobalStyle.Regular}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                />
-                            </Animated.View>
-
-                            <Animated.View
-                                entering={FadeInDown.delay(400).duration(1000).springify()}
-                                style={AuthStyle.Input}
-                            >
-                                <View style={AuthStyle.Password}>
+                            {fields.map((f) => (
+                                <Animated.View entering={f.entering} style={AuthStyle.InputWrap}>
                                     <TextInput
-                                        placeholder="Mật khẩu"
-                                        placeholderTextColor={'gray'}
-                                        style={[GlobalStyle.Regular, { position: 'relative', width: '90%' }]}
+                                        key={f.name}
+                                        placeholder={f.label}
+                                        cursorColor="#3e9ae4"
+                                        underlineColor="white"
+                                        activeUnderlineColor="white"
                                         secureTextEntry={!showPassword}
+                                        style={(GlobalStyle.Regular, AuthStyle.Input)}
+                                        right={
+                                            <TextInput.Icon
+                                                onPress={() => setShowPassword(!showPassword)}
+                                                icon={f.icon}
+                                            />
+                                        }
                                     />
+                                </Animated.View>
+                            ))}
 
-                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                        <AntDesign name={showPassword ? 'eye' : 'eyeo'} size={24} color="black" />
-                                    </TouchableOpacity>
-                                </View>
-                            </Animated.View>
-
-                            <Animated.View
-                                entering={FadeInDown.delay(600).duration(1000).springify()}
-                                style={AuthStyle.Input}
-                            >
-                                <TextInput placeholder="Mã số sinh viên" placeholderTextColor={'gray'} />
-                            </Animated.View>
-                            {/* Button Signup */}
                             <Animated.View
                                 entering={FadeInDown.delay(800).duration(1000).springify()}
                                 style={{ width: '100%' }}
@@ -109,7 +109,7 @@ const Signup = () => {
                                 style={AuthStyle.Detail}
                             >
                                 <Text style={GlobalStyle.SemiBold}>Bạn đã có tài khoản?</Text>
-                                <TouchableOpacity onPress={() => navigation.push('Login')}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
                                     <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
                                         Đăng nhập
                                     </Text>
@@ -117,9 +117,9 @@ const Signup = () => {
                             </Animated.View>
                         </View>
                     </View>
-                </View>
-            </TouchableOpacity>
-        </GestureHandlerRootView>
+                </KeyboardAvoidingView>
+            </ScrollView>
+        </View>
     );
 };
 

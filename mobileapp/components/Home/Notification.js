@@ -1,12 +1,12 @@
 import { Text, View } from 'react-native';
 import GlobalStyle from '../../styles/Style';
 
-const Home = () => {
+const Notification = () => {
     return (
         <View style={GlobalStyle.Container}>
-            <Text>Home Screen</Text>
+            <Text>Notification Screen</Text>
         </View>
     );
 };
 
-export default Home;
+export default Notification;
