@@ -15,15 +15,15 @@ from core.utils import factory
 from core.utils.configs import MODEL_DATA_PATH
 from interacts.models import Comment, Like
 from schools.models import (
-	AcademicYear,
-	Class,
-	Criterion,
-	EducationalSystem,
-	Faculty,
-	Major,
-	Semester,
-	SemesterOfStudent,
-	TrainingPoint,
+    AcademicYear,
+    Class,
+    Criterion,
+    EducationalSystem,
+    Faculty,
+    Major,
+    Semester,
+    SemesterOfStudent,
+    TrainingPoint,
 )
 from users.models import Account, Administrator, Assistant, Specialist, Student
 
@@ -72,7 +72,7 @@ class Command(BaseCommand):
 				for data in model_data:
 					for date_field in date_fields:
 						if date_field in data:
-							data[date_field] = datetime.datetime.strptime(__date_string=data[date_field], __format="%Y-%m-%d").date()
+							data[date_field] = datetime.datetime.strptime(data[date_field], "%Y-%m-%d").date()
 
 					if model_name.__eq__("Bulletin"):
 						poster = Assistant.objects.order_by("?").first()
