@@ -29,20 +29,39 @@ const GlobalStyle = StyleSheet.create({
     },
     HelpText: {
         marginBottom: 12,
-        marginTop:-16,
+        marginTop: -16,
         fontSize: 16,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
     },
     Title: {
+        color: '#3e9ae4',
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'blue',
     },
     BackGround: {
         width: '100%',
         height: '100%',
         backgroundColor: 'white',
+    },
+    ModalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+        backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    },
+    ModalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
     },
 });
 

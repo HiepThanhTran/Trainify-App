@@ -75,7 +75,6 @@ const Signin = () => {
             if (ex.response && ex.response.status === 400) {
                 setErrorVisible(true);
                 setErrorMsg('Email hoặc mật khẩu không chính xác');
-                console.error(ex.response.data);
             } else console.error(ex);
         } finally {
             setLoading(false);

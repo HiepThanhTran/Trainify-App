@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Keyboard, TouchableOpacity, View } from 'react-native';
+import { Keyboard, Modal, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
@@ -11,6 +11,7 @@ const Signup = () => {
     const [account, setAccount] = useState({});
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -76,12 +77,11 @@ const Signup = () => {
                 },
             });
 
-            if (res.status === 201) navigation.navigate('Signin');
+            if (res.status === 201) setModalVisible(!modalVisible);
         } catch (ex) {
             if (ex.response && ex.response.status === 400) {
                 setErrorVisible(true);
                 setErrorMsg(ex.response.data.detail);
-                console.error(ex.response.data);
             } else console.error(ex);
         } finally {
             setLoading(false);
@@ -95,6 +95,8 @@ const Signup = () => {
     };
 
     const navigation = useNavigation();
+    const goToSignIn = () => navigation.navigate('Signin');
+
     return (
         <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
             <View style={AuthStyle.Container}>
@@ -147,9 +149,34 @@ const Signup = () => {
                             </Text>
                         </Button>
 
+                        <Modal
+                            animationType="fade"
+                            visible={modalVisible}
+                            transparent={true}
+                            onRequestClose={() => setModalVisible(!modalVisible)}
+                        >
+                            <View style={GlobalStyle.ModalContainer}>
+                                <View style={GlobalStyle.ModalView}>
+                                    <Text style={[GlobalStyle.Title, { marginBottom: 20 }]}>
+                                        Đăng ký tài khoản thành công
+                                    </Text>
+                                    <Button
+                                        onPress={goToSignIn}
+                                        icon="account"
+                                        textColor="white"
+                                        style={AuthStyle.Button}
+                                    >
+                                        <Text variant="headlineLarge" style={[AuthStyle.ButtonText, GlobalStyle.Bold]}>
+                                            Đăng nhập
+                                        </Text>
+                                    </Button>
+                                </View>
+                            </View>
+                        </Modal>
+
                         <View style={AuthStyle.Footer}>
                             <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
-                            <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+                            <TouchableOpacity onPress={goToSignIn}>
                                 <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
                                     Đăng nhập
                                 </Text>

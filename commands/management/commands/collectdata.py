@@ -54,106 +54,105 @@ class Command(BaseCommand):
 			"Bulletin": Bulletin,
 			"Activity": Activity,
 		}
-		with transaction.atomic():
-			if self.is_collected_data(app_labels=[Administrator._meta.app_label], model_names=["administrator"]):
-				self.stdout.write(f"Data for Administrator already exists {self.style.ERROR('SKIP')}")
-			else:
-				Account.objects.create_superuser(email="admin@gmail.com", password="admin@123")
-				collect_data_list.append(CollectData(app_label=Administrator._meta.app_label, model_name="administrator", applied=True))
-				self.stdout.write(f"Created account for Administrator successfully... {self.style.SUCCESS(f'OK')}")
+		if self.is_collected_data(app_labels=[Administrator._meta.app_label], model_names=["administrator"]):
+			self.stdout.write(f"Data for Administrator already exists {self.style.ERROR('SKIP')}")
+		else:
+			Account.objects.create_superuser(email="admin@gmail.com", password="admin@123")
+			collect_data_list.append(CollectData(app_label=Administrator._meta.app_label, model_name="administrator", applied=True))
+			self.stdout.write(f"Created account for Administrator successfully... {self.style.SUCCESS(f'OK')}")
 
-			for model_name, model_instance in models_list.items():
-				if self.is_collected_data(app_labels=[model_instance._meta.app_label], model_names=[model_name.lower()]):
-					self.stdout.write(f"Data for {model_name} already exists {self.style.ERROR('SKIP')}")
-					continue
+		for model_name, model_instance in models_list.items():
+			if self.is_collected_data(app_labels=[model_instance._meta.app_label], model_names=[model_name.lower()]):
+				self.stdout.write(f"Data for {model_name} already exists {self.style.ERROR('SKIP')}")
+				continue
 
-				f = open(MODEL_DATA_PATH[model_name])
-				model_data = json.load(f)
-				for data in model_data:
-					for date_field in date_fields:
-						if date_field in data:
-							data[date_field] = datetime.datetime.strptime(data[date_field], "%Y-%m-%d").date()
+			f = open(MODEL_DATA_PATH[model_name])
+			model_data = json.load(f)
+			for data in model_data:
+				for date_field in date_fields:
+					if date_field in data:
+						data[date_field] = datetime.datetime.strptime(data[date_field], "%Y-%m-%d").date()
 
-					if model_name.__eq__("Bulletin"):
-						poster = Assistant.objects.order_by("?").first()
-						data["poster"] = poster
-						data["cover"] = self.bulletin_cover
+				if model_name.__eq__("Bulletin"):
+					poster = Assistant.objects.order_by("?").first()
+					data["poster"] = poster
+					data["cover"] = self.bulletin_cover
 
-					if model_name.__eq__("Activity"):
-						organizer = Assistant.objects.order_by("?").first()
-						data["organizer"] = organizer
-						data["image"] = self.activity_image
+				if model_name.__eq__("Activity"):
+					organizer = Assistant.objects.order_by("?").first()
+					data["organizer"] = organizer
+					data["image"] = self.activity_image
 
-					obj = model_instance.objects.create(**data)
+				obj = model_instance.objects.create(**data)
 
-				collect_data_list.append(CollectData(app_label=model_instance._meta.app_label, model_name=model_name.lower(), applied=True))
-				self.stdout.write(f"Created data for {model_name} successfully... {self.style.SUCCESS(f'OK')}")
+			collect_data_list.append(CollectData(app_label=model_instance._meta.app_label, model_name=model_name.lower(), applied=True))
+			self.stdout.write(f"Created data for {model_name} successfully... {self.style.SUCCESS(f'OK')}")
 
-			# SemesterOfStudent && TrainingPoint
-			if self.is_collected_data(app_labels=[SemesterOfStudent._meta.app_label, TrainingPoint._meta.app_label], model_names=["semesterofstudent", "trainingpoint"]):
-				self.stdout.write(f"Data for SemesterOfStudent already exists {self.style.ERROR('SKIP')}")
-			else:
-				semesters = Semester.objects.prefetch_related("students").all()
-				students = Student.objects.all()
-				self.create_semester_of_student(semesters=semesters, students=students)
-				self.create_training_point_for_students(students=students, semesters=semesters, criterions=Criterion.objects.all())
+		# SemesterOfStudent && TrainingPoint
+		if self.is_collected_data(app_labels=[SemesterOfStudent._meta.app_label, TrainingPoint._meta.app_label], model_names=["semesterofstudent", "trainingpoint"]):
+			self.stdout.write(f"Data for SemesterOfStudent already exists {self.style.ERROR('SKIP')}")
+		else:
+			semesters = Semester.objects.prefetch_related("students").all()
+			students = Student.objects.all()
+			self.create_semester_of_student(semesters=semesters, students=students)
+			self.create_training_point_for_students(students=students, semesters=semesters, criterions=Criterion.objects.all())
 
-				collect_data_list.append(CollectData(app_label=SemesterOfStudent._meta.app_label, model_name="semesterofstudent", applied=True))
-				collect_data_list.append(CollectData(app_label=TrainingPoint._meta.app_label, model_name="trainingpoint", applied=True))
-				self.stdout.write(f"Created data for SemesterOfStudent successfully... {self.style.SUCCESS(f'OK')}")
-				self.stdout.write(f"Created data for TrainingPoint successfully... {self.style.SUCCESS(f'OK')}")
+			collect_data_list.append(CollectData(app_label=SemesterOfStudent._meta.app_label, model_name="semesterofstudent", applied=True))
+			collect_data_list.append(CollectData(app_label=TrainingPoint._meta.app_label, model_name="trainingpoint", applied=True))
+			self.stdout.write(f"Created data for SemesterOfStudent successfully... {self.style.SUCCESS(f'OK')}")
+			self.stdout.write(f"Created data for TrainingPoint successfully... {self.style.SUCCESS(f'OK')}")
 
-			# Account
-			if self.is_collected_data(app_labels=[Account._meta.app_label], model_names=["account"]):
-				self.stdout.write(f"Data for Account already exists {self.style.ERROR('SKIP')}")
-			else:
-				faculties = Faculty.objects.prefetch_related("students", "assistants", "specialists").all()
-				for faculty in faculties:
-					classes = Class.objects.filter(major__faculty=faculty)
-					for sclass in classes:
-						students = sclass.students.select_related("account").order_by("?")[:15]
-						self.create_accounts_for_users(users=students, password=self.default_password, role=Account.Role.STUDENT)
+		# Account
+		if self.is_collected_data(app_labels=[Account._meta.app_label], model_names=["account"]):
+			self.stdout.write(f"Data for Account already exists {self.style.ERROR('SKIP')}")
+		else:
+			faculties = Faculty.objects.prefetch_related("students", "assistants", "specialists").all()
+			for faculty in faculties:
+				classes = Class.objects.filter(major__faculty=faculty)
+				for sclass in classes:
+					students = sclass.students.select_related("account").order_by("?")[:15]
+					self.create_accounts_for_users(users=students, password=self.default_password, role=Account.Role.STUDENT)
 
-					assistants = faculty.assistants.select_related("account").order_by("?")[:2]
-					specialists = faculty.specialists.select_related("account").all()
-					self.create_accounts_for_users(users=assistants, password=self.default_password, role=Account.Role.ASSISTANT)
-					self.create_accounts_for_users(users=specialists, password=self.default_password, role=Account.Role.SPECIALIST)
+				assistants = faculty.assistants.select_related("account").order_by("?")[:2]
+				specialists = faculty.specialists.select_related("account").all()
+				self.create_accounts_for_users(users=assistants, password=self.default_password, role=Account.Role.ASSISTANT)
+				self.create_accounts_for_users(users=specialists, password=self.default_password, role=Account.Role.SPECIALIST)
 
-				collect_data_list.append(CollectData(app_label=Account._meta.app_label, model_name="account", applied=True))
-				self.stdout.write(f"Created account for Student successfully... {self.style.SUCCESS(f'OK')}")
-				self.stdout.write(f"Created account for Assistant of successfully... {self.style.SUCCESS(f'OK')}")
-				self.stdout.write(f"Created account for Specialist of successfully... {self.style.SUCCESS(f'OK')}")
+			collect_data_list.append(CollectData(app_label=Account._meta.app_label, model_name="account", applied=True))
+			self.stdout.write(f"Created account for Student successfully... {self.style.SUCCESS(f'OK')}")
+			self.stdout.write(f"Created account for Assistant of successfully... {self.style.SUCCESS(f'OK')}")
+			self.stdout.write(f"Created account for Specialist of successfully... {self.style.SUCCESS(f'OK')}")
 
-			# ActivityRegistration
-			if self.is_collected_data(app_labels=[ActivityRegistration._meta.app_label], model_names=["activityregistration"]):
-				self.stdout.write(f"Data for ActivityRegistration already exists {self.style.ERROR('SKIP')}")
-			else:
-				activities = Activity.objects.prefetch_related("participants").all()
-				classes = Class.objects.prefetch_related("students").all()
-				self.create_activity_registrations(activities=activities, classes=classes)
+		# ActivityRegistration
+		if self.is_collected_data(app_labels=[ActivityRegistration._meta.app_label], model_names=["activityregistration"]):
+			self.stdout.write(f"Data for ActivityRegistration already exists {self.style.ERROR('SKIP')}")
+		else:
+			activities = Activity.objects.prefetch_related("participants").all()
+			classes = Class.objects.prefetch_related("students").all()
+			self.create_activity_registrations(activities=activities, classes=classes)
 
-				collect_data_list.append(CollectData(app_label=ActivityRegistration._meta.app_label, model_name="activityregistration", applied=True))
-				self.stdout.write(f"Created data for ActivityRegistration successfully... {self.style.SUCCESS(f'OK')}")
+			collect_data_list.append(CollectData(app_label=ActivityRegistration._meta.app_label, model_name="activityregistration", applied=True))
+			self.stdout.write(f"Created data for ActivityRegistration successfully... {self.style.SUCCESS(f'OK')}")
 
-			models_list = {
-				"Comment": Comment,
-				"Like": Like,
-			}
-			for model_name, model_instance in models_list.items():
-				if self.is_collected_data(app_labels=[model_instance._meta.app_label], model_names=[model_name.lower()]):
-					self.stdout.write(f"Data for {model_name} already exists {self.style.ERROR('SKIP')}")
-					continue
+		models_list = {
+			"Comment": Comment,
+			"Like": Like,
+		}
+		for model_name, model_instance in models_list.items():
+			if self.is_collected_data(app_labels=[model_instance._meta.app_label], model_names=[model_name.lower()]):
+				self.stdout.write(f"Data for {model_name} already exists {self.style.ERROR('SKIP')}")
+				continue
 
-				f = open(MODEL_DATA_PATH[model_name])
-				model_data = json.load(f)
-				for data in model_data:
-					obj = model_instance.objects.create(**data)
+			f = open(MODEL_DATA_PATH[model_name])
+			model_data = json.load(f)
+			for data in model_data:
+				obj = model_instance.objects.create(**data)
 
-				collect_data_list.append(CollectData(app_label=model_instance._meta.app_label, model_name=model_name.lower(), applied=True))
-				self.stdout.write(f"Created data for {model_name} successfully... {self.style.SUCCESS(f'OK')}")
+			collect_data_list.append(CollectData(app_label=model_instance._meta.app_label, model_name=model_name.lower(), applied=True))
+			self.stdout.write(f"Created data for {model_name} successfully... {self.style.SUCCESS(f'OK')}")
 
-			CollectData.objects.bulk_create(collect_data_list)
-			self.stdout.write(f"- Total time: {self.style.SUCCESS(self.convert_seconds(time.time() - total_time))}")
+		CollectData.objects.bulk_create(collect_data_list)
+		self.stdout.write(f"- Total time: {self.style.SUCCESS(self.convert_seconds(time.time() - total_time))}")
 
 	@staticmethod
 	def is_collected_data(app_labels, model_names):

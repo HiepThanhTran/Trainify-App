@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { AccountContext, DispatchContext } from '../../configs/Contexts';
 import GlobalStyle from '../../styles/Style';
 
@@ -8,15 +8,15 @@ const Profile = ({ navigation }) => {
     const account = useContext(AccountContext);
     const dispatch = useContext(DispatchContext);
 
-    const goToSignIn = () => {
-        navigation.navigate('Signin');
-    };
+    const goToSignIn = () => navigation.navigate('Signin');
 
     return (
         <View style={GlobalStyle.Container}>
-            <Text style={{marginBottom: 10}}>Profile Screen</Text>
+            <Text style={{ marginBottom: 10 }}>Profile Screen</Text>
             {account === null ? (
-                <Button onPress={goToSignIn}>Đăng nhập</Button>
+                <>
+                    <Button onPress={goToSignIn}>Đăng nhập</Button>
+                </>
             ) : (
                 <>
                     <Text style={GlobalStyle.Title}>CHÀO {account.user.first_name}!</Text>
