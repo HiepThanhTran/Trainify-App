@@ -6,6 +6,57 @@ from core.utils import factory, validations
 from interacts.models import Like
 
 
+class BulletinSerializer(BaseSerializer):
+    class Meta:
+        model = Bulletin
+        fields = ["id", "title", "cover", "created_date", "updated_date", "content"]
+
+    def to_representation(self, bulletin):
+        data = super().to_representation(bulletin)
+        cover = data.get("cover")
+
+        if "cover" in self.fields and cover:
+            data["cover"] = bulletin.cover.url
+
+        return data
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+
+        instance_name = validations.check_account_role(request.user)[1]
+        validated_data["poster"] = getattr(request.user, instance_name, None)
+        bulletin = Bulletin.objects.create(**validated_data)
+
+        cover = validated_data.pop("cover", None)
+        bulletin.cover = factory.get_or_upload_image(file=cover, public_id=f"bulletin-{bulletin.id}" if cover else None, ftype="bulletin")
+        bulletin.save()
+
+        return bulletin
+
+    def update(self, bulletin, validated_data):
+        cover = validated_data.get("cover", None)
+        if cover:
+            validated_data["cover"] = factory.get_or_upload_image(file=cover, public_id=f"bulletin-{bulletin.id}")
+
+        for key, value in validated_data.items():
+            setattr(bulletin, key, value)
+        bulletin.save()
+
+        return bulletin
+
+
+class BulletinDetailsSerialzer(BulletinSerializer):
+    poster = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BulletinSerializer.Meta.model
+        fields = BulletinSerializer.Meta.fields + ["poster"]
+
+    def get_poster(self, bulletin):
+        serializer_class = validations.check_user_instance(bulletin.poster)[0]
+        return serializer_class(bulletin.poster).data
+
+
 class ActivitySerializer(BaseSerializer):
     class Meta:
         model = Activity
@@ -86,57 +137,6 @@ class AuthenticatedActivityDetailsSerializer(AuthenticatedActivitySerializer):
     def get_organizer(self, activity):
         serializer_class = validations.check_user_instance(activity.organizer)[0]
         return serializer_class(activity.organizer).data
-
-
-class BulletinSerializer(BaseSerializer):
-    class Meta:
-        model = Bulletin
-        fields = ["id", "title", "cover", "created_date", "updated_date", "content"]
-
-    def to_representation(self, bulletin):
-        data = super().to_representation(bulletin)
-        cover = data.get("cover")
-
-        if "cover" in self.fields and cover:
-            data["cover"] = bulletin.cover.url
-
-        return data
-
-    def create(self, validated_data):
-        request = self.context.get("request")
-
-        instance_name = validations.check_account_role(request.user)[1]
-        validated_data["poster"] = getattr(request.user, instance_name, None)
-        bulletin = Bulletin.objects.create(**validated_data)
-
-        cover = validated_data.pop("cover", None)
-        bulletin.cover = factory.get_or_upload_image(file=cover, public_id=f"bulletin-{bulletin.id}" if cover else None, ftype="bulletin")
-        bulletin.save()
-
-        return bulletin
-
-    def update(self, bulletin, validated_data):
-        cover = validated_data.get("cover", None)
-        if cover:
-            validated_data["cover"] = factory.get_or_upload_image(file=cover, public_id=f"bulletin-{bulletin.id}")
-
-        for key, value in validated_data.items():
-            setattr(bulletin, key, value)
-        bulletin.save()
-
-        return bulletin
-
-
-class BulletinDetailsSerialzer(BulletinSerializer):
-    poster = serializers.SerializerMethodField()
-
-    class Meta:
-        model = BulletinSerializer.Meta.model
-        fields = BulletinSerializer.Meta.fields + ["poster"]
-
-    def get_poster(self, bulletin):
-        serializer_class = validations.check_user_instance(bulletin.poster)[0]
-        return serializer_class(bulletin.poster).data
 
 
 class ActivityRegistrationSerializer(BaseSerializer):

@@ -38,11 +38,11 @@ class AccountViewSet(viewsets.ViewSet):
 
         return Response(data=self.serializer_class(request.user).data, status=status.HTTP_200_OK)
 
-    @action(methods=["post"], detail=False, url_path="auth/students/register")
+    @action(methods=["post"], detail=False, url_path="students/register")
     def create_student_account(self, request):
         return self._create_account(request=request)
 
-    @action(methods=["post"], detail=False, url_path="auth/assistants/register")
+    @action(methods=["post"], detail=False, url_path="assistants/register")
     def create_assistant_account(self, request):
         return self._create_account(request=request)
 

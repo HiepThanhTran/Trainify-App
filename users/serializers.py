@@ -31,10 +31,7 @@ class AccountSerializer(BaseSerializer):
 
 	def create(self, validated_data):
 		user = factory.find_user_by_code(code=validated_data.pop("code"))
-
 		validations.validate_email(code=user.code, first_name=user.first_name, email=validated_data["email"])
-		if user.account:
-			raise ValidationError({"detail": "Người dùng đã có tài khoản"})
 
 		avatar = validated_data.get("avatar", None)
 		validated_data["avatar"] = factory.get_or_upload_image(file=avatar, public_id=f"user-{user.code}" if avatar else avatar, ftype="avatar")

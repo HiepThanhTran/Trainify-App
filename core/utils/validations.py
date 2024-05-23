@@ -40,7 +40,7 @@ def validate_email(code, first_name, email):
 	pattern = f"^{code}{first_name}@ou.edu.vn$"
 
 	if not email or not bool(re.match(pattern, email.strip())):
-		raise ValidationError({"email": "Vui lòng nhập email trường cấp"})
+		raise ValidationError({"detail": "Vui lòng nhập email trường cấp"})
 
 	return email
 

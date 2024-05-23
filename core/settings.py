@@ -26,10 +26,10 @@ load_dotenv(".env.development.local")
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6*^0g#i2%(w@-d(!f$aylqv89yht0!_4f$=$%0%d#fk8%uh6*g"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app", ".now.sh"]
 
@@ -98,20 +98,20 @@ pymysql.install_as_MySQLdb()
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-	"default": {
-	"ENGINE": "django.db.backends.postgresql_psycopg2",
-	"NAME": os.getenv("POSTGRES_DATABASE"),
-	"USER": os.getenv("POSTGRES_USER"),
-	"PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-	"HOST": os.getenv("POSTGRES_HOST"),
-	},
 	# "default": {
-	# 	"ENGINE": "django.db.backends.mysql",
-	# 	"NAME": "training_point_db",
-	# 	"USER": "root",
-	# 	"PASSWORD": "29012003",
-	# 	"HOST": "localhost",
+	# 	"ENGINE": "django.db.backends.postgresql_psycopg2",
+	# 	"NAME": os.getenv("POSTGRES_DATABASE"),
+	# 	"USER": os.getenv("POSTGRES_USER"),
+	# 	"PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+	# 	"HOST": os.getenv("POSTGRES_HOST"),
 	# },
+	"default": {
+		"ENGINE": "django.db.backends.mysql",
+		"NAME": "training_point_db",
+		"USER": "root",
+		"PASSWORD": "29012003",
+		"HOST": "localhost",
+	},
 	# "default": {
 	#     "ENGINE": "django.db.backends.sqlite3",
 	#     "NAME": BASE_DIR / "db.sqlite3",
@@ -206,9 +206,9 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 cloudinary.config(
-	cloud_name="dtthwldgs",
-	api_key="295661242477252",
-	api_secret="xKPY2fG-4h1mtZl2_PRvxsSfgtA",
+	cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+	api_key=os.getenv("CLOUDINARY_API_KEY"),
+	api_secret=os.getenv("CLOUDINARY_API_SECRET"),
 )
 
 customColorPalette = [

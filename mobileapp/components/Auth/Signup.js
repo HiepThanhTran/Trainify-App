@@ -81,6 +81,7 @@ const Signup = () => {
             if (ex.response && ex.response.status === 400) {
                 setErrorVisible(true);
                 setErrorMsg(ex.response.data.detail);
+                console.error(ex.response.data);
             } else console.error(ex);
         } finally {
             setLoading(false);

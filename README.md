@@ -28,34 +28,32 @@ pip install -r requirements.txt
 
 6 : Change name, user, password of **DATABASES** variable in settings.py
 
-7 : Run a data collection if you want sample data **(This may take a while)**
+7 : Run makemigrations and migrate
+
+```shell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+8 : Run a data collection if you want sample data **(This may take a while)**
 
 ```shell
 python manage.py collectdata
 ```
 
-- This command also run makemigrations and migrate
 - This command will create a superuser with:
     - **username**: admin@gmail.com
     - **password**: admin@123
+- And fill data for the database
 
-- If you want to use your database, you can run makemigrations and migrate and create superuser
+9 : Create superuser if you don't run collectdata command (Step 8)
 
 ```shell
-python manage.py makemigrations
-python manage.py migrate
-
 python manage.py createsuperuser
 ```
 
-8 : Run project
+10 : Run project
 
 ```shell
 python manage.py runserver
 ```
-
-## Contributing
-
-- [Trần Thanh Hiệp](https://github.com/hiepthanhtran)
-- [Nguyễn Song Hậu](https://github.com/SongHau)
-

@@ -130,7 +130,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
         if request.method.__eq__("POST"):
             content = request.data.get("content")
             if not content:
-                return Response(data={"content": "Nội dung bình luận không được trống"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data={"detail": "Nội dung bình luận không được trống"}, status=status.HTTP_400_BAD_REQUEST)
 
             comment = self.get_object().comments.create(content=content, account=request.user)
             serializer = interacts_serializers.CommentSerializer(comment)
