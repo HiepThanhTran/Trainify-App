@@ -1,60 +1,58 @@
-import { ImageBackground, StyleSheet } from 'react-native';
-import { IMGElement } from 'react-native-render-html';
+import { StyleSheet } from 'react-native';
 
 const AuthStyle = StyleSheet.create({
-    Container:{
-        flex: 1
+    Container: {
+        flex: 1,
     },
-    Header:{
+    Header: {
         flex: 2,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingBottom: 4
+        paddingBottom: 4,
     },
-    HeaderTitle:{
+    HeaderTitle: {
         fontSize: 30,
         marginTop: 30,
         color: 'white',
-        marginBottom: 20
+        marginBottom: 20,
     },
-    SubTitle:{
+    SubTitle: {
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
-        lineHeight: 30
+        lineHeight: 30,
     },
-    Footer:{
+    Form: {
         flex: 3,
         backgroundColor: 'white',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 22,
-        paddingVertical: 30
+        paddingVertical: 30,
     },
-    Input:{
+    Input: {
         backgroundColor: '#f1f4ff',
         borderWidth: 2,
         borderColor: '#3e9ae4',
-        marginBottom: 20
+        marginBottom: 20,
     },
-    Button:{
+    Button: {
         width: '100%',
         backgroundColor: '#3e9ae4',
         borderRadius: 16,
         marginBottom: 12,
-        padding: 8,
     },
-    ButtonText:{
+    ButtonText: {
         color: 'white',
-        fontSize: 20
+        fontSize: 20,
     },
-    Detail:{
+    Footer: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 5,
-    }
+    },
 });
 
 export default AuthStyle;

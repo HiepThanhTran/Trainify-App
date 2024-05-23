@@ -19,14 +19,31 @@ const GlobalStyle = StyleSheet.create({
     Italic: {
         fontFamily: 'OpenSansItalic',
     },
-    PrimaryColor:{
-        color: '#3e9ae4'
+    PrimaryColor: {
+        color: '#3e9ae4',
     },
-    BackGround:{
+    Container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    HelpText: {
+        marginBottom: 12,
+        marginTop:-16,
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    Title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'blue',
+    },
+    BackGround: {
         width: '100%',
         height: '100%',
-        backgroundColor: 'white'
-    }
+        backgroundColor: 'white',
+    },
 });
 
 export default GlobalStyle;

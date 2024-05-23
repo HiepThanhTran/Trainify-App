@@ -1,15 +1,15 @@
+import { API_VERSION, BASE_URL, URL_TYPE } from '@env';
 import axios from 'axios';
 
-const [URL, TYPE, VERSION] = ['https://trainingpoint.vercel.app', 'api', 'v1'];
-const BASE_URL = `${URL}/${TYPE}/${VERSION}/`;
+const API_URL = `${BASE_URL}/${URL_TYPE}/${API_VERSION}/`;
 
 export const endPoints = {
     //// Accounts
     me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
     'me-update': '/accounts/me/update/', // PATCH: Cập nhật tài khoản đang đăng nhập
     login: '/o/token/', // POST: Lấy access token đăng nhập
-    'student-register': '/accounts/auth/student/register/', // POST: Đăng ký tài khoản cho sinh viên
-    'assistant-register': '/accounts/auth/assistant/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
+    'student-register': '/accounts/students/register/', // POST: Đăng ký tài khoản cho sinh viên
+    'assistant-register': '/accounts/assistants/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
 
     //// Students
     students: '/students/', // GET: Lấy danh sách sinh viên
@@ -81,11 +81,11 @@ export const endPoints = {
 
 export const authAPI = (token) => {
     return axios.create({
-        baseURL: BASE_URL,
+        baseURL: API_URL,
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
 };
 
-export default axios.create({ baseURL: BASE_URL });
+export default axios.create({ baseURL: API_URL });
