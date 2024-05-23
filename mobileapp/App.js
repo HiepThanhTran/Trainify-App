@@ -16,7 +16,7 @@ export default function App() {
     return (
         <>
             {!fontsLoaded ? (
-                <View style={GlobalStyle.Container}>
+                <View style={GlobalStyle.Center}>
                     <ActivityIndicator size="large" color="#3e9ae4" />
                 </View>
             ) : (

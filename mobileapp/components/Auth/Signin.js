@@ -5,6 +5,7 @@ import { TextInput, Button } from 'react-native-paper';
 import AuthStyle from './Style';
 import GlobalStyle from '../../styles/Style';
 import { useNavigation } from '@react-navigation/native';
+import Theme from '../../styles/Theme';
 
 const Signin = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -16,8 +17,8 @@ const Signin = () => {
         style={{ flex: 1 }}
       >
         <View style={AuthStyle.Header}>
-          <Text style={[AuthStyle.HeaderTitle, GlobalStyle.Bold]}>Đăng nhập</Text>
-          <Text style={[AuthStyle.SubTitle, GlobalStyle.Bold]}>Chào mừng bạn đến với hệ thống điểm rèn luyện sinh viên</Text>
+          <Text style={AuthStyle.HeaderTitle}>Đăng nhập</Text>
+          <Text style={AuthStyle.SubTitle}>Chào mừng bạn đến với hệ thống điểm rèn luyện sinh viên</Text>
         </View>
 
         <View style={AuthStyle.Footer}>
@@ -43,16 +44,14 @@ const Signin = () => {
             right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setPasswordVisible(!passwordVisible)} />}
           />
 
-          <TouchableOpacity style={AuthStyle.Button}>
-            <Button>
-              <Text style={[AuthStyle.ButtonText, GlobalStyle.Bold]}>Đăng nhập</Text>
-            </Button>
-          </TouchableOpacity>
+          <Button style={AuthStyle.Button}>
+              <Text style={AuthStyle.ButtonText}>Đăng nhập</Text>
+          </Button>
 
           <View style={AuthStyle.Detail}>
-            <Text style={GlobalStyle.Bold}>Bạn chưa có tài khoản?</Text>
+            <Text style={{fontFamily: Theme.Bold}}>Bạn chưa có tài khoản?</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-              <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
+              <Text style={{fontFamily: Theme.Bold, marginLeft: 5, color: Theme.PrimaryColor}}>
                 Đăng ký
               </Text>
             </TouchableOpacity>

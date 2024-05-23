@@ -1,5 +1,5 @@
-import { ImageBackground, StyleSheet } from 'react-native';
-import { IMGElement } from 'react-native-render-html';
+import { StyleSheet } from 'react-native';
+import Theme from '../../styles/Theme'
 
 const AuthStyle = StyleSheet.create({
     Container:{
@@ -10,19 +10,21 @@ const AuthStyle = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingBottom: 4
+        paddingBottom: 4,
     },
     HeaderTitle:{
         fontSize: 30,
         marginTop: 30,
         color: 'white',
-        marginBottom: 20
+        marginBottom: 20,
+        fontFamily: Theme.Bold
     },
     SubTitle:{
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
-        lineHeight: 30
+        lineHeight: 30,
+        fontFamily: Theme.Bold
     },
     Footer:{
         flex: 3,
@@ -35,19 +37,20 @@ const AuthStyle = StyleSheet.create({
     Input:{
         backgroundColor: '#f1f4ff',
         borderWidth: 2,
-        borderColor: '#3e9ae4',
+        borderColor: Theme.PrimaryColor,
         marginBottom: 20
     },
     Button:{
         width: '100%',
-        backgroundColor: '#3e9ae4',
+        backgroundColor: Theme.PrimaryColor,
         borderRadius: 16,
         marginBottom: 12,
         padding: 8,
     },
     ButtonText:{
         color: 'white',
-        fontSize: 20
+        fontSize: 20,
+        fontFamily: Theme.Bold
     },
     Detail:{
         flex: 1,

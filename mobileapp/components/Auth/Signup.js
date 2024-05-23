@@ -5,6 +5,7 @@ import { TextInput, Button } from 'react-native-paper';
 import AuthStyle from './Style';
 import GlobalStyle from '../../styles/Style';
 import { useNavigation } from '@react-navigation/native';
+import Theme from '../../styles/Theme';
 
 const Signup = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -16,8 +17,8 @@ const Signup = () => {
                 style={{ flex: 1 }}
             >
                 <View style={AuthStyle.Header}>
-                    <Text style={[AuthStyle.HeaderTitle, GlobalStyle.Bold]}>Đăng ký</Text>
-                    <Text style={[AuthStyle.SubTitle, GlobalStyle.Bold]}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
+                    <Text style={AuthStyle.HeaderTitle}>Đăng ký</Text>
+                    <Text style={AuthStyle.SubTitle}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
                 </View>
 
                 <View style={AuthStyle.Footer}>
@@ -65,16 +66,14 @@ const Signup = () => {
                         right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setPasswordVisible(!passwordVisible)} />}
                     />
 
-                    <TouchableOpacity style={AuthStyle.Button}>
-                        <Button>
-                            <Text style={[AuthStyle.ButtonText, GlobalStyle.Bold]}>Đăng ký</Text>
-                        </Button>
-                    </TouchableOpacity>
-
+                    <Button style={AuthStyle.Button}>
+                        <Text style={AuthStyle.ButtonText}>Đăng ký</Text>
+                    </Button>
+                  
                     <View style={AuthStyle.Detail}>
-                        <Text style={GlobalStyle.Bold}>Bạn đã có tài khoản?</Text>
+                        <Text style={{fontFamily: Theme.Bold}}>Bạn đã có tài khoản?</Text>
                         <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-                            <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
+                            <Text style={{fontFamily: Theme.Bold, marginLeft: 5, color: Theme.PrimaryColor}}>
                                 Đăng nhập
                             </Text>
                         </TouchableOpacity>

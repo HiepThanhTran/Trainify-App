@@ -44,7 +44,7 @@ const Onboarding = () => {
     const buttonLabel = (label) => {
         return (
             <View style={{ padding: 12 }}>
-                <Text style={[GlobalStyle.SemiBold, OnboardingStyle.NextButton]}>{label}</Text>
+                <Text style={OnboardingStyle.Button}>{label}</Text>
             </View>
         );
     };
@@ -66,8 +66,8 @@ const Onboarding = () => {
                                 loop
                             />
                         )}
-                        <Text style={[GlobalStyle.Bold, OnboardingStyle.OnboardingTitle]}>{item.title}</Text>
-                        <Text style={[GlobalStyle.SemiBold, OnboardingStyle.OnboardingDescription]}>
+                        <Text style={OnboardingStyle.OnboardingTitle}>{item.title}</Text>
+                        <Text style={OnboardingStyle.OnboardingDescription}>
                             {item.description}
                         </Text>
                     </View>
