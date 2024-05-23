@@ -33,9 +33,11 @@ class AccountViewSet(viewsets.ViewSet):
     @action(methods=["patch"], detail=False, url_path="me/update")
     def partial_update_authenticated_account(self, request):
         serializer = users_serializers.AccountUpdateSerializer(instance=request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+        
+        if not serializer.is_valid(raise_exception=False):
+            return Response(data={"detail": "Người dùng đã có tài khoản"}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer.save()
-
         return Response(data=self.serializer_class(request.user).data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=False, url_path="students/register")
