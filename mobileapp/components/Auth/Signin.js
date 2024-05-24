@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { TextInput, Button } from 'react-native-paper';
 import AuthStyle from './Style';
-import GlobalStyle from '../../styles/Style';
 import { useNavigation } from '@react-navigation/native';
 import Theme from '../../styles/Theme';
 

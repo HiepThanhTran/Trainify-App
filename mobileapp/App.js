@@ -7,7 +7,7 @@ import Signup from './components/Auth/Signup';
 import MainTab from './components/Navigations/Tabs';
 import useFonts from './configs/Fonts';
 import GlobalStyle from './styles/Style';
-
+import BulletinDetail from './components/Activity/BulletinDetail';
 
 const RootStack = createNativeStackNavigator();
 
@@ -22,24 +22,25 @@ export default function App() {
             ) : (
                 <NavigationContainer>
                     <RootStack.Navigator>
-                        <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} />
-                        {/* <RootStack.Screen name="MainTab" options={{ headerShown: false }} component={MainTab} /> */}
-                        <RootStack.Screen
+                        {/* <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} /> */}
+                        <RootStack.Screen name="MainTab" options={{ headerShown: false }} component={MainTab} />
+                        {/* <RootStack.Screen
                             name="Signin"
                             options={{
                                 title: 'Đăng nhập',
                                 headerShown: false,
                             }}
                             component={Signin}
-                        />
-                        <RootStack.Screen
+                        /> */}
+                        {/* <RootStack.Screen
                             name="Signup"
                             options={{
                                 title: 'Đăng ký',
                                 headerShown: false,
                             }}
                             component={Signup}
-                        />
+                        /> */}
+                         <RootStack.Screen name="BulletinDetail" options={{ headerShown: false }} component={BulletinDetail} />
                     </RootStack.Navigator>
                 </NavigationContainer>
             )}
