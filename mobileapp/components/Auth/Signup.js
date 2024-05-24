@@ -7,7 +7,7 @@ import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
 
-const Signup = () => {
+const Signup = ({ navigation }) => {
     const [account, setAccount] = useState({});
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -21,39 +21,36 @@ const Signup = () => {
             name: 'code',
             icon: 'badge-account',
             keyboardType: 'numeric',
+            errorMsg: 'Mã số sinh viên không được trống',
         },
         {
             label: 'Email',
             name: 'email',
             icon: 'email',
             keyboardType: 'email-address',
+            errorMsg: 'Email không được trống',
         },
         {
             label: 'Mật khẩu',
             name: 'password',
             secureTextEntry: !passwordVisible,
             icon: passwordVisible ? 'eye-off' : 'eye',
+            errorMsg: 'Mật khẩu không được trống',
         },
         {
             label: 'Xác nhận mật khẩu',
             name: 'confirm',
             secureTextEntry: !passwordVisible,
             icon: passwordVisible ? 'eye-off' : 'eye',
+            errorMsg: 'Vui lòng xác nhận mật khẩu!',
         },
     ];
 
     const signup = async () => {
-        const errorMsgs = [
-            { name: 'code', errorMsg: 'Mã số sinh viên không được trống' },
-            { name: 'email', errorMsg: 'Email không được trống' },
-            { name: 'password', errorMsg: 'Mật khẩu không được trống' },
-            { name: 'confirm', errorMsg: 'Vui lòng xác nhận mật khẩu!' },
-        ];
-
-        for (let msg of errorMsgs) {
-            if (!account[msg.name]) {
+        for (let field of fields) {
+            if (!account[field.name]) {
                 setErrorVisible(true);
-                setErrorMsg(msg.errorMsg);
+                setErrorMsg(field.errorMsg);
                 return;
             }
         }
@@ -93,9 +90,6 @@ const Signup = () => {
             return { ...current, [field]: value };
         });
     };
-
-    const navigation = useNavigation();
-    const goToSignIn = () => navigation.navigate('Signin');
 
     return (
         <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
@@ -161,7 +155,7 @@ const Signup = () => {
                                         Đăng ký tài khoản thành công
                                     </Text>
                                     <Button
-                                        onPress={goToSignIn}
+                                        onPress={() => navigation.navigate('Signin')}
                                         icon="account"
                                         textColor="white"
                                         style={AuthStyle.Button}
@@ -176,7 +170,7 @@ const Signup = () => {
 
                         <View style={AuthStyle.Footer}>
                             <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
-                            <TouchableOpacity onPress={goToSignIn}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
                                 <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
                                     Đăng nhập
                                 </Text>

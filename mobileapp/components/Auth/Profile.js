@@ -1,30 +1,20 @@
-import { useContext } from 'react';
 import { View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { AccountContext, DispatchContext } from '../../configs/Contexts';
+import { SIGN_OUT } from '../../configs/Constants';
+import { useAccount, useAccountDispatch } from '../../configs/Context';
 import GlobalStyle from '../../styles/Style';
 
-const Profile = ({ navigation }) => {
-    const account = useContext(AccountContext);
-    const dispatch = useContext(DispatchContext);
-
-    const goToSignIn = () => navigation.navigate('Signin');
+const Profile = () => {
+    const account = useAccount();
+    const dispatch = useAccountDispatch();
 
     return (
         <View style={GlobalStyle.Container}>
             <Text style={{ marginBottom: 10 }}>Profile Screen</Text>
-            {account === null ? (
-                <>
-                    <Button onPress={goToSignIn}>Đăng nhập</Button>
-                </>
-            ) : (
-                <>
-                    <Text style={GlobalStyle.Title}>CHÀO {account.user.first_name}!</Text>
-                    <Button icon="logout" onPress={() => dispatch({ type: 'logout' })}>
-                        Đăng xuất
-                    </Button>
-                </>
-            )}
+            <Text style={GlobalStyle.Title}>CHÀO {account.data.user.first_name}</Text>
+            <Button icon="logout" onPress={() => dispatch({ type: SIGN_OUT })}>
+                Đăng xuất
+            </Button>
         </View>
     );
 };

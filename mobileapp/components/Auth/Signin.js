@@ -1,49 +1,45 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
-import { DispatchContext } from '../../configs/Contexts';
+import { SIGN_IN } from '../../configs/Constants';
+import { useAccountDispatch } from '../../configs/Context';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
 
-const Signin = () => {
+const Signin = ({ navigation }) => {
     const [account, setAccount] = useState({});
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
-    const dispatch = useContext(DispatchContext);
-    const navigation = useNavigation();
+    const dispatch = useAccountDispatch();
     const fields = [
         {
             label: 'Email',
             name: 'username',
             icon: 'email',
             keyboardType: 'email-address',
+            errorMsg: 'Email không được trống',
         },
         {
             label: 'Mật khẩu',
             name: 'password',
             secureTextEntry: !passwordVisible,
             icon: passwordVisible ? 'eye-off' : 'eye',
+            errorMsg: 'Mật khẩu không được trống',
         },
     ];
 
     const signin = async () => {
-        const errorMsgs = [
-            { name: 'username', errorMsg: 'Email không được trống' },
-            { name: 'password', errorMsg: 'Mật khẩu không được trống' },
-        ];
-
-        for (let msg of errorMsgs) {
-            if (!account[msg.name]) {
+        for (let field of fields) {
+            if (!account[field.name]) {
                 setErrorVisible(true);
-                setErrorMsg(msg.errorMsg);
+                setErrorMsg(field.errorMsg);
                 return;
             }
         }
@@ -59,13 +55,13 @@ const Signin = () => {
                 client_secret: CLIENT_SECRET,
             });
 
-            await AsyncStorage.setItem('token', res.data.access_token);
+			await AsyncStorage.setItem('token', res.data.access_token);
 
             setTimeout(async () => {
                 let user = await authAPI(res.data.access_token).get(endPoints['me']);
 
                 dispatch({
-                    type: 'login',
+                    type: SIGN_IN,
                     payload: user.data,
                 });
 
