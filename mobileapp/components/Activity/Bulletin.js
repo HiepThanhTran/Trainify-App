@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Keyboard } from "react-native"; 
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Keyboard } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { Dimensions } from "react-native";
 import RenderHTML from "react-native-render-html";
@@ -16,29 +16,26 @@ const Bulletin = ({ navigation }) => {
     const [bulletins, setBulletins] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [q, setQ] = useState("");
-    const [canLoadMore, setCanLoadMore] = useState(true);
+    const [title, setTitle] = useState("");
 
     const loadBulletins = async () => {
         if (page > 0) {
             setLoading(true);
             try {
-                let url = `${endPoints['bulletins']}?page=${page}`;
-                if (q) {
-                    url += `&title=${encodeURIComponent(q)}`;
-                }
+                let url = `${endPoints['bulletins']}?page=${page}&title=${title}`;
                 let res = await APIs.get(url);
                 if (res.data.next === null) {
                     setPage(0);
-                    setCanLoadMore(false);
                 }
                 if (page === 1) {
                     setBulletins(res.data.results);
                 } else {
-                    setBulletins(current => [...current, ...res.data.results]);
+                    setBulletins(current => {
+                        return [...current, ...res.data.results];
+                    });
                 }
-            } catch (ex) {
-                console.error(ex);
+            } catch (err) {
+                console.error(err);
             } finally {
                 setLoading(false);
             }
@@ -47,21 +44,21 @@ const Bulletin = ({ navigation }) => {
 
     useEffect(() => {
         loadBulletins();
-    }, [page, q]);
+    }, [page, title]);
 
     const loadMore = ({ nativeEvent }) => {
-        if (!loading && canLoadMore && isCloseToBottom(nativeEvent)) {
+        if (!loading && page > 0 && isCloseToBottom(nativeEvent)) {
             setPage(page + 1);
         }
     };
 
     const search = (value) => {
         setPage(1);
-        setQ(value);
+        setTitle(value);
     };
 
     const go = (bulletinID) => {
-        navigation.navigate('BulletinDetail', { 'bulletinID': bulletinID })
+        navigation.navigate('BulletinDetail', { 'bulletinID': bulletinID });
     };
 
     const dismissKeyboard = () => {
@@ -80,16 +77,16 @@ const Bulletin = ({ navigation }) => {
                         style={BulletinStyle.SearchInput}
                         placeholder="Tìm kiếm bản tin"
                         onChangeText={search}
-                        value={q}
+                        value={title}
                     />
                 </View>
 
-                <ScrollView style={BulletinStyle.BulletinCardContainer} onScroll={loadMore} 
-                     showsVerticalScrollIndicator={false}
-                     showsHorizontalScrollIndicator={false}
+                <ScrollView
+                    style={BulletinStyle.BulletinCardContainer}
+                    onScroll={loadMore}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
-                    <RefreshControl onRefresh={loadBulletins} />
-                    {loading && <ActivityIndicator />}
                     {bulletins.map((bulletin) => (
                         <TouchableOpacity key={bulletin.id} onPress={() => go(bulletin.id)}>
                             <View style={BulletinStyle.BulletinCard}>
