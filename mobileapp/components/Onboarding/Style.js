@@ -1,9 +1,10 @@
 import { Dimensions, StyleSheet } from 'react-native';
+import Theme from '../../styles/Theme';
 
 //Size Image
 const { width, height } = Dimensions.get('screen');
 
-const OnboardingStyles = StyleSheet.create({
+const OnboardingStyle = StyleSheet.create({
     OnboardingContainer: {
         flex: 1,
         alignItems: 'center',
@@ -18,17 +19,20 @@ const OnboardingStyles = StyleSheet.create({
     OnboardingTitle: {
         fontSize: 28,
         marginTop: 60,
+        fontFamily: Theme.Bold
     },
     OnboardingDescription: {
         fontSize: 16,
         marginTop: 20,
         textAlign: 'center',
         lineHeight: 30,
+        fontFamily: Theme.SemiBold
     },
-    NextButton: {
+    Button: {
         fontWeight: '600',
         fontSize: 16,
+        fontFamily: Theme.SemiBold
     },
 });
 
-export default OnboardingStyles;
+export default OnboardingStyle;

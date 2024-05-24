@@ -63,6 +63,16 @@ const GlobalStyle = StyleSheet.create({
             height: 2,
         },
     },
+    BackGround:{
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'white'
+    },
+    Center:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });
 
 export default GlobalStyle;

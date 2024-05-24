@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Keyboard, Modal, TouchableOpacity, View } from 'react-native';

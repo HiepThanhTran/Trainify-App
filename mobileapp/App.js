@@ -25,7 +25,14 @@ const RootNavigator = () => {
                     <RootStack.Screen name="Signup" options={{ headerShown: false }} component={Signup} />
                 </>
             ) : (
-                <RootStack.Screen name="MainTab" options={{ headerShown: false }} component={MainTab} />
+                <>
+                    <RootStack.Screen name="MainTab" options={{ headerShown: false }} component={MainTab} />
+                    <RootStack.Screen
+                        name="BulletinDetail"
+                        options={{ headerShown: false }}
+                        component={BulletinDetail}
+                    />
+                </>
             )}
         </RootStack.Navigator>
     );
@@ -37,7 +44,7 @@ export default function App() {
     return (
         <>
             {!fontsLoaded ? (
-                <View style={GlobalStyle.Container}>
+                <View style={GlobalStyle.Center}>
                     <ActivityIndicator size="large" color="#3e9ae4" />
                 </View>
             ) : (

@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import GlobalStyle from '../../styles/Style';
-import OnboardingStyles from './Style';
+import OnboardingStyle from './Style';
 
 // Animation
 const animations = [
@@ -44,7 +44,7 @@ const Onboarding = () => {
     const buttonLabel = (label) => {
         return (
             <View style={{ padding: 12 }}>
-                <Text style={[GlobalStyle.SemiBold, OnboardingStyles.NextButton]}>{label}</Text>
+                <Text style={OnboardingStyle.Button}>{label}</Text>
             </View>
         );
     };
@@ -56,18 +56,18 @@ const Onboarding = () => {
             data={animations}
             renderItem={({ item }) => {
                 return (
-                    <View style={OnboardingStyles.OnboardingContainer}>
+                    <View style={OnboardingStyle.OnboardingContainer}>
                         {item.image && (
                             <LottieView
-                                style={OnboardingStyles.OnboardingImage}
+                                style={OnboardingStyle.OnboardingImage}
                                 source={item.image}
                                 ref={animation}
                                 autoPlay
                                 loop
                             />
                         )}
-                        <Text style={[GlobalStyle.Bold, OnboardingStyles.OnboardingTitle]}>{item.title}</Text>
-                        <Text style={[GlobalStyle.SemiBold, OnboardingStyles.OnboardingDescription]}>
+                        <Text style={OnboardingStyle.OnboardingTitle}>{item.title}</Text>
+                        <Text style={OnboardingStyle.OnboardingDescription}>
                             {item.description}
                         </Text>
                     </View>

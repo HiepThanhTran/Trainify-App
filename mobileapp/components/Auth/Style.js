@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import Theme from '../../styles/Theme'
 
 const AuthStyle = StyleSheet.create({
     Container: {
@@ -16,12 +17,14 @@ const AuthStyle = StyleSheet.create({
         marginTop: 30,
         color: 'white',
         marginBottom: 20,
+        fontFamily: Theme.Bold
     },
     SubTitle: {
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
         lineHeight: 30,
+        fontFamily: Theme.Bold
     },
     Form: {
         flex: 3,
@@ -34,18 +37,20 @@ const AuthStyle = StyleSheet.create({
     Input: {
         backgroundColor: '#f1f4ff',
         borderWidth: 2,
-        borderColor: '#3e9ae4',
         marginBottom: 20,
+        borderColor: Theme.PrimaryColor,
+        marginBottom: 20
     },
     Button: {
         width: '100%',
-        backgroundColor: '#3e9ae4',
+        backgroundColor: Theme.PrimaryColor,
         borderRadius: 16,
         marginBottom: 12,
     },
     ButtonText: {
         color: 'white',
         fontSize: 20,
+        fontFamily: Theme.Bold
     },
     Footer: {
         flex: 1,
