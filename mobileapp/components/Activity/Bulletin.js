@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState} from "react";
 import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Keyboard } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { Dimensions } from "react-native";

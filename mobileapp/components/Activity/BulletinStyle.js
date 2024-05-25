@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import Theme from '../../styles/Theme'
+import { Title } from "react-native-paper";
 
 const BulletinStyle = StyleSheet.create({
     Container: {
@@ -63,12 +64,24 @@ const BulletinStyle = StyleSheet.create({
         marginBottom: 10,
         fontFamily: Theme.Bold
     },
+    TitleDetail:{
+        fontSize: 25,
+        marginBottom: 15,
+        fontFamily: Theme.Bold
+    },
     Content:{
-        width: '100%',
+        width: '100%',  
         fontSize: 20,
         marginBottom: 5,
         fontFamily: Theme.Regular,
         lineHeight: 30
+    },
+    ContentDetail:{
+        fontSize: 18,
+        fontFamily: Theme.Regular,
+        lineHeight: 30,
+        marginTop: 20,
+        marginBottom: 20
     },
     Date:{
         fontSize: 18,
@@ -76,6 +89,18 @@ const BulletinStyle = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10
     },
+    DateDetail:{
+        fontSize: 18,
+        fontFamily: Theme.SemiBold,
+        marginBottom: 10
+    },
+    DateUpdate:{
+        fontSize: 18,
+        fontFamily: Theme.SemiBold,
+    },
+    ActivityContainer:{
+        marginTop: 20
+    }
 })
 
 export default BulletinStyle;

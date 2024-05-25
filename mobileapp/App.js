@@ -8,6 +8,7 @@ import MainTab from './components/Navigations/Tabs';
 import useFonts from './configs/Fonts';
 import GlobalStyle from './styles/Style';
 import BulletinDetail from './components/Activity/BulletinDetail';
+import Activity from './components/Activity/Activity';
 
 const RootStack = createNativeStackNavigator();
 
@@ -41,6 +42,7 @@ export default function App() {
                             component={Signup}
                         /> */}
                          <RootStack.Screen name="BulletinDetail" options={{ headerShown: false }} component={BulletinDetail} />
+                         <RootStack.Screen name="Activity" options={{ headerShown: false }} component={Activity} />
                     </RootStack.Navigator>
                 </NavigationContainer>
             )}
