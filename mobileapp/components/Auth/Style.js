@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
-import Theme from '../../styles/Theme'
+import Theme from '../../styles/Theme';
 
 const AuthStyle = StyleSheet.create({
+    // Auth Style
     Container: {
         flex: 1,
     },
@@ -17,14 +18,14 @@ const AuthStyle = StyleSheet.create({
         marginTop: 30,
         color: 'white',
         marginBottom: 20,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     SubTitle: {
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
         lineHeight: 30,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     Form: {
         flex: 3,
@@ -39,7 +40,7 @@ const AuthStyle = StyleSheet.create({
         borderWidth: 2,
         marginBottom: 20,
         borderColor: Theme.PrimaryColor,
-        marginBottom: 20
+        marginBottom: 20,
     },
     Button: {
         width: '100%',
@@ -50,13 +51,18 @@ const AuthStyle = StyleSheet.create({
     ButtonText: {
         color: 'white',
         fontSize: 20,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     Footer: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 5,
+    },
+    FooterText: {
+        color: Theme.PrimaryColor,
+        marginLeft: 5,
+        fontFamily: Theme.Bold,
     },
 });
 

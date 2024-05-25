@@ -80,7 +80,7 @@ class AccountUpdateSerializer(serializers.Serializer):
 class UserSerializer(BaseSerializer):
 	class Meta:
 		model = User
-		fields = ["id", "first_name", "middle_name", "last_name", "gender", "date_of_birth", "address", "phone_number", "faculty"]
+		fields = ["id", "code", "first_name", "middle_name", "last_name", "gender", "date_of_birth", "address", "phone_number", "faculty"]
 
 	def to_representation(self, user):
 		data = super().to_representation(user)
@@ -112,7 +112,7 @@ class AssistantSerializer(UserSerializer):
 class StudentSerializer(UserSerializer):
 	class Meta:
 		model = Student
-		fields = UserSerializer.Meta.fields + ["code", "major", "sclass", "academic_year", "educational_system"]
+		fields = UserSerializer.Meta.fields + ["major", "sclass", "academic_year", "educational_system"]
 
 	def to_representation(self, student):
 		data = super().to_representation(student)

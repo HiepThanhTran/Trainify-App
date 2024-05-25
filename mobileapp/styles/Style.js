@@ -1,29 +1,13 @@
 import { StyleSheet } from 'react-native';
+import Theme from './Theme';
 
 const GlobalStyle = StyleSheet.create({
-    Bold: {
-        fontFamily: 'OpenSansBold',
-    },
-    SemiBold: {
-        fontFamily: 'OpenSansSemiBold',
-    },
-    Light: {
-        fontFamily: 'OpenSansLight',
-    },
-    Medium: {
-        fontFamily: 'OpenSansMedium',
-    },
-    Regular: {
-        fontFamily: 'OpenSansRegular',
-    },
-    Italic: {
-        fontFamily: 'OpenSansItalic',
-    },
-    PrimaryColor: {
-        color: '#3e9ae4',
-    },
     Container: {
         flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    Center: {
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -31,13 +15,8 @@ const GlobalStyle = StyleSheet.create({
         marginBottom: 12,
         marginTop: -16,
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: Theme.Bold,
         textAlign: 'center',
-    },
-    Title: {
-        color: '#3e9ae4',
-        fontSize: 20,
-        fontWeight: 'bold',
     },
     BackGround: {
         width: '100%',
@@ -63,15 +42,15 @@ const GlobalStyle = StyleSheet.create({
             height: 2,
         },
     },
-    BackGround:{
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'white'
+    ModalTitle: {
+        color: Theme.PrimaryColor,
+        fontSize: 20,
+        fontFamily: Theme.Bold,
+        marginBottom: 20,
     },
-    Center:{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+    DialogButton: {
+        color: Theme.PrimaryColor,
+        fontSize: 16,
     }
 });
 

@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Keyboard } from "react-native"; 
 import { AntDesign } from '@expo/vector-icons';
-import { Dimensions } from "react-native";
-import RenderHTML from "react-native-render-html";
-import GlobalStyle from '../../styles/Style';
-import BulletinStyle from "./BulletinStyle";
-import Theme from "../../styles/Theme";
+import React, { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    Keyboard,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
-import { isCloseToBottom } from "../Utils/Utils";
-import { formatDate } from "../Utils/Utils";
+import GlobalStyle from '../../styles/Style';
+import Theme from '../../styles/Theme';
+import { formatDate, isCloseToBottom } from '../Utils/Utils';
+import BulletinStyle from './BulletinStyle';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -16,17 +25,14 @@ const Bulletin = ({ navigation }) => {
     const [bulletins, setBulletins] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [q, setQ] = useState("");
+    const [q, setQ] = useState('');
     const [canLoadMore, setCanLoadMore] = useState(true);
 
     const loadBulletins = async () => {
         if (page > 0) {
             setLoading(true);
             try {
-                let url = `${endPoints['bulletins']}?page=${page}`;
-                if (q) {
-                    url += `&title=${encodeURIComponent(q)}`;
-                }
+                let url = `${endPoints['bulletins']}?page=${page}&title=${q}`;
                 let res = await APIs.get(url);
                 if (res.data.next === null) {
                     setPage(0);
@@ -35,7 +41,7 @@ const Bulletin = ({ navigation }) => {
                 if (page === 1) {
                     setBulletins(res.data.results);
                 } else {
-                    setBulletins(current => [...current, ...res.data.results]);
+                    setBulletins((current) => [...current, ...res.data.results]);
                 }
             } catch (ex) {
                 console.error(ex);
@@ -60,68 +66,67 @@ const Bulletin = ({ navigation }) => {
         setQ(value);
     };
 
-    const go = (bulletinID) => {
-        navigation.navigate('BulletinDetail', { 'bulletinID': bulletinID })
-    };
-
-    const dismissKeyboard = () => {
-        Keyboard.dismiss();
+    const goToBulletinDetail = (bulletinID) => {
+        navigation.navigate('BulletinDetail', { bulletinID: bulletinID });
     };
 
     return (
-        <View style={GlobalStyle.BackGround} onTouchStart={dismissKeyboard}>
-            <View style={BulletinStyle.Container}>
-                <View style={BulletinStyle.TopContainer}>
-                    <Text style={BulletinStyle.Text}>Bản tin</Text>
-                    <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
-                </View>
-                <View style={BulletinStyle.Search}>
-                    <TextInput
-                        style={BulletinStyle.SearchInput}
-                        placeholder="Tìm kiếm bản tin"
-                        onChangeText={search}
-                        value={q}
-                    />
-                </View>
+        <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
+            <View style={GlobalStyle.BackGround}>
+                <View style={BulletinStyle.Container}>
+                    <View style={BulletinStyle.TopContainer}>
+                        <Text style={BulletinStyle.Text}>Bản tin</Text>
+                        <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
+                    </View>
+                    <View style={BulletinStyle.Search}>
+                        <TextInput
+                            style={BulletinStyle.SearchInput}
+                            placeholder="Tìm kiếm bản tin"
+                            onChangeText={search}
+                            value={q}
+                        />
+                    </View>
 
-                <ScrollView style={BulletinStyle.BulletinCardContainer} onScroll={loadMore} 
-                     showsVerticalScrollIndicator={false}
-                     showsHorizontalScrollIndicator={false}
-                >
-                    <RefreshControl onRefresh={loadBulletins} />
-                    {loading && <ActivityIndicator />}
-                    {bulletins.map((bulletin) => (
-                        <TouchableOpacity key={bulletin.id} onPress={() => go(bulletin.id)}>
-                            <View style={BulletinStyle.BulletinCard}>
-                                <View style={BulletinStyle.BulletinCardImage}>
-                                    <Image
-                                        style={BulletinStyle.Image}
-                                        source={{ uri: bulletin.cover }}
-                                    />
+                    <ScrollView
+                        style={BulletinStyle.BulletinCardContainer}
+                        onScroll={loadMore}
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        <RefreshControl onRefresh={loadBulletins} />
+                        {loading && <ActivityIndicator />}
+                        {bulletins.map((bulletin) => (
+                            <TouchableOpacity key={bulletin.id} onPress={() => goToBulletinDetail(bulletin.id)}>
+                                <View style={BulletinStyle.BulletinCard}>
+                                    <View style={BulletinStyle.BulletinCardImage}>
+                                        <Image style={BulletinStyle.Image} source={{ uri: bulletin.cover }} />
+                                    </View>
+
+                                    <View style={BulletinStyle.BulletinsCardDetail}>
+                                        <Text style={BulletinStyle.Title}>{bulletin.title}</Text>
+
+                                        <RenderHTML
+                                            contentWidth={screenWidth}
+                                            source={{ html: bulletin.content }}
+                                            baseStyle={BulletinStyle.Content}
+                                            defaultTextProps={{
+                                                numberOfLines: 2,
+                                                ellipsizeMode: 'tail',
+                                            }}
+                                        />
+
+                                        <Text style={BulletinStyle.Date}>
+                                            Ngày tạo: <Text>{formatDate(bulletin.created_date)}</Text>
+                                        </Text>
+                                    </View>
                                 </View>
-
-                                <View style={BulletinStyle.BulletinsCardDetail}>
-                                    <Text style={BulletinStyle.Title}>{bulletin.title}</Text>
-
-                                    <RenderHTML
-                                        contentWidth={screenWidth}
-                                        source={{ html: bulletin.content }}
-                                        baseStyle={BulletinStyle.Content}
-                                        defaultTextProps={{
-                                            numberOfLines: 5,
-                                            ellipsizeMode: 'tail'
-                                        }}
-                                    />
-
-                                    <Text style={BulletinStyle.Date}>Ngày tạo: <Text>{formatDate(bulletin.created_date)}</Text></Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                    {loading && page > 1 && <ActivityIndicator />}
-                </ScrollView>
+                            </TouchableOpacity>
+                        ))}
+                        {loading && page > 1 && <ActivityIndicator />}
+                    </ScrollView>
+                </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

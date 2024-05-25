@@ -1,12 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SIGN_IN, SIGN_OUT } from './Constants';
+import { SIGN_IN, SIGN_OUT } from '../configs/Constants';
 
-const initialState = {
-    data: null,
-    isLoggedIn: false,
-};
-
-export const accountReducer = (state = initialState, action) => {
+export const accountReducer = (state, action) => {
     switch (action.type) {
         case SIGN_IN:
             return {
@@ -15,12 +10,14 @@ export const accountReducer = (state = initialState, action) => {
                 data: action.payload,
             };
         case SIGN_OUT:
-            AsyncStorage.removeItem('token');
+            AsyncStorage.multiRemove(['access-token', 'refresh-token']);
+
             return {
                 ...state,
                 data: null,
                 isLoggedIn: false,
             };
+        default:
+            return state;
     }
-    return state;
 };

@@ -4,6 +4,7 @@ import { Keyboard, Modal, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
+import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
 
 const Signup = ({ navigation }) => {
@@ -45,7 +46,7 @@ const Signup = ({ navigation }) => {
         },
     ];
 
-    const signup = async () => {
+    const handleSignup = async () => {
         for (let field of fields) {
             if (!account[field.name]) {
                 setErrorVisible(true);
@@ -74,11 +75,13 @@ const Signup = ({ navigation }) => {
             });
 
             if (res.status === 201) setModalVisible(!modalVisible);
-        } catch (ex) {
-            if (ex.response && ex.response.status === 400) {
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
                 setErrorVisible(true);
-                setErrorMsg(ex.response.data.detail);
-            } else console.error(ex);
+                setErrorMsg(error.response.data.detail);
+            } else {
+                console.error(error);
+            }
         } finally {
             setLoading(false);
         }
@@ -95,10 +98,8 @@ const Signup = ({ navigation }) => {
             <View style={AuthStyle.Container}>
                 <LinearGradient colors={['rgba(62,154,228,1)', 'rgba(62,154,228,0.8)']} style={{ flex: 1 }}>
                     <View style={AuthStyle.Header}>
-                        <Text style={[AuthStyle.HeaderTitle, GlobalStyle.Bold]}>Đăng ký</Text>
-                        <Text style={[AuthStyle.SubTitle, GlobalStyle.Bold]}>
-                            Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên
-                        </Text>
+                        <Text style={AuthStyle.HeaderTitle}>Đăng ký</Text>
+                        <Text style={AuthStyle.SubTitle}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
                     </View>
 
                     <View style={AuthStyle.Form}>
@@ -113,7 +114,7 @@ const Signup = ({ navigation }) => {
                                 style={AuthStyle.Input}
                                 keyboardType={f.keyboardType}
                                 secureTextEntry={f.secureTextEntry}
-                                cursorColor="#3e9ae4"
+                                cursorColor={Theme.PrimaryColor}
                                 underlineColor="transparent"
                                 activeUnderlineColor="transparent"
                                 onChangeText={(value) => updateAccount(f.name, value)}
@@ -135,9 +136,9 @@ const Signup = ({ navigation }) => {
                             icon="account"
                             textColor="white"
                             style={AuthStyle.Button}
-                            onPress={signup}
+                            onPress={handleSignup}
                         >
-                            <Text variant="headlineLarge" style={[AuthStyle.ButtonText, GlobalStyle.Bold]}>
+                            <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
                                 Đăng ký
                             </Text>
                         </Button>
@@ -150,16 +151,14 @@ const Signup = ({ navigation }) => {
                         >
                             <View style={GlobalStyle.ModalContainer}>
                                 <View style={GlobalStyle.ModalView}>
-                                    <Text style={[GlobalStyle.Title, { marginBottom: 20 }]}>
-                                        Đăng ký tài khoản thành công
-                                    </Text>
+                                    <Text style={GlobalStyle.ModalTitle}>Đăng ký tài khoản thành công</Text>
                                     <Button
                                         onPress={() => navigation.navigate('Signin')}
                                         icon="account"
                                         textColor="white"
                                         style={AuthStyle.Button}
                                     >
-                                        <Text variant="headlineLarge" style={[AuthStyle.ButtonText, GlobalStyle.Bold]}>
+                                        <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
                                             Đăng nhập
                                         </Text>
                                     </Button>
@@ -170,9 +169,7 @@ const Signup = ({ navigation }) => {
                         <View style={AuthStyle.Footer}>
                             <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
                             <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-                                <Text style={[GlobalStyle.Bold, { color: '#1873bc' }, { marginLeft: 5 }]}>
-                                    Đăng nhập
-                                </Text>
+                                <Text style={AuthStyle.FooterText}>Đăng nhập</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

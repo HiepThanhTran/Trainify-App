@@ -1,16 +1,27 @@
 import csv
 
+from django.db.models import Func, Q
 from rest_framework import generics, parsers, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from activities import serializers as activities_serializers
-from activities.models import Activity, ActivityRegistration, Bulletin, MissingActivityReport
-from core.utils import dao, validations
+from activities.models import (
+    Activity,
+    ActivityRegistration,
+    Bulletin,
+    MissingActivityReport,
+)
 from core.base import paginators, perms
+from core.utils import dao, validations
 from interacts import serializers as interacts_serializers
 from users.models import Student
+
+
+class Unaccent(Func):
+    function = 'unaccent'
+    template = '%(function)s(%(expressions)s)'
 
 
 class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
@@ -23,7 +34,7 @@ class BulletinViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
 
         if self.action.__eq__("list"):
             title = self.request.query_params.get("title")
-            queryset = queryset.filter(title__icontains=title) if title else queryset
+            queryset = queryset.annotate(unaccented_title=Unaccent('title')).filter(Q(unaccented_title__icontains=title) | Q(title__icontains=title)) if title else queryset
 
         return queryset
 
@@ -84,7 +95,7 @@ class ActivityViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Ret
                 queryset = queryset.filter(**{param: value}) if value else queryset
 
             name = self.request.query_params.get("name")
-            queryset = queryset.filter(name__icontains=name) if name else queryset
+            queryset = queryset.annotate(unaccented_name=Unaccent("name")).filter(Q(unaccented_name__icontains=name) | Q(name__icontains=name)) if name else queryset
 
             form = self.request.query_params.get("form")
             queryset = queryset.filter(organizational_form__iexact=form) if form else queryset

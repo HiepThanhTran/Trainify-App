@@ -7,7 +7,7 @@ export const endPoints = {
     //// Accounts
     me: '/accounts/me/', // GET: Xem thông tin tài khoản đang đăng nhập
     'me-update': '/accounts/me/update/', // PATCH: Cập nhật tài khoản đang đăng nhập
-    login: '/o/token/', // POST: Lấy access token đăng nhập
+    token: '/o/token/', // POST: Lấy access token đăng nhập
     'student-register': '/accounts/students/register/', // POST: Đăng ký tài khoản cho sinh viên
     'assistant-register': '/accounts/assistants/register/', // POST: Đăng ký tài khoản cho trợ lý sinh viên
 
