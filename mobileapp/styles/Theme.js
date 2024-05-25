@@ -1,7 +1,17 @@
+export const Light = {
+    TextColor: 'black',
+    BackgroundColor: 'white',
+    ButtonTextColor: 'white',
+};
+
+export const Dark = {
+    TextColor: 'white',
+    BackgroundColor: 'black',
+    ButtonTextColor: 'black',
+};
+
 export default {
-    //Color
     PrimaryColor: '#3e9ae4',
-    //Font
     Bold: 'OpenSansBold',
     SemiBold: 'OpenSansSemiBold',
     Light: 'OpenSansLight',

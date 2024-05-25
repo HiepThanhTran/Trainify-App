@@ -2,8 +2,8 @@ import { CLIENT_ID, CLIENT_SECRET } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import APIs, { authAPI, endPoints } from '../configs/APIs';
-import { SIGN_IN } from '../configs/Constants';
-import { accountReducer } from '../reducers/AccountReducer';
+import { status } from '../configs/Constants';
+import { SIGN_IN, accountReducer } from '../reducers/AccountReducer';
 
 export const AccountContext = createContext();
 export const AccountDispatchContext = createContext();
@@ -38,14 +38,16 @@ export const AccountProvider = ({ children }) => {
             const user = await authAPI(accessToken).get(endPoints['me']);
             dispatch({ type: SIGN_IN, payload: user.data });
         } catch (error) {
-            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-                const refreshToken = await AsyncStorage.getItem('refresh-token');
-                if (refreshToken) {
+            if (error.response) {
+                if (error.response.status === status.HTTP_401_UNAUTHORIZED || status.HTTP_403_FORBIDDEN) {
+                    const refreshToken = await AsyncStorage.getItem('refresh-token');
+                    if (!refreshToken) return
+
                     await getNewAccessToken(refreshToken);
                     checkLogged();
                 }
             } else {
-                console.error(error)
+                console.error(error);
             }
         }
     };

@@ -5,8 +5,9 @@ import React, { useState } from 'react';
 import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
-import { SIGN_IN } from '../../configs/Constants';
+import { status } from '../../configs/Constants';
 import { useAccountDispatch } from '../../contexts/AccountContext';
+import { SIGN_IN } from '../../reducers/AccountReducer';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
@@ -19,6 +20,7 @@ const Signin = ({ navigation }) => {
     const [errorMsg, setErrorMsg] = useState('');
 
     const dispatch = useAccountDispatch();
+    
     const fields = [
         {
             label: 'Email',
@@ -69,12 +71,14 @@ const Signin = ({ navigation }) => {
                     payload: user.data,
                 });
 
-                navigation.navigate('MainTab');
+                navigation.navigate('MainTabs');
             }, 100);
         } catch (error) {
-            if (error.response && error.response.status === 400) {
-                setErrorVisible(true);
-                setErrorMsg('Email hoặc mật khẩu không chính xác');
+            if (error.response) {
+                if (error.response.status === status.HTTP_400_BAD_REQUEST) {
+                    setErrorVisible(true);
+                    setErrorMsg('Email hoặc mật khẩu không chính xác');
+                }
             } else {
                 console.error(error);
             }

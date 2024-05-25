@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Keyboard, Modal, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { endPoints } from '../../configs/APIs';
+import { status } from '../../configs/Constants';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
@@ -76,9 +77,11 @@ const Signup = ({ navigation }) => {
 
             if (res.status === 201) setModalVisible(!modalVisible);
         } catch (error) {
-            if (error.response && error.response.status === 400) {
-                setErrorVisible(true);
-                setErrorMsg(error.response.data.detail);
+            if (error.response) {
+                if (error.response.status === status.HTTP_400_BAD_REQUEST) {
+                    setErrorVisible(true);
+                    setErrorMsg(error.response.data.detail);
+                }
             } else {
                 console.error(error);
             }

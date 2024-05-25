@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SIGN_IN, SIGN_OUT } from '../configs/Constants';
+
+const SIGN_IN = 'LOGIN';
+const SIGN_OUT = 'LOGOUT';
+
+export { SIGN_IN, SIGN_OUT };
 
 export const accountReducer = (state, action) => {
     switch (action.type) {

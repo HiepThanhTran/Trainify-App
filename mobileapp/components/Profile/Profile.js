@@ -2,13 +2,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Button, Dialog, Icon, PaperProvider, Portal, Text } from 'react-native-paper';
-import { SIGN_OUT } from '../../configs/Constants';
 import { useAccount, useAccountDispatch } from '../../contexts/AccountContext';
+import { SIGN_OUT } from '../../reducers/AccountReducer';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { ProfileStyle } from './Style';
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
     const [dialogVisible, setDialogVisible] = useState(false);
 
     const dispatch = useAccountDispatch();
@@ -16,18 +16,19 @@ const Profile = () => {
 
     const Sections = [
         {
-            title: 'Cài đặt',
-            items: [
-                { label: 'Cài đặt bảo mật', icon: 'shield-account' },
-                { label: 'Cài đặt thông báo', icon: 'bell-outline' },
-            ],
-        },
-        {
             title: 'Tiện ích',
             items: [
                 { label: 'Điểm rèn luyện', icon: 'star-outline' },
                 { label: 'Hoạt động đã đăng ký', icon: 'ticket-account' },
                 { label: 'Hoạt động đã tham gia', icon: 'check-decagram-outline' },
+            ],
+        },
+        {
+            title: 'Cài đặt',
+            items: [
+                { label: 'Cài đặt bảo mật', icon: 'shield-account' },
+                { label: 'Cài đặt thông báo', icon: 'bell-outline' },
+                { label: 'Cài đặt chung', icon: 'cog-outline' },
             ],
         },
         {
@@ -42,6 +43,8 @@ const Profile = () => {
     const handleSignout = () => dispatch({ type: SIGN_OUT });
 
     const toggleDialog = () => setDialogVisible(!dialogVisible);
+
+    const goToScreen = (name) => navigation.navigate(name)
 
     return (
         <LinearGradient
@@ -64,7 +67,10 @@ const Profile = () => {
                                 {account.data.user.code}
                             </Text>
                         </View>
-                        <TouchableOpacity style={[GlobalStyle.Center, ProfileStyle.HeaderButton]}>
+                        <TouchableOpacity
+                            onPress={() => goToScreen('Personal')}
+                            style={[GlobalStyle.Center, ProfileStyle.HeaderButton]}
+                        >
                             <Text style={ProfileStyle.ButtonText}>Trang cá nhân</Text>
                             <Icon color="white" source="chevron-right" size={20} />
                         </TouchableOpacity>
