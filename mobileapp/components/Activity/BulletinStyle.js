@@ -3,11 +3,6 @@ import Theme from '../../styles/Theme'
 import { Title } from "react-native-paper";
 
 const BulletinStyle = StyleSheet.create({
-    Container: {
-        marginTop: 80,
-        marginLeft: 12,
-        marginRight: 12
-    },
     TopContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -55,6 +50,10 @@ const BulletinStyle = StyleSheet.create({
         height: '100%',
         borderRadius: 16,
     },
+    ImageDetail:{
+        width: '100%',
+        height: '100%',
+    },
     BulletinsCardDetail: {
         width: '100%',
     },
@@ -69,6 +68,12 @@ const BulletinStyle = StyleSheet.create({
         marginBottom: 15,
         fontFamily: Theme.Bold
     },
+    Description:{
+        borderWidth: 1,
+        borderColor: Theme.PrimaryColor,
+        padding: 10,
+        borderRadius: 10
+    },
     Content:{
         width: '100%',  
         fontSize: 20,
@@ -81,7 +86,7 @@ const BulletinStyle = StyleSheet.create({
         fontFamily: Theme.Regular,
         lineHeight: 30,
         marginTop: 20,
-        marginBottom: 20
+        marginBottom: 20,
     },
     Date:{
         fontSize: 18,
@@ -98,9 +103,6 @@ const BulletinStyle = StyleSheet.create({
         fontSize: 18,
         fontFamily: Theme.SemiBold,
     },
-    ActivityContainer:{
-        marginTop: 20
-    }
 })
 
 export default BulletinStyle;

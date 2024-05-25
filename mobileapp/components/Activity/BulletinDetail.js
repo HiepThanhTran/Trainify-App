@@ -11,13 +11,14 @@ import Theme from "../../styles/Theme";
 
 const screenWidth = Dimensions.get('window').width;
 
-const BulletinDetail = ({ route }) => {
+const BulletinDetail = ({ navigation, route }) => {
     const [bulletindetail, setBulletinDetail] = useState(null);
     const [loading, setLoading] = useState(true);
     const bulletinID = route?.params?.bulletinID;
 
     const loadBulletinDetail = async () => {
         try {
+            setLoading(true);
             let res = await APIs.get(endPoints['bulletin-detail'](bulletinID));
             setBulletinDetail(res.data);
         } catch (err) {
@@ -43,28 +44,35 @@ const BulletinDetail = ({ route }) => {
 
     return (
         <View style={GlobalStyle.BackGround}>
-            <View style={BulletinStyle.Container}>
-                <ScrollView key={bulletindetail.id}>
+            <View style={GlobalStyle.ContainerScreen}>
+                {loading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
+                <ScrollView
+                    key={bulletindetail.id}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <Text style={[GlobalStyle.TextCenter, BulletinStyle.TitleDetail]}>{bulletindetail.title}</Text>
-                    <View style={BulletinStyle.BulletinCardImage}>
-                        <Image
-                            style={BulletinStyle.Image}
-                            source={{ uri: bulletindetail.cover }}
+                    <View style={BulletinStyle.Description}>
+                        <View style={BulletinStyle.BulletinCardImage}>
+                            <Image
+                                style={BulletinStyle.ImageDetail}
+                                source={{ uri: bulletindetail.cover }}
+                            />
+                        </View>
+
+                        <RenderHTML
+                            contentWidth={screenWidth}
+                            source={{ html: bulletindetail.content }}
+                            baseStyle={BulletinStyle.ContentDetail}
                         />
+
+                        <Text style={BulletinStyle.DateDetail}>Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text></Text>
+                        <Text style={BulletinStyle.DateUpdate}>Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text></Text>
                     </View>
 
-                    <RenderHTML
-                        contentWidth={screenWidth}
-                        source={{ html: bulletindetail.content }}
-                        baseStyle={BulletinStyle.ContentDetail}
-                    />
-
-                    <Text style={BulletinStyle.DateDetail}>Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text></Text>
-                    <Text style={BulletinStyle.DateUpdate}>Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text></Text>
-
-                    <View style={BulletinStyle.ActivityContainer}>
-                        <Text>Danh sách hoạt động</Text>
-                        <Activity route={route} />
+                    <View style={{marginTop: 20}}>
+                        <Text style={BulletinStyle.TitleDetail}>Danh sách hoạt động</Text>
+                        <Activity route={route} navigation={navigation} />
                     </View>
                 </ScrollView>
             </View>

@@ -9,6 +9,7 @@ import useFonts from './configs/Fonts';
 import GlobalStyle from './styles/Style';
 import BulletinDetail from './components/Activity/BulletinDetail';
 import Activity from './components/Activity/Activity';
+import ActivityDetail from './components/Activity/ActivityDetail';
 
 const RootStack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ export default function App() {
                         /> */}
                          <RootStack.Screen name="BulletinDetail" options={{ headerShown: false }} component={BulletinDetail} />
                          <RootStack.Screen name="Activity" options={{ headerShown: false }} component={Activity} />
+                         <RootStack.Screen name="ActivityDetail" options={{ headerShown: false }} component={ActivityDetail} />
                     </RootStack.Navigator>
                 </NavigationContainer>
             )}

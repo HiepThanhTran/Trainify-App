@@ -13,6 +13,11 @@ const GlobalStyle = StyleSheet.create({
     },
     TextCenter:{
         textAlign: 'center'
+    },
+    ContainerScreen:{
+        marginTop: 80,
+        marginLeft: 12,
+        marginRight: 12
     }
 });
 

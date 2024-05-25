@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from "react";
-import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Keyboard } from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, ScrollView, Keyboard } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { Dimensions } from "react-native";
 import RenderHTML from "react-native-render-html";
@@ -67,7 +67,7 @@ const Bulletin = ({ navigation }) => {
 
     return (
         <View style={GlobalStyle.BackGround} onTouchStart={dismissKeyboard}>
-            <View style={BulletinStyle.Container}>
+            <View style={GlobalStyle.ContainerScreen}>
                 <View style={BulletinStyle.TopContainer}>
                     <Text style={BulletinStyle.Text}>Bản tin</Text>
                     <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
