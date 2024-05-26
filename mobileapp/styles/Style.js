@@ -65,6 +65,16 @@ const GlobalStyle = StyleSheet.create({
         color: 'white',
         fontFamily: Theme.Bold,
     },
+        justifyContent: 'center'
+    },
+    TextCenter:{
+        textAlign: 'center'
+    },
+    ContainerScreen:{
+        marginTop: 80,
+        marginLeft: 12,
+        marginRight: 12
+    }
 });
 
 export default GlobalStyle;
