@@ -61,7 +61,7 @@ const RootTabsNavigator = () => {
 };
 
 const Stack = createNativeStackNavigator();
-
+const test = 1;
 const RootStacksNavigator = () => {
     const account = useAccount();
 
