@@ -2,8 +2,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Button, Dialog, Icon, PaperProvider, Portal, Text } from 'react-native-paper';
-import { useAccount, useAccountDispatch } from '../../contexts/AccountContext';
-import { SIGN_OUT } from '../../reducers/AccountReducer';
+import { SignOutAction } from '../../store/actions/AccountAction';
+import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { ProfileStyle } from './Style';
@@ -40,11 +40,11 @@ const Profile = ({ navigation }) => {
         },
     ];
 
-    const handleSignout = () => dispatch({ type: SIGN_OUT });
+    const handleSignout = () => dispatch(SignOutAction());
 
     const toggleDialog = () => setDialogVisible(!dialogVisible);
 
-    const goToScreen = (name) => navigation.navigate(name)
+    const goToScreen = (name) => navigation.navigate(name);
 
     return (
         <LinearGradient

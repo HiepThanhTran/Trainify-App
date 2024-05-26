@@ -66,8 +66,8 @@ const Bulletin = ({ navigation }) => {
         setQ(value);
     };
 
-    const goToBulletinDetail = (bulletinID) => {
-        navigation.navigate('BulletinDetail', { bulletinID: bulletinID });
+    const goToBulletinDetail = (bulletinID, title) => {
+        navigation.navigate('BulletinDetail', { bulletinID: bulletinID, title: title });
     };
 
     return (
@@ -96,7 +96,10 @@ const Bulletin = ({ navigation }) => {
                         <RefreshControl onRefresh={loadBulletins} />
                         {loading && <ActivityIndicator />}
                         {bulletins.map((bulletin) => (
-                            <TouchableOpacity key={bulletin.id} onPress={() => goToBulletinDetail(bulletin.id)}>
+                            <TouchableOpacity
+                                key={bulletin.id}
+                                onPress={() => goToBulletinDetail(bulletin.id, bulletin.title)}
+                            >
                                 <View style={BulletinStyle.BulletinCard}>
                                     <View style={BulletinStyle.BulletinCardImage}>
                                         <Image style={BulletinStyle.Image} source={{ uri: bulletin.cover }} />

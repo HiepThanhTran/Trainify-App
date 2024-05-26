@@ -6,8 +6,8 @@ export const Light = {
 
 export const Dark = {
     TextColor: 'white',
-    BackgroundColor: 'black',
-    ButtonTextColor: 'black',
+    BackgroundColor: '#0e1116',
+    ButtonTextColor: '#0e1116',
 };
 
 export default {

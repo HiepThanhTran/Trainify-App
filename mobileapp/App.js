@@ -1,7 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Button, Text, TouchableOpacity, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import Bulletin from './components/Activity/Bulletin';
 import BulletinDetail from './components/Activity/BulletinDetail';
 import Signin from './components/Auth/Signin';
@@ -11,10 +12,9 @@ import NotificationDetail from './components/Notification/NotificationDetail';
 import Personal from './components/Profile/Personal';
 import Profile from './components/Profile/Profile';
 import useFonts from './configs/Fonts';
-import { AccountProvider, useAccount } from './contexts/AccountContext';
+import { AccountProvider, useAccount } from './store/contexts/AccountContext';
 import GlobalStyle from './styles/Style';
 import Theme from './styles/Theme';
-import { Icon } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
@@ -69,15 +69,30 @@ const RootStacksNavigator = () => {
             {/* <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} /> */}
             {account.isLoggedIn === false ? (
                 <>
-                    <Stack.Screen name="Signin" options={{ headerShown: false }} component={Signin} />
-                    <Stack.Screen name="Signup" options={{ headerShown: false }} component={Signup} />
+                    <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
+                    <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
                 </>
             ) : (
                 <>
-                    <Stack.Screen name="MainTabs" options={{ headerShown: false }} component={RootTabsNavigator} />
-                    <Stack.Screen name="BulletinDetail" component={BulletinDetail} />
+                    <Stack.Screen name="MainTabs" component={RootTabsNavigator} options={{ headerShown: false }} />
+                    <Stack.Screen
+                        name="BulletinDetail"
+                        component={BulletinDetail}
+                        options={({ route }) => ({ title: route?.params.title })}
+                    />
                     <Stack.Screen name="NotificationDetail" component={NotificationDetail} />
-                    <Stack.Screen name="Personal" component={Personal} />
+                    <Stack.Screen
+                        name="Personal"
+                        component={Personal}
+                        options={{
+                            title: 'Trang cá nhân',
+                            headerRight: () => (
+                                <TouchableOpacity style={[GlobalStyle.Center, GlobalStyle.HeaderButton]}>
+                                    <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
+                                </TouchableOpacity>
+                            ),
+                        }}
+                    />
                 </>
             )}
         </Stack.Navigator>

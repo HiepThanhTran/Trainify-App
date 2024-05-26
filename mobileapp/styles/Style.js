@@ -1,5 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import Theme from './Theme';
+
+const { width, height } = Dimensions.get('window');
 
 const GlobalStyle = StyleSheet.create({
     Container: {
@@ -51,7 +53,18 @@ const GlobalStyle = StyleSheet.create({
     DialogButton: {
         color: Theme.PrimaryColor,
         fontSize: 16,
-    }
+    },
+    HeaderButton: {
+        width: width / 4,
+        height: 40,
+        padding: 8,
+        borderRadius: 16,
+        backgroundColor: Theme.PrimaryColor,
+    },
+    HeaderButtonText: {
+        color: 'white',
+        fontFamily: Theme.Bold,
+    },
 });
 
 export default GlobalStyle;

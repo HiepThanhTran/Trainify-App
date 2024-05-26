@@ -9,14 +9,13 @@ export const ProfileStyle = StyleSheet.create({
         marginTop: height * 0.1,
         height: height * 0.2,
         borderRadius: 16,
-        marginLeft: 12,
-        marginRight: 12,
+        marginHorizontal: 12,
     },
     AvatarContainer: {
         marginTop: -height * 0.07,
         width: width * 0.2,
         height: width * 0.2,
-        borderWidth: 3,
+        borderWidth: 4,
         borderRadius: (width * 0.2) / 2,
         borderColor: 'white',
         backgroundColor: '#f1f4ff',
@@ -39,13 +38,11 @@ export const ProfileStyle = StyleSheet.create({
         color: 'white',
         fontSize: 14,
         fontFamily: Theme.Bold,
-        marginLeft: 8,
-        marginRight: 8,
+        marginHorizontal: 8,
     },
     Section: {
         marginTop: 40,
-        marginLeft: 12,
-        marginRight: 12,
+        marginHorizontal: 12,
     },
     SectionTitle: {
         fontFamily: Theme.SemiBold,
@@ -80,8 +77,7 @@ export const ProfileStyle = StyleSheet.create({
         fontFamily: Theme.SemiBold,
     },
     Footer: {
-        marginTop: 16,
-        marginBottom: 16,
+        marginVertical: 16,
     },
     FooterButton: {
         width: '60%',

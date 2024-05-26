@@ -1,16 +1,16 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
-import { useAccountDispatch } from '../../contexts/AccountContext';
-import { SIGN_IN } from '../../reducers/AccountReducer';
+import { SignInAction } from '../../store/actions/AccountAction';
+import { useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signin = ({ navigation }) => {
     const [account, setAccount] = useState({});
@@ -20,7 +20,7 @@ const Signin = ({ navigation }) => {
     const [errorMsg, setErrorMsg] = useState('');
 
     const dispatch = useAccountDispatch();
-    
+
     const fields = [
         {
             label: 'Email',
@@ -66,10 +66,7 @@ const Signin = ({ navigation }) => {
             setTimeout(async () => {
                 let user = await authAPI(tokens.data.access_token).get(endPoints['me']);
 
-                dispatch({
-                    type: SIGN_IN,
-                    payload: user.data,
-                });
+                dispatch(SignInAction(user.data));
 
                 navigation.navigate('MainTabs');
             }, 100);
