@@ -26,7 +26,7 @@ export const ProfileStyle = StyleSheet.create({
     },
     HeaderButton: {
         backgroundColor: Theme.PrimaryColor,
-        padding: 8,
+        padding: 4,
         position: 'absolute',
         bottom: 0,
         width: '100%',

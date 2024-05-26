@@ -44,20 +44,16 @@ const BulletinDetail = ({ navigation, route }) => {
 
     return (
         <View style={GlobalStyle.BackGround}>
-            <View style={GlobalStyle.ContainerScreen}>
+            <View style={{ marginHorizontal: 12 }}>
                 {loading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
                 <ScrollView
                     key={bulletindetail.id}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                 >
-                    <Text style={[GlobalStyle.TextCenter, BulletinStyle.TitleDetail]}>{bulletindetail.title}</Text>
                     <View style={BulletinStyle.Description}>
                         <View style={BulletinStyle.BulletinCardImage}>
-                            <Image
-                                style={BulletinStyle.ImageDetail}
-                                source={{ uri: bulletindetail.cover }}
-                            />
+                            <Image style={BulletinStyle.ImageDetail} source={{ uri: bulletindetail.cover }} />
                         </View>
 
                         <RenderHTML
@@ -66,11 +62,15 @@ const BulletinDetail = ({ navigation, route }) => {
                             baseStyle={BulletinStyle.ContentDetail}
                         />
 
-                        <Text style={BulletinStyle.DateDetail}>Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text></Text>
-                        <Text style={BulletinStyle.DateUpdate}>Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text></Text>
+                        <Text style={BulletinStyle.DateDetail}>
+                            Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text>
+                        </Text>
+                        <Text style={BulletinStyle.DateUpdate}>
+                            Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text>
+                        </Text>
                     </View>
 
-                    <View style={{marginTop: 20}}>
+                    <View style={{ marginTop: 20 }}>
                         <Text style={BulletinStyle.TitleDetail}>Danh sách hoạt động</Text>
                         <Activity route={route} navigation={navigation} />
                     </View>

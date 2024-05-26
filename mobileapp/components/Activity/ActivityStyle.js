@@ -34,6 +34,7 @@ const ActivityStyle = StyleSheet.create({
     },
     ActivityTitleDetail:{
         fontSize: 25,
+        textAlign: 'center',
         marginBottom: 15,
         fontFamily: Theme.Bold
     },

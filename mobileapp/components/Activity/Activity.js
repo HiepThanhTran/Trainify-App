@@ -50,7 +50,7 @@ const Activity = ({navigation, route }) => {
         const contentHeight = nativeEvent.contentSize.height;
 
         if (currentOffset + height + paddingToBottom >= contentHeight && !loading && page > 0) {
-            setPage(page = page + 1);
+            setPage(page + 1);
         }
     }, [loading]);
 
@@ -59,8 +59,8 @@ const Activity = ({navigation, route }) => {
         setName(value);
     };
 
-    const goActivityDetail = (activityID) => {
-        navigation.navigate('ActivityDetail', {'activityID': activityID });
+    const goActivityDetail = (activityID, name) => {
+        navigation.navigate('ActivityDetail', {'activityID': activityID, name:name });
     };
 
     return (
@@ -77,7 +77,7 @@ const Activity = ({navigation, route }) => {
 
                 <ScrollView onScroll={handleScroll}>
                     {activity.map((activity) => (
-                        <TouchableOpacity key={activity.id} onPress={() => goActivityDetail(activity.id)}>
+                        <TouchableOpacity key={activity.id} onPress={() => goActivityDetail(activity.id, activity.name)}>
                             <View style={ActivityStyle.ActivityCard}>
                                 <Text style={ActivityStyle.ActivityTitle}>{activity.name}</Text>
                                 <View style={ActivityStyle.ActivityCardImage}>

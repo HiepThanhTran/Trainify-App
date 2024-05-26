@@ -15,6 +15,7 @@ import useFonts from './configs/Fonts';
 import { AccountProvider, useAccount } from './store/contexts/AccountContext';
 import GlobalStyle from './styles/Style';
 import Theme from './styles/Theme';
+import ActivityDetail from './components/Activity/ActivityDetail';
 
 const Tab = createBottomTabNavigator();
 
@@ -79,6 +80,11 @@ const RootStacksNavigator = () => {
                         name="BulletinDetail"
                         component={BulletinDetail}
                         options={({ route }) => ({ title: route?.params.title })}
+                    />
+                    <Stack.Screen
+                        name="ActivityDetail"
+                        component={ActivityDetail}
+                        options={({ route }) => ({ title: route?.params.name })}
                     />
                     <Stack.Screen name="NotificationDetail" component={NotificationDetail} />
                     <Stack.Screen
