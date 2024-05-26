@@ -1,21 +1,21 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, Button, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
+import ActivityDetail from './components/Activity/ActivityDetail';
 import Bulletin from './components/Activity/Bulletin';
 import BulletinDetail from './components/Activity/BulletinDetail';
 import Signin from './components/Auth/Signin';
 import Signup from './components/Auth/Signup';
 import Notification from './components/Notification/Notification';
 import NotificationDetail from './components/Notification/NotificationDetail';
-import Personal from './components/Profile/Personal';
+import EditProfile from './components/Profile/EditProfile';
 import Profile from './components/Profile/Profile';
 import useFonts from './configs/Fonts';
 import { AccountProvider, useAccount } from './store/contexts/AccountContext';
 import GlobalStyle from './styles/Style';
 import Theme from './styles/Theme';
-import ActivityDetail from './components/Activity/ActivityDetail';
 
 const Tab = createBottomTabNavigator();
 
@@ -88,8 +88,8 @@ const RootStacksNavigator = () => {
                     />
                     <Stack.Screen name="NotificationDetail" component={NotificationDetail} />
                     <Stack.Screen
-                        name="Personal"
-                        component={Personal}
+                        name="EditProfile"
+                        component={EditProfile}
                         options={{
                             title: 'Trang cá nhân',
                             headerRight: () => (
@@ -111,8 +111,8 @@ export default function App() {
     return (
         <>
             {!fontsLoaded ? (
-                <View style={GlobalStyle.Center}>
-                    <ActivityIndicator size="large" color="#3e9ae4" />
+                <View style={GlobalStyle.Container}>
+                    <ActivityIndicator size="large" color={Theme.PrimaryColor} />
                 </View>
             ) : (
                 <NavigationContainer>

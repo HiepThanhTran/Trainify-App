@@ -1,7 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Button, Dialog, Icon, PaperProvider, Portal, Text } from 'react-native-paper';
+import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Icon, Text } from 'react-native-paper';
 import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
@@ -9,10 +8,8 @@ import Theme from '../../styles/Theme';
 import { ProfileStyle } from './Style';
 
 const Profile = ({ navigation }) => {
-    const [dialogVisible, setDialogVisible] = useState(false);
-
     const dispatch = useAccountDispatch();
-    const account = useAccount();
+    const currentAccount = useAccount();
 
     const Sections = [
         {
@@ -40,9 +37,17 @@ const Profile = ({ navigation }) => {
         },
     ];
 
-    const handleSignout = () => dispatch(SignOutAction());
-
-    const toggleDialog = () => setDialogVisible(!dialogVisible);
+    const handleSignout = () => {
+        Alert.alert(
+            'Đăng xuất',
+            'Bạn chắc chắn muốn đăng xuất?',
+            [
+                { text: 'Đăng xuất', onPress: () => dispatch(SignOutAction()) },
+                { text: 'Hủy', style: 'cancel' },
+            ],
+            { cancelable: true },
+        );
+    };
 
     const goToScreen = (name) => navigation.navigate(name);
 
@@ -53,73 +58,49 @@ const Profile = ({ navigation }) => {
             style={{ flex: 1 }}
         >
             <ScrollView>
-                <PaperProvider>
-                    <View style={[GlobalStyle.Container, ProfileStyle.Header]}>
-                        <View style={[GlobalStyle.Center, ProfileStyle.AvatarContainer]}>
-                            <Image style={ProfileStyle.Avatar} source={{ uri: account.data.avatar }} />
-                        </View>
-                        <View style={GlobalStyle.Center}>
-                            <Text style={[GlobalStyle.Bold, { fontSize: 24 }]}>
-                                {account.data.user.last_name} {account.data.user.middle_name}{' '}
-                                {account.data.user.first_name}
-                            </Text>
-                            <Text style={[GlobalStyle.Medium, { color: 'gray', fontSize: 16 }]}>
-                                {account.data.user.code}
-                            </Text>
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => goToScreen('Personal')}
-                            style={[GlobalStyle.Center, ProfileStyle.HeaderButton]}
-                        >
-                            <Text style={ProfileStyle.ButtonText}>Trang cá nhân</Text>
-                            <Icon color="white" source="chevron-right" size={20} />
-                        </TouchableOpacity>
+                <View style={[GlobalStyle.Container, ProfileStyle.Header]}>
+                    <Image style={ProfileStyle.Avatar} source={{ uri: currentAccount.data.avatar }} />
+                    <View style={GlobalStyle.Center}>
+                        <Text style={[GlobalStyle.Bold, { fontSize: 24 }]}>
+                            {currentAccount.data.user.last_name} {currentAccount.data.user.middle_name}{' '}
+                            {currentAccount.data.user.first_name}
+                        </Text>
+                        <Text style={[GlobalStyle.Medium, { color: 'gray', fontSize: 16 }]}>
+                            {currentAccount.data.user.code}
+                        </Text>
                     </View>
-                    {Sections.map((section) => (
-                        <View style={ProfileStyle.Section}>
-                            <Text style={ProfileStyle.SectionTitle}>{section.title}</Text>
-                            <View style={ProfileStyle.SectionBody}>
-                                {section.items.map((item) => (
-                                    <TouchableOpacity onPress={null} style={ProfileStyle.SectionItem}>
-                                        <View style={ProfileStyle.SectionItemLeft}>
-                                            <Icon color={Theme.PrimaryColor} source={item.icon} size={24} />
-                                            <Text style={ProfileStyle.TextItemLeft}>{item.label}</Text>
-                                        </View>
-                                        <View>
-                                            <Icon source="chevron-right" size={24} />
-                                        </View>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
+                    <TouchableOpacity
+                        onPress={() => goToScreen('EditProfile')}
+                        style={[GlobalStyle.Center, ProfileStyle.HeaderButton]}
+                    >
+                        <Text style={ProfileStyle.ButtonText}>Trang cá nhân</Text>
+                        <Icon color="white" source="chevron-right" size={20} />
+                    </TouchableOpacity>
+                </View>
+                {Sections.map((section, sectionIndex) => (
+                    <View key={sectionIndex} style={ProfileStyle.Section}>
+                        <Text style={ProfileStyle.SectionTitle}>{section.title}</Text>
+                        <View style={ProfileStyle.SectionBody}>
+                            {section.items.map((item, itemIndex) => (
+                                <TouchableOpacity key={itemIndex} onPress={null} style={ProfileStyle.SectionItem}>
+                                    <View style={ProfileStyle.SectionItemLeft}>
+                                        <Icon color={Theme.PrimaryColor} source={item.icon} size={24} />
+                                        <Text style={ProfileStyle.TextItemLeft}>{item.label}</Text>
+                                    </View>
+                                    <View>
+                                        <Icon source="chevron-right" size={24} />
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
                         </View>
-                    ))}
-                    <View style={[GlobalStyle.Center, ProfileStyle.Footer]}>
-                        <TouchableOpacity
-                            onPress={toggleDialog}
-                            style={[GlobalStyle.Center, ProfileStyle.FooterButton]}
-                        >
-                            <Icon color="white" source="logout" size={20} />
-                            <Text style={ProfileStyle.ButtonText}>Đăng xuất</Text>
-                        </TouchableOpacity>
                     </View>
-
-                    <Portal>
-                        <Dialog style={{ backgroundColor: 'white' }} visible={dialogVisible} onDismiss={toggleDialog}>
-                            <Dialog.Title>Đăng xuất</Dialog.Title>
-                            <Dialog.Content>
-                                <Text variant="bodyLarge">Bạn chắc chắn muốn đăng xuất?</Text>
-                            </Dialog.Content>
-                            <Dialog.Actions>
-                                <Button textColor={Theme.PrimaryColor} onPress={handleSignout}>
-                                    Đăng xuất
-                                </Button>
-                                <Button textColor={Theme.PrimaryColor} onPress={toggleDialog}>
-                                    Hủy
-                                </Button>
-                            </Dialog.Actions>
-                        </Dialog>
-                    </Portal>
-                </PaperProvider>
+                ))}
+                <View style={[GlobalStyle.Center, ProfileStyle.Footer]}>
+                    <TouchableOpacity onPress={handleSignout} style={[GlobalStyle.Center, ProfileStyle.FooterButton]}>
+                        <Icon color="white" source="logout" size={20} />
+                        <Text style={ProfileStyle.ButtonText}>Đăng xuất</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
         </LinearGradient>
     );

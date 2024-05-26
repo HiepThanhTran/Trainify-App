@@ -13,7 +13,9 @@ const screenWidth = Dimensions.get('window').width;
 const ActivityDetail = ({ route }) => {
     const [activitydetail, setActivityDetail] = useState(null);
     const [loading, setLoading] = useState(true);
+    
     const activityID = route?.params?.activityID;
+
     const loadActivityDetail = async () => {
         try {
             setLoading(true);
@@ -31,47 +33,54 @@ const ActivityDetail = ({ route }) => {
             loadActivityDetail();
         }
     }, [activityID]);
-
-    if (loading) {
-        return (
-            <View style={GlobalStyle.Center}>
-                <ActivityIndicator size="large" color={Theme.PrimaryColor} />
-            </View>
-        );
-    }
+    
     return (
-        <View style={GlobalStyle.BackGround}>
-            <View style={{ marginHorizontal: 12 }}>
-                {loading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
-                <ScrollView key={activitydetail.id}>
-                    <View style={ActivityStyle.ActivityDes}>
-                        <View style={ActivityStyle.ActivityCardImage}>
-                            <Image source={{ uri: activitydetail.image }} style={ActivityStyle.ActivityImageDetail} />
-                        </View>
-                        <RenderHTML
-                            contentWidth={screenWidth}
-                            source={{ html: activitydetail.description }}
-                            baseStyle={ActivityStyle.ActivityContentDetail}
-                        />
-                        <Text style={ActivityStyle.Text}>Đối tượng tham gia: {activitydetail.participant}</Text>
-                        <Text style={ActivityStyle.Text}>Địa điểm: {activitydetail.location}</Text>
-                        <Text style={[ActivityStyle.Text, ActivityStyle.Point]}>
-                            Điểm cộng: {activitydetail.point}, {activitydetail.criterion}
-                        </Text>
-                        <Text style={ActivityStyle.Text}>{activitydetail.semester}</Text>
-                        <Text style={ActivityStyle.Text}>Khoa: {activitydetail.faculty}</Text>
-                        <Text style={ActivityStyle.ActivityStartDate}>Ngày bắt đầu: {activitydetail.start_date}</Text>
-                        <Text style={ActivityStyle.ActivityEndDate}>Ngày kết thúc: {activitydetail.end_date}</Text>
-                        <Text style={ActivityStyle.ActivityCreateDate}>
-                            Ngày tạo: <Text>{formatDate(activitydetail.created_date)}</Text>
-                        </Text>
-                        <Text style={ActivityStyle.ActivityUpdateDate}>
-                            Ngày cập nhập: <Text>{formatDate(activitydetail.updated_date)}</Text>
-                        </Text>
+        <>
+            {loading ? (
+                <View style={GlobalStyle.Container}>
+                    <ActivityIndicator size="large" color={Theme.PrimaryColor} />
+                </View>
+            ) : (
+                <View style={GlobalStyle.BackGround}>
+                    <View style={{ marginHorizontal: 12 }}>
+                        <ScrollView key={activitydetail.id}>
+                            <View style={ActivityStyle.ActivityDes}>
+                                <View style={ActivityStyle.ActivityCardImage}>
+                                    <Image
+                                        source={{ uri: activitydetail.image }}
+                                        style={ActivityStyle.ActivityImageDetail}
+                                    />
+                                </View>
+                                <RenderHTML
+                                    contentWidth={screenWidth}
+                                    source={{ html: activitydetail.description }}
+                                    baseStyle={ActivityStyle.ActivityContentDetail}
+                                />
+                                <Text style={ActivityStyle.Text}>Đối tượng tham gia: {activitydetail.participant}</Text>
+                                <Text style={ActivityStyle.Text}>Địa điểm: {activitydetail.location}</Text>
+                                <Text style={[ActivityStyle.Text, ActivityStyle.Point]}>
+                                    Điểm cộng: {activitydetail.point}, {activitydetail.criterion}
+                                </Text>
+                                <Text style={ActivityStyle.Text}>{activitydetail.semester}</Text>
+                                <Text style={ActivityStyle.Text}>Khoa: {activitydetail.faculty}</Text>
+                                <Text style={ActivityStyle.ActivityStartDate}>
+                                    Ngày bắt đầu: {activitydetail.start_date}
+                                </Text>
+                                <Text style={ActivityStyle.ActivityEndDate}>
+                                    Ngày kết thúc: {activitydetail.end_date}
+                                </Text>
+                                <Text style={ActivityStyle.ActivityCreateDate}>
+                                    Ngày tạo: <Text>{formatDate(activitydetail.created_date)}</Text>
+                                </Text>
+                                <Text style={ActivityStyle.ActivityUpdateDate}>
+                                    Ngày cập nhập: <Text>{formatDate(activitydetail.updated_date)}</Text>
+                                </Text>
+                            </View>
+                        </ScrollView>
                     </View>
-                </ScrollView>
-            </View>
-        </View>
+                </View>
+            )}
+        </>
     );
 }
 

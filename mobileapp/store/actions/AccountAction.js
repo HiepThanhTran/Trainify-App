@@ -2,9 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SIGN_IN = 'LOGIN';
 const SIGN_OUT = 'LOGOUT';
-const UPDATE_DATA = 'UPDATE_DATA';
+const UPDATE_ACCOUNT = 'UPDATE_ACCOUNT';
 
-export { SIGN_IN, SIGN_OUT, UPDATE_DATA };
+export { SIGN_IN, SIGN_OUT, UPDATE_ACCOUNT };
 
 export const SignInAction = (payload) => {
     return {
@@ -23,7 +23,7 @@ export const SignOutAction = () => {
 
 export const UpdateAccountAction = (payload) => {
     return {
-        type: UPDATE_DATA,
+        type: UPDATE_ACCOUNT,
         payload: payload,
     };
 };

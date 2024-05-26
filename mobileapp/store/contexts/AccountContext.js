@@ -11,6 +11,7 @@ export const AccountDispatchContext = createContext(null);
 
 const initialState = {
     data: null,
+    loading: false,
     isLoggedIn: false,
 };
 

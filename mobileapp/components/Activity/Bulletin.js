@@ -38,9 +38,7 @@ const Bulletin = ({ navigation }) => {
                 if (page === 1) {
                     setBulletins(res.data.results);
                 } else {
-                    setBulletins((current) => {
-                        return [...current, ...res.data.results];
-                    });
+                    setBulletins([...bulletins, ...res.data.results]);
                 }
             } catch (err) {
                 console.error(err);

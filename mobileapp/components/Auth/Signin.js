@@ -1,4 +1,5 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Keyboard, TouchableOpacity, View } from 'react-native';
@@ -10,7 +11,6 @@ import { useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signin = ({ navigation }) => {
     const [account, setAccount] = useState({});
@@ -85,9 +85,7 @@ const Signin = ({ navigation }) => {
     };
 
     const updateAccount = (field, value) => {
-        setAccount((current) => {
-            return { ...current, [field]: value };
-        });
+        setAccount({ ...account, [field]: value });
     };
 
     return (

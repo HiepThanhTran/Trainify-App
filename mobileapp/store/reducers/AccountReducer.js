@@ -1,4 +1,4 @@
-import { SIGN_IN, SIGN_OUT, UPDATE_DATA } from '../actions/AccountAction';
+import { SIGN_IN, SIGN_OUT } from '../actions/AccountAction';
 
 export const accountReducer = (state, action) => {
     switch (action.type) {
@@ -14,7 +14,7 @@ export const accountReducer = (state, action) => {
                 data: null,
                 isLoggedIn: false,
             };
-        case UPDATE_DATA:
+        case UPDATE_ACCOUNT:
             return {
                 ...state,
                 data: {
