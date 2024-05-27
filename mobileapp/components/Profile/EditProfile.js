@@ -1,11 +1,13 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import mime from 'mime';
 import { useEffect, useState } from 'react';
 import { Image, Keyboard, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton, TextInput } from 'react-native-paper';
-import APIs, { endPoints } from '../../configs/APIs';
+import { authAPI, endPoints } from '../../configs/APIs';
 import { DEFAULT_USER_COVER, status } from '../../configs/Constants';
-import { AccountRequestAction, UpdateAccountAction } from '../../store/actions/AccountAction';
+import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
@@ -79,7 +81,7 @@ const EditProfile = ({ navigation }) => {
             if (!res.canceled) {
                 setTempAccount((current) => ({
                     ...current,
-                    avatar: res.assets[0].uri,
+                    avatar: res.assets[0],
                 }));
             }
         }
@@ -127,38 +129,39 @@ const EditProfile = ({ navigation }) => {
     };
 
     const handleUpdateProfile = async () => {
-        dispatch(AccountRequestAction());
-
         let form = new FormData();
+        let count = 0;
         if (currentAccount.data.avatar !== tempAccount.avatar) {
+            const newUri = 'file:///' + tempAccount.avatar.uri.split('file:/').join('');
+
             form.append('avatar', {
                 uri: tempAccount.avatar.uri,
-                type: tempAccount.avatar.type,
+                type: mime.getType(tempAccount.avatar.uri),
                 name: tempAccount.avatar.fileName,
             });
+            count++;
         }
         for (let key in tempAccount.user) {
             if (currentAccount.data.user[key] !== tempAccount.user[key]) {
                 form.append(key, tempAccount.user[key]);
+                count++;
             }
         }
 
         try {
-            let res = await APIs.patch(endPoints['me-update'], form, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.info(res.data);
+            if (count > 0) {
+                const accessToken = await AsyncStorage.getItem('access-token');
+                let res = await authAPI(accessToken).patch(endPoints['me-update'], form);
 
-            if (res.status === status.HTTP_200_OK) {
-                dispatch(UpdateAccountAction(tempAccount));
+                if (res.status === status.HTTP_200_OK) {
+                    dispatch(UpdateAccountAction(res.data));
+                }
             }
         } catch (error) {
             if (error.response) {
-                console.error(error.response.data);
+                console.error('Response:', error.response.data);
             } else {
-                console.error(error);
+                console.error('Error:', error);
             }
         }
     };
@@ -185,7 +188,15 @@ const EditProfile = ({ navigation }) => {
                         style={GlobalStyle.Center}
                         onPress={() => setModalVisible(!modalVisible)}
                     >
-                        <Image style={EditProfileStyle.Avatar} source={{ uri: tempAccount.avatar }} />
+                        <Image
+                            style={EditProfileStyle.Avatar}
+                            source={{
+                                uri:
+                                    typeof tempAccount.avatar === 'string'
+                                        ? tempAccount.avatar
+                                        : tempAccount.avatar.uri,
+                            }}
+                        />
                         <View style={EditProfileStyle.CameraIcon}>
                             <Icon source="camera" color={Theme.PrimaryColor} size={32} />
                         </View>
