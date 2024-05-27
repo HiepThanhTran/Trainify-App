@@ -16,7 +16,7 @@ import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, isCloseToBottom } from '../Utils/Utils';
+import { formatDate, isCloseToBottom } from '../../utils/Utils';
 import BulletinStyle from './BulletinStyle';
 
 const screenWidth = Dimensions.get('window').width;
@@ -69,7 +69,7 @@ const Bulletin = ({ navigation }) => {
 
     const onRefresh = useCallback(async () => {
         setPage(1);
-        setBulletins([])
+        setBulletins([]);
         setRefreshing(true);
         await loadBulletins();
         setRefreshing(false);

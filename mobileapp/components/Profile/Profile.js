@@ -16,8 +16,7 @@ const Profile = ({ navigation }) => {
             title: 'Tiện ích',
             items: [
                 { label: 'Điểm rèn luyện', icon: 'star-outline' },
-                { label: 'Hoạt động đã đăng ký', icon: 'ticket-account' },
-                { label: 'Hoạt động đã tham gia', icon: 'check-decagram-outline' },
+                { label: 'Hoạt động của sinh viên', icon: 'ticket' },
             ],
         },
         {
@@ -25,7 +24,7 @@ const Profile = ({ navigation }) => {
             items: [
                 { label: 'Cài đặt bảo mật', icon: 'shield-account' },
                 { label: 'Cài đặt thông báo', icon: 'bell-outline' },
-                { label: 'Cài đặt chung', icon: 'cog-outline' },
+                // { label: 'Cài đặt chung', icon: 'cog-outline' },
             ],
         },
         {
@@ -82,7 +81,7 @@ const Profile = ({ navigation }) => {
                         <Text style={ProfileStyle.SectionTitle}>{section.title}</Text>
                         <View style={ProfileStyle.SectionBody}>
                             {section.items.map((item, itemIndex) => (
-                                <TouchableOpacity key={itemIndex} onPress={null} style={ProfileStyle.SectionItem}>
+                                <TouchableOpacity activeOpacity={0.6} key={itemIndex} onPress={null} style={ProfileStyle.SectionItem}>
                                     <View style={ProfileStyle.SectionItemLeft}>
                                         <Icon color={Theme.PrimaryColor} source={item.icon} size={24} />
                                         <Text style={ProfileStyle.TextItemLeft}>{item.label}</Text>

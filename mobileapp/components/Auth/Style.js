@@ -55,9 +55,9 @@ const AuthStyle = StyleSheet.create({
     },
     Footer: {
         flex: 1,
+        marginTop: 5,
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 5,
     },
     FooterText: {
         color: Theme.PrimaryColor,

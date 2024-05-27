@@ -1,7 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, LogBox, StatusBar, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import ActivityDetail from './components/Activity/ActivityDetail';
 import Bulletin from './components/Activity/Bulletin';
@@ -13,9 +15,11 @@ import NotificationDetail from './components/Notification/NotificationDetail';
 import EditProfile from './components/Profile/EditProfile';
 import Profile from './components/Profile/Profile';
 import useFonts from './configs/Fonts';
+import Splash from './screens/Splash/Splash';
 import { AccountProvider, useAccount } from './store/contexts/AccountContext';
 import GlobalStyle from './styles/Style';
 import Theme from './styles/Theme';
+LogBox.ignoreAllLogs();
 
 const Tab = createBottomTabNavigator();
 
@@ -66,6 +70,17 @@ const RootStacksNavigator = () => {
     const fontsLoaded = useFonts();
     const account = useAccount();
 
+    const [splash, setSplash] = useState(true);
+
+    const checkSplashDone = async () => {
+        const splashDone = await AsyncStorage.getItem('splash-done');
+        if (splashDone) setSplash(false);
+    };
+
+    useEffect(() => {
+        checkSplashDone();
+    }, []);
+
     return (
         <>
             {!fontsLoaded || account.loading ? (
@@ -74,9 +89,11 @@ const RootStacksNavigator = () => {
                 </View>
             ) : (
                 <Stack.Navigator>
-                    {/* <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} /> */}
                     {account.isLoggedIn === false ? (
                         <>
+                            {splash && (
+                                <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
+                            )}
                             <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
                             <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
                         </>
@@ -115,6 +132,7 @@ export default function App() {
     return (
         <NavigationContainer>
             <AccountProvider>
+                <StatusBar />
                 <RootStacksNavigator />
             </AccountProvider>
         </NavigationContainer>

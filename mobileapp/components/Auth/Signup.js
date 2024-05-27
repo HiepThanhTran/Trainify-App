@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Keyboard, Modal, TouchableOpacity, View } from 'react-native';
+import { Keyboard, Modal, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
@@ -95,88 +95,90 @@ const Signup = ({ navigation }) => {
     };
 
     return (
-        <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
-            <View style={AuthStyle.Container}>
-                <LinearGradient colors={['rgba(62,154,228,1)', 'rgba(62,154,228,0.8)']} style={{ flex: 1 }}>
-                    <View style={AuthStyle.Header}>
-                        <Text style={AuthStyle.HeaderTitle}>Đăng ký</Text>
-                        <Text style={AuthStyle.SubTitle}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
-                    </View>
-
-                    <View style={AuthStyle.Form}>
-                        <HelperText type="error" visible={errorVisible} style={GlobalStyle.HelpText}>
-                            {errorMsg}
-                        </HelperText>
-                        {fields.map((f) => (
-                            <TextInput
-                                key={f.name}
-                                value={account[f.name]}
-                                placeholder={f.label}
-                                style={AuthStyle.Input}
-                                keyboardType={f.keyboardType}
-                                secureTextEntry={f.secureTextEntry}
-                                cursorColor={Theme.PrimaryColor}
-                                underlineColor="transparent"
-                                activeUnderlineColor="transparent"
-                                onChangeText={(value) => updateAccount(f.name, value)}
-                                right={
-                                    <TextInput.Icon
-                                        icon={f.icon}
-                                        onPress={
-                                            f.name === 'password' || 'confirm'
-                                                ? () => setPasswordVisible(!passwordVisible)
-                                                : null
-                                        }
-                                    />
-                                }
-                            />
-                        ))}
-
-                        <Button
-                            loading={loading}
-                            icon="account"
-                            textColor="white"
-                            style={AuthStyle.Button}
-                            onPress={handleSignup}
-                        >
-                            <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
-                                Đăng ký
-                            </Text>
-                        </Button>
-
-                        <Modal
-                            animationType="fade"
-                            visible={modalVisible}
-                            transparent={true}
-                            onRequestClose={() => setModalVisible(!modalVisible)}
-                        >
-                            <View style={GlobalStyle.ModalContainer}>
-                                <View style={GlobalStyle.ModalView}>
-                                    <Text style={GlobalStyle.ModalTitle}>Đăng ký thành công</Text>
-                                    <Button
-                                        onPress={() => navigation.navigate('Signin')}
-                                        icon="account"
-                                        textColor="white"
-                                        style={AuthStyle.Button}
-                                    >
-                                        <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
-                                            Đăng nhập
-                                        </Text>
-                                    </Button>
-                                </View>
-                            </View>
-                        </Modal>
-
-                        <View style={AuthStyle.Footer}>
-                            <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
-                            <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-                                <Text style={AuthStyle.FooterText}>Đăng nhập</Text>
-                            </TouchableOpacity>
+        <ScrollView style={GlobalStyle.BackGround}>
+            <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
+                <View style={AuthStyle.Container}>
+                    <LinearGradient colors={['rgba(62,154,228,1)', 'rgba(62,154,228,0.8)']} style={{ flex: 1 }}>
+                        <View style={AuthStyle.Header}>
+                            <Text style={AuthStyle.HeaderTitle}>Đăng ký</Text>
+                            <Text style={AuthStyle.SubTitle}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
                         </View>
-                    </View>
-                </LinearGradient>
-            </View>
-        </TouchableOpacity>
+
+                        <View style={AuthStyle.Form}>
+                            <HelperText type="error" visible={errorVisible} style={GlobalStyle.HelpText}>
+                                {errorMsg}
+                            </HelperText>
+                            {fields.map((f) => (
+                                <TextInput
+                                    key={f.name}
+                                    value={account[f.name]}
+                                    placeholder={f.label}
+                                    style={AuthStyle.Input}
+                                    keyboardType={f.keyboardType}
+                                    secureTextEntry={f.secureTextEntry}
+                                    cursorColor={Theme.PrimaryColor}
+                                    underlineColor="transparent"
+                                    activeUnderlineColor="transparent"
+                                    onChangeText={(value) => updateAccount(f.name, value)}
+                                    right={
+                                        <TextInput.Icon
+                                            icon={f.icon}
+                                            onPress={
+                                                f.name === 'password' || 'confirm'
+                                                    ? () => setPasswordVisible(!passwordVisible)
+                                                    : null
+                                            }
+                                        />
+                                    }
+                                />
+                            ))}
+
+                            <Button
+                                loading={loading}
+                                icon="account"
+                                textColor="white"
+                                style={AuthStyle.Button}
+                                onPress={handleSignup}
+                            >
+                                <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
+                                    Đăng ký
+                                </Text>
+                            </Button>
+
+                            <Modal
+                                animationType="fade"
+                                visible={modalVisible}
+                                transparent={true}
+                                onRequestClose={() => setModalVisible(!modalVisible)}
+                            >
+                                <View style={GlobalStyle.ModalContainer}>
+                                    <View style={GlobalStyle.ModalView}>
+                                        <Text style={GlobalStyle.ModalTitle}>Đăng ký thành công</Text>
+                                        <Button
+                                            onPress={() => navigation.navigate('Signin')}
+                                            icon="account"
+                                            textColor="white"
+                                            style={AuthStyle.Button}
+                                        >
+                                            <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
+                                                Đăng nhập
+                                            </Text>
+                                        </Button>
+                                    </View>
+                                </View>
+                            </Modal>
+
+                            <View style={AuthStyle.Footer}>
+                                <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
+                                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+                                    <Text style={AuthStyle.FooterText}>Đăng nhập</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </LinearGradient>
+                </View>
+            </TouchableOpacity>
+        </ScrollView>
     );
 };
 

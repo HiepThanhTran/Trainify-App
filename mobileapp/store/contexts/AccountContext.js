@@ -41,8 +41,8 @@ export const AccountProvider = ({ children }) => {
     };
 
     const checkLogged = async () => {
-        const accessToken = await AsyncStorage.getItem('access-token');
-        const refreshToken = await AsyncStorage.getItem('refresh-token');
+        const [[, accessToken], [, refreshToken]] = await AsyncStorage.multiGet(['access-token', 'refresh-token']);
+
         if (!accessToken || !refreshToken) {
             dispatch(SignoutAction());
             return;
@@ -64,7 +64,6 @@ export const AccountProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        AsyncStorage.getAllKeys().then((data) => console.log(data));
         checkLogged();
     }, []);
 

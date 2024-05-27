@@ -1,19 +1,18 @@
-import { View, Text, ActivityIndicator, Image, ScrollView } from "react-native";
-import GlobalStyle from "../../styles/Style";
-import { useState, useEffect } from "react";
-import APIs, { endPoints } from "../../configs/APIs";
-import ActivityStyle from "./ActivityStyle";
-import Theme from "../../styles/Theme";
-import RenderHTML from "react-native-render-html";
-import { Dimensions } from "react-native";
-import { formatDate } from "../Utils/Utils";
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, Image, ScrollView, Text, View } from 'react-native';
+import RenderHTML from 'react-native-render-html';
+import APIs, { endPoints } from '../../configs/APIs';
+import GlobalStyle from '../../styles/Style';
+import Theme from '../../styles/Theme';
+import { formatDate } from '../../utils/Utils';
+import ActivityStyle from './ActivityStyle';
 
 const screenWidth = Dimensions.get('window').width;
 
 const ActivityDetail = ({ route }) => {
     const [activitydetail, setActivityDetail] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+
     const activityID = route?.params?.activityID;
 
     const loadActivityDetail = async () => {
@@ -24,7 +23,7 @@ const ActivityDetail = ({ route }) => {
         } catch (err) {
             console.error(err);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
@@ -33,7 +32,7 @@ const ActivityDetail = ({ route }) => {
             loadActivityDetail();
         }
     }, [activityID]);
-    
+
     return (
         <>
             {loading ? (
@@ -82,6 +81,6 @@ const ActivityDetail = ({ route }) => {
             )}
         </>
     );
-}
+};
 
 export default ActivityDetail;
