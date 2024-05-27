@@ -61,10 +61,10 @@ const RootTabsNavigator = () => {
 };
 
 const Stack = createNativeStackNavigator();
-const test = 1;
+
 const RootStacksNavigator = () => {
     const account = useAccount();
-
+    
     return (
         <Stack.Navigator>
             {/* <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} /> */}
