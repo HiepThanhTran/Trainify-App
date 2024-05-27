@@ -1,12 +1,22 @@
-import React, { useEffect, useState, useCallback, RefreshControl } from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import AllStyle from './AllStyle';
-import ActivityStyle from './ActivityStyle';
 import { formatDate, isCloseToBottom } from '../Utils/Utils';
+import ActivityStyle from './ActivityStyle';
+import AllStyle from './AllStyle';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -14,7 +24,7 @@ const BulletinDetail = ({ navigation, route }) => {
     const [bulletindetail, setBulletinDetail] = useState(null);
     const [activity, setActivity] = useState([]);
     const [page, setPage] = useState(1);
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const bulletinID = route?.params?.bulletinID;
@@ -43,7 +53,7 @@ const BulletinDetail = ({ navigation, route }) => {
                 if (page === 1) {
                     setActivity(res.data.results);
                 } else {
-                    setActivity(current => [...current, ...res.data.results]);
+                    setActivity([...activity, ...res.data.results]);
                 }
             } catch (err) {
                 console.error(err);
@@ -54,13 +64,8 @@ const BulletinDetail = ({ navigation, route }) => {
     };
 
     useEffect(() => {
-        if (bulletinID) {
-            loadBulletinDetail();
-        }
-    }, [bulletinID]);
-
-    useEffect(() => {
         loadActivity();
+        loadBulletinDetail();
     }, [bulletinID, page, name]);
 
     const loadMore = ({ nativeEvent }) => {
@@ -104,7 +109,10 @@ const BulletinDetail = ({ navigation, route }) => {
                                 <View style={AllStyle.Description}>
                                     <View style={AllStyle.CardImage}>
                                         {bulletindetail?.cover && (
-                                            <Image style={AllStyle.ImageDetail} source={{ uri: bulletindetail.cover }} />
+                                            <Image
+                                                style={AllStyle.ImageDetail}
+                                                source={{ uri: bulletindetail.cover }}
+                                            />
                                         )}
                                     </View>
 
@@ -137,15 +145,25 @@ const BulletinDetail = ({ navigation, route }) => {
                                             />
                                         </View>
 
-                                        <ScrollView 
+                                        <ScrollView
                                             onScroll={loadMore}
-                                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                                            refreshControl={
+                                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                            }
                                         >
                                             {activity.map((activity) => (
-                                                <TouchableOpacity key={activity.id} onPress={() => goActivityDetail(activity.id, activity.name)}>
+                                                <TouchableOpacity
+                                                    key={activity.id}
+                                                    onPress={() => goActivityDetail(activity.id, activity.name)}
+                                                >
                                                     <View style={AllStyle.Card}>
                                                         <Text style={AllStyle.ActivityTitle}>{activity.name}</Text>
-                                                        <View style={[ActivityStyle.ActivityCardImage, {marginBottom: 10}]}>
+                                                        <View
+                                                            style={[
+                                                                ActivityStyle.ActivityCardImage,
+                                                                { marginBottom: 10 },
+                                                            ]}
+                                                        >
                                                             <Image
                                                                 source={{ uri: activity.image }}
                                                                 style={AllStyle.ActivityImage}
@@ -157,7 +175,7 @@ const BulletinDetail = ({ navigation, route }) => {
                                                             baseStyle={AllStyle.Content}
                                                             defaultTextProps={{
                                                                 numberOfLines: 3,
-                                                                ellipsizeMode: 'tail'
+                                                                ellipsizeMode: 'tail',
                                                             }}
                                                         />
 
