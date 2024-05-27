@@ -25,25 +25,26 @@ const BulletinDetail = ({ navigation, route }) => {
     const [activity, setActivity] = useState([]);
     const [page, setPage] = useState(1);
     const [name, setName] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [bulletinLoading, setBulletinLoading] = useState(true);
+    const [activityLoading, setActivityLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const bulletinID = route?.params?.bulletinID;
 
     const loadBulletinDetail = async () => {
-        setLoading(true);
+        setBulletinLoading(true);
         try {
             let res = await APIs.get(endPoints['bulletin-detail'](bulletinID));
             setBulletinDetail(res.data);
         } catch (err) {
             console.error(err);
         } finally {
-            setLoading(false);
+            setBulletinLoading(false);
         }
     };
 
     const loadActivity = async () => {
         if (page > 0) {
-            setLoading(true);
+            setActivityLoading(true);
             try {
                 let url = `${endPoints['activities']}?bulletin_id=${bulletinID}&page=${page}&name=${name}`;
                 let res = await APIs.get(url);
@@ -53,24 +54,33 @@ const BulletinDetail = ({ navigation, route }) => {
                 if (page === 1) {
                     setActivity(res.data.results);
                 } else {
-                    setActivity([...activity, ...res.data.results]);
+                    setActivity((prevActivity) => [...prevActivity, ...res.data.results]);
                 }
             } catch (err) {
                 console.error(err);
             } finally {
-                setLoading(false);
+                setActivityLoading(false);
             }
         }
     };
 
     useEffect(() => {
-        loadActivity();
         loadBulletinDetail();
-    }, [bulletinID, page, name]);
+    }, [bulletinID]);
+
+    useEffect(() => {
+        if (page > 1) {
+            loadActivity();
+        }
+    }, [page]);
+
+    useEffect(() => {
+        loadActivity();
+    }, [name, bulletinID]);
 
     const loadMore = ({ nativeEvent }) => {
-        if (!loading && page > 0 && isCloseToBottom(nativeEvent)) {
-            setPage(page + 1);
+        if (!activityLoading && page > 0 && isCloseToBottom(nativeEvent)) {
+            setPage((prevPage) => prevPage + 1);
         }
     };
 
@@ -78,9 +88,10 @@ const BulletinDetail = ({ navigation, route }) => {
         setPage(1);
         setActivity([]);
         setRefreshing(true);
+        setName("");
         await loadActivity();
         setRefreshing(false);
-    }, []);
+    }, [bulletinID, name]);
 
     const search = (value) => {
         setPage(1);
@@ -93,7 +104,7 @@ const BulletinDetail = ({ navigation, route }) => {
 
     return (
         <>
-            {loading ? (
+            {bulletinLoading ? (
                 <View style={GlobalStyle.Container}>
                     <ActivityIndicator size="large" color={Theme.PrimaryColor} />
                 </View>
@@ -104,6 +115,10 @@ const BulletinDetail = ({ navigation, route }) => {
                             key={bulletindetail?.id || 'bulletin-detail-scroll'}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
+                            onScroll={loadMore}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            }
                         >
                             {bulletindetail && (
                                 <View style={AllStyle.Description}>
@@ -145,50 +160,44 @@ const BulletinDetail = ({ navigation, route }) => {
                                             />
                                         </View>
 
-                                        <ScrollView
-                                            onScroll={loadMore}
-                                            refreshControl={
-                                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                                            }
-                                        >
-                                            {activity.map((activity) => (
-                                                <TouchableOpacity
-                                                    key={activity.id}
-                                                    onPress={() => goActivityDetail(activity.id, activity.name)}
-                                                >
-                                                    <View style={AllStyle.Card}>
-                                                        <Text style={AllStyle.ActivityTitle}>{activity.name}</Text>
-                                                        <View
-                                                            style={[
-                                                                ActivityStyle.ActivityCardImage,
-                                                                { marginBottom: 10 },
-                                                            ]}
-                                                        >
-                                                            <Image
-                                                                source={{ uri: activity.image }}
-                                                                style={AllStyle.ActivityImage}
-                                                            />
-                                                        </View>
-                                                        <RenderHTML
-                                                            contentWidth={screenWidth}
-                                                            source={{ html: activity.description }}
-                                                            baseStyle={AllStyle.Content}
-                                                            defaultTextProps={{
-                                                                numberOfLines: 3,
-                                                                ellipsizeMode: 'tail',
-                                                            }}
+                                        {activity.map((activity) => (
+                                            <TouchableOpacity
+                                                key={activity.id}
+                                                onPress={() => goActivityDetail(activity.id, activity.name)}
+                                            >
+                                                <View style={AllStyle.Card}>
+                                                    <Text style={AllStyle.ActivityTitle}>{activity.name}</Text>
+                                                    <View
+                                                        style={[
+                                                            ActivityStyle.ActivityCardImage,
+                                                            { marginBottom: 10 },
+                                                        ]}
+                                                    >
+                                                        <Image
+                                                            source={{ uri: activity.image }}
+                                                            style={AllStyle.ActivityImage}
                                                         />
-
-                                                        <Text style={AllStyle.DateDetail}>
-                                                            Ngày bắt đầu: <Text>{formatDate(activity.start_date)}</Text>
-                                                        </Text>
-                                                        <Text style={AllStyle.DateDetail}>
-                                                            Ngày kết thúc: <Text>{formatDate(activity.end_date)}</Text>
-                                                        </Text>
                                                     </View>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </ScrollView>
+                                                    <RenderHTML
+                                                        contentWidth={screenWidth}
+                                                        source={{ html: activity.description }}
+                                                        baseStyle={AllStyle.Content}
+                                                        defaultTextProps={{
+                                                            numberOfLines: 3,
+                                                            ellipsizeMode: 'tail',
+                                                        }}
+                                                    />
+
+                                                    <Text style={AllStyle.DateDetail}>
+                                                        Ngày bắt đầu: <Text>{formatDate(activity.start_date)}</Text>
+                                                    </Text>
+                                                    <Text style={AllStyle.DateDetail}>
+                                                        Ngày kết thúc: <Text>{formatDate(activity.end_date)}</Text>
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        ))}
+                                        {activityLoading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
                                     </View>
                                 </View>
                             </View>
