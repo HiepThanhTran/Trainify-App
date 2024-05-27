@@ -46,6 +46,7 @@ const BulletinDetail = ({ navigation, route }) => {
             setActivityLoading(true);
             try {
                 let url = `${endPoints['activities']}?bulletin_id=${bulletinID}&page=${page}&name=${name}`;
+                console.log(url);
                 let res = await APIs.get(url);
                 if (res.data.next === null) {
                     setPage(0);
