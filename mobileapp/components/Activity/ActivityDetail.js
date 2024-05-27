@@ -2,7 +2,6 @@ import { View, Text, ActivityIndicator, Image, ScrollView } from "react-native";
 import GlobalStyle from "../../styles/Style";
 import { useState, useEffect } from "react";
 import APIs, { endPoints } from "../../configs/APIs";
-import ActivityStyle from "./ActivityStyle";
 import Theme from "../../styles/Theme";
 import RenderHTML from "react-native-render-html";
 import { Dimensions } from "react-native";

@@ -15,7 +15,6 @@ import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, isCloseToBottom } from '../Utils/Utils';
-import ActivityStyle from './ActivityStyle';
 import AllStyle from './AllStyle';
 
 const screenWidth = Dimensions.get('window').width;
@@ -169,7 +168,7 @@ const BulletinDetail = ({ navigation, route }) => {
                                                     <Text style={AllStyle.ActivityTitle}>{activity.name}</Text>
                                                     <View
                                                         style={[
-                                                            ActivityStyle.ActivityCardImage,
+                                                            AllStyle.CardImage,
                                                             { marginBottom: 10 },
                                                         ]}
                                                     >

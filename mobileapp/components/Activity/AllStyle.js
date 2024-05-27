@@ -4,7 +4,7 @@ import Theme from "../../styles/Theme";
 export default AllStyle = StyleSheet.create({
     ContainerScreen:{
         marginHorizontal: 12,
-        marginTop: 40
+        marginTop: 80
     },
     ContainerScreenDetail:{
         marginHorizontal: 12,
@@ -35,7 +35,6 @@ export default AllStyle = StyleSheet.create({
         fontFamily: Theme.SemiBold,
     },
     Container:{
-        marginTop: 10,
         marginBottom: 135
     },
     Card:{
