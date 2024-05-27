@@ -80,7 +80,7 @@ const Activity = ({navigation, route }) => {
                         <TouchableOpacity key={activity.id} onPress={() => goActivityDetail(activity.id, activity.name)}>
                             <View style={ActivityStyle.ActivityCard}>
                                 <Text style={ActivityStyle.ActivityTitle}>{activity.name}</Text>
-                                <View style={ActivityStyle.ActivityCardImage}>
+                                <View style={AllStyle.CardImage}>
                                     <Image
                                         source={{ uri: activity.image }}
                                         style={ActivityStyle.ActivityImage}
@@ -89,9 +89,9 @@ const Activity = ({navigation, route }) => {
                                 <RenderHTML
                                     contentWidth={screenWidth}
                                     source={{ html: activity.description }}
-                                    baseStyle={ActivityStyle.ActivityContent}
+                                    baseStyle={[ActivityStyle.ActivityContent, {marginTop: 20}]}
                                     defaultTextProps={{
-                                        numberOfLines: 5,
+                                        numberOfLines: 3,
                                         ellipsizeMode: 'tail'
                                     }}
                                 />

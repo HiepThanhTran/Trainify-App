@@ -1,14 +1,20 @@
 import { StyleSheet } from "react-native";
-import Theme from '../../styles/Theme'
-import { Title } from "react-native-paper";
+import Theme from "../../styles/Theme";
 
-const BulletinStyle = StyleSheet.create({
-    TopContainer: {
+export default AllStyle = StyleSheet.create({
+    ContainerScreen:{
+        marginHorizontal: 12,
+        marginTop: 40
+    },
+    ContainerScreenDetail:{
+        marginHorizontal: 12,
+    },
+    BulletinTopContainer:{
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    Text: {
+    BulletinTitle:{
         fontSize: 28,
         color: Theme.PrimaryColor,
         fontFamily: Theme.Bold
@@ -28,11 +34,11 @@ const BulletinStyle = StyleSheet.create({
         fontSize: 15,
         fontFamily: Theme.SemiBold,
     },
-    BulletinCardContainer:{
+    Container:{
         marginTop: 10,
-        marginBottom: 150
+        marginBottom: 135
     },
-    BulletinCard: {
+    Card:{
         flexDirection: 'column',
         marginBottom: 20,
         borderWidth: 1,
@@ -40,39 +46,24 @@ const BulletinStyle = StyleSheet.create({
         padding: 15,
         borderRadius: 16
     },
-    BulletinCardImage: {
+    CardImage:{
         justifyContent: 'center',
         width:'100%',
         height: 180
     },
-    Image: {
+    Image:{
         width: '100%',
         height: '100%',
         borderRadius: 16,
     },
-    ImageDetail:{
-        width: '100%',
-        height: '100%',
-    },
-    BulletinsCardDetail: {
+    CardDetail: {
         width: '100%',
     },
-    Title:{
+    CardDetailTitle:{
         fontSize: 25,
         marginTop: 20,
         marginBottom: 10,
         fontFamily: Theme.Bold
-    },
-    TitleDetail:{
-        fontSize: 25,
-        marginBottom: 15,
-        fontFamily: Theme.Bold
-    },
-    Description:{
-        borderWidth: 1,
-        borderColor: Theme.PrimaryColor,
-        padding: 10,
-        borderRadius: 10
     },
     Content:{
         width: '100%',  
@@ -81,18 +72,24 @@ const BulletinStyle = StyleSheet.create({
         fontFamily: Theme.Regular,
         lineHeight: 30
     },
+    Date:{
+        fontSize: 18,
+        fontFamily: Theme.SemiBold,
+        marginTop: 10,
+        marginBottom: 10
+    }, 
+    Description:{
+        borderWidth: 1,
+        borderColor: Theme.PrimaryColor,
+        padding: 10,
+        borderRadius: 10
+    },
     ContentDetail:{
         fontSize: 18,
         fontFamily: Theme.Regular,
         lineHeight: 30,
         marginTop: 20,
         marginBottom: 20,
-    },
-    Date:{
-        fontSize: 18,
-        fontFamily: Theme.SemiBold,
-        marginTop: 10,
-        marginBottom: 10
     },
     DateDetail:{
         fontSize: 18,
@@ -103,6 +100,35 @@ const BulletinStyle = StyleSheet.create({
         fontSize: 18,
         fontFamily: Theme.SemiBold,
     },
-})
-
-export default BulletinStyle;
+    Title:{
+        fontSize: 25,
+        marginTop: 20,
+        marginBottom: 10,
+        fontFamily: Theme.Bold
+    },
+    TitleDetail:{
+        fontSize: 25,
+        marginBottom: 15,
+        fontFamily: Theme.Bold,
+    },
+    ImageDetail:{
+        width: '100%',
+        height: '100%'
+    },
+    ActivitContainer:{
+        marginTop: 20
+    },
+    ActivityTitle:{
+        fontFamily: Theme.Bold,
+        fontSize: 20,
+        marginBottom: 10
+    },
+    ActivityImage:{
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
+    },
+    ActivityDate:{
+        
+    }
+});
