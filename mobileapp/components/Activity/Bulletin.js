@@ -1,10 +1,11 @@
 import { AntDesign } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Dimensions,
     Image,
     Keyboard,
+    RefreshControl,
     ScrollView,
     Text,
     TextInput,
@@ -22,9 +23,10 @@ const screenWidth = Dimensions.get('window').width;
 
 const Bulletin = ({ navigation }) => {
     const [bulletins, setBulletins] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [title, setTitle] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const loadBulletins = async () => {
         if (page > 0) {
@@ -65,6 +67,14 @@ const Bulletin = ({ navigation }) => {
 
     const dismissKeyboard = () => Keyboard.dismiss();
 
+    const onRefresh = useCallback(async () => {
+        setPage(1);
+        setBulletins([])
+        setRefreshing(true);
+        await loadBulletins();
+        setRefreshing(false);
+    }, []);
+
     const goToBulletinDetail = (bulletinID, title) => {
         navigation.navigate('BulletinDetail', { bulletinID: bulletinID, title: title });
     };
@@ -90,7 +100,9 @@ const Bulletin = ({ navigation }) => {
                     onScroll={loadMore}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 >
+                    {/* {loading && <ActivityIndicator size='large' />} */}
                     {bulletins.map((bulletin) => (
                         <TouchableOpacity
                             key={bulletin.id}

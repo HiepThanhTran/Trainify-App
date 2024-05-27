@@ -1,3 +1,9 @@
+export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715504153/default-avatar.png';
+export const DEFAULT_USER_COVER = 'https://res.cloudinary.com/dtthwldgs/image/upload/v1716737233/default-user-cover.jpg';
+export const DEFAULT_BULLETIN_COVER = 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715532800/bulletin-cover.png';
+export const DEFAULT_ACTIVITY_IMAGE = 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715532803/activity-image.png';
+
+
 export const status = {
     HTTP_100_CONTINUE: 100,
     HTTP_101_SWITCHING_PROTOCOLS: 101,

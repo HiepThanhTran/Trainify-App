@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
-import { SignOutAction } from '../../store/actions/AccountAction';
+import { SignoutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
@@ -42,7 +42,7 @@ const Profile = ({ navigation }) => {
             'Đăng xuất',
             'Bạn chắc chắn muốn đăng xuất?',
             [
-                { text: 'Đăng xuất', onPress: () => dispatch(SignOutAction()) },
+                { text: 'Đăng xuất', onPress: () => dispatch(SignoutAction()) },
                 { text: 'Hủy', style: 'cancel' },
             ],
             { cancelable: true },

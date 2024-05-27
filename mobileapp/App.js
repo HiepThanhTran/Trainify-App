@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import ActivityDetail from './components/Activity/ActivityDetail';
 import Bulletin from './components/Activity/Bulletin';
@@ -63,64 +63,60 @@ const RootTabsNavigator = () => {
 const Stack = createNativeStackNavigator();
 
 const RootStacksNavigator = () => {
+    const fontsLoaded = useFonts();
     const account = useAccount();
 
     return (
-        <Stack.Navigator>
-            {/* <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} /> */}
-            {account.isLoggedIn === false ? (
-                <>
-                    <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
-                    <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-                </>
-            ) : (
-                <>
-                    <Stack.Screen name="MainTabs" component={RootTabsNavigator} options={{ headerShown: false }} />
-                    <Stack.Screen
-                        name="BulletinDetail"
-                        component={BulletinDetail}
-                        options={({ route }) => ({ title: route?.params.title })}
-                    />
-                    <Stack.Screen
-                        name="ActivityDetail"
-                        component={ActivityDetail}
-                        options={({ route }) => ({ title: route?.params.name })}
-                    />
-                    <Stack.Screen name="NotificationDetail" component={NotificationDetail} />
-                    <Stack.Screen
-                        name="EditProfile"
-                        component={EditProfile}
-                        options={{
-                            title: 'Trang cá nhân',
-                            headerRight: () => (
-                                <TouchableOpacity style={[GlobalStyle.Center, GlobalStyle.HeaderButton]}>
-                                    <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
-                                </TouchableOpacity>
-                            ),
-                        }}
-                    />
-                </>
-            )}
-        </Stack.Navigator>
-    );
-};
-
-export default function App() {
-    const fontsLoaded = useFonts();
-
-    return (
         <>
-            {!fontsLoaded ? (
+            {!fontsLoaded || account.loading ? (
                 <View style={GlobalStyle.Container}>
                     <ActivityIndicator size="large" color={Theme.PrimaryColor} />
                 </View>
             ) : (
-                <NavigationContainer>
-                    <AccountProvider>
-                        <RootStacksNavigator />
-                    </AccountProvider>
-                </NavigationContainer>
+                <Stack.Navigator>
+                    {/* <RootStack.Screen name="Onboaring" options={{ headerShown: false }} component={Onboarding} /> */}
+                    {account.isLoggedIn === false ? (
+                        <>
+                            <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
+                            <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+                        </>
+                    ) : (
+                        <>
+                            <Stack.Screen
+                                name="MainTabs"
+                                component={RootTabsNavigator}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="BulletinDetail"
+                                component={BulletinDetail}
+                                options={({ route }) => ({ title: route?.params.title })}
+                            />
+                            <Stack.Screen
+                                name="ActivityDetail"
+                                component={ActivityDetail}
+                                options={({ route }) => ({ title: route?.params.name })}
+                            />
+                            <Stack.Screen name="NotificationDetail" component={NotificationDetail} />
+                            <Stack.Screen
+                                name="EditProfile"
+                                component={EditProfile}
+                                options={{ title: 'Trang cá nhân' }}
+                            />
+                        </>
+                    )}
+                </Stack.Navigator>
             )}
         </>
+    );
+};
+
+export default function App() {
+    return (
+        <NavigationContainer>
+            <AccountProvider>
+                <RootStacksNavigator />
+            </AccountProvider>
+        </NavigationContainer>
     );
 }

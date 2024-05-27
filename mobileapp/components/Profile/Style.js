@@ -12,7 +12,7 @@ export const ProfileStyle = StyleSheet.create({
         marginHorizontal: 12,
     },
     Avatar: {
-        marginTop: -height * 0.07,
+        marginTop: -height * 0.1,
         width: width * 0.2,
         height: width * 0.2,
         borderWidth: 4,
@@ -22,7 +22,7 @@ export const ProfileStyle = StyleSheet.create({
     },
     HeaderButton: {
         backgroundColor: Theme.PrimaryColor,
-        padding: 4,
+        padding: 8,
         position: 'absolute',
         bottom: 0,
         width: '100%',
@@ -53,11 +53,11 @@ export const ProfileStyle = StyleSheet.create({
         borderBottomWidth: 0,
     },
     SectionItem: {
-        padding: 8,
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 10,
+        paddingVertical: 16,
+        paddingHorizontal: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
         justifyContent: 'space-between',
@@ -106,17 +106,34 @@ export const EditProfileStyle = StyleSheet.create({
         right: width / 3,
         zIndex: 999,
     },
-    InputWrap: {
+    FormContainer: {
         marginBottom: 6,
         marginHorizontal: 12,
         flexDirection: 'column',
     },
-    InputText: {
+    FormWrap: {
+        marginVertical: 6,
+    },
+    FormText: {
         fontSize: 16,
         fontFamily: Theme.SemiBold,
     },
-    Input: {
-        marginVertical: 6,
-        justifyContent: 'center',
+    FormData: {
+        borderRadius: 0,
+        borderWidth: 2,
+        backgroundColor: '#f1f4ff',
+        borderColor: Theme.PrimaryColor,
+    },
+    RadioGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    RadioWrap: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    RadioText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
     },
 });

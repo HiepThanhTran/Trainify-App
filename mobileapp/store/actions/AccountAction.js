@@ -6,14 +6,14 @@ const UPDATE_ACCOUNT = 'UPDATE_ACCOUNT';
 
 export { SIGN_IN, SIGN_OUT, UPDATE_ACCOUNT };
 
-export const SignInAction = (payload) => {
+const SigninAction = (payload) => {
     return {
         type: SIGN_IN,
         payload: payload,
     };
 };
 
-export const SignOutAction = () => {
+const SignoutAction = () => {
     AsyncStorage.multiRemove(['access-token', 'refresh-token']);
 
     return {
@@ -21,9 +21,11 @@ export const SignOutAction = () => {
     };
 };
 
-export const UpdateAccountAction = (payload) => {
+const UpdateAccountAction = (payload) => {
     return {
         type: UPDATE_ACCOUNT,
         payload: payload,
     };
 };
+
+export { SigninAction, SignoutAction, UpdateAccountAction };

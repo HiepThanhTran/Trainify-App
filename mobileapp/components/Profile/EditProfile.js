@@ -1,81 +1,75 @@
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
-import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list';
-import { Icon, TextInput } from 'react-native-paper';
-import { UpdateAccountAction } from '../../store/actions/AccountAction';
+import { useEffect, useState } from 'react';
+import { Image, Keyboard, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Icon, RadioButton, TextInput } from 'react-native-paper';
+import APIs, { endPoints } from '../../configs/APIs';
+import { DEFAULT_USER_COVER, status } from '../../configs/Constants';
+import { AccountRequestAction, UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
+import { formatDate } from '../Utils/Utils';
 import { EditProfileStyle } from './Style';
 
-const EditProfile = () => {
+const EditProfile = ({ navigation }) => {
     const dispatch = useAccountDispatch();
     const currentAccount = useAccount();
 
     const [tempAccount, setTempAccount] = useState(currentAccount.data);
-    const [avatar, setAvatar] = useState(currentAccount.data.avatar);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selected, setSelected] = useState('');
 
-    const fields = [
+    const accountFields = [
         {
             label: 'Email',
+            name: 'email',
+            value: currentAccount.data.email,
             icon: 'email',
-            editable: true,
-            value: tempAccount.email,
+            disabled: true,
         },
         {
-            label: `Mã số ${tempAccount.original_role}`,
+            label: `Mã số ${currentAccount.data.original_role.toLowerCase()}`,
+            name: 'code',
+            value: currentAccount.data.user.code,
             icon: 'badge-account',
-            editable: true,
-            value: tempAccount.user.code,
+            disabled: true,
         },
+    ];
+    const userFields = [
         {
             label: 'Họ',
-            icon: '',
-            value: tempAccount.user.last_name,
+            name: 'last_name',
+            icon: 'account-eye',
         },
         {
             label: 'Tên đệm',
-            icon: '',
-            value: tempAccount.user.middle_name,
+            name: 'middle_name',
+            icon: 'account-eye',
         },
         {
             label: 'Tên',
-            icon: '',
-            value: tempAccount.user.first_name,
+            name: 'first_name',
+            icon: 'account-eye',
         },
         {
             label: 'Địa chỉ',
+            name: 'address',
             icon: 'map-marker',
-            value: tempAccount.user.address,
         },
         {
             label: 'Số điện thoại',
+            name: 'phone_number',
             icon: 'phone',
-            value: currentAccount.data.user.phone_number,
+            keyboardType: 'numeric',
         },
     ];
-    const genderData = [
-        { key: 'M', value: 'Nam' },
-        { key: 'F', value: 'Nữ' },
-    ];
 
-    const handleSave = () => {
-        dispatch(UpdateAccountAction(tempAccount));
-    };
-
-    const updateTempAccount = (field, value) => {
-        setTempAccount({ ...tempAccount, [field]: value });
-    };
-
-    const handleGallerySelection = async () => {
-        let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const handleSelection = async (requestPermission, launchFunction) => {
+        let { status } = await requestPermission();
         if (status !== 'granted') {
             alert('Permissions denied!');
         } else {
-            let res = await ImagePicker.launchImageLibraryAsync({
+            let res = await launchFunction({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 aspect: [4, 4],
@@ -83,110 +77,220 @@ const EditProfile = () => {
             });
 
             if (!res.canceled) {
-                setAvatar(res.assets[0].uri);
+                setTempAccount((current) => ({
+                    ...current,
+                    avatar: res.assets[0].uri,
+                }));
             }
         }
         setModalVisible(false);
     };
 
-    const handleCameraSelection = async () => {
-        let { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Permissions denied!');
-        } else {
-            let res = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [4, 4],
-                quality: 1,
+    const handleGallerySelection = () =>
+        handleSelection(ImagePicker.requestMediaLibraryPermissionsAsync, ImagePicker.launchImageLibraryAsync);
+
+    const handleCameraSelection = () =>
+        handleSelection(ImagePicker.requestCameraPermissionsAsync, ImagePicker.launchCameraAsync);
+
+    const handleDatePickerOnChange = (event, selectedDate) => {
+        const dateInDesiredFormat = selectedDate.toISOString().split('T')[0];
+        updateUserOfTempAccount('date_of_birth', dateInDesiredFormat);
+    };
+
+    const getFirstDayOfMoth = (date) => {
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+    };
+
+    const getLastDayOfMoth = (date) => {
+        return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    };
+
+    const showDatePicker = () => {
+        DateTimePickerAndroid.open({
+            value: new Date(tempAccount.user.date_of_birth),
+            onChange: handleDatePickerOnChange,
+            mode: 'date',
+            is24Hour: true,
+            minimumDate: getFirstDayOfMoth(new Date(tempAccount.user.date_of_birth)),
+            maximumDate: getLastDayOfMoth(new Date(tempAccount.user.date_of_birth)),
+        });
+    };
+
+    const updateUserOfTempAccount = (field, value) => {
+        setTempAccount((current) => ({
+            ...current,
+            user: {
+                ...current.user,
+                [field]: value,
+            },
+        }));
+    };
+
+    const handleUpdateProfile = async () => {
+        dispatch(AccountRequestAction());
+
+        let form = new FormData();
+        if (currentAccount.data.avatar !== tempAccount.avatar) {
+            form.append('avatar', {
+                uri: tempAccount.avatar.uri,
+                type: tempAccount.avatar.type,
+                name: tempAccount.avatar.fileName,
             });
-
-            if (!res.canceled) {
-                setAvatar(res.assets[0].uri);
+        }
+        for (let key in tempAccount.user) {
+            if (currentAccount.data.user[key] !== tempAccount.user[key]) {
+                form.append(key, tempAccount.user[key]);
             }
         }
-        setModalVisible(false);
+
+        try {
+            let res = await APIs.patch(endPoints['me-update'], form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.info(res.data);
+
+            if (res.status === status.HTTP_200_OK) {
+                dispatch(UpdateAccountAction(tempAccount));
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error(error.response.data);
+            } else {
+                console.error(error);
+            }
+        }
     };
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={handleUpdateProfile} style={[GlobalStyle.Center, GlobalStyle.HeaderButton]}>
+                    <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation, tempAccount]);
 
     return (
         <View style={GlobalStyle.BackGround}>
             <ScrollView>
-                <View>
-                    {/* <LinearGradient
-                        colors={['rgba(62,154,228,1)', 'rgba(255,255,255, 0.8)']}
-                        style={EditProfileStyle.CoverImage}
-                    /> */}
-                    <Image
-                        style={EditProfileStyle.CoverImage}
-                        source={{
-                            uri: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1716737233/default-user-cover.jpg',
-                        }}
-                    />
-                </View>
-                <TouchableOpacity
-                    activeOpacity={1}
-                    style={GlobalStyle.Center}
-                    onPress={() => setModalVisible(!modalVisible)}
-                >
-                    <Image style={EditProfileStyle.Avatar} source={{ uri: avatar }} />
-                    <View style={EditProfileStyle.CameraIcon}>
-                        <Icon source="camera" color={Theme.PrimaryColor} size={32} />
+                <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
+                    <View>
+                        <Image style={EditProfileStyle.CoverImage} source={{ uri: DEFAULT_USER_COVER }} />
                     </View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => setModalVisible(!modalVisible)}
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        style={GlobalStyle.Center}
+                        onPress={() => setModalVisible(!modalVisible)}
                     >
-                        <View style={GlobalStyle.ModalContainer}>
-                            <View style={GlobalStyle.ModalView}>
-                                <Text style={GlobalStyle.ModalTitle}>Chọn lựa chọn</Text>
-                                <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleGallerySelection}>
-                                    <Text style={GlobalStyle.ModalButtonText}>Thư viện</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleCameraSelection}>
-                                    <Text style={GlobalStyle.ModalButtonText}>Camera</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={GlobalStyle.ModalButton}
-                                    onPress={() => setModalVisible(false)}
-                                >
-                                    <Text style={GlobalStyle.ModalButtonText}>Hủy</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <Image style={EditProfileStyle.Avatar} source={{ uri: tempAccount.avatar }} />
+                        <View style={EditProfileStyle.CameraIcon}>
+                            <Icon source="camera" color={Theme.PrimaryColor} size={32} />
                         </View>
-                    </Modal>
-                </TouchableOpacity>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => setModalVisible(!modalVisible)}
+                        >
+                            <View style={GlobalStyle.ModalContainer}>
+                                <View style={GlobalStyle.ModalView}>
+                                    <Text style={GlobalStyle.ModalTitle}>Chọn lựa chọn</Text>
+                                    <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleGallerySelection}>
+                                        <Text style={GlobalStyle.ModalButtonText}>Thư viện</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleCameraSelection}>
+                                        <Text style={GlobalStyle.ModalButtonText}>Camera</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={GlobalStyle.ModalButton}
+                                        onPress={() => setModalVisible(false)}
+                                    >
+                                        <Text style={GlobalStyle.ModalButtonText}>Hủy</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    </TouchableOpacity>
 
-                {fields.map((f, index) => (
-                    <View key={index}>
-                        <View style={EditProfileStyle.InputWrap}>
-                            <Text style={EditProfileStyle.InputText}>{f.label}</Text>
-                            <View style={EditProfileStyle.Input}>
-                                <TextInput
-                                    value={f.value}
-                                    mode="outlined"
-                                    disabled={f.editable}
-                                    placeholder={f.label}
-                                    right={<TextInput.Icon icon={f.icon} />}
-                                />
+                    <View style={EditProfileStyle.FormContainer}>
+                        {accountFields.map((f) => (
+                            <>
+                                <Text style={EditProfileStyle.FormText}>{f.label}</Text>
+                                <View style={EditProfileStyle.FormWrap}>
+                                    <TextInput
+                                        key={f.name}
+                                        value={f.value}
+                                        disabled={f.disabled}
+                                        placeholder={f.label}
+                                        style={EditProfileStyle.FormData}
+                                        cursorColor={Theme.PrimaryColor}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        right={<TextInput.Icon icon={f.icon} />}
+                                    />
+                                </View>
+                            </>
+                        ))}
+                        {userFields.map((f) => (
+                            <>
+                                <Text style={EditProfileStyle.FormText}>{f.label}</Text>
+                                <View style={EditProfileStyle.FormWrap}>
+                                    <TextInput
+                                        key={f.name}
+                                        value={tempAccount.user[f.name]}
+                                        disabled={f.disabled}
+                                        placeholder={f.label}
+                                        style={EditProfileStyle.FormData}
+                                        keyboardType={f.keyboardType}
+                                        cursorColor={Theme.PrimaryColor}
+                                        underlineColor="transparent"
+                                        activeUnderlineColor="transparent"
+                                        onChangeText={(value) => updateUserOfTempAccount(f.name, value)}
+                                        right={<TextInput.Icon icon={f.icon} />}
+                                    />
+                                </View>
+                            </>
+                        ))}
+                    </View>
+                    <View>
+                        <View style={EditProfileStyle.FormContainer}>
+                            <Text style={EditProfileStyle.FormText}>Giới tính</Text>
+                            <View style={EditProfileStyle.FormWrap}>
+                                <View style={EditProfileStyle.RadioGroup}>
+                                    <View style={EditProfileStyle.RadioWrap}>
+                                        <Text style={EditProfileStyle.RadioText}>Nam</Text>
+                                        <RadioButton
+                                            value="M"
+                                            color={Theme.PrimaryColor}
+                                            status={tempAccount.user.gender === 'M' ? 'checked' : 'unchecked'}
+                                            onPress={() => updateUserOfTempAccount('gender', 'M')}
+                                        />
+                                    </View>
+                                    <View style={EditProfileStyle.RadioWrap}>
+                                        <Text style={EditProfileStyle.RadioText}>Nữ</Text>
+                                        <RadioButton
+                                            value="F"
+                                            color={Theme.PrimaryColor}
+                                            status={tempAccount.user.gender === 'F' ? 'checked' : 'unchecked'}
+                                            onPress={() => updateUserOfTempAccount('gender', 'F')}
+                                        />
+                                    </View>
+                                </View>
                             </View>
                         </View>
                     </View>
-                ))}
-                <View>
-                    <View style={EditProfileStyle.InputWrap}>
-                        <Text style={EditProfileStyle.InputText}>Giới tính</Text>
-                        <View style={EditProfileStyle.Input}>
-                            <SelectList
-                                data={genderData}
-                                search={false}
-                                save="value"
-                                setSelected={(val) => setSelected(val)}
-                            />
-                        </View>
+                    <View style={EditProfileStyle.FormContainer}>
+                        <Text style={EditProfileStyle.FormText}>Ngày sinh</Text>
+                        <TouchableOpacity onPress={showDatePicker} style={EditProfileStyle.FormWrap}>
+                            <Text style={{ ...EditProfileStyle.FormData, padding: 16, fontSize: 16 }}>
+                                {formatDate(tempAccount.user['date_of_birth'])}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableOpacity>
             </ScrollView>
         </View>
     );
