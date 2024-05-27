@@ -1,25 +1,25 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
-import { SignInAction } from '../../store/actions/AccountAction';
+import { AccountRequestAction, SigninAction } from '../../store/actions/AccountAction';
 import { useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signin = ({ navigation }) => {
+    const dispatch = useAccountDispatch();
+
     const [account, setAccount] = useState({});
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
-
-    const dispatch = useAccountDispatch();
 
     const fields = [
         {
@@ -66,9 +66,10 @@ const Signin = ({ navigation }) => {
             setTimeout(async () => {
                 let user = await authAPI(tokens.data.access_token).get(endPoints['me']);
 
-                dispatch(SignInAction(user.data));
-
-                navigation.navigate('MainTabs');
+                if (user.status === status.HTTP_200_OK) {
+                    dispatch(SigninAction(user.data));
+                    // navigation.navigate('MainTabs');
+                }
             }, 100);
         } catch (error) {
             if (error.response) {
@@ -85,9 +86,7 @@ const Signin = ({ navigation }) => {
     };
 
     const updateAccount = (field, value) => {
-        setAccount((current) => {
-            return { ...current, [field]: value };
-        });
+        setAccount({ ...account, [field]: value });
     };
 
     return (

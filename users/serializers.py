@@ -12,7 +12,7 @@ class AccountSerializer(BaseSerializer):
 
 	class Meta:
 		model = Account
-		fields = ["id", "original_role", "code", "email", "password", "avatar", "date_joined", "last_login", "user"]
+		fields = ["id", "role", "original_role", "code", "email", "password", "avatar", "date_joined", "last_login", "user"]
 		extra_kwargs = {
 			"password": {"write_only": True},
 			"original_role": {"read_only": True},

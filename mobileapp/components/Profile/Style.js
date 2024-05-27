@@ -11,8 +11,8 @@ export const ProfileStyle = StyleSheet.create({
         borderRadius: 16,
         marginHorizontal: 12,
     },
-    AvatarContainer: {
-        marginTop: -height * 0.07,
+    Avatar: {
+        marginTop: -height * 0.1,
         width: width * 0.2,
         height: width * 0.2,
         borderWidth: 4,
@@ -20,13 +20,9 @@ export const ProfileStyle = StyleSheet.create({
         borderColor: 'white',
         backgroundColor: '#f1f4ff',
     },
-    Avatar: {
-        height: width * 0.2,
-        width: width * 0.2,
-    },
     HeaderButton: {
         backgroundColor: Theme.PrimaryColor,
-        padding: 4,
+        padding: 8,
         position: 'absolute',
         bottom: 0,
         width: '100%',
@@ -57,11 +53,11 @@ export const ProfileStyle = StyleSheet.create({
         borderBottomWidth: 0,
     },
     SectionItem: {
-        padding: 8,
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 10,
+        paddingVertical: 16,
+        paddingHorizontal: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
         justifyContent: 'space-between',
@@ -85,5 +81,59 @@ export const ProfileStyle = StyleSheet.create({
         backgroundColor: Theme.PrimaryColor,
         padding: 12,
         borderRadius: 12,
+    },
+});
+
+export const EditProfileStyle = StyleSheet.create({
+    CoverImage: {
+        flex: 1,
+        height: height / 5,
+        borderBottomWidth: 1,
+        borderBottomColor: 'black',
+    },
+    Avatar: {
+        width: 155,
+        height: 155,
+        marginTop: -90,
+        borderRadius: 999,
+        borderWidth: 4,
+        borderColor: 'white',
+        backgroundColor: '#f1f4ff',
+    },
+    CameraIcon: {
+        position: 'absolute',
+        bottom: 0,
+        right: width / 3,
+        zIndex: 999,
+    },
+    FormContainer: {
+        marginBottom: 6,
+        marginHorizontal: 12,
+        flexDirection: 'column',
+    },
+    FormWrap: {
+        marginVertical: 6,
+    },
+    FormText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
+    },
+    FormData: {
+        borderRadius: 0,
+        borderWidth: 2,
+        backgroundColor: '#f1f4ff',
+        borderColor: Theme.PrimaryColor,
+    },
+    RadioGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    RadioWrap: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    RadioText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
     },
 });

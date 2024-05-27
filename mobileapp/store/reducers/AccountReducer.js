@@ -1,10 +1,11 @@
-import { SIGN_IN, SIGN_OUT, UPDATE_DATA } from '../actions/AccountAction';
+import { SIGN_IN, SIGN_OUT, UPDATE_ACCOUNT } from '../actions/AccountAction';
 
 export const accountReducer = (state, action) => {
     switch (action.type) {
         case SIGN_IN:
             return {
                 ...state,
+                loading: false,
                 isLoggedIn: true,
                 data: action.payload,
             };
@@ -12,11 +13,13 @@ export const accountReducer = (state, action) => {
             return {
                 ...state,
                 data: null,
+                loading: false,
                 isLoggedIn: false,
             };
-        case UPDATE_DATA:
+        case UPDATE_ACCOUNT:
             return {
                 ...state,
+                loading: false,
                 data: {
                     ...state.data,
                     ...action.payload,

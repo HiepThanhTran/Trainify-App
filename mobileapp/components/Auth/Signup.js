@@ -91,9 +91,7 @@ const Signup = ({ navigation }) => {
     };
 
     const updateAccount = (field, value) => {
-        setAccount((current) => {
-            return { ...current, [field]: value };
-        });
+        setAccount({ ...account, [field]: value });
     };
 
     return (
@@ -154,7 +152,7 @@ const Signup = ({ navigation }) => {
                         >
                             <View style={GlobalStyle.ModalContainer}>
                                 <View style={GlobalStyle.ModalView}>
-                                    <Text style={GlobalStyle.ModalTitle}>Đăng ký tài khoản thành công</Text>
+                                    <Text style={GlobalStyle.ModalTitle}>Đăng ký thành công</Text>
                                     <Button
                                         onPress={() => navigation.navigate('Signin')}
                                         icon="account"
