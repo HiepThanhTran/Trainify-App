@@ -69,7 +69,6 @@ const BulletinDetail = ({ navigation, route }) => {
         setName(value);
     };
 
-
     return (
         <>
             {loading ? (
@@ -114,8 +113,8 @@ const BulletinDetail = ({ navigation, route }) => {
                                             <TextInput
                                                 style={AllStyle.SearchInput}
                                                 placeholder="Tìm kiếm hoạt động"
-                                                onChangeText={search}
-                                                value={name}
+                                                   onChangeText={search}
+                                                   value={name}
                                             />
                                         </View>
 

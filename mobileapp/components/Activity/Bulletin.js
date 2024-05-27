@@ -84,7 +84,9 @@ const Bulletin = ({ navigation }) => {
             <View style={AllStyle.ContainerScreen}>
                 <View style={AllStyle.BulletinTopContainer}>
                     <Text style={AllStyle.BulletinTitle}>Bản tin</Text>
-                    <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
+                    <TouchableOpacity>
+                        <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
+                    </TouchableOpacity>
                 </View>
                 <View style={AllStyle.Search}>
                     <TextInput
