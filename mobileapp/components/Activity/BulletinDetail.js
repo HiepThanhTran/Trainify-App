@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, RefreshControl } from 'react';
 import { ActivityIndicator, Dimensions, Image, ScrollView, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate } from '../Utils/Utils';
 import AllStyle from './AllStyle';
 import ActivityStyle from './ActivityStyle';
+import { formatDate, isCloseToBottom } from '../Utils/Utils';
 
 const screenWidth = Dimensions.get('window').width;
 
 const BulletinDetail = ({ navigation, route }) => {
     const [bulletindetail, setBulletinDetail] = useState(null);
     const [activity, setActivity] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [name, setName] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const bulletinID = route?.params?.bulletinID;
 
     const loadBulletinDetail = async () => {
@@ -42,9 +43,7 @@ const BulletinDetail = ({ navigation, route }) => {
                 if (page === 1) {
                     setActivity(res.data.results);
                 } else {
-                    setActivity(current => {
-                        return [...current, ...res.data.results];
-                    });
+                    setActivity(current => [...current, ...res.data.results]);
                 }
             } catch (err) {
                 console.error(err);
@@ -64,9 +63,27 @@ const BulletinDetail = ({ navigation, route }) => {
         loadActivity();
     }, [bulletinID, page, name]);
 
+    const loadMore = ({ nativeEvent }) => {
+        if (!loading && page > 0 && isCloseToBottom(nativeEvent)) {
+            setPage(page + 1);
+        }
+    };
+
+    const onRefresh = useCallback(async () => {
+        setPage(1);
+        setActivity([]);
+        setRefreshing(true);
+        await loadActivity();
+        setRefreshing(false);
+    }, []);
+
     const search = (value) => {
         setPage(1);
         setName(value);
+    };
+
+    const goActivityDetail = (id, name) => {
+        navigation.navigate('ActivityDetail', { id, name });
     };
 
     return (
@@ -79,30 +96,32 @@ const BulletinDetail = ({ navigation, route }) => {
                 <View style={GlobalStyle.BackGround}>
                     <View style={AllStyle.ContainerScreenDetail}>
                         <ScrollView
-                            key={bulletindetail.id}
+                            key={bulletindetail?.id || 'bulletin-detail-scroll'}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                         >
-                            <View style={AllStyle.Description}>
-                                <View style={AllStyle.CardImage}>
-                                    {bulletindetail?.cover && (
-                                        <Image style={AllStyle.ImageDetail} source={{ uri: bulletindetail.cover }} />
-                                    )}
+                            {bulletindetail && (
+                                <View style={AllStyle.Description}>
+                                    <View style={AllStyle.CardImage}>
+                                        {bulletindetail?.cover && (
+                                            <Image style={AllStyle.ImageDetail} source={{ uri: bulletindetail.cover }} />
+                                        )}
+                                    </View>
+
+                                    <RenderHTML
+                                        contentWidth={screenWidth}
+                                        source={{ html: bulletindetail.content }}
+                                        baseStyle={AllStyle.ContentDetail}
+                                    />
+
+                                    <Text style={AllStyle.DateDetail}>
+                                        Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text>
+                                    </Text>
+                                    <Text style={AllStyle.DateUpdate}>
+                                        Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text>
+                                    </Text>
                                 </View>
-
-                                <RenderHTML
-                                    contentWidth={screenWidth}
-                                    source={{ html: bulletindetail.content }}
-                                    baseStyle={AllStyle.ContentDetail}
-                                />
-
-                                <Text style={AllStyle.DateDetail}>
-                                    Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text>
-                                </Text>
-                                <Text style={AllStyle.DateUpdate}>
-                                    Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text>
-                                </Text>
-                            </View>
+                            )}
 
                             <View style={AllStyle.ActivitContainer}>
                                 <Text style={AllStyle.TitleDetail}>Danh sách hoạt động</Text>
@@ -113,12 +132,15 @@ const BulletinDetail = ({ navigation, route }) => {
                                             <TextInput
                                                 style={AllStyle.SearchInput}
                                                 placeholder="Tìm kiếm hoạt động"
-                                                   onChangeText={search}
-                                                   value={name}
+                                                onChangeText={search}
+                                                value={name}
                                             />
                                         </View>
 
-                                        <ScrollView>
+                                        <ScrollView 
+                                            onScroll={loadMore}
+                                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                                        >
                                             {activity.map((activity) => (
                                                 <TouchableOpacity key={activity.id} onPress={() => goActivityDetail(activity.id, activity.name)}>
                                                     <View style={AllStyle.Card}>
@@ -139,8 +161,12 @@ const BulletinDetail = ({ navigation, route }) => {
                                                             }}
                                                         />
 
-                                                        <Text style={AllStyle.DateDetail}>Ngày bắt đầu: {activity.start_date}</Text>
-                                                        <Text style={AllStyle.DateDetail}>Ngày kết thúc: {activity.end_date}</Text>
+                                                        <Text style={AllStyle.DateDetail}>
+                                                            Ngày bắt đầu: <Text>{formatDate(activity.start_date)}</Text>
+                                                        </Text>
+                                                        <Text style={AllStyle.DateDetail}>
+                                                            Ngày kết thúc: <Text>{formatDate(activity.end_date)}</Text>
+                                                        </Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             ))}
