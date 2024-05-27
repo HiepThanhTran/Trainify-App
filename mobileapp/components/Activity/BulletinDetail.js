@@ -98,8 +98,8 @@ const BulletinDetail = ({ navigation, route }) => {
         setName(value);
     };
 
-    const goActivityDetail = (id, name) => {
-        navigation.navigate('ActivityDetail', { id, name });
+    const goActivityDetail = (activityID, name) => {
+        navigation.navigate('ActivityDetail',  { activityID: activityID, name: name });
     };
 
     return (
@@ -112,7 +112,7 @@ const BulletinDetail = ({ navigation, route }) => {
                 <View style={GlobalStyle.BackGround}>
                     <View style={AllStyle.ContainerScreenDetail}>
                         <ScrollView
-                            key={bulletindetail?.id || 'bulletin-detail-scroll'}
+                            key={bulletindetail?.id}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                             onScroll={loadMore}

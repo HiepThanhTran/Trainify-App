@@ -128,7 +128,9 @@ export default AllStyle = StyleSheet.create({
         height: '100%',
         borderRadius: 10,
     },
-    ActivityDate:{
-        
+    AcitivityDetailText:{
+        fontSize: 18,
+        fontFamily: Theme.SemiBold,
+        marginBottom: 10
     }
 });
