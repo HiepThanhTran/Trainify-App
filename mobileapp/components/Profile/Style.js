@@ -85,29 +85,34 @@ export const ProfileStyle = StyleSheet.create({
 });
 
 export const EditProfileStyle = StyleSheet.create({
-    CoverImage: {
-        flex: 1,
-        height: height / 5,
-        borderBottomWidth: 2,
-        borderBottomColor: 'black',
-    },
-    AvatarContainer: {
-        marginLeft: 12,
+    BackgroundImage: {
+        flexWrap: 'wrap',
+        margin: 12,
+        padding: 4,
+        borderRadius: 20,
+        overflow: 'hidden',
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#1e1e1e',
+    },
+    FullName: {
+        flex: 1,
+        fontSize: 24,
+        fontFamily: Theme.Bold,
+        textAlign: 'center',
     },
     Avatar: {
-        width: 155,
-        height: 155,
-        marginTop: -90,
-        borderRadius: 999,
-        borderWidth: 4,
+        width: 100,
+        height: 100,
+        borderWidth: 2,
+        borderRadius: 20,
         borderColor: 'lightgrey',
-        backgroundColor: '#f1f4ff',
     },
     CameraIcon: {
         position: 'absolute',
-        bottom: 0,
-        left: width / 3.5,
+        bottom: -2,
+        left: width / 5.2,
         zIndex: 999,
         backgroundColor: 'gray',
         borderRadius: 8,
@@ -125,7 +130,7 @@ export const EditProfileStyle = StyleSheet.create({
         marginHorizontal: 12,
     },
     SchoolContainer: {
-        marginVertical: 20,
+        marginBottom: 20,
         backgroundColor: '#f1f4ff',
     },
     SchoolItem: {

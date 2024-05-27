@@ -1,12 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 import mime from 'mime';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Keyboard, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, Portal, Provider, RadioButton, Snackbar, TextInput } from 'react-native-paper';
 import { authAPI, endPoints } from '../../configs/APIs';
-import { DEFAULT_USER_COVER, status } from '../../configs/Constants';
+import { status } from '../../configs/Constants';
 import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
@@ -22,8 +23,8 @@ const EditProfile = ({ navigation }) => {
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [snackBarMsg, setSnackBarMsg] = useState('');
-    const [edited, setEdited] = useState(false);
+    const [snackBarMsg, setSnackBarMsg] = useState('sdfsdf');
+    const [canUpdate, setCanUpdate] = useState(false);
 
     const schoolFields = [
         {
@@ -32,14 +33,14 @@ const EditProfile = ({ navigation }) => {
             icon: 'school',
         },
         {
-            label: 'Khóa',
-            name: 'academic_year',
-            icon: 'calendar',
-        },
-        {
             label: 'Khoa',
             name: 'faculty',
             icon: 'school',
+        },
+        {
+            label: 'Khóa',
+            name: 'academic_year',
+            icon: 'calendar',
         },
         {
             label: 'Ngành',
@@ -97,47 +98,29 @@ const EditProfile = ({ navigation }) => {
         },
     ];
 
-    const splitTextIntoLines = (text, maxCharsPerLine) => {
-        const words = text.split(' ');
-        let lines = [];
-        let currentLine = '';
-
-        for (let i = 0; i < words.length; i++) {
-            if ((currentLine + words[i]).length <= maxCharsPerLine) {
-                currentLine += words[i] + ' ';
-            } else {
-                lines.push(currentLine);
-                currentLine = words[i] + ' ';
-            }
-        }
-        lines.push(currentLine);
-
-        return lines;
-    };
-
-    const checkEdited = () => {
+    const checkCanUpdate = () => {
         let isEdited = currentAccount.data.avatar !== tempAccount.avatar;
 
         for (let key in tempAccount.user) {
-            if (currentAccount.data.user[key] !== tempAccount.user[key]) {
+            if (tempAccount.user[key] !== '' && tempAccount.user[key] !== currentAccount.data.user[key]) {
                 isEdited = true;
                 break;
             }
         }
 
-        setEdited(isEdited);
+        setCanUpdate(isEdited);
     };
 
     const renderHeaderButton = () => {
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity
-                    disabled={!edited}
+                    disabled={!canUpdate}
                     onPress={handleUpdateProfile}
                     style={{
                         ...GlobalStyle.Center,
                         ...GlobalStyle.HeaderButton,
-                        ...(!edited ? { backgroundColor: 'rgba(52, 52, 52, 0.8)' } : {}),
+                        ...(!canUpdate ? { backgroundColor: 'rgba(52, 52, 52, 0.8)' } : {}),
                     }}
                 >
                     <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
@@ -243,19 +226,24 @@ const EditProfile = ({ navigation }) => {
     };
 
     useEffect(() => {
-        checkEdited();
+        checkCanUpdate();
+    }, [tempAccount]);
+
+    useEffect(() => {
         renderHeaderButton();
-    }, [navigation, tempAccount, edited]);
+    }, [navigation, canUpdate]);
 
     return (
         <Provider>
             <View style={GlobalStyle.BackGround}>
                 <ScrollView>
                     <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
-                        <View>
-                            <Image style={EditProfileStyle.CoverImage} source={{ uri: DEFAULT_USER_COVER }} />
-                        </View>
-                        <View style={EditProfileStyle.AvatarContainer}>
+                        <LinearGradient
+                            colors={['#3399FF', '#66CCFF', '#99CCFF', '#f1f4ff']}
+                            start={{ x: 1, y: 0 }}
+                            end={{ x: 0, y: 1 }}
+                            style={EditProfileStyle.BackgroundImage}
+                        >
                             <TouchableOpacity activeOpacity={0.5} onPress={() => setModalVisible(true)}>
                                 <Image
                                     style={EditProfileStyle.Avatar}
@@ -267,55 +255,58 @@ const EditProfile = ({ navigation }) => {
                                     }}
                                 />
                                 <View style={EditProfileStyle.CameraIcon}>
-                                    <Icon source="camera" color="white" size={32} />
+                                    <Icon source="camera" color="white" size={24} />
                                 </View>
-                                <Modal
-                                    animationType="slide"
-                                    transparent={true}
-                                    visible={modalVisible}
-                                    onRequestClose={() => setModalVisible(false)}
-                                >
-                                    <View style={GlobalStyle.ModalContainer}>
-                                        <View style={GlobalStyle.ModalView}>
-                                            <Text style={GlobalStyle.ModalTitle}>Chọn lựa chọn</Text>
-                                            <TouchableOpacity
-                                                style={GlobalStyle.ModalButton}
-                                                onPress={handleGallerySelection}
-                                            >
-                                                <Text style={GlobalStyle.ModalButtonText}>Thư viện</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={GlobalStyle.ModalButton}
-                                                onPress={handleCameraSelection}
-                                            >
-                                                <Text style={GlobalStyle.ModalButtonText}>Camera</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={GlobalStyle.ModalButton}
-                                                onPress={() => setModalVisible(false)}
-                                            >
-                                                <Text style={GlobalStyle.ModalButtonText}>Hủy</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                </Modal>
                             </TouchableOpacity>
-                        </View>
+
+                            <Text style={EditProfileStyle.FullName}>
+                                {currentAccount.data.user.last_name} {currentAccount.data.user.middle_name}{' '}
+                                {currentAccount.data.user.first_name}
+                            </Text>
+
+                            <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={modalVisible}
+                                onRequestClose={() => setModalVisible(false)}
+                            >
+                                <View style={GlobalStyle.ModalContainer}>
+                                    <View style={GlobalStyle.ModalView}>
+                                        <Text style={GlobalStyle.ModalTitle}>Chọn lựa chọn</Text>
+                                        <TouchableOpacity
+                                            style={GlobalStyle.ModalButton}
+                                            onPress={handleGallerySelection}
+                                        >
+                                            <Text style={GlobalStyle.ModalButtonText}>Thư viện</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={GlobalStyle.ModalButton}
+                                            onPress={handleCameraSelection}
+                                        >
+                                            <Text style={GlobalStyle.ModalButtonText}>Camera</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={GlobalStyle.ModalButton}
+                                            onPress={() => setModalVisible(false)}
+                                        >
+                                            <Text style={GlobalStyle.ModalButtonText}>Hủy</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </Modal>
+                        </LinearGradient>
 
                         <View style={{ ...EditProfileStyle.SchoolContainer, ...EditProfileStyle.SectionContainer }}>
                             <Text style={EditProfileStyle.Header}>Thông tin trường</Text>
                             {schoolFields.map((f) => {
                                 const labelT = tempAccount.user[f.name] ? tempAccount.user[f.name] : 'Không có';
-                                const lines = splitTextIntoLines(`${f.label}: ${labelT}`, 35);
                                 return (
                                     <View key={f.name} style={EditProfileStyle.SchoolItem}>
                                         <Icon color={Theme.PrimaryColor} source={f.icon} size={24} />
-                                        <View>
-                                            {lines.map((line, index) => (
-                                                <Text key={index} style={EditProfileStyle.SchoolItemText}>
-                                                    {line}
-                                                </Text>
-                                            ))}
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={EditProfileStyle.SchoolItemText}>
+                                                {`${f.label}: ${labelT}`}
+                                            </Text>
                                         </View>
                                     </View>
                                 );

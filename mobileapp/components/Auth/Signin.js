@@ -68,7 +68,6 @@ const Signin = ({ navigation }) => {
 
                 if (user.status === status.HTTP_200_OK) {
                     dispatch(SigninAction(user.data));
-                    // navigation.navigate('MainTabs');
                 }
             }, 100);
         } catch (error) {
@@ -77,8 +76,10 @@ const Signin = ({ navigation }) => {
                     setErrorVisible(true);
                     setErrorMsg('Email hoặc mật khẩu không chính xác');
                 }
+            } else if (error.request) {
+                console.error(error.request);
             } else {
-                console.error(error);
+                console.error(`Error message: ${error.message}`);
             }
         } finally {
             setLoading(false);

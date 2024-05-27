@@ -15,24 +15,24 @@ import NotificationDetail from './components/Notification/NotificationDetail';
 import EditProfile from './components/Profile/EditProfile';
 import Profile from './components/Profile/Profile';
 import useFonts from './configs/Fonts';
-import Splash from './screens/Splash/Splash';
+import Splash from './components/Splash/Splash';
 import { AccountProvider, useAccount } from './store/contexts/AccountContext';
 import GlobalStyle from './styles/Style';
 import Theme from './styles/Theme';
 LogBox.ignoreAllLogs();
 
-const Tab = createBottomTabNavigator();
+const RootTab = createBottomTabNavigator();
 
 const RootTabsNavigator = () => {
     return (
-        <Tab.Navigator
+        <RootTab.Navigator
             screenOptions={() => ({
                 tabBarActiveTintColor: Theme.PrimaryColor,
                 tabBarInactiveTintColor: 'black',
                 tabBarHideOnKeyboard: true,
             })}
         >
-            <Tab.Screen
+            <RootTab.Screen
                 name="Home"
                 component={Bulletin}
                 options={{
@@ -40,8 +40,8 @@ const RootTabsNavigator = () => {
                     headerShown: false,
                     tabBarIcon: () => <Icon color="gray" size={35} source="home" />,
                 }}
-            ></Tab.Screen>
-            <Tab.Screen
+            ></RootTab.Screen>
+            <RootTab.Screen
                 name="Notification"
                 component={Notification}
                 options={{
@@ -50,8 +50,8 @@ const RootTabsNavigator = () => {
                     headerShown: false,
                     tabBarIcon: () => <Icon color="gray" size={35} source="bell" />,
                 }}
-            ></Tab.Screen>
-            <Tab.Screen
+            ></RootTab.Screen>
+            <RootTab.Screen
                 name="Profile"
                 component={Profile}
                 options={{
@@ -59,12 +59,12 @@ const RootTabsNavigator = () => {
                     headerShown: false,
                     tabBarIcon: () => <Icon color="gray" size={35} source="account" />,
                 }}
-            ></Tab.Screen>
-        </Tab.Navigator>
+            ></RootTab.Screen>
+        </RootTab.Navigator>
     );
 };
 
-const Stack = createNativeStackNavigator();
+const RoootStack = createNativeStackNavigator();
 
 const RootStacksNavigator = () => {
     const fontsLoaded = useFonts();
@@ -88,41 +88,41 @@ const RootStacksNavigator = () => {
                     <ActivityIndicator size="large" color={Theme.PrimaryColor} />
                 </View>
             ) : (
-                <Stack.Navigator>
+                <RoootStack.Navigator>
                     {account.isLoggedIn === false ? (
                         <>
                             {splash && (
-                                <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
+                                <RoootStack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
                             )}
-                            <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
-                            <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+                            <RoootStack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
+                            <RoootStack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
                         </>
                     ) : (
                         <>
-                            <Stack.Screen
+                            <RoootStack.Screen
                                 name="MainTabs"
                                 component={RootTabsNavigator}
                                 options={{ headerShown: false }}
                             />
-                            <Stack.Screen
+                            <RoootStack.Screen
                                 name="BulletinDetail"
                                 component={BulletinDetail}
                                 options={({ route }) => ({ title: route?.params.title })}
                             />
-                            <Stack.Screen
+                            <RoootStack.Screen
                                 name="ActivityDetail"
                                 component={ActivityDetail}
                                 options={({ route }) => ({ title: route?.params.name })}
                             />
-                            <Stack.Screen name="NotificationDetail" component={NotificationDetail} />
-                            <Stack.Screen
+                            <RoootStack.Screen name="NotificationDetail" component={NotificationDetail} />
+                            <RoootStack.Screen
                                 name="EditProfile"
                                 component={EditProfile}
                                 options={{ title: 'Trang cá nhân' }}
                             />
                         </>
                     )}
-                </Stack.Navigator>
+                </RoootStack.Navigator>
             )}
         </>
     );

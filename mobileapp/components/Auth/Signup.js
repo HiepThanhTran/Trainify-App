@@ -63,7 +63,7 @@ const Signup = ({ navigation }) => {
         }
 
         let form = new FormData();
-        for (let key in account) if (key !== 'confirm') form.append(key, account[key]);
+        for (let key in account) if (key !== 'confirm') form.append(key, account[key].trim());
 
         setErrorMsg('');
         setLoading(true);
@@ -82,8 +82,10 @@ const Signup = ({ navigation }) => {
                     setErrorVisible(true);
                     setErrorMsg(error.response.data.detail);
                 }
+            } else if (error.request) {
+                console.error(error.request);
             } else {
-                console.error(error);
+                console.error(`Error message: ${error.message}`);
             }
         } finally {
             setLoading(false);

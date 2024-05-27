@@ -1,7 +1,6 @@
 import { Dimensions, StyleSheet } from 'react-native';
 import Theme from '../../styles/Theme';
 
-//Size Image
 const { width, height } = Dimensions.get('screen');
 
 const SplashStyle = StyleSheet.create({

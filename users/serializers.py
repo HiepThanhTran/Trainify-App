@@ -71,7 +71,8 @@ class AccountUpdateSerializer(serializers.Serializer):
 		account.save()
 
 		for attr, value in validated_data.items():
-			setattr(user, attr, value)
+			if attr != 'code':
+				setattr(user, attr, value)
 		user.save()
 
 		return account

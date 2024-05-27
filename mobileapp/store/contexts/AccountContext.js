@@ -34,13 +34,17 @@ export const AccountProvider = ({ children }) => {
         } catch (error) {
             if (error.response) {
                 console.error(error.response.data);
+                console.error(error.response.status);
+                console.error(error.response.headers);
+            } else if (error.request) {
+                console.error(error.request);
             } else {
-                console.error(error);
+                console.error(`Error message: ${error.message}`);
             }
         }
     };
 
-    const checkLogged = async () => {
+    const checkLogged = async (retryCount = 0) => {
         const [[, accessToken], [, refreshToken]] = await AsyncStorage.multiGet(['access-token', 'refresh-token']);
 
         if (!accessToken || !refreshToken) {
@@ -53,12 +57,20 @@ export const AccountProvider = ({ children }) => {
             dispatch(SigninAction(user.data));
         } catch (error) {
             if (error.response) {
-                if (error.response.status === status.HTTP_401_UNAUTHORIZED || status.HTTP_403_FORBIDDEN) {
-                    await getNewAccessToken(refreshToken);
-                    checkLogged();
+                errorStatus = error.response.status;
+                if (
+                    (errorStatus !== status.HTTP_401_UNAUTHORIZED && errorStatus !== status.HTTP_403_FORBIDDEN) ||
+                    retryCount > 3
+                ) {
+                    dispatch(SignoutAction());
+                    return;
                 }
+                await getNewAccessToken(refreshToken);
+                checkLogged(retryCount + 1);
+            } else if (error.request) {
+                console.error(error.request);
             } else {
-                console.error(error);
+                console.error(`Error message: ${error.message}`);
             }
         }
     };
