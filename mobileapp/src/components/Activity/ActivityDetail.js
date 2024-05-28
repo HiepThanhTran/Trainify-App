@@ -5,7 +5,7 @@ import APIs, { endPoints } from "../../configs/APIs";
 import Theme from "../../styles/Theme";
 import RenderHTML from "react-native-render-html";
 import { Dimensions } from "react-native";
-import { formatDate, isCloseToBottom } from '../Utils/Utils';
+import { formatDate, isCloseToBottom } from '../../utils/Utilities';
 import AllStyle from "./AllStyle";
 import CommentStyle from "./CommentStyle";
 import moment from "moment";
@@ -190,6 +190,6 @@ const ActivityDetail = ({ route }) => {
             )}
         </>
     );
-};
+}
 
 export default ActivityDetail;
