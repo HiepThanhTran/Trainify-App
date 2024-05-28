@@ -18,6 +18,7 @@ const theme = {
     colors: {
         ...DefaultTheme.colors,
         primary: Theme.PrimaryColor,
+        accent: Theme.PrimaryColor,
     },
 };
 

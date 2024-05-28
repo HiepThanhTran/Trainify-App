@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeStack from '../stacks/HomeStack';
-import NotificationStack from '../stacks/NotificationStack';
-import ProfileStack from '../stacks/ProfileStack';
 import MainTab from '../tabs/MainTab';
+import HomeStack from './HomeStack';
+import NotificationStack from './NotificationStack';
+import ProfileStack from './ProfileStack';
 
 const Stack = createNativeStackNavigator();
 

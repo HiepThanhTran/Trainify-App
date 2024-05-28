@@ -22,6 +22,7 @@
     "expo-image-picker": "~15.0.5",
     "expo-linear-gradient": "^13.0.2",
     "expo-status-bar": "~1.12.1",
+    "firebase": "^10.12.2",
     "lottie-react-native": "6.7.0",
     "mime": "^4.0.3",
     "moment": "^2.30.1",
