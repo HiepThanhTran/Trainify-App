@@ -14,7 +14,7 @@ import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, isCloseToBottom } from '../Utils/Utils';
+import { formatDate, isCloseToBottom } from '../../utils/Utilities';
 import AllStyle from './AllStyle';
 
 const screenWidth = Dimensions.get('window').width;
@@ -30,25 +30,13 @@ const BulletinDetail = ({ navigation, route }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const bulletinID = route?.params?.bulletinID;
 
-    useEffect(() => {
-        loadBulletinDetail();
-    }, [bulletinID]);
-
     const loadBulletinDetail = async () => {
         setBulletinLoading(true);
         try {
             let res = await APIs.get(endPoints['bulletin-detail'](bulletinID));
             setBulletinDetail(res.data);
-        } catch (error) {
-            if (error.response) {
-                console.error(error.response.data);
-                console.error(error.response.status);
-                console.error(error.response.headers);
-            } else if (error.request) {
-                console.error(error.request);
-            } else {
-                console.error(`Error message: ${error.message}`);
-            }
+        } catch (err) {
+            console.error(err);
         } finally {
             setBulletinLoading(false);
         }

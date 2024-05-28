@@ -16,8 +16,8 @@ import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, isCloseToBottom } from '../Utils/Utils';
-import BulletinStyle from './BulletinStyle';
+import { formatDate, isCloseToBottom } from '../../utils/Utilities';
+import AllStyle from './AllStyle';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -76,19 +76,24 @@ const Bulletin = ({ navigation }) => {
     }, []);
 
     const goToBulletinDetail = (bulletinID, title) => {
-        navigation.navigate('BulletinDetail', { bulletinID: bulletinID, title: title });
+        navigation.navigate('HomeStack', {
+            screen: "BulletinDetail", 
+            params: { bulletinID: bulletinID, title: title}
+         });
     };
 
     return (
         <View style={GlobalStyle.BackGround} onTouchStart={dismissKeyboard}>
-            <View style={{ marginHorizontal: 12, marginTop: 40 }}>
-                <View style={BulletinStyle.TopContainer}>
-                    <Text style={BulletinStyle.Text}>Bản tin</Text>
-                    <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
+            <View style={AllStyle.ContainerScreen}>
+                <View style={AllStyle.BulletinTopContainer}>
+                    <Text style={AllStyle.BulletinTitle}>Bản tin</Text>
+                    <TouchableOpacity>
+                        <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
+                    </TouchableOpacity>
                 </View>
-                <View style={BulletinStyle.Search}>
+                <View style={AllStyle.Search}>
                     <TextInput
-                        style={BulletinStyle.SearchInput}
+                        style={AllStyle.SearchInput}
                         placeholder="Tìm kiếm bản tin"
                         onChangeText={search}
                         value={title}
@@ -96,44 +101,42 @@ const Bulletin = ({ navigation }) => {
                 </View>
 
                 <ScrollView
-                    style={BulletinStyle.BulletinCardContainer}
+                    style={AllStyle.Container}
                     onScroll={loadMore}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 >
-                    {/* {loading && <ActivityIndicator size='large' />} */}
                     {bulletins.map((bulletin) => (
                         <TouchableOpacity
                             key={bulletin.id}
                             onPress={() => goToBulletinDetail(bulletin.id, bulletin.title)}
                         >
-                            <View style={BulletinStyle.BulletinCard}>
-                                <View style={BulletinStyle.BulletinCardImage}>
-                                    <Image style={BulletinStyle.Image} source={{ uri: bulletin.cover }} />
+                            <View style={AllStyle.Card}>
+                                <View style={AllStyle.CardImage}>
+                                    <Image style={AllStyle.Image} source={{ uri: bulletin.cover }} />
                                 </View>
 
-                                <View style={BulletinStyle.BulletinsCardDetail}>
-                                    <Text style={BulletinStyle.Title}>{bulletin.title}</Text>
-
+                                <View style={AllStyle.CardDetail}>
+                                    <Text style={AllStyle.Title}>{bulletin.title}</Text>
                                     <RenderHTML
                                         contentWidth={screenWidth}
                                         source={{ html: bulletin.content }}
-                                        baseStyle={BulletinStyle.Content}
+                                        baseStyle= {AllStyle.Content}
                                         defaultTextProps={{
                                             numberOfLines: 2,
                                             ellipsizeMode: 'tail',
                                         }}
                                     />
 
-                                    <Text style={BulletinStyle.Date}>
+                                    <Text style={AllStyle.Date}>
                                         Ngày tạo: <Text>{formatDate(bulletin.created_date)}</Text>
                                     </Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
                     ))}
-                    {loading && page > 1 && <ActivityIndicator />}
+                    {loading && page > 1 && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
                 </ScrollView>
             </View>
         </View>
