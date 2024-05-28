@@ -10,6 +10,7 @@ import AllStyle from "./AllStyle";
 import CommentStyle from "./CommentStyle";
 import moment from "moment";
 import 'moment/locale/vi';
+import { RichEditor, RichToolbar, actions } from "react-native-pell-rich-editor";
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -21,6 +22,7 @@ const ActivityDetail = ({ route }) => {
     const [commentLoading, setCommentLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [newcomment, setNewComment] = useState("");
     const activityID = route?.params?.activityID;
 
     const loadActivityDetail = async () => {
@@ -42,7 +44,7 @@ const ActivityDetail = ({ route }) => {
                 let url = `${endPoints['activity-comments'](activityID)}?page=${page}`;
                 let res = await APIs.get(url);
                 if (res.data.next === null) {
-                    setPage(0); // No more pages to load
+                    setPage(0);
                 }
                 if (reset) {
                     setComments(res.data.results);
@@ -147,7 +149,8 @@ const ActivityDetail = ({ route }) => {
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
-
+                                
+                                
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
                                         <View key={comment.id} style={AllStyle.Card}>
