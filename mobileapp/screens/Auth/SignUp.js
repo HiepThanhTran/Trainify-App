@@ -1,20 +1,22 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Keyboard, Modal, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Button, HelperText, Text, TextInput } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
+import AuthFormButton from '../../components/Auth/AuthFormButton';
+import AuthFormInput from '../../components/Auth/AuthFormInput';
+import Helper from '../../components/Helper';
 import APIs, { endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
 import GlobalStyle from '../../styles/Style';
-import Theme from '../../styles/Theme';
 import AuthStyle from './Style';
 
-const Signup = ({ navigation }) => {
+const SignUp = ({ navigation }) => {
     const [account, setAccount] = useState({});
-    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
-    const [errorMsg, setErrorMsg] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const fields = [
         {
@@ -47,7 +49,7 @@ const Signup = ({ navigation }) => {
         },
     ];
 
-    const handleSignup = async () => {
+    const handleSignUp = async () => {
         for (let field of fields) {
             if (!account[field.name]) {
                 setErrorVisible(true);
@@ -82,6 +84,9 @@ const Signup = ({ navigation }) => {
                     setErrorVisible(true);
                     setErrorMsg(error.response.data.detail);
                 }
+                console.error(error.response.data);
+                console.error(error.response.status);
+                console.error(error.response.headers);
             } else if (error.request) {
                 console.error(error.request);
             } else {
@@ -101,51 +106,26 @@ const Signup = ({ navigation }) => {
             <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => Keyboard.dismiss()}>
                 <View style={AuthStyle.Container}>
                     <LinearGradient colors={['rgba(62,154,228,1)', 'rgba(62,154,228,0.8)']} style={{ flex: 1 }}>
-                        <View style={AuthStyle.Header}>
+                        <View style={AuthStyle.HeaderContainer}>
                             <Text style={AuthStyle.HeaderTitle}>Đăng ký</Text>
-                            <Text style={AuthStyle.SubTitle}>Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên</Text>
+                            <Text style={AuthStyle.HeaderBody}>
+                                Đăng ký để sử dụng hệ thống điểm rèn luyện sinh viên
+                            </Text>
                         </View>
 
                         <View style={AuthStyle.Form}>
-                            <HelperText type="error" visible={errorVisible} style={GlobalStyle.HelpText}>
-                                {errorMsg}
-                            </HelperText>
-                            {fields.map((f) => (
-                                <TextInput
-                                    key={f.name}
-                                    value={account[f.name]}
-                                    placeholder={f.label}
-                                    style={AuthStyle.Input}
-                                    keyboardType={f.keyboardType}
-                                    secureTextEntry={f.secureTextEntry}
-                                    cursorColor={Theme.PrimaryColor}
-                                    underlineColor="transparent"
-                                    activeUnderlineColor="transparent"
-                                    onChangeText={(value) => updateAccount(f.name, value)}
-                                    right={
-                                        <TextInput.Icon
-                                            icon={f.icon}
-                                            onPress={
-                                                f.name === 'password' || 'confirm'
-                                                    ? () => setPasswordVisible(!passwordVisible)
-                                                    : null
-                                            }
-                                        />
-                                    }
+                            <Helper type="error" visible={errorVisible} message={errorMsg} />
+                            {fields.map((field) => (
+                                <AuthFormInput
+                                    field={field}
+                                    account={account}
+                                    updateAccount={updateAccount}
+                                    passwordVisible={passwordVisible}
+                                    setPasswordVisible={setPasswordVisible}
                                 />
                             ))}
 
-                            <Button
-                                loading={loading}
-                                icon="account"
-                                textColor="white"
-                                style={AuthStyle.Button}
-                                onPress={handleSignup}
-                            >
-                                <Text variant="headlineLarge" style={AuthStyle.ButtonText}>
-                                    Đăng ký
-                                </Text>
-                            </Button>
+                            <AuthFormButton text="Đăng ký" loading={loading} onPress={handleSignUp} />
 
                             <Modal
                                 animationType="fade"
@@ -169,13 +149,13 @@ const Signup = ({ navigation }) => {
                                     </View>
                                 </View>
                             </Modal>
+                        </View>
 
-                            <View style={AuthStyle.Footer}>
-                                <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
-                                <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-                                    <Text style={AuthStyle.FooterText}>Đăng nhập</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View style={AuthStyle.FooterContainer}>
+                            <Text style={GlobalStyle.Bold}>Đã có tài khoản?</Text>
+                            <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                                <Text style={AuthStyle.FooterText}>Đăng nhập</Text>
+                            </TouchableOpacity>
                         </View>
                     </LinearGradient>
                 </View>
@@ -184,4 +164,4 @@ const Signup = ({ navigation }) => {
     );
 };
 
-export default Signup;
+export default SignUp;

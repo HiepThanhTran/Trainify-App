@@ -16,7 +16,7 @@ import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, isCloseToBottom } from '../../utils/Utils';
+import { formatDate, isCloseToBottom } from '../../utils/Utilities';
 import BulletinStyle from './BulletinStyle';
 
 const screenWidth = Dimensions.get('window').width;
@@ -25,8 +25,12 @@ const Bulletin = ({ navigation }) => {
     const [bulletins, setBulletins] = useState([]);
     const [page, setPage] = useState(1);
     const [title, setTitle] = useState('');
-    const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        loadBulletins();
+    }, [page, title]);
 
     const loadBulletins = async () => {
         if (page > 0) {
@@ -42,17 +46,22 @@ const Bulletin = ({ navigation }) => {
                 } else {
                     setBulletins([...bulletins, ...res.data.results]);
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (error) {
+                if (error.response) {
+                    console.error(error.response.data);
+                    console.error(error.response.status);
+                    console.error(error.response.headers);
+                } else if (error.request) {
+                    console.error(error.request);
+                } else {
+                    console.error(`Error message: ${error.message}`);
+                }
             } finally {
                 setLoading(false);
+                setRefreshing(false);
             }
         }
     };
-
-    useEffect(() => {
-        loadBulletins();
-    }, [page, title]);
 
     const loadMore = ({ nativeEvent }) => {
         if (!loading && page > 0 && isCloseToBottom(nativeEvent)) {
@@ -60,27 +69,27 @@ const Bulletin = ({ navigation }) => {
         }
     };
 
+    const onRefresh = useCallback(async () => {
+        setPage(1);
+        setTitle('');
+        setRefreshing(true);
+        await loadBulletins();
+    }, []);
+
     const search = (value) => {
         setPage(1);
         setTitle(value);
     };
 
-    const dismissKeyboard = () => Keyboard.dismiss();
-
-    const onRefresh = useCallback(async () => {
-        setPage(1);
-        setBulletins([]);
-        setRefreshing(true);
-        await loadBulletins();
-        setRefreshing(false);
-    }, []);
-
     const goToBulletinDetail = (bulletinID, title) => {
-        navigation.navigate('BulletinDetail', { bulletinID: bulletinID, title: title });
+        navigation.navigate('HomeStack', {
+            screen: 'BulletinDetail',
+            params: { bulletinID: bulletinID, title: title },
+        });
     };
 
     return (
-        <View style={GlobalStyle.BackGround} onTouchStart={dismissKeyboard}>
+        <View style={GlobalStyle.BackGround} onTouchStart={() => Keyboard.dismiss()}>
             <View style={{ marginHorizontal: 12, marginTop: 40 }}>
                 <View style={BulletinStyle.TopContainer}>
                     <Text style={BulletinStyle.Text}>Bản tin</Text>
@@ -100,9 +109,10 @@ const Bulletin = ({ navigation }) => {
                     onScroll={loadMore}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                    refreshControl={
+                        <RefreshControl colors={[Theme.PrimaryColor]} refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                 >
-                    {/* {loading && <ActivityIndicator size='large' />} */}
                     {bulletins.map((bulletin) => (
                         <TouchableOpacity
                             key={bulletin.id}
@@ -133,7 +143,7 @@ const Bulletin = ({ navigation }) => {
                             </View>
                         </TouchableOpacity>
                     ))}
-                    {loading && page > 1 && <ActivityIndicator />}
+                    {loading && page > 1 && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
                 </ScrollView>
             </View>
         </View>

@@ -4,9 +4,12 @@ import React, { useRef } from 'react';
 import { Text, View } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import GlobalStyle from '../../styles/Style';
+import Theme from '../../styles/Theme';
 import SplashStyle from './Style';
 
 const Splash = ({ navigation }) => {
+    const animation = useRef(null);
+
     const animations = [
         {
             id: 1,
@@ -32,11 +35,11 @@ const Splash = ({ navigation }) => {
         await AsyncStorage.setItem('splash-done', 'true');
         navigation.reset({
             index: 0,
-            routes: [{ name: 'Signin' }],
+            routes: [{ name: 'SignIn' }],
         });
     };
 
-    const buttonLabel = (label) => {
+    const renderButton = (label) => {
         return (
             <View style={{ padding: 12 }}>
                 <Text style={SplashStyle.Button}>{label}</Text>
@@ -44,15 +47,15 @@ const Splash = ({ navigation }) => {
         );
     };
 
-    const animation = useRef(null);
-
     return (
         <AppIntroSlider
             style={GlobalStyle.BackGround}
             data={animations}
+            showSkipButton
+            onDone={handleDone}
             renderItem={({ item }) => {
                 return (
-                    <View style={SplashStyle.OnboardingContainer}>
+                    <View key={item.id} style={SplashStyle.OnboardingContainer}>
                         {item.image && (
                             <LottieView
                                 style={SplashStyle.OnboardingImage}
@@ -67,15 +70,10 @@ const Splash = ({ navigation }) => {
                     </View>
                 );
             }}
-            activeDotStyle={{
-                backgroundColor: '#3e9ae4',
-                width: 20,
-            }}
-            showSkipButton
-            renderNextButton={() => buttonLabel('Tiếp tục')}
-            renderSkipButton={() => buttonLabel('Bỏ qua')}
-            renderDoneButton={() => buttonLabel('Hoàn tất')}
-            onDone={handleDone}
+            activeDotStyle={{ backgroundColor: Theme.PrimaryColor, width: 20 }}
+            renderNextButton={() => renderButton('Tiếp tục')}
+            renderSkipButton={() => renderButton('Bỏ qua')}
+            renderDoneButton={() => renderButton('Hoàn tất')}
         />
     );
 };

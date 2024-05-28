@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet } from 'react-native';
 import Theme from './Theme';
 
-const { width, height } = Dimensions.get('window');
+export const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const GlobalStyle = StyleSheet.create({
     Container: {
@@ -12,13 +12,6 @@ const GlobalStyle = StyleSheet.create({
     Center: {
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    HelpText: {
-        marginBottom: 12,
-        marginTop: -16,
-        fontSize: 16,
-        fontFamily: Theme.Bold,
-        textAlign: 'center',
     },
     BackGround: {
         width: '100%',
@@ -48,7 +41,7 @@ const GlobalStyle = StyleSheet.create({
         marginBottom: 20,
     },
     ModalButton: {
-        width: width / 3,
+        width: screenWidth / 3,
         padding: 10,
         marginTop: 15,
         borderRadius: 16,
@@ -64,7 +57,7 @@ const GlobalStyle = StyleSheet.create({
         fontSize: 16,
     },
     HeaderButton: {
-        width: width / 4,
+        width: screenWidth / 4,
         height: 40,
         padding: 8,
         borderRadius: 16,

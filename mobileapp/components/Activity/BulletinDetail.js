@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, Text, View } from 'react-native';
+import { Dimensions, Image, ScrollView, Text, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
-import Theme from '../../styles/Theme';
-import { formatDate } from '../../utils/Utils';
+import { formatDate } from '../../utils/Utilities';
+import Loading from '../Loading';
 import Activity from './Activity';
 import BulletinStyle from './BulletinStyle';
 
@@ -15,30 +15,34 @@ const BulletinDetail = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
     const bulletinID = route?.params?.bulletinID;
 
+    useEffect(() => {
+        loadBulletinDetail();
+    }, [bulletinID]);
+
     const loadBulletinDetail = async () => {
         setLoading(true);
         try {
             let res = await APIs.get(endPoints['bulletin-detail'](bulletinID));
             setBulletinDetail(res.data);
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            if (error.response) {
+                console.error(error.response.data);
+                console.error(error.response.status);
+                console.error(error.response.headers);
+            } else if (error.request) {
+                console.error(error.request);
+            } else {
+                console.error(`Error message: ${error.message}`);
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        if (bulletinID) {
-            loadBulletinDetail();
-        }
-    }, [bulletinID]);
-
     return (
         <>
             {loading ? (
-                <View style={GlobalStyle.Container}>
-                    <ActivityIndicator size="large" color={Theme.PrimaryColor} />
-                </View>
+                <Loading />
             ) : (
                 <View style={GlobalStyle.BackGround}>
                     <View style={{ marginHorizontal: 12 }}>

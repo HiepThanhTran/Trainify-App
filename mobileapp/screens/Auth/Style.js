@@ -1,26 +1,22 @@
 import { StyleSheet } from 'react-native';
+import { screenHeight } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 
 const AuthStyle = StyleSheet.create({
-    // Auth Style
-    Container: {
-        flex: 1,
-    },
-    Header: {
-        flex: 2,
-        justifyContent: 'center',
+    HeaderContainer: {
+        marginTop: screenHeight / 8,
         alignItems: 'center',
+        justifyContent: 'center',
         paddingHorizontal: 20,
         paddingBottom: 4,
     },
     HeaderTitle: {
         fontSize: 30,
-        marginTop: 30,
         color: 'white',
         marginBottom: 20,
         fontFamily: Theme.Bold,
     },
-    SubTitle: {
+    HeaderBody: {
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
@@ -28,36 +24,17 @@ const AuthStyle = StyleSheet.create({
         fontFamily: Theme.Bold,
     },
     Form: {
-        flex: 3,
+        marginTop: screenHeight / 20,
         backgroundColor: 'white',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 22,
         paddingVertical: 30,
     },
-    Input: {
-        backgroundColor: '#f1f4ff',
-        borderWidth: 2,
-        marginBottom: 20,
-        borderColor: Theme.PrimaryColor,
-        marginBottom: 20,
-    },
-    Button: {
-        width: '100%',
-        backgroundColor: Theme.PrimaryColor,
-        borderRadius: 16,
-        marginBottom: 12,
-    },
-    ButtonText: {
-        color: 'white',
-        fontSize: 20,
-        fontFamily: Theme.Bold,
-    },
-    Footer: {
-        flex: 1,
-        marginTop: 5,
+    FooterContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
+        backgroundColor: 'white',
     },
     FooterText: {
         color: Theme.PrimaryColor,

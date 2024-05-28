@@ -4,7 +4,7 @@ import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate } from '../../utils/Utils';
+import { formatDate } from '../../utils/Utilities';
 import ActivityStyle from './ActivityStyle';
 
 const screenWidth = Dimensions.get('window').width;

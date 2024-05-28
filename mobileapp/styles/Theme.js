@@ -12,6 +12,7 @@ export const Dark = {
 
 export default {
     PrimaryColor: '#3e9ae4',
+    SecondaryColor: '#f1f4ff',
     Bold: 'OpenSansBold',
     SemiBold: 'OpenSansSemiBold',
     Light: 'OpenSansLight',

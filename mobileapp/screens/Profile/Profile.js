@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
-import { SignoutAction } from '../../store/actions/AccountAction';
+import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
@@ -41,14 +41,17 @@ const Profile = ({ navigation }) => {
             'Đăng xuất',
             'Bạn chắc chắn muốn đăng xuất?',
             [
-                { text: 'Đăng xuất', onPress: () => dispatch(SignoutAction()) },
+                { text: 'Đăng xuất', onPress: () => dispatch(SignOutAction()) },
                 { text: 'Hủy', style: 'cancel' },
             ],
             { cancelable: true },
         );
     };
 
-    const goToScreen = (name) => navigation.navigate(name);
+    const goToScreen = (name) =>
+        navigation.navigate('ProfileStack', {
+            screen: name,
+        });
 
     return (
         <LinearGradient
@@ -57,20 +60,20 @@ const Profile = ({ navigation }) => {
             style={{ flex: 1 }}
         >
             <ScrollView>
-                <View style={[GlobalStyle.Container, ProfileStyle.Header]}>
+                <View style={{ ...GlobalStyle.Container, ...ProfileStyle.Header }}>
                     <Image style={ProfileStyle.Avatar} source={{ uri: currentAccount.data.avatar }} />
                     <View style={GlobalStyle.Center}>
-                        <Text style={[GlobalStyle.Bold, { fontSize: 24 }]}>
+                        <Text style={{ ...GlobalStyle.Bold, fontSize: 24 }}>
                             {currentAccount.data.user.last_name} {currentAccount.data.user.middle_name}{' '}
                             {currentAccount.data.user.first_name}
                         </Text>
-                        <Text style={[GlobalStyle.Medium, { color: 'gray', fontSize: 16 }]}>
+                        <Text style={{ ...GlobalStyle.Medium, color: 'gray', fontSize: 16 }}>
                             {currentAccount.data.user.code}
                         </Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => goToScreen('EditProfile')}
-                        style={[GlobalStyle.Center, ProfileStyle.HeaderButton]}
+                        style={{ ...GlobalStyle.Center, ...ProfileStyle.HeaderButton }}
                     >
                         <Text style={ProfileStyle.ButtonText}>Trang cá nhân</Text>
                         <Icon color="white" source="chevron-right" size={20} />
@@ -81,7 +84,12 @@ const Profile = ({ navigation }) => {
                         <Text style={ProfileStyle.SectionTitle}>{section.title}</Text>
                         <View style={ProfileStyle.SectionBody}>
                             {section.items.map((item, itemIndex) => (
-                                <TouchableOpacity activeOpacity={0.6} key={itemIndex} onPress={null} style={ProfileStyle.SectionItem}>
+                                <TouchableOpacity
+                                    activeOpacity={0.6}
+                                    key={itemIndex}
+                                    onPress={null}
+                                    style={ProfileStyle.SectionItem}
+                                >
                                     <View style={ProfileStyle.SectionItemLeft}>
                                         <Icon color={Theme.PrimaryColor} source={item.icon} size={24} />
                                         <Text style={ProfileStyle.TextItemLeft}>{item.label}</Text>
@@ -94,8 +102,11 @@ const Profile = ({ navigation }) => {
                         </View>
                     </View>
                 ))}
-                <View style={[GlobalStyle.Center, ProfileStyle.Footer]}>
-                    <TouchableOpacity onPress={handleSignout} style={[GlobalStyle.Center, ProfileStyle.FooterButton]}>
+                <View style={{ ...GlobalStyle.Center, ...ProfileStyle.Footer }}>
+                    <TouchableOpacity
+                        onPress={handleSignout}
+                        style={{ ...GlobalStyle.Center, ...ProfileStyle.FooterButton }}
+                    >
                         <Icon color="white" source="logout" size={20} />
                         <Text style={ProfileStyle.ButtonText}>Đăng xuất</Text>
                     </TouchableOpacity>

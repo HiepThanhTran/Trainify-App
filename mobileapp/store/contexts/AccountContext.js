@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
-import { SigninAction, SignoutAction } from '../actions/AccountAction';
+import { SignInAction, SignOutAction } from '../actions/AccountAction';
 import { accountReducer } from '../reducers/AccountReducer';
 
 export const AccountContext = createContext(null);
@@ -48,13 +48,13 @@ export const AccountProvider = ({ children }) => {
         const [[, accessToken], [, refreshToken]] = await AsyncStorage.multiGet(['access-token', 'refresh-token']);
 
         if (!accessToken || !refreshToken) {
-            dispatch(SignoutAction());
+            dispatch(SignOutAction());
             return;
         }
 
         try {
             const user = await authAPI(accessToken).get(endPoints['me']);
-            dispatch(SigninAction(user.data));
+            dispatch(SignInAction(user.data));
         } catch (error) {
             if (error.response) {
                 errorStatus = error.response.status;
@@ -62,9 +62,10 @@ export const AccountProvider = ({ children }) => {
                     (errorStatus !== status.HTTP_401_UNAUTHORIZED && errorStatus !== status.HTTP_403_FORBIDDEN) ||
                     retryCount > 3
                 ) {
-                    dispatch(SignoutAction());
+                    dispatch(SignOutAction());
                     return;
                 }
+                
                 await getNewAccessToken(refreshToken);
                 checkLogged(retryCount + 1);
             } else if (error.request) {

@@ -1,24 +1,25 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 
-const { width, height } = Dimensions.get('window');
+const borderRadiusHeader = 16;
 
 export const ProfileStyle = StyleSheet.create({
     Header: {
         backgroundColor: 'white',
-        marginTop: height * 0.1,
-        height: height * 0.2,
-        borderRadius: 16,
+        marginTop: screenHeight * 0.1,
+        height: screenHeight * 0.2,
+        borderRadius: borderRadiusHeader,
         marginHorizontal: 12,
     },
     Avatar: {
-        marginTop: -height * 0.1,
-        width: width * 0.2,
-        height: width * 0.2,
+        marginTop: -screenHeight * 0.1,
+        width: screenWidth * 0.2,
+        height: screenWidth * 0.2,
         borderWidth: 4,
-        borderRadius: (width * 0.2) / 2,
+        borderRadius: (screenWidth * 0.2) / 2,
         borderColor: 'white',
-        backgroundColor: '#f1f4ff',
+        backgroundColor: Theme.SecondaryColor,
     },
     HeaderButton: {
         backgroundColor: Theme.PrimaryColor,
@@ -27,8 +28,8 @@ export const ProfileStyle = StyleSheet.create({
         bottom: 0,
         width: '100%',
         flexDirection: 'row',
-        borderBottomLeftRadius: 16,
-        borderBottomRightRadius: 16,
+        borderBottomLeftRadius: borderRadiusHeader,
+        borderBottomRightRadius: borderRadiusHeader,
     },
     ButtonText: {
         color: 'white',
@@ -85,9 +86,10 @@ export const ProfileStyle = StyleSheet.create({
 });
 
 export const EditProfileStyle = StyleSheet.create({
-    BackgroundImage: {
+    AvatarContainer: {
         flexWrap: 'wrap',
-        margin: 12,
+        marginHorizontal: 12,
+        marginVertical: 20,
         padding: 4,
         borderRadius: 20,
         overflow: 'hidden',
@@ -112,7 +114,7 @@ export const EditProfileStyle = StyleSheet.create({
     CameraIcon: {
         position: 'absolute',
         bottom: -2,
-        left: width / 5.2,
+        left: screenWidth / 5.2,
         zIndex: 999,
         backgroundColor: 'gray',
         borderRadius: 8,
@@ -131,7 +133,7 @@ export const EditProfileStyle = StyleSheet.create({
     },
     SchoolContainer: {
         marginBottom: 20,
-        backgroundColor: '#f1f4ff',
+        backgroundColor: Theme.SecondaryColor,
     },
     SchoolItem: {
         marginBottom: 12,
@@ -156,7 +158,7 @@ export const EditProfileStyle = StyleSheet.create({
     FormData: {
         borderRadius: 0,
         borderWidth: 2,
-        backgroundColor: '#f1f4ff',
+        backgroundColor: Theme.SecondaryColor,
         borderColor: Theme.PrimaryColor,
     },
     RadioGroup: {
@@ -170,5 +172,10 @@ export const EditProfileStyle = StyleSheet.create({
     RadioText: {
         fontSize: 16,
         fontFamily: Theme.SemiBold,
+    },
+    SnackbarText: {
+        fontFamily: Theme.SemiBold,
+        color: 'white',
+        marginRight: 8,
     },
 });

@@ -1,17 +1,16 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-
-const { width, height } = Dimensions.get('screen');
 
 const SplashStyle = StyleSheet.create({
     OnboardingContainer: {
         flex: 1,
         alignItems: 'center',
         padding: 15,
-        paddingTop: height / 10,
+        paddingTop: screenHeight / 10,
     },
     OnboardingImage: {
-        width: width + 50,
+        width: screenWidth + 50,
         height: 330,
         resizeMode: 'contain',
     },
