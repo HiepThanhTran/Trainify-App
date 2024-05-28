@@ -4,17 +4,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import mime from 'mime';
 import { useEffect, useState } from 'react';
-import { Alert, Image, Keyboard, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Keyboard, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, Portal, RadioButton, Snackbar, TextInput } from 'react-native-paper';
 import Loading from '../../components/Loading';
 import { authAPI, endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
 import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
-import GlobalStyle from '../../styles/Style';
+import GlobalStyle, { screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, getFirstDayOfMoth, getLastDayOfMoth } from '../../utils/Utilities';
-import { EditProfileStyle } from './Style';
 
 const EditProfile = ({ navigation }) => {
     const dispatch = useAccountDispatch();
@@ -134,12 +133,16 @@ const EditProfile = ({ navigation }) => {
                     setSnackBarMsg('Cập nhật thành công');
                 }
             } catch (error) {
-                if (error.response) {
-                    console.error('Response:', error.response.data);
-                } else {
-                    console.error('Error:', error);
-                }
                 setSnackBarMsg('Có lỗi xảy ra khi cập nhật');
+                if (error.response) {
+                    console.error(error.response.data);
+                    console.error(error.response.status);
+                    console.error(error.response.headers);
+                } else if (error.request) {
+                    console.error(error.request);
+                } else {
+                    console.error(`Error message: ${error.message}`);
+                }
             } finally {
                 setLoading(false);
             }
@@ -395,5 +398,100 @@ const EditProfile = ({ navigation }) => {
         </View>
     );
 };
+
+const EditProfileStyle = StyleSheet.create({
+    AvatarContainer: {
+        flexWrap: 'wrap',
+        marginHorizontal: 12,
+        marginVertical: 20,
+        padding: 4,
+        borderRadius: 20,
+        overflow: 'hidden',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#1e1e1e',
+    },
+    FullName: {
+        flex: 1,
+        fontSize: 24,
+        fontFamily: Theme.Bold,
+        textAlign: 'center',
+    },
+    Avatar: {
+        width: 100,
+        height: 100,
+        borderWidth: 2,
+        borderRadius: 20,
+        borderColor: 'lightgrey',
+    },
+    CameraIcon: {
+        position: 'absolute',
+        bottom: -2,
+        left: screenWidth / 5.2,
+        zIndex: 999,
+        backgroundColor: 'gray',
+        borderRadius: 8,
+    },
+    Header: {
+        fontSize: 20,
+        marginBottom: 12,
+        fontFamily: Theme.Bold,
+    },
+    SectionContainer: {
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: Theme.PrimaryColor,
+        marginHorizontal: 12,
+    },
+    SchoolContainer: {
+        marginBottom: 20,
+        backgroundColor: Theme.SecondaryColor,
+    },
+    SchoolItem: {
+        marginBottom: 12,
+        flexDirection: 'row',
+    },
+    SchoolItemText: {
+        fontSize: 16,
+        marginLeft: 12,
+        fontFamily: Theme.SemiBold,
+    },
+    FormContainer: {
+        marginBottom: 6,
+        flexDirection: 'column',
+    },
+    FormWrap: {
+        marginVertical: 6,
+    },
+    FormText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
+    },
+    FormData: {
+        borderRadius: 0,
+        borderWidth: 2,
+        backgroundColor: Theme.SecondaryColor,
+        borderColor: Theme.PrimaryColor,
+    },
+    RadioGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    RadioWrap: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    RadioText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
+    },
+    SnackbarText: {
+        fontFamily: Theme.SemiBold,
+        color: 'white',
+        marginRight: 8,
+    },
+});
 
 export default EditProfile;

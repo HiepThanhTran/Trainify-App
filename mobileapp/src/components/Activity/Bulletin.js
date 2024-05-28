@@ -36,8 +36,12 @@ const Bulletin = ({ navigation }) => {
         if (page > 0) {
             setLoading(true);
             try {
-                let url = `${endPoints['bulletins']}?page=${page}&title=${title}`;
-                let res = await APIs.get(url);
+                let res = await APIs.get(endPoints['bulletins'], {
+                    params: {
+                        page: page,
+                        title: title,
+                    },
+                });
                 if (res.data.next === null) {
                     setPage(0);
                 }
@@ -103,7 +107,6 @@ const Bulletin = ({ navigation }) => {
                         value={title}
                     />
                 </View>
-
                 <ScrollView
                     style={BulletinStyle.BulletinCardContainer}
                     onScroll={loadMore}
