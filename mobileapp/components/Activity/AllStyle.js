@@ -4,7 +4,7 @@ import Theme from "../../styles/Theme";
 export default AllStyle = StyleSheet.create({
     ContainerScreen:{
         marginHorizontal: 12,
-        marginTop: 80
+        marginTop: 70
     },
     ContainerScreenDetail:{
         marginHorizontal: 12,
@@ -81,7 +81,8 @@ export default AllStyle = StyleSheet.create({
         borderWidth: 1,
         borderColor: Theme.PrimaryColor,
         padding: 10,
-        borderRadius: 10
+        borderRadius: 10,
+        marginTop: 20
     },
     ContentDetail:{
         fontSize: 18,
@@ -90,14 +91,10 @@ export default AllStyle = StyleSheet.create({
         marginTop: 20,
         marginBottom: 20,
     },
-    DateDetail:{
-        fontSize: 18,
+    DateTime:{
+        fontSize: 14,
         fontFamily: Theme.SemiBold,
-        marginBottom: 10
-    },
-    DateUpdate:{
-        fontSize: 18,
-        fontFamily: Theme.SemiBold,
+        color: 'gray'
     },
     Title:{
         fontSize: 25,
@@ -131,5 +128,22 @@ export default AllStyle = StyleSheet.create({
         fontSize: 18,
         fontFamily: Theme.SemiBold,
         marginBottom: 10
+    },
+    More:{
+        fontFamily: Theme.Bold,
+        fontSize: 18,
+        marginTop: -15,
+        marginBottom: 10
+    },
+    Time:{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    DateDetail:{
+        fontSize: 18,
+        marginTop: 10,
+        fontFamily: Theme.SemiBold
     }
 });

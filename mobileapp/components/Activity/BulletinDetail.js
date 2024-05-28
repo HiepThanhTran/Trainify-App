@@ -27,6 +27,7 @@ const BulletinDetail = ({ navigation, route }) => {
     const [bulletinLoading, setBulletinLoading] = useState(true);
     const [activityLoading, setActivityLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const bulletinID = route?.params?.bulletinID;
 
     const loadBulletinDetail = async () => {
@@ -46,7 +47,6 @@ const BulletinDetail = ({ navigation, route }) => {
             setActivityLoading(true);
             try {
                 let url = `${endPoints['activities']}?bulletin_id=${bulletinID}&page=${page}&name=${name}`;
-                console.log(url);
                 let res = await APIs.get(url);
                 if (res.data.next === null) {
                     setPage(0);
@@ -54,7 +54,7 @@ const BulletinDetail = ({ navigation, route }) => {
                 if (page === 1) {
                     setActivity(res.data.results);
                 } else {
-                    setActivity((prevActivity) => [...prevActivity, ...res.data.results]);
+                    setActivity((current) => [...current, ...res.data.results]);
                 }
             } catch (err) {
                 console.error(err);
@@ -99,7 +99,7 @@ const BulletinDetail = ({ navigation, route }) => {
     };
 
     const goActivityDetail = (activityID, name) => {
-        navigation.navigate('ActivityDetail',  { activityID: activityID, name: name });
+        navigation.navigate('ActivityDetail', { activityID: activityID, name: name });
     };
 
     return (
@@ -135,14 +135,23 @@ const BulletinDetail = ({ navigation, route }) => {
                                         contentWidth={screenWidth}
                                         source={{ html: bulletindetail.content }}
                                         baseStyle={AllStyle.ContentDetail}
+                                        defaultTextProps={{
+                                            numberOfLines: isExpanded ? 0 : 4,
+                                            ellipsizeMode: 'tail',
+                                        }}
                                     />
+                                    <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
+                                        <Text style={AllStyle.More}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+                                    </TouchableOpacity>
 
-                                    <Text style={AllStyle.DateDetail}>
-                                        Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text>
-                                    </Text>
-                                    <Text style={AllStyle.DateUpdate}>
-                                        Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text>
-                                    </Text>
+                                    <View style={AllStyle.Time}>
+                                        <Text style={AllStyle.DateTime}>
+                                            Ngày tạo: <Text>{formatDate(bulletindetail.created_date)}</Text>
+                                        </Text>
+                                        <Text style={AllStyle.DateTime}>
+                                            Ngày cập nhập: <Text>{formatDate(bulletindetail.updated_date)}</Text>
+                                        </Text>
+                                    </View>
                                 </View>
                             )}
 
@@ -191,7 +200,7 @@ const BulletinDetail = ({ navigation, route }) => {
                                                     <Text style={AllStyle.DateDetail}>
                                                         Ngày bắt đầu: <Text>{formatDate(activity.start_date)}</Text>
                                                     </Text>
-                                                    <Text style={AllStyle.DateDetail}>
+                                                    <Text style={AllStyle.Date}>
                                                         Ngày kết thúc: <Text>{formatDate(activity.end_date)}</Text>
                                                     </Text>
                                                 </View>
