@@ -30,6 +30,7 @@ const ActivityDetail = ({ route }) => {
     const [newcomment, setNewComment] = useState('');
     const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
+    const [visibleFormEdit, setVisibleFormEdit] = useState(null);
 
     const loadActivityDetail = async () => {
         try {
@@ -55,7 +56,7 @@ const ActivityDetail = ({ route }) => {
                 if (res.data.next === null) {
                     setPage(0);
                 }
-                if (page === 1 || checkcomment===true) {
+                if (page === 1 || checkcomment === true) {
                     setComments(res.data.results);
                 } else {
                     setComments((current) => [...current, ...res.data.results]);
@@ -93,7 +94,7 @@ const ActivityDetail = ({ route }) => {
     }, []);
 
     useEffect(() => {
-        if (newcomment === ''){
+        if (newcomment === '') {
             richText?.current?.setContentHTML(newcomment);
             setCheckComment(false);
         }
@@ -112,6 +113,10 @@ const ActivityDetail = ({ route }) => {
         await loadComments(true);
         setRefreshing(false);
     }, [activityID]);
+
+    const toggleFormEdit = (commentId) => {
+        setVisibleFormEdit(commentId === visibleFormEdit ? null : commentId);
+    };
 
     return (
         <>
@@ -179,7 +184,7 @@ const ActivityDetail = ({ route }) => {
                                     </View>
 
                                     <View>
-                                        <TouchableOpacity onPress={() => setShowCommentInput(!showCommentInput)}>
+                                        <TouchableOpacity>
                                             <FontAwesome5 name="comment" size={24} color="black" />
                                         </TouchableOpacity>
                                     </View>
@@ -204,39 +209,62 @@ const ActivityDetail = ({ route }) => {
                                 </View>
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
-                                        <View key={comment.id} style={AllStyle.Card}>
-                                            <View style={CommentStyle.CommentTop}>
-                                                <View style={CommentStyle.CommentCardImage}>
-                                                    <Image
-                                                        source={{ uri: comment.account.avatar }}
-                                                        style={CommentStyle.CommentImage}
+                                        <TouchableOpacity
+                                            key={comment.id}
+                                            activeOpacity={1}
+                                            onPressOut={() => setVisibleFormEdit(null)}
+                                        >
+                                            <View style={AllStyle.Card}>
+                                                <View style={CommentStyle.CommentEditContainer}>
+                                                    <TouchableOpacity onPress={() => toggleFormEdit(comment.id)}>
+                                                        <Text style={CommentStyle.CommentEdit}>...</Text>
+                                                    </TouchableOpacity>
+
+                                                    {visibleFormEdit === comment.id && (
+                                                        <View style={CommentStyle.FormEdit}>
+                                                            <TouchableOpacity>
+                                                                <Text style={CommentStyle.FormEditText}>Chỉnh sửa</Text>
+                                                            </TouchableOpacity>
+
+                                                            <TouchableOpacity>
+                                                                <Text style={CommentStyle.FormEditText}>Xóa</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    )}
+                                                </View>
+                                                <View style={CommentStyle.CommentTop}>
+                                                    <View style={CommentStyle.CommentCardImage}>
+                                                        <Image
+                                                            source={{ uri: comment.account.avatar }}
+                                                            style={CommentStyle.CommentImage}
+                                                        />
+                                                    </View>
+
+                                                    <View style={CommentStyle.CommentInfo}>
+                                                        <Text style={CommentStyle.CommentName}>
+                                                            {comment.account.user.last_name}
+                                                            {comment.account.user.middle_name}
+                                                            {comment.account.user.first_name}
+                                                        </Text>
+                                                        <Text style={CommentStyle.CommentTime}>
+                                                            {moment(comment.created_date).fromNow()}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+
+                                                <View>
+                                                    <RenderHTML
+                                                        contentWidth={screenWidth}
+                                                        source={{ html: comment.content }}
+                                                        baseStyle={AllStyle.Content}
+                                                        defaultTextProps={{
+                                                            numberOfLines: 3,
+                                                            ellipsizeMode: 'tail',
+                                                        }}
                                                     />
                                                 </View>
-
-                                                <View style={CommentStyle.CommentInfo}>
-                                                    <Text style={CommentStyle.CommentName}>
-                                                        {comment.account.user.last_name}
-                                                        {comment.account.user.middle_name}
-                                                        {comment.account.user.first_name}
-                                                    </Text>
-                                                    <Text style={CommentStyle.CommentTime}>
-                                                        {moment(comment.created_date).fromNow()}
-                                                    </Text>
-                                                </View>
                                             </View>
-
-                                            <View>
-                                                <RenderHTML
-                                                    contentWidth={screenWidth}
-                                                    source={{ html: comment.content }}
-                                                    baseStyle={AllStyle.Content}
-                                                    defaultTextProps={{
-                                                        numberOfLines: 3,
-                                                        ellipsizeMode: 'tail',
-                                                    }}
-                                                />
-                                            </View>
-                                        </View>
+                                        </TouchableOpacity>
                                     ))}
                                     {commentLoading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
                                 </View>
