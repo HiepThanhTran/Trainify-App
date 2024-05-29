@@ -76,7 +76,7 @@ const BulletinDetail = ({ navigation, route }) => {
 
     useEffect(() => {
         loadActivity();
-    }, [name, bulletinID]);
+    }, [bulletinID, name]);
 
     const loadMore = ({ nativeEvent }) => {
         if (!activityLoading && page > 0 && isCloseToBottom(nativeEvent)) {
@@ -91,7 +91,7 @@ const BulletinDetail = ({ navigation, route }) => {
         setName("");
         await loadActivity();
         setRefreshing(false);
-    }, [bulletinID, name]);
+    }, [bulletinID]);
 
     const search = (value) => {
         setPage(1);

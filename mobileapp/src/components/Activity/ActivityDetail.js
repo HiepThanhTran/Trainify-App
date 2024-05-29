@@ -1,18 +1,14 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import 'moment/locale/vi';
-import { useCallback, useEffect, useState } from 'react';
-import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    RefreshControl,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { RichEditor } from 'react-native-pell-rich-editor';
 import RenderHTML from 'react-native-render-html';
-import APIs, { endPoints } from '../../configs/APIs';
+import APIs, { authAPI, endPoints } from '../../configs/APIs';
+import { status } from '../../configs/Constants';
+import { useAccount } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, isCloseToBottom } from '../../utils/Utilities';
@@ -29,7 +25,10 @@ const ActivityDetail = ({ route }) => {
     const [commentLoading, setCommentLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [checkcomment, setCheckComment] = useState(false);
+    const richText = useRef();
     const [newcomment, setNewComment] = useState('');
+    const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
 
     const loadActivityDetail = async () => {
@@ -44,16 +43,19 @@ const ActivityDetail = ({ route }) => {
         }
     };
 
-    const loadComments = async (reset = false) => {
+    const loadComments = async () => {
         if (page > 0) {
             setCommentLoading(true);
             try {
-                let url = `${endPoints['activity-comments'](activityID)}?page=${page}`;
-                let res = await APIs.get(url);
+                let res = await APIs.get(endPoints['activity-comments'](activityID), {
+                    params: {
+                        page: page,
+                    },
+                });
                 if (res.data.next === null) {
                     setPage(0);
                 }
-                if (reset) {
+                if (page === 1 || checkcomment===true) {
                     setComments(res.data.results);
                 } else {
                     setComments((current) => [...current, ...res.data.results]);
@@ -66,19 +68,37 @@ const ActivityDetail = ({ route }) => {
         }
     };
 
+    const postComment = async () => {
+        let form = new FormData();
+        form.append('content', newcomment);
+        try {
+            const accessToken = await AsyncStorage.getItem('access-token');
+            let res = await authAPI(accessToken).post(endPoints['activity-comments'](activityID), form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (res.status === status.HTTP_201_CREATED) {
+                setNewComment('');
+                setCheckComment(true);
+            }
+        } catch (err) {
+            console.error(err.response.data);
+        }
+    };
+
     useEffect(() => {
         loadActivityDetail();
-    }, [activityID]);
+        loadComments();
+    }, []);
 
     useEffect(() => {
-        if (page > 1) {
-            loadComments();
+        if (newcomment === ''){
+            richText?.current?.setContentHTML(newcomment);
+            setCheckComment(false);
         }
-    }, [page]);
-
-    useEffect(() => {
-        loadComments(true);
-    }, [activityID]);
+        loadComments();
+    }, [page, checkcomment]);
 
     const loadMore = ({ nativeEvent }) => {
         if (!commentLoading && page > 0 && isCloseToBottom(nativeEvent)) {
@@ -149,11 +169,39 @@ const ActivityDetail = ({ route }) => {
                                         Ngày cập nhập: <Text>{formatDate(activityDetail.updated_date)}</Text>
                                     </Text>
                                 </View>
+
+                                <View style={AllStyle.ReactContainer}>
+                                    <View style={AllStyle.Like}>
+                                        <TouchableOpacity>
+                                            <AntDesign name="like2" size={30} color="black" />
+                                        </TouchableOpacity>
+                                        <Text style={AllStyle.LikeDetail}>2000</Text>
+                                    </View>
+
+                                    <View>
+                                        <TouchableOpacity onPress={() => setShowCommentInput(!showCommentInput)}>
+                                            <FontAwesome5 name="comment" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
                             </View>
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
+                                <View style={AllStyle.RichEditorContainer}>
+                                    <RichEditor
+                                        ref={richText}
+                                        initialContentHTML={newcomment}
+                                        onChange={(text) => setNewComment(text)}
+                                        style={AllStyle.RichText}
+                                        placeholder='Nhập bình luận của bạn'
+                                    />
 
+                                    <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
+                                        <FontAwesome name="send" size={24} color="black" />
+                                    </TouchableOpacity>
+                                </View>
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
                                         <View key={comment.id} style={AllStyle.Card}>
@@ -167,9 +215,9 @@ const ActivityDetail = ({ route }) => {
 
                                                 <View style={CommentStyle.CommentInfo}>
                                                     <Text style={CommentStyle.CommentName}>
-                                                        {comment.account.user.last_name}{' '}
-                                                        {comment.account.user.middle_name}{' '}
-                                                        {comment.account.user.first_name}{' '}
+                                                        {comment.account.user.last_name}
+                                                        {comment.account.user.middle_name}
+                                                        {comment.account.user.first_name}
                                                     </Text>
                                                     <Text style={CommentStyle.CommentTime}>
                                                         {moment(comment.created_date).fromNow()}

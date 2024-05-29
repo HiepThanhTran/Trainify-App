@@ -35,7 +35,7 @@ export default AllStyle = StyleSheet.create({
         fontFamily: Theme.SemiBold,
     },
     Container: {
-        marginBottom: 135,
+        marginBottom: 135
     },
     Card: {
         flexDirection: 'column',
@@ -48,7 +48,7 @@ export default AllStyle = StyleSheet.create({
     CardImage: {
         justifyContent: 'center',
         width: '100%',
-        height: 180,
+        height: 180
     },
     Image: {
         width: '100%',
@@ -75,7 +75,7 @@ export default AllStyle = StyleSheet.create({
         fontSize: 18,
         fontFamily: Theme.SemiBold,
         marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 10
     },
     Description: {
         borderWidth: 1,
@@ -112,7 +112,7 @@ export default AllStyle = StyleSheet.create({
         height: '100%',
     },
     ActivitContainer: {
-        marginTop: 20,
+        marginTop: 20
     },
     ActivityTitle: {
         fontFamily: Theme.Bold,
@@ -131,7 +131,7 @@ export default AllStyle = StyleSheet.create({
     },
     More: {
         fontFamily: Theme.Bold,
-        fontSize: 18,
+        fontSize: 17.2,
         marginTop: -15,
         marginBottom: 10,
     },
@@ -144,6 +144,44 @@ export default AllStyle = StyleSheet.create({
     DateDetail: {
         fontSize: 18,
         marginTop: 10,
-        fontFamily: Theme.SemiBold,
+        fontFamily: Theme.SemiBold
     },
+    RichEditorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: Theme.PrimaryColor,
+    },
+    RichText: {
+        flex: 1,
+        minHeight: 40,
+        borderRightWidth: 1,
+        borderRightColor: Theme.PrimaryColor,
+        paddingRight: 10,
+    },
+    SendIcon: {
+        marginLeft: 10,
+        padding: 5,
+    },
+    ReactContainer:{
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 20
+    },
+    Like:{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    LikeDetail:{
+        fontFamily: Theme.Bold,
+        fontSize: 18,
+        marginLeft: 8
+    }
 });

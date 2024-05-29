@@ -63,6 +63,11 @@ const SignIn = ({ navigation }) => {
 
             const { accessToken } = await setTokens(tokens);
 
+            console.log(CLIENT_ID)
+            console.log(CLIENT_SECRET)
+            console.log(tokens.data.access_token)
+            console.log(tokens.data.refresh_token)
+
             setTimeout(async () => {
                 let user = await authAPI(accessToken).get(endPoints['me']);
 

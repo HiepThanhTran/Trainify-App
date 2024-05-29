@@ -5,14 +5,14 @@ import { getNewAccessToken, getTokens } from '../../utils/Utilities';
 import { SignInAction, SignOutAction } from '../actions/AccountAction';
 import { accountReducer } from '../reducers/AccountReducer';
 
-export const AccountContext = createContext(null);
-export const AccountDispatchContext = createContext(null);
+    export const AccountContext = createContext(null);
+    export const AccountDispatchContext = createContext(null);
 
-const initialState = {
-    data: null,
-    loading: true,
-    isLoggedIn: false,
-};
+    const initialState = {
+        data: null,
+        loading: true,
+        isLoggedIn: false,
+    };
 
 export const AccountProvider = ({ children }) => {
     const [account, dispatch] = useReducer(accountReducer, initialState);
@@ -20,10 +20,10 @@ export const AccountProvider = ({ children }) => {
     const checkLogged = async (retryCount = 0) => {
         const { accessToken, refreshToken } = await getTokens();
 
-        if (!accessToken || !refreshToken) {
-            dispatch(SignOutAction());
-            return;
-        }
+            if (!accessToken || !refreshToken) {
+                dispatch(SignOutAction());
+                return;
+            }
 
         try {
             const user = await authAPI(accessToken).get(endPoints['me']);
@@ -49,21 +49,21 @@ export const AccountProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-        checkLogged();
-    }, []);
+        useEffect(() => {
+            checkLogged();
+        }, []);
 
-    return (
-        <AccountContext.Provider value={account}>
-            <AccountDispatchContext.Provider value={dispatch}>{children}</AccountDispatchContext.Provider>
-        </AccountContext.Provider>
-    );
-};
+        return (
+            <AccountContext.Provider value={account}>
+                <AccountDispatchContext.Provider value={dispatch}>{children}</AccountDispatchContext.Provider>
+            </AccountContext.Provider>
+        );
+    };
 
-export const useAccount = () => {
-    return useContext(AccountContext);
-};
+    export const useAccount = () => {
+        return useContext(AccountContext);
+    };
 
-export const useAccountDispatch = () => {
-    return useContext(AccountDispatchContext);
-};
+    export const useAccountDispatch = () => {
+        return useContext(AccountDispatchContext);
+    };
