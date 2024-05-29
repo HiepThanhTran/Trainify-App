@@ -269,9 +269,11 @@ const ActivityDetail = ({ route }) => {
                                                         {moment(comment.created_date).fromNow()}
                                                     </Text>
                                                 </View>
-                                                <TouchableOpacity onPress={() => toggleMenu(comment.id)}>
-                                                    <FontAwesome name="ellipsis-h" size={24} color="black" />
-                                                </TouchableOpacity>
+                                                {comment.account.id === accountData.id && ( // Kiểm tra xem comment có thuộc về tài khoản đăng nhập không
+                                                    <TouchableOpacity onPress={() => toggleMenu(comment.id)}>
+                                                        <FontAwesome name="ellipsis-h" size={24} color="black" />
+                                                    </TouchableOpacity>
+                                                )}
                                             </View>
 
                                             {openedMenu === comment.id && (
