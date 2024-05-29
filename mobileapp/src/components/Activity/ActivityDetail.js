@@ -26,12 +26,13 @@ const ActivityDetail = ({ route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [checkcomment, setCheckComment] = useState(false);
+    const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
     const richText = useRef();
     const [newcomment, setNewComment] = useState('');
     const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
     const [visibleFormEdit, setVisibleFormEdit] = useState(null);
-
+    
     const loadActivityDetail = async () => {
         try {
             setActivityDetailLoading(true);
@@ -118,6 +119,10 @@ const ActivityDetail = ({ route }) => {
         setVisibleFormEdit(commentId === visibleFormEdit ? null : commentId);
     };
 
+    const toggleCommentInput = () => {
+        setIsCommentInputVisible(!isCommentInputVisible);
+    };
+
     return (
         <>
             {activityDetailLoading ? (
@@ -184,7 +189,7 @@ const ActivityDetail = ({ route }) => {
                                     </View>
 
                                     <View>
-                                        <TouchableOpacity>
+                                        <TouchableOpacity onPress={toggleCommentInput}>
                                             <FontAwesome5 name="comment" size={24} color="black" />
                                         </TouchableOpacity>
                                     </View>
@@ -194,19 +199,21 @@ const ActivityDetail = ({ route }) => {
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
-                                <View style={AllStyle.RichEditorContainer}>
-                                    <RichEditor
-                                        ref={richText}
-                                        initialContentHTML={newcomment}
-                                        onChange={(text) => setNewComment(text)}
-                                        style={AllStyle.RichText}
-                                        placeholder='Nhập bình luận của bạn'
-                                    />
+                                {isCommentInputVisible && (
+                                    <View style={AllStyle.RichEditorContainer}>
+                                        <RichEditor
+                                            ref={richText}
+                                            initialContentHTML={newcomment}
+                                            onChange={(text) => setNewComment(text)}
+                                            style={AllStyle.RichText}
+                                            placeholder='Nhập bình luận của bạn'
+                                        />
 
-                                    <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
-                                        <FontAwesome name="send" size={24} color="black" />
-                                    </TouchableOpacity>
-                                </View>
+                                        <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
+                                            <FontAwesome name="send" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
                                         <TouchableOpacity
