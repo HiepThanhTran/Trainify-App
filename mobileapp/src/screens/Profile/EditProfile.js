@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,7 +13,7 @@ import { useAccount, useAccountDispatch } from '../../store/contexts/AccountCont
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle, { screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, getFirstDayOfYear, getLastDayOfYear } from '../../utils/Utilities';
+import { formatDate, getFirstDayOfYear, getLastDayOfYear, getNewAccessToken, getTokens } from '../../utils/Utilities';
 
 const EditProfile = ({ navigation }) => {
     const { loading, setLoading } = useGlobalContext();
@@ -26,6 +25,7 @@ const EditProfile = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [snackBarMsg, setSnackBarMsg] = useState('');
     const [canUpdate, setCanUpdate] = useState(false);
+    const [isRendered, setIsRendered] = useState(false);
 
     const schoolFields = [
         {
@@ -54,6 +54,7 @@ const EditProfile = ({ navigation }) => {
             icon: 'account-group',
         },
     ];
+
     const accountFields = [
         {
             label: 'Email',
@@ -70,6 +71,7 @@ const EditProfile = ({ navigation }) => {
             disabled: true,
         },
     ];
+
     const userFields = [
         {
             label: 'Họ',
@@ -102,55 +104,53 @@ const EditProfile = ({ navigation }) => {
     useEffect(() => {
         checkCanUpdate();
         renderHeaderButton();
+        setIsRendered(true);
     }, [navigation, tempAccount, canUpdate, currentAccount]);
 
     const handleUpdateProfile = async () => {
         let form = new FormData();
-        let count = 0;
         if (currentAccount.data.avatar !== tempAccount.avatar) {
             form.append('avatar', {
                 uri: tempAccount.avatar.uri,
                 type: mime.getType(tempAccount.avatar.uri),
                 name: tempAccount.avatar.fileName,
             });
-            count++;
         }
         for (let key in tempAccount.user) {
             if (currentAccount.data.user[key] !== tempAccount.user[key]) {
                 form.append(key, tempAccount.user[key]);
-                count++;
             }
         }
 
-        if (count > 0) {
-            setLoading(true);
-            setSnackBarVisible(true);
-            try {
-                const accessToken = await AsyncStorage.getItem('access-token');
-                let res = await authAPI(accessToken).patch(endPoints['me-update'], form, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
+        setLoading(true);
+        setSnackBarVisible(true);
+        const { accessToken, refreshToken } = await getTokens();
+        try {
+            let res = await authAPI(accessToken).patch(endPoints['me-update'], form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-                if (res.status === Status.HTTP_200_OK) {
-                    dispatch(UpdateAccountAction(res.data));
-                    setSnackBarMsg('Cập nhật thành công');
-                }
-            } catch (error) {
-                setSnackBarMsg('Có lỗi xảy ra khi cập nhật');
-                if (error.response) {
-                    console.error(error.response.data);
-                    console.error(error.response.status);
-                    console.error(error.response.headers);
-                } else if (error.request) {
-                    console.error(error.request);
-                } else {
-                    console.error(`Error message: ${error.message}`);
-                }
-            } finally {
-                setLoading(false);
+            if (res.status === Status.HTTP_200_OK) {
+                dispatch(UpdateAccountAction(res.data));
+                setSnackBarMsg('Cập nhật thành công');
             }
+        } catch (error) {
+            setSnackBarMsg('Có lỗi xảy ra khi cập nhật');
+            if (error.response) {
+                errorStatus = error.response.status;
+                if (errorStatus === Status.HTTP_401_UNAUTHORIZED || errorStatus === Status.HTTP_403_FORBIDDEN) {
+                    const newAccessToken = await getNewAccessToken(refreshToken, dispatch);
+                    if (newAccessToken) handleUpdateProfile();
+                }
+            } else if (error.request) {
+                console.error(error.request);
+            } else {
+                console.error(`Error message: ${error.message}`);
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -246,6 +246,8 @@ const EditProfile = ({ navigation }) => {
             maximumDate: getLastDayOfYear(new Date(tempAccount.user.date_of_birth)),
         });
     };
+
+    if (!isRendered) return <Loading />;
 
     return (
         <View style={GlobalStyle.BackGround}>
@@ -412,7 +414,7 @@ const EditProfile = ({ navigation }) => {
     );
 };
 
-const EditProfileStyle = StyleSheet.create({
+export const EditProfileStyle = StyleSheet.create({
     AvatarContainer: {
         flexWrap: 'wrap',
         marginHorizontal: 12,

@@ -16,12 +16,12 @@ const HomeStack = () => {
             <Stack.Screen
                 name="BulletinDetail"
                 component={BulletinDetail}
-                options={({ route }) => ({ title: route?.params.title })}
+                options={({ route }) => ({ title: route?.params?.title })}
             />
             <Stack.Screen
                 name="ActivityDetail"
                 component={ActivityDetail}
-                options={({ route }) => ({ title: route?.params.name })}
+                options={({ route }) => ({ title: route?.params?.name })}
             />
         </Stack.Navigator>
     );

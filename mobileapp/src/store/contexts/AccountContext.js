@@ -1,8 +1,7 @@
-import { CLIENT_ID, CLIENT_SECRET } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useReducer } from 'react';
-import APIs, { authAPI, endPoints } from '../../configs/APIs';
+import { authAPI, endPoints } from '../../configs/APIs';
 import { Status } from '../../configs/Constants';
+import { getNewAccessToken, getTokens } from '../../utils/Utilities';
 import { SignInAction, SignOutAction } from '../actions/AccountAction';
 import { accountReducer } from '../reducers/AccountReducer';
 
@@ -18,34 +17,8 @@ const initialState = {
 export const AccountProvider = ({ children }) => {
     const [account, dispatch] = useReducer(accountReducer, initialState);
 
-    const getNewAccessToken = async (refreshToken) => {
-        try {
-            const tokens = await APIs.post(endPoints['token'], {
-                refresh_token: refreshToken,
-                grant_type: 'refresh_token',
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-            });
-
-            await AsyncStorage.multiSet([
-                ['access-token', tokens.data.access_token],
-                ['refresh-token', tokens.data.refresh_token],
-            ]);
-        } catch (error) {
-            if (error.response) {
-                console.error(error.response.data);
-                console.error(error.response.status);
-                console.error(error.response.headers);
-            } else if (error.request) {
-                console.error(error.request);
-            } else {
-                console.error(`Error message: ${error.message}`);
-            }
-        }
-    };
-
     const checkLogged = async (retryCount = 0) => {
-        const [[, accessToken], [, refreshToken]] = await AsyncStorage.multiGet(['access-token', 'refresh-token']);
+        const { accessToken, refreshToken } = await getTokens();
 
         if (!accessToken || !refreshToken) {
             dispatch(SignOutAction());
@@ -66,8 +39,8 @@ export const AccountProvider = ({ children }) => {
                     return;
                 }
 
-                await getNewAccessToken(refreshToken);
-                checkLogged(retryCount + 1);
+                const newAccessToken  = await getNewAccessToken(refreshToken, dispatch);
+                if (newAccessToken) checkLogged(retryCount + 1);
             } else if (error.request) {
                 console.error(error.request);
             } else {

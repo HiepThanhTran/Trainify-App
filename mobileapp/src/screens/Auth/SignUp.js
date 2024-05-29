@@ -1,15 +1,15 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Keyboard, Modal, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import AuthFormButton from '../../components/Auth/AuthFormButton';
 import AuthFormInput from '../../components/Auth/AuthFormInput';
 import Helper from '../../components/Helper';
 import APIs, { endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
-import { GlobalContext, useGlobalContext } from '../../store/contexts/GlobalContext';
 
 const SignUp = ({ navigation }) => {
     const { loading, setLoading } = useGlobalContext();
@@ -82,7 +82,7 @@ const SignUp = ({ navigation }) => {
             if (res.status === 201) setModalVisible(!modalVisible);
         } catch (error) {
             if (error.response) {
-                if (error.response.status === status.HTTP_400_BAD_REQUEST) {
+                if (error.response.status === Status.HTTP_400_BAD_REQUEST) {
                     setErrorVisible(true);
                     setErrorMsg(error.response.data.detail);
                 }

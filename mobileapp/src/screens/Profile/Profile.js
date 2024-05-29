@@ -5,6 +5,7 @@ import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
+import { removeTokens } from '../../utils/Utilities';
 
 const Profile = ({ navigation }) => {
     const dispatch = useAccountDispatch();
@@ -16,7 +17,7 @@ const Profile = ({ navigation }) => {
             items: [
                 { label: 'Điểm rèn luyện', icon: 'star-outline', screen: 'TrainingPoint' },
                 { label: 'Hoạt động của sinh viên', icon: 'ticket', screen: '' },
-            ]
+            ],
         },
         {
             title: 'Cài đặt',
@@ -36,11 +37,16 @@ const Profile = ({ navigation }) => {
     ];
 
     const handleSignout = () => {
+        const SignOut = async () => {
+            await removeTokens();
+            dispatch(SignOutAction());
+        };
+
         Alert.alert(
             'Đăng xuất',
             'Bạn chắc chắn muốn đăng xuất?',
             [
-                { text: 'Đăng xuất', onPress: () => dispatch(SignOutAction()) },
+                { text: 'Đăng xuất', onPress: SignOut },
                 { text: 'Hủy', style: 'cancel' },
             ],
             { cancelable: true },

@@ -13,6 +13,7 @@ export const Dark = {
 export default {
     PrimaryColor: '#3e9ae4',
     SecondaryColor: '#f1f4ff',
+    MaxPointColor: '#f0a419',
     Bold: 'OpenSansBold',
     SemiBold: 'OpenSansSemiBold',
     Light: 'OpenSansLight',

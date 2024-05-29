@@ -52,10 +52,6 @@ const GlobalStyle = StyleSheet.create({
         textAlign: 'center',
         fontFamily: Theme.Bold,
     },
-    DialogButton: {
-        color: Theme.PrimaryColor,
-        fontSize: 16,
-    },
     HeaderButton: {
         width: screenWidth / 4,
         height: 40,
