@@ -8,10 +8,10 @@ export const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN', options);
 };
 
-export const getFirstDayOfMoth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
+export const getFirstDayOfYear = (date) => {
+    return new Date(date.getFullYear(), 0, 1);
 };
 
-export const getLastDayOfMoth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+export const getLastDayOfYear = (date) => {
+    return new Date(date.getFullYear(), 11, 31);
 };

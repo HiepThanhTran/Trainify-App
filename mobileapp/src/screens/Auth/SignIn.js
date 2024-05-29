@@ -65,6 +65,11 @@ const SignIn = ({ navigation }) => {
                 ['refresh-token', tokens.data.refresh_token],
             ]);
 
+            console.log(CLIENT_ID)
+            console.log(CLIENT_SECRET)
+            console.log(tokens.data.access_token)
+            console.log(tokens.data.refresh_token)
+
             setTimeout(async () => {
                 let user = await authAPI(tokens.data.access_token).get(endPoints['me']);
 

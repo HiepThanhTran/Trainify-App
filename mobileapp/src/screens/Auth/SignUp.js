@@ -137,7 +137,7 @@ const SignUp = ({ navigation }) => {
                                     <View style={GlobalStyle.ModalView}>
                                         <Text style={GlobalStyle.ModalTitle}>Đăng ký thành công</Text>
                                         <Button
-                                            onPress={() => navigation.navigate('Signin')}
+                                            onPress={() => navigation.navigate('SignIn')}
                                             icon="account"
                                             textColor="white"
                                             style={AuthStyle.Button}

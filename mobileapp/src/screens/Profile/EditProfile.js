@@ -13,7 +13,7 @@ import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, getFirstDayOfMoth, getLastDayOfMoth } from '../../utils/Utilities';
+import { formatDate, getFirstDayOfYear, getLastDayOfYear } from '../../utils/Utilities';
 
 const EditProfile = ({ navigation }) => {
     const dispatch = useAccountDispatch();
@@ -229,8 +229,9 @@ const EditProfile = ({ navigation }) => {
             onChange: handleDatePickerOnChange,
             mode: 'date',
             is24Hour: true,
-            minimumDate: getFirstDayOfMoth(new Date(tempAccount.user.date_of_birth)),
-            maximumDate: getLastDayOfMoth(new Date(tempAccount.user.date_of_birth)),
+            display: 'spinner',
+            minimumDate: getFirstDayOfYear(new Date(tempAccount.user.date_of_birth)),
+            maximumDate: getLastDayOfYear(new Date(tempAccount.user.date_of_birth)),
         });
     };
 
@@ -424,6 +425,7 @@ const EditProfileStyle = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 20,
         borderColor: 'lightgrey',
+        backgroundColor: Theme.SecondaryColor,
     },
     CameraIcon: {
         position: 'absolute',

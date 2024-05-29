@@ -1,5 +1,4 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'react-native';
 import Loading from '../components/Loading';
 import useFonts from '../configs/Fonts';
 import { useAccount } from '../store/contexts/AccountContext';
@@ -11,10 +10,10 @@ const Routers = () => {
     const account = useAccount();
 
     if (!fontsLoaded || account.loading) return <Loading />;
-    
+
     return (
         <>
-            <StatusBar animated={true} barStyle="light-content" />
+            {/* <StatusBar animated={true} barStyle="light-content" /> */}
             <NavigationContainer>{!account.isLoggedIn ? <AuthStack /> : <MainStack />}</NavigationContainer>
         </>
     );

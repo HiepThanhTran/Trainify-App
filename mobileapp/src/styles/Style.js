@@ -49,8 +49,8 @@ const GlobalStyle = StyleSheet.create({
     },
     ModalButtonText: {
         color: 'white',
-        fontWeight: 'bold',
         textAlign: 'center',
+        fontFamily: Theme.Bold,
     },
     DialogButton: {
         color: Theme.PrimaryColor,

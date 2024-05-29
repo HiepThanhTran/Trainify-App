@@ -73,7 +73,7 @@ const Bulletin = ({ navigation }) => {
 
     const onRefresh = useCallback(async () => {
         setPage(1);
-        setBulletins([])
+        setBulletins([]);
         setRefreshing(true);
         await loadBulletins();
         setRefreshing(false);
@@ -81,9 +81,9 @@ const Bulletin = ({ navigation }) => {
 
     const goToBulletinDetail = (bulletinID, title) => {
         navigation.navigate('HomeStack', {
-            screen: "BulletinDetail", 
-            params: { bulletinID: bulletinID, title: title}
-         });
+            screen: 'BulletinDetail',
+            params: { bulletinID: bulletinID, title: title },
+        });
     };
 
     return (
@@ -125,7 +125,7 @@ const Bulletin = ({ navigation }) => {
                                     <RenderHTML
                                         contentWidth={screenWidth}
                                         source={{ html: bulletin.content }}
-                                        baseStyle= {AllStyle.Content}
+                                        baseStyle={AllStyle.Content}
                                         defaultTextProps={{
                                             numberOfLines: 2,
                                             ellipsizeMode: 'tail',
