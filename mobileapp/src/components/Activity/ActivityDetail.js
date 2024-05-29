@@ -1,7 +1,7 @@
 import { View, Text, ActivityIndicator, Image, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
 import GlobalStyle from "../../styles/Style";
-import { useState, useEffect, useCallback } from "react";
-import APIs, { endPoints } from "../../configs/APIs";
+import { useState, useEffect, useCallback, useRef } from "react";
+import APIs, { authAPI, endPoints } from "../../configs/APIs";
 import Theme from "../../styles/Theme";
 import RenderHTML from "react-native-render-html";
 import { Dimensions } from "react-native";
@@ -11,7 +11,9 @@ import CommentStyle from "./CommentStyle";
 import moment from "moment";
 import 'moment/locale/vi';
 import { RichEditor, RichToolbar, actions } from "react-native-pell-rich-editor";
-
+import { FontAwesome } from '@expo/vector-icons';
+import { useAccount } from "../../store/contexts/AccountContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const screenWidth = Dimensions.get('window').width;
 
 const ActivityDetail = ({ route }) => {
@@ -22,7 +24,10 @@ const ActivityDetail = ({ route }) => {
     const [commentLoading, setCommentLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const richText = useRef();
     const [newcomment, setNewComment] = useState("");
+    const [checkcomment, setCheckComment] = useState(false);
+    const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
 
     const loadActivityDetail = async () => {
@@ -37,7 +42,7 @@ const ActivityDetail = ({ route }) => {
         }
     };
 
-    const loadComments = async (reset = false) => {
+    const loadComments = async () => {
         if (page > 0) {
             setCommentLoading(true);
             try {
@@ -46,8 +51,8 @@ const ActivityDetail = ({ route }) => {
                 if (res.data.next === null) {
                     setPage(0);
                 }
-                if (reset) {
-                    setComments(res.data.results);
+                if (page===1 || checkcomment===true) {
+                    setComments(res.data.results); 
                 } else {
                     setComments((current) => [...current, ...res.data.results]);
                 }
@@ -59,8 +64,25 @@ const ActivityDetail = ({ route }) => {
         }
     };
 
+    const postComment = async () => {
+        let form = new FormData();
+        form.append('content',newcomment);
+        try {
+            const accessToken = await AsyncStorage.getItem('access-token');
+            let res = await authAPI(accessToken).post(endPoints['activity-comments'](activityID),form);
+            if(res.status===201){
+                console.log("Finish");
+                setCheckComment(true);
+            }
+            setNewComment("");
+        } catch (err) {
+            console.error(err.response.data);
+        }
+    }
+
     useEffect(() => {
         loadActivityDetail();
+        loadComments();
     }, [activityID]);
 
     useEffect(() => {
@@ -70,8 +92,9 @@ const ActivityDetail = ({ route }) => {
     }, [page]);
 
     useEffect(() => {
-        loadComments(true);
-    }, [activityID]);
+        loadComments();
+        setCheckComment(false);
+    }, [checkcomment]);
 
     const loadMore = ({ nativeEvent }) => {
         if (!commentLoading && page > 0 && isCloseToBottom(nativeEvent)) {
@@ -149,8 +172,18 @@ const ActivityDetail = ({ route }) => {
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
-                                
-                                
+                                <View style={AllStyle.RichEditorContainer}>
+                                    <RichEditor
+                                        ref={richText}
+                                        initialContentHTML={newcomment}
+                                        onChange={(text) => setNewComment(text)}
+                                        style={AllStyle.RichText}
+                                    />
+
+                                    <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
+                                        <FontAwesome name="send" size={24} color="black" />
+                                    </TouchableOpacity>
+                                </View>
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
                                         <View key={comment.id} style={AllStyle.Card}>

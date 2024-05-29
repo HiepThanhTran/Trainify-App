@@ -84,8 +84,6 @@ export const authAPI = (token) => {
         baseURL: API_URL,
         headers: {
             Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
         },
     });
 };
