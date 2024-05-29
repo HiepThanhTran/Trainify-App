@@ -1,19 +1,28 @@
-import { View, Text, ActivityIndicator, Image, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
-import GlobalStyle from "../../styles/Style";
-import { useState, useEffect, useCallback, useRef } from "react";
-import APIs, { authAPI, endPoints } from "../../configs/APIs";
-import Theme from "../../styles/Theme";
-import RenderHTML from "react-native-render-html";
-import { Dimensions } from "react-native";
-import { formatDate, isCloseToBottom } from '../../utils/Utilities';
-import AllStyle from "./AllStyle";
-import CommentStyle from "./CommentStyle";
-import moment from "moment";
-import 'moment/locale/vi';
-import { RichEditor, RichToolbar, actions } from "react-native-pell-rich-editor";
 import { FontAwesome } from '@expo/vector-icons';
-import { useAccount } from "../../store/contexts/AccountContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
+import 'moment/locale/vi';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { RichEditor } from 'react-native-pell-rich-editor';
+import RenderHTML from 'react-native-render-html';
+import APIs, { authAPI, endPoints } from '../../configs/APIs';
+import { status } from '../../configs/Constants';
+import { useAccount } from '../../store/contexts/AccountContext';
+import GlobalStyle from '../../styles/Style';
+import Theme from '../../styles/Theme';
+import { formatDate, isCloseToBottom } from '../../utils/Utilities';
+import AllStyle from './AllStyle';
+import CommentStyle from './CommentStyle';
 const screenWidth = Dimensions.get('window').width;
 
 const ActivityDetail = ({ route }) => {
@@ -25,8 +34,7 @@ const ActivityDetail = ({ route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const richText = useRef();
-    const [newcomment, setNewComment] = useState("");
-    const [checkcomment, setCheckComment] = useState(false);
+    const [newcomment, setNewComment] = useState('');
     const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
 
@@ -46,13 +54,16 @@ const ActivityDetail = ({ route }) => {
         if (page > 0) {
             setCommentLoading(true);
             try {
-                let url = `${endPoints['activity-comments'](activityID)}?page=${page}`;
-                let res = await APIs.get(url);
+                let res = await APIs.get(endPoints['activity-comments'](activityID), {
+                    params: {
+                        page: page,
+                    },
+                });
                 if (res.data.next === null) {
                     setPage(0);
                 }
-                if (page===1 || checkcomment===true) {
-                    setComments(res.data.results); 
+                if (page === 1 || newcomment === '') {
+                    setComments(res.data.results);
                 } else {
                     setComments((current) => [...current, ...res.data.results]);
                 }
@@ -66,35 +77,31 @@ const ActivityDetail = ({ route }) => {
 
     const postComment = async () => {
         let form = new FormData();
-        form.append('content',newcomment);
+        form.append('content', newcomment);
         try {
             const accessToken = await AsyncStorage.getItem('access-token');
-            let res = await authAPI(accessToken).post(endPoints['activity-comments'](activityID),form);
-            if(res.status===201){
-                console.log("Finish");
-                setCheckComment(true);
+            let res = await authAPI(accessToken).post(endPoints['activity-comments'](activityID), form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (res.status === status.HTTP_201_CREATED) {
+                setNewComment('');
             }
-            setNewComment("");
         } catch (err) {
             console.error(err.response.data);
         }
-    }
+    };
 
     useEffect(() => {
         loadActivityDetail();
         loadComments();
-    }, [activityID]);
+    }, []);
 
     useEffect(() => {
-        if (page > 1) {
-            loadComments();
-        }
-    }, [page]);
-
-    useEffect(() => {
+        if (newcomment === '') richText?.current?.setContentHTML(newcomment);
         loadComments();
-        setCheckComment(false);
-    }, [checkcomment]);
+    }, [page, newcomment]);
 
     const loadMore = ({ nativeEvent }) => {
         if (!commentLoading && page > 0 && isCloseToBottom(nativeEvent)) {
@@ -123,16 +130,11 @@ const ActivityDetail = ({ route }) => {
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                             onScroll={loadMore}
-                            refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                            }
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                         >
                             <View style={AllStyle.Description}>
                                 <View style={AllStyle.CardImage}>
-                                    <Image
-                                        source={{ uri: activityDetail.image }}
-                                        style={AllStyle.ImageDetail}
-                                    />
+                                    <Image source={{ uri: activityDetail.image }} style={AllStyle.ImageDetail} />
                                 </View>
                                 <RenderHTML
                                     contentWidth={screenWidth}
@@ -147,7 +149,9 @@ const ActivityDetail = ({ route }) => {
                                     <Text style={AllStyle.More}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
                                 </TouchableOpacity>
 
-                                <Text style={AllStyle.AcitivityDetailText}>Đối tượng tham gia: {activityDetail.participant}</Text>
+                                <Text style={AllStyle.AcitivityDetailText}>
+                                    Đối tượng tham gia: {activityDetail.participant}
+                                </Text>
                                 <Text style={AllStyle.AcitivityDetailText}>
                                     Điểm cộng: {activityDetail.point}, {activityDetail.criterion}
                                 </Text>
@@ -196,8 +200,14 @@ const ActivityDetail = ({ route }) => {
                                                 </View>
 
                                                 <View style={CommentStyle.CommentInfo}>
-                                                    <Text style={CommentStyle.CommentName}>{comment.account.user.last_name} {comment.account.user.middle_name} {comment.account.user.first_name} </Text>
-                                                    <Text style={CommentStyle.CommentTime}>{moment(comment.created_date).fromNow()}</Text>
+                                                    <Text style={CommentStyle.CommentName}>
+                                                        {comment.account.user.last_name}{' '}
+                                                        {comment.account.user.middle_name}{' '}
+                                                        {comment.account.user.first_name}{' '}
+                                                    </Text>
+                                                    <Text style={CommentStyle.CommentTime}>
+                                                        {moment(comment.created_date).fromNow()}
+                                                    </Text>
                                                 </View>
                                             </View>
 
@@ -223,6 +233,6 @@ const ActivityDetail = ({ route }) => {
             )}
         </>
     );
-}
+};
 
 export default ActivityDetail;
