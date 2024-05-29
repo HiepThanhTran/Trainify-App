@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Button, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
@@ -27,12 +27,13 @@ const ActivityDetail = ({ route }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [checkcomment, setCheckComment] = useState(false);
     const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState(null);
     const richText = useRef();
     const [newcomment, setNewComment] = useState('');
     const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
     const [visibleFormEdit, setVisibleFormEdit] = useState(null);
-
+    
     const loadActivityDetail = async () => {
         try {
             setActivityDetailLoading(true);
@@ -291,6 +292,16 @@ const ActivityDetail = ({ route }) => {
                                                             ellipsizeMode: 'tail',
                                                         }}
                                                     />
+                                                </View>
+
+                                                <View style={CommentStyle.ButtonEditContainer}>
+                                                    <View style={CommentStyle.ButtonEdit}>
+                                                        <Button title='Hủy'></Button>
+                                                    </View>
+                                                  
+                                                    <View style={CommentStyle.ButtonEdit}>
+                                                        <Button title='Cập nhập'></Button>
+                                                    </View>
                                                 </View>
                                             </View>
                                         </TouchableOpacity>

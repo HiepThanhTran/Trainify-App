@@ -66,7 +66,19 @@ const CommentStyle = StyleSheet.create({
         fontFamily: Theme.Bold,
         fontSize: 15,
         marginTop: 9
-    }
+    },
+    ButtonEditContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 10
+    },
+    ButtonEdit: {
+        flex: 1, 
+        marginHorizontal: 35
+    },
+    
 })
 
 export default CommentStyle;
