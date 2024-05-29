@@ -1,18 +1,9 @@
-import { FontAwesome } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import 'moment/locale/vi';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    RefreshControl,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import RenderHTML from 'react-native-render-html';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
@@ -23,6 +14,7 @@ import Theme from '../../styles/Theme';
 import { formatDate, isCloseToBottom } from '../../utils/Utilities';
 import AllStyle from './AllStyle';
 import CommentStyle from './CommentStyle';
+
 const screenWidth = Dimensions.get('window').width;
 
 const ActivityDetail = ({ route }) => {
@@ -33,6 +25,10 @@ const ActivityDetail = ({ route }) => {
     const [commentLoading, setCommentLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [showCommentInput, setShowCommentInput] = useState(false);
+    const [openedMenu, setOpenedMenu] = useState(null);
+    const [editCommentID, setEditCommentID] = useState(null);
+    const [editContent, setEditContent] = useState('');
     const richText = useRef();
     const [newcomment, setNewComment] = useState('');
     const { data: accountData } = useAccount();
@@ -93,6 +89,44 @@ const ActivityDetail = ({ route }) => {
         }
     };
 
+    const editComment = async (commentID, updatedContent) => {
+        try {
+            const accessToken = await AsyncStorage.getItem('access-token');
+            let res = await authAPI(accessToken).put(endPoints['comment-detail'](commentID), { content: updatedContent }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (res.status === status.HTTP_200_OK) {
+                setComments((currentComments) =>
+                    currentComments.map((comment) =>
+                        comment.id === commentID ? { ...comment, content: updatedContent } : comment
+                    )
+                );
+            }
+        } catch (err) {
+            console.error(err.response.data);
+        }
+    };
+
+    const deleteComment = async (commentID) => {
+        try {
+            const accessToken = await AsyncStorage.getItem('access-token');
+            let res = await authAPI(accessToken).delete(endPoints['comment-detail'](commentID), {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (res.status === status.HTTP_204_NO_CONTENT) {
+                setComments((currentComments) =>
+                    currentComments.filter((comment) => comment.id !== commentID)
+                );
+            }
+        } catch (err) {
+            console.error(err.response.data);
+        }
+    };
+
     useEffect(() => {
         loadActivityDetail();
         loadComments();
@@ -115,6 +149,14 @@ const ActivityDetail = ({ route }) => {
         await loadComments(true);
         setRefreshing(false);
     }, [activityID]);
+
+    const toggleMenu = (commentId) => {
+        setOpenedMenu(openedMenu === commentId ? null : commentId);
+    };
+
+    const handleOutsideClick = () => {
+        setOpenedMenu(null);
+    };
 
     return (
         <>
@@ -172,22 +214,40 @@ const ActivityDetail = ({ route }) => {
                                         Ngày cập nhập: <Text>{formatDate(activityDetail.updated_date)}</Text>
                                     </Text>
                                 </View>
+
+                                <View style={AllStyle.ReactContainer}>
+                                    <View style={AllStyle.Like}>
+                                        <TouchableOpacity>
+                                            <AntDesign name="like2" size={30} color="black" />
+                                        </TouchableOpacity>
+                                        <Text style={AllStyle.LikeDetail}>2000</Text>
+                                    </View>
+
+                                    <View>
+                                        <TouchableOpacity onPress={() => setShowCommentInput(!showCommentInput)}>
+                                            <FontAwesome5 name="comment" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
                             </View>
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
-                                <View style={AllStyle.RichEditorContainer}>
-                                    <RichEditor
-                                        ref={richText}
-                                        initialContentHTML={newcomment}
-                                        onChange={(text) => setNewComment(text)}
-                                        style={AllStyle.RichText}
-                                    />
+                                {showCommentInput && (
+                                    <View style={AllStyle.RichEditorContainer}>
+                                        <RichEditor
+                                            ref={richText}
+                                            initialContentHTML={newcomment}
+                                            onChange={(text) => setNewComment(text)}
+                                            style={AllStyle.RichText}
+                                            placeholder='Nhập bình luận của bạn'
+                                        />
 
-                                    <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
-                                        <FontAwesome name="send" size={24} color="black" />
-                                    </TouchableOpacity>
-                                </View>
+                                        <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
+                                            <FontAwesome name="send" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
                                         <View key={comment.id} style={AllStyle.Card}>
@@ -201,15 +261,29 @@ const ActivityDetail = ({ route }) => {
 
                                                 <View style={CommentStyle.CommentInfo}>
                                                     <Text style={CommentStyle.CommentName}>
-                                                        {comment.account.user.last_name}{' '}
-                                                        {comment.account.user.middle_name}{' '}
-                                                        {comment.account.user.first_name}{' '}
+                                                        {comment.account.user.last_name}
+                                                        {comment.account.user.middle_name}
+                                                        {comment.account.user.first_name}
                                                     </Text>
                                                     <Text style={CommentStyle.CommentTime}>
                                                         {moment(comment.created_date).fromNow()}
                                                     </Text>
                                                 </View>
+                                                <TouchableOpacity onPress={() => toggleMenu(comment.id)}>
+                                                    <FontAwesome name="ellipsis-h" size={24} color="black" />
+                                                </TouchableOpacity>
                                             </View>
+
+                                            {openedMenu === comment.id && (
+                                                <View style={CommentStyle.CommentMenu}>
+                                                    <TouchableOpacity onPress={() => editComment(comment.id, comment.content)}>
+                                                        <Text style={CommentStyle.CommentMenuItem}>Chỉnh sửa</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => deleteComment(comment.id)}>
+                                                        <Text style={CommentStyle.CommentMenuItem}>Xóa</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            )}
 
                                             <View>
                                                 <RenderHTML

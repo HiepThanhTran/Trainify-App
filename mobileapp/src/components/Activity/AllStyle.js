@@ -178,5 +178,10 @@ export default AllStyle = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center'
+    },
+    LikeDetail:{
+        fontFamily: Theme.Bold,
+        fontSize: 18,
+        marginLeft: 8
     }
 });
