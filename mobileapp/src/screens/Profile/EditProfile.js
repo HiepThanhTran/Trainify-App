@@ -8,22 +8,23 @@ import { Alert, Image, Keyboard, Modal, ScrollView, StyleSheet, Text, TouchableO
 import { Icon, Portal, RadioButton, Snackbar, TextInput } from 'react-native-paper';
 import Loading from '../../components/Loading';
 import { authAPI, endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
 import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle, { screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, getFirstDayOfYear, getLastDayOfYear } from '../../utils/Utilities';
 
 const EditProfile = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
     const dispatch = useAccountDispatch();
     const currentAccount = useAccount();
 
     const [tempAccount, setTempAccount] = useState(currentAccount.data);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [snackBarMsg, setSnackBarMsg] = useState('sdfsdf');
+    const [snackBarMsg, setSnackBarMsg] = useState('');
     const [canUpdate, setCanUpdate] = useState(false);
 
     const schoolFields = [
@@ -101,7 +102,7 @@ const EditProfile = ({ navigation }) => {
     useEffect(() => {
         checkCanUpdate();
         renderHeaderButton();
-    }, [navigation, tempAccount, canUpdate]);
+    }, [navigation, tempAccount, canUpdate, currentAccount]);
 
     const handleUpdateProfile = async () => {
         let form = new FormData();
@@ -126,9 +127,13 @@ const EditProfile = ({ navigation }) => {
             setSnackBarVisible(true);
             try {
                 const accessToken = await AsyncStorage.getItem('access-token');
-                let res = await authAPI(accessToken).patch(endPoints['me-update'], form);
+                let res = await authAPI(accessToken).patch(endPoints['me-update'], form, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
 
-                if (res.status === status.HTTP_200_OK) {
+                if (res.status === Status.HTTP_200_OK) {
                     dispatch(UpdateAccountAction(res.data));
                     setSnackBarMsg('Cập nhật thành công');
                 }
@@ -217,7 +222,14 @@ const EditProfile = ({ navigation }) => {
                         ...(!canUpdate ? { backgroundColor: 'rgba(52, 52, 52, 0.8)' } : {}),
                     }}
                 >
-                    <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
+                    <Text
+                        style={{
+                            ...GlobalStyle.HeaderButtonText,
+                            ...(!canUpdate ? { color: 'lightgrey' } : {}),
+                        }}
+                    >
+                        Cập nhật
+                    </Text>
                 </TouchableOpacity>
             ),
         });

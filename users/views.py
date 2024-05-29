@@ -95,7 +95,7 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         semesters = Semester.objects.filter(
             academic_year__start_date__year__gte=student_academic_year.start_date.year,
-            academic_year__start_date__year__lte=student_academic_year.end_date.year
+            academic_year__start_date__year__lt=student_academic_year.end_date.year
         )
 
         serializer = schools_serializer.SemesterSerializer(semesters, many=True)

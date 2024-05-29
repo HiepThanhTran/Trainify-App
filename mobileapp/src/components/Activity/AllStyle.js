@@ -1,23 +1,23 @@
-import { StyleSheet } from "react-native";
-import Theme from "../../styles/Theme";
+import { StyleSheet } from 'react-native';
+import Theme from '../../styles/Theme';
 
 export default AllStyle = StyleSheet.create({
-    ContainerScreen:{
+    ContainerScreen: {
         marginHorizontal: 12,
-        marginTop: 70
+        marginTop: 32,
     },
-    ContainerScreenDetail:{
+    ContainerScreenDetail: {
         marginHorizontal: 12,
     },
-    BulletinTopContainer:{
+    BulletinTopContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    BulletinTitle:{
+    BulletinTitle: {
         fontSize: 28,
         color: Theme.PrimaryColor,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     Search: {
         flexDirection: 'row',
@@ -27,30 +27,30 @@ export default AllStyle = StyleSheet.create({
         borderRadius: 10,
         padding: 12,
         marginTop: 20,
-        marginBottom: 20
+        marginBottom: 20,
     },
     SearchInput: {
         width: '100%',
         fontSize: 15,
         fontFamily: Theme.SemiBold,
     },
-    Container:{
-        marginBottom: 135
+    Container: {
+        marginBottom: 135,
     },
-    Card:{
+    Card: {
         flexDirection: 'column',
         marginBottom: 20,
         borderWidth: 1,
         borderColor: Theme.PrimaryColor,
         padding: 15,
-        borderRadius: 16
+        borderRadius: 16,
     },
-    CardImage:{
+    CardImage: {
         justifyContent: 'center',
-        width:'100%',
-        height: 180
+        width: '100%',
+        height: 180,
     },
-    Image:{
+    Image: {
         width: '100%',
         height: '100%',
         borderRadius: 16,
@@ -58,92 +58,92 @@ export default AllStyle = StyleSheet.create({
     CardDetail: {
         width: '100%',
     },
-    CardDetailTitle:{
+    CardDetailTitle: {
         fontSize: 25,
         marginTop: 20,
         marginBottom: 10,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
-    Content:{
-        width: '100%',  
+    Content: {
+        width: '100%',
         fontSize: 20,
         marginBottom: 5,
         fontFamily: Theme.Regular,
-        lineHeight: 30
+        lineHeight: 30,
     },
-    Date:{
+    Date: {
         fontSize: 18,
         fontFamily: Theme.SemiBold,
         marginTop: 10,
-        marginBottom: 10
-    }, 
-    Description:{
+        marginBottom: 10,
+    },
+    Description: {
         borderWidth: 1,
         borderColor: Theme.PrimaryColor,
         padding: 10,
         borderRadius: 10,
-        marginTop: 20
+        marginTop: 20,
     },
-    ContentDetail:{
+    ContentDetail: {
         fontSize: 18,
         fontFamily: Theme.Regular,
         lineHeight: 30,
         marginTop: 20,
         marginBottom: 20,
     },
-    DateTime:{
+    DateTime: {
         fontSize: 14,
         fontFamily: Theme.SemiBold,
-        color: 'gray'
+        color: 'gray',
     },
-    Title:{
+    Title: {
         fontSize: 25,
         marginTop: 20,
         marginBottom: 10,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
-    TitleDetail:{
+    TitleDetail: {
         fontSize: 25,
         marginBottom: 15,
         fontFamily: Theme.Bold,
     },
-    ImageDetail:{
+    ImageDetail: {
         width: '100%',
-        height: '100%'
+        height: '100%',
     },
-    ActivitContainer:{
-        marginTop: 20
+    ActivitContainer: {
+        marginTop: 20,
     },
-    ActivityTitle:{
+    ActivityTitle: {
         fontFamily: Theme.Bold,
         fontSize: 20,
-        marginBottom: 10
+        marginBottom: 10,
     },
-    ActivityImage:{
+    ActivityImage: {
         width: '100%',
         height: '100%',
         borderRadius: 10,
     },
-    AcitivityDetailText:{
+    AcitivityDetailText: {
         fontSize: 18,
         fontFamily: Theme.SemiBold,
-        marginBottom: 10
+        marginBottom: 10,
     },
-    More:{
+    More: {
         fontFamily: Theme.Bold,
         fontSize: 18,
         marginTop: -15,
-        marginBottom: 10
+        marginBottom: 10,
     },
-    Time:{
+    Time: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
-    DateDetail:{
+    DateDetail: {
         fontSize: 18,
         marginTop: 10,
-        fontFamily: Theme.SemiBold
-    }
+        fontFamily: Theme.SemiBold,
+    },
 });

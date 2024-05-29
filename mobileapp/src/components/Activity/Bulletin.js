@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, isCloseToBottom } from '../../utils/Utilities';
@@ -22,10 +23,11 @@ import AllStyle from './AllStyle';
 const screenWidth = Dimensions.get('window').width;
 
 const Bulletin = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
+
     const [bulletins, setBulletins] = useState([]);
     const [page, setPage] = useState(1);
     const [title, setTitle] = useState('');
-    const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
     const loadBulletins = async () => {

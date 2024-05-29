@@ -16,7 +16,7 @@ const Providers = () => {
     );
 };
 
-const theme = {
+export const theme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,

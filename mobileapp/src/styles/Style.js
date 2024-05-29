@@ -61,10 +61,10 @@ const GlobalStyle = StyleSheet.create({
         height: 40,
         padding: 8,
         borderRadius: 16,
-        backgroundColor: Theme.PrimaryColor,
+        backgroundColor: '#eee',
     },
     HeaderButtonText: {
-        color: 'white',
+        color: 'black',
         fontFamily: Theme.Bold,
     },
 });

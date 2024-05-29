@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Keyboard, Modal, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import AuthFormButton from '../../components/Auth/AuthFormButton';
@@ -9,11 +9,13 @@ import APIs, { endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
+import { GlobalContext, useGlobalContext } from '../../store/contexts/GlobalContext';
 
 const SignUp = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
+
     const [account, setAccount] = useState({});
     const [errorMsg, setErrorMsg] = useState('');
-    const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);

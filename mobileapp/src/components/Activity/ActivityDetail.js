@@ -1,16 +1,23 @@
-import { View, Text, ActivityIndicator, Image, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
-import GlobalStyle from "../../styles/Style";
-import { useState, useEffect, useCallback } from "react";
-import APIs, { endPoints } from "../../configs/APIs";
-import Theme from "../../styles/Theme";
-import RenderHTML from "react-native-render-html";
-import { Dimensions } from "react-native";
-import { formatDate, isCloseToBottom } from '../../utils/Utilities';
-import AllStyle from "./AllStyle";
-import CommentStyle from "./CommentStyle";
-import moment from "moment";
+import moment from 'moment';
 import 'moment/locale/vi';
-import { RichEditor, RichToolbar, actions } from "react-native-pell-rich-editor";
+import { useCallback, useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import RenderHTML from 'react-native-render-html';
+import APIs, { endPoints } from '../../configs/APIs';
+import GlobalStyle from '../../styles/Style';
+import Theme from '../../styles/Theme';
+import { formatDate, isCloseToBottom } from '../../utils/Utilities';
+import AllStyle from './AllStyle';
+import CommentStyle from './CommentStyle';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -22,7 +29,7 @@ const ActivityDetail = ({ route }) => {
     const [commentLoading, setCommentLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-    const [newcomment, setNewComment] = useState("");
+    const [newcomment, setNewComment] = useState('');
     const activityID = route?.params?.activityID;
 
     const loadActivityDetail = async () => {
@@ -100,16 +107,11 @@ const ActivityDetail = ({ route }) => {
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                             onScroll={loadMore}
-                            refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                            }
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                         >
                             <View style={AllStyle.Description}>
                                 <View style={AllStyle.CardImage}>
-                                    <Image
-                                        source={{ uri: activityDetail.image }}
-                                        style={AllStyle.ImageDetail}
-                                    />
+                                    <Image source={{ uri: activityDetail.image }} style={AllStyle.ImageDetail} />
                                 </View>
                                 <RenderHTML
                                     contentWidth={screenWidth}
@@ -124,7 +126,9 @@ const ActivityDetail = ({ route }) => {
                                     <Text style={AllStyle.More}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
                                 </TouchableOpacity>
 
-                                <Text style={AllStyle.AcitivityDetailText}>Đối tượng tham gia: {activityDetail.participant}</Text>
+                                <Text style={AllStyle.AcitivityDetailText}>
+                                    Đối tượng tham gia: {activityDetail.participant}
+                                </Text>
                                 <Text style={AllStyle.AcitivityDetailText}>
                                     Điểm cộng: {activityDetail.point}, {activityDetail.criterion}
                                 </Text>
@@ -149,8 +153,7 @@ const ActivityDetail = ({ route }) => {
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
-                                
-                                
+
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
                                         <View key={comment.id} style={AllStyle.Card}>
@@ -163,8 +166,14 @@ const ActivityDetail = ({ route }) => {
                                                 </View>
 
                                                 <View style={CommentStyle.CommentInfo}>
-                                                    <Text style={CommentStyle.CommentName}>{comment.account.user.last_name} {comment.account.user.middle_name} {comment.account.user.first_name} </Text>
-                                                    <Text style={CommentStyle.CommentTime}>{moment(comment.created_date).fromNow()}</Text>
+                                                    <Text style={CommentStyle.CommentName}>
+                                                        {comment.account.user.last_name}{' '}
+                                                        {comment.account.user.middle_name}{' '}
+                                                        {comment.account.user.first_name}{' '}
+                                                    </Text>
+                                                    <Text style={CommentStyle.CommentTime}>
+                                                        {moment(comment.created_date).fromNow()}
+                                                    </Text>
                                                 </View>
                                             </View>
 
@@ -190,6 +199,6 @@ const ActivityDetail = ({ route }) => {
             )}
         </>
     );
-}
+};
 
 export default ActivityDetail;

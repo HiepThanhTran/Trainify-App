@@ -11,15 +11,16 @@ import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { status } from '../../configs/Constants';
 import { SignInAction } from '../../store/actions/AccountAction';
 import { useAccountDispatch } from '../../store/contexts/AccountContext';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
 
 const SignIn = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
     const dispatch = useAccountDispatch();
 
     const [account, setAccount] = useState({});
     const [errorMsg, setErrorMsg] = useState('');
-    const [loading, setLoading] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -65,10 +66,10 @@ const SignIn = ({ navigation }) => {
                 ['refresh-token', tokens.data.refresh_token],
             ]);
 
-            console.log(CLIENT_ID)
-            console.log(CLIENT_SECRET)
-            console.log(tokens.data.access_token)
-            console.log(tokens.data.refresh_token)
+            console.log(CLIENT_ID);
+            console.log(CLIENT_SECRET);
+            console.log(tokens.data.access_token);
+            console.log(tokens.data.refresh_token);
 
             setTimeout(async () => {
                 let user = await authAPI(tokens.data.access_token).get(endPoints['me']);

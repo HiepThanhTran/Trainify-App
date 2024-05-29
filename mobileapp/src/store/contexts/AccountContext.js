@@ -2,7 +2,7 @@ import { CLIENT_ID, CLIENT_SECRET } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
 import { SignInAction, SignOutAction } from '../actions/AccountAction';
 import { accountReducer } from '../reducers/AccountReducer';
 
@@ -59,13 +59,13 @@ export const AccountProvider = ({ children }) => {
             if (error.response) {
                 errorStatus = error.response.status;
                 if (
-                    (errorStatus !== status.HTTP_401_UNAUTHORIZED && errorStatus !== status.HTTP_403_FORBIDDEN) ||
+                    (errorStatus !== Status.HTTP_401_UNAUTHORIZED && errorStatus !== Status.HTTP_403_FORBIDDEN) ||
                     retryCount > 3
                 ) {
                     dispatch(SignOutAction());
                     return;
                 }
-                
+
                 await getNewAccessToken(refreshToken);
                 checkLogged(retryCount + 1);
             } else if (error.request) {

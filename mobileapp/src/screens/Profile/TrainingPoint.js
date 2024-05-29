@@ -1,18 +1,21 @@
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Button } from 'react-native-paper';
+import Loading from '../../components/Loading';
 import APIs, { endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
+import { useAccount } from '../../store/contexts/AccountContext';
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 
 const TrainingPoint = ({ navigation }) => {
-    const { semester, setSemester } = useGlobalContext();
+    const { semester, setSemester, loading, setLoading } = useGlobalContext();
+    const currentAccount = useAccount();
+
     const [semesters, setSemesters] = useState();
-    const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
     const sheetRef = useRef(BottomSheet);
 
     useEffect(() => {
@@ -20,33 +23,12 @@ const TrainingPoint = ({ navigation }) => {
         renderHeaderButton();
     }, [navigation]);
 
-    const handleClosePress = useCallback(() => {
-        sheetRef.current?.close();
-    }, []);
-
-    const renderSemester = useCallback(
-        ({ item }) => (
-            <TouchableOpacity onPress={() => setSemester(item.id)}>
-                <View
-                    style={{
-                        ...TrainingPointStyle.ItemContainer,
-                        ...(semester === item.id ? { backgroundColor: Theme.SecondaryColor } : null),
-                    }}
-                >
-                    <Text style={TrainingPointStyle.ItemText}>
-                        {item.original_name} - {item.academic_year}
-                    </Text>
-                </View>
-            </TouchableOpacity>
-        ),
-        [semester],
-    );
-
     const loadSemesters = async () => {
+        setLoading(true);
         try {
-            let res = await APIs.get(endPoints['semesters']);
+            let res = await APIs.get(endPoints['student-semesters'](currentAccount.data.user.id));
 
-            if (res.status === status.HTTP_200_OK) setSemesters(res.data);
+            if (res.status === Status.HTTP_200_OK) setSemesters(res.data);
         } catch (error) {
             if (error.response) {
                 console.error(error.response.data);
@@ -57,8 +39,34 @@ const TrainingPoint = ({ navigation }) => {
             } else {
                 console.error(`Error message: ${error.message}`);
             }
+        } finally {
+            setLoading(false);
         }
     };
+
+    const handleClosePress = () => {
+        sheetRef?.current.close();
+    };
+
+    const handleChooseSemester = (semesterId) => {
+        setSemester(semesterId);
+        handleClosePress();
+    };
+
+    const renderSemester = ({ item }) => (
+        <TouchableOpacity onPress={() => handleChooseSemester(item.id)}>
+            <View
+                style={{
+                    ...TrainingPointStyle.ItemContainer,
+                    ...(semester === item.id ? { backgroundColor: Theme.SecondaryColor } : null),
+                }}
+            >
+                <Text style={TrainingPointStyle.ItemText}>
+                    {item.original_name} - {item.academic_year}
+                </Text>
+            </View>
+        </TouchableOpacity>
+    );
 
     const renderHeaderButton = () => {
         navigation.setOptions({
@@ -73,18 +81,20 @@ const TrainingPoint = ({ navigation }) => {
         });
     };
 
+    if (loading) return <Loading />;
+
     return (
         <GestureHandlerRootView>
             <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={handleClosePress}>
                 <View style={GlobalStyle.Container}>
                     <View>
-                        <Text>TEST</Text>
+                        <Text>Training Point Screen</Text>
                     </View>
 
                     <BottomSheet
                         index={!semester ? 1 : -1}
                         ref={sheetRef}
-                        snapPoints={snapPoints}
+                        snapPoints={['25%', '50%', '90%']}
                         enablePanDownToClose={true}
                         handleStyle={{ display: 'none' }}
                     >
@@ -100,7 +110,6 @@ const TrainingPoint = ({ navigation }) => {
                         </View>
                         <BottomSheetFlatList
                             data={semesters}
-                            extraData={semester}
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={renderSemester}
                             contentContainerStyle={{ backgroundColor: 'white' }}
@@ -120,6 +129,7 @@ const TrainingPointStyle = StyleSheet.create({
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
         alignItems: 'center',
+        justifyContent: 'center',
         paddingHorizontal: 16,
         backgroundColor: Theme.PrimaryColor,
     },
@@ -131,7 +141,7 @@ const TrainingPointStyle = StyleSheet.create({
     HandleHeaderText: {
         color: 'white',
         fontSize: 16,
-        fontFamily: Theme.SemiBold,
+        fontFamily: Theme.Bold,
     },
     HandleButton: {
         position: 'absolute',
@@ -145,8 +155,8 @@ const TrainingPointStyle = StyleSheet.create({
     ItemContainer: {
         padding: 12,
         paddingLeft: 20,
-        borderBottomWidth: 1,
-        borderColor: 'lightgrey',
+        borderBottomWidth: 2,
+        borderColor: '#eee',
     },
     ItemText: {
         fontSize: 20,
