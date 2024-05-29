@@ -32,7 +32,7 @@ const ActivityDetail = ({ route }) => {
     const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
     const [visibleFormEdit, setVisibleFormEdit] = useState(null);
-    
+
     const loadActivityDetail = async () => {
         try {
             setActivityDetailLoading(true);
@@ -89,6 +89,24 @@ const ActivityDetail = ({ route }) => {
         }
     };
 
+    const deleteComment = async (commentID) => {
+        try {
+            const accessToken = await AsyncStorage.getItem('access-token');
+            let res = await authAPI(accessToken).delete(endPoints['comment-detail'](commentID), {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (res.status === status.HTTP_204_NO_CONTENT) {
+                setComments((currentComments) =>
+                    currentComments.filter((comment) => comment.id !== commentID)
+                );
+            }
+        } catch (err) {
+            console.error(err.response.data);
+        }
+    };
+
     useEffect(() => {
         loadActivityDetail();
         loadComments();
@@ -115,8 +133,10 @@ const ActivityDetail = ({ route }) => {
         setRefreshing(false);
     }, [activityID]);
 
-    const toggleFormEdit = (commentId) => {
-        setVisibleFormEdit(commentId === visibleFormEdit ? null : commentId);
+    const toggleFormEdit = (commentId, accountId) => {
+        if (accountId === accountData?.id) {
+            setVisibleFormEdit(commentId === visibleFormEdit ? null : commentId);
+        }
     };
 
     const toggleCommentInput = () => {
@@ -223,9 +243,11 @@ const ActivityDetail = ({ route }) => {
                                         >
                                             <View style={AllStyle.Card}>
                                                 <View style={CommentStyle.CommentEditContainer}>
-                                                    <TouchableOpacity onPress={() => toggleFormEdit(comment.id)}>
-                                                        <Text style={CommentStyle.CommentEdit}>...</Text>
-                                                    </TouchableOpacity>
+                                                    {comment.account.id === accountData?.id && (
+                                                        <TouchableOpacity onPress={() => toggleFormEdit(comment.id, comment.account.id)}>
+                                                            <Text style={CommentStyle.CommentEdit}>...</Text>
+                                                        </TouchableOpacity>
+                                                    )}
 
                                                     {visibleFormEdit === comment.id && (
                                                         <View style={CommentStyle.FormEdit}>
@@ -233,7 +255,7 @@ const ActivityDetail = ({ route }) => {
                                                                 <Text style={CommentStyle.FormEditText}>Chỉnh sửa</Text>
                                                             </TouchableOpacity>
 
-                                                            <TouchableOpacity>
+                                                            <TouchableOpacity onPress={() => deleteComment(comment.id)}>
                                                                 <Text style={CommentStyle.FormEditText}>Xóa</Text>
                                                             </TouchableOpacity>
                                                         </View>
