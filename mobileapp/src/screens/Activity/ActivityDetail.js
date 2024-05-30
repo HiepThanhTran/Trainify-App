@@ -1,22 +1,13 @@
-import { AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import 'moment/locale/vi';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    RefreshControl,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import RenderHTML from 'react-native-render-html';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
 import { useAccount } from '../../store/contexts/AccountContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
@@ -25,11 +16,11 @@ import AllStyle from './AllStyle';
 import CommentStyle from './CommentStyle';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Portal } from 'react-native-paper';
+import { Alert } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
-const ActivityDetail = ({ navigation, route }) => {
+const ActivityDetail = ({ route }) => {
    const [activityDetail, setActivityDetail] = useState(null);
    const [comments, setComments] = useState([]);
    const [page, setPage] = useState(1);
@@ -46,17 +37,11 @@ const ActivityDetail = ({ navigation, route }) => {
    const bottomSheetRef = useRef(BottomSheet);
    const [commentID, setCommentID] = useState(null);
 
-   const toggleFormEdit = (commentID) => {
-      setFormEditStates((prevState) => ({
-         ...prevState,
-         [commentID]: !prevState[commentID],
-      }));
-   };
-
    const loadActivityDetail = async () => {
       try {
          setActivityDetailLoading(true);
-         let res = await APIs.get(endPoints['activity-detail'](activityID));
+         const accessToken = await AsyncStorage.getItem('access-token');
+         let res = await authAPI(accessToken).get(endPoints['activity-detail'](activityID));
          setActivityDetail(res.data);
       } catch (err) {
          console.error(err);
@@ -100,7 +85,7 @@ const ActivityDetail = ({ navigation, route }) => {
                'Content-Type': 'multipart/form-data',
             },
          });
-         if (res.status === status.HTTP_201_CREATED) {
+         if (res.status === Status.HTTP_201_CREATED) {
             setNewComment('');
             setCheckComment(true);
          }
@@ -117,7 +102,7 @@ const ActivityDetail = ({ navigation, route }) => {
                'Content-Type': 'application/json',
             },
          });
-         if (res.status === status.HTTP_204_NO_CONTENT) {
+         if (res.status === Status.HTTP_204_NO_CONTENT) {
             setComments((currentComments) =>
                currentComments.filter((comment) => comment.id !== commentID)
             );
@@ -127,6 +112,20 @@ const ActivityDetail = ({ navigation, route }) => {
          console.error(err.response.data);
       }
    };
+
+   const handleDeleteComment = (commentID) => {
+      Alert.alert(
+         'Xóa bình luận',
+         'Bạn chắc chắn muốn xóa bình luận này không?',
+         [
+             { text: 'Có', onPress: () => {
+                  deleteComment(commentID);
+             } },
+             { text: 'Không', style: 'cancel' },
+         ],
+         { cancelable: true },
+     );
+   }
 
    useEffect(() => {
       console.log(bottomSheetRef.current)
@@ -220,12 +219,6 @@ const ActivityDetail = ({ navigation, route }) => {
                                  </TouchableOpacity>
                                  <Text style={AllStyle.LikeDetail}>2000</Text>
                               </View>
-
-                              <View>
-                                 <TouchableOpacity>
-                                    <FontAwesome5 name="comment" size={24} color="black" />
-                                 </TouchableOpacity>
-                              </View>
                            </View>
 
                         </View>
@@ -262,7 +255,7 @@ const ActivityDetail = ({ navigation, route }) => {
                                                 }}>
                                                    <Text style={CommentStyle.FormEditText}>Chỉnh sửa</Text>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity onPress={() => deleteComment(comment.id)}>
+                                                <TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
                                                    <Text style={CommentStyle.FormEditText}>Xóa</Text>
                                                 </TouchableOpacity>
                                              </View>
@@ -318,16 +311,7 @@ const ActivityDetail = ({ navigation, route }) => {
                      alignItems: 'center',
                   }}>
                      <View style={{width: '100%', borderWidth: 1}}>
-                              <RichEditor
-                                 ref={richText}
-                                 initialContentHTML={newcomment}
-                                 onChange={(text) => setNewComment(text)}
-                                 placeholder='Nhập bình luận của bạn'
-                              />
-
-                              <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
-                                 <FontAwesome name="send" size={24} color={Theme.PrimaryColor} />
-                              </TouchableOpacity>
+                           <Text>Hello</Text>
                      </View>
                   </BottomSheetView>
                </BottomSheet>

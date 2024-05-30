@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import Theme from '../../styles/Theme';
+import { screenWidth } from '../../styles/Style';
 
 const CommentStyle = StyleSheet.create({
     CommentContainer: {
@@ -17,9 +18,11 @@ const CommentStyle = StyleSheet.create({
         width: '100%',
     },
     CommentCardImage: {
-        width: 90,
-        height: 90,
+        width: 60,
+        height: 60,
         marginLeft: -16,
+        borderRadius: screenWidth/2,
+        overflow: 'hidden'
     },
     CommentImage: {
         width: '100%',
