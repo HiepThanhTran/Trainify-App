@@ -30,13 +30,15 @@ const ActivityDetail = ({ route }) => {
    const [isExpanded, setIsExpanded] = useState(false);
    const [checkcomment, setCheckComment] = useState(false);
    const richText = useRef();
+   const richText1 = useRef();
    const [newcomment, setNewComment] = useState('');
    const { data: accountData } = useAccount();
    const activityID = route?.params?.activityID;
    const [isFormEditVisible, setIsFormEditVisible] = useState(false);
    const [selectedCommentID, setSelectedCommentID] = useState(null);
    const bottomSheetRef = useRef(BottomSheet);
-   const [commentID, setCommentID] = useState(null);
+   const [commentcontent, setCommentContent] = useState('');
+   const [commentcontentId, setCommentContentId] = useState('');
 
    const handleToggleCommentForm = (commentID) => {
       if (selectedCommentID === commentID) {
@@ -137,6 +139,26 @@ const ActivityDetail = ({ route }) => {
          { cancelable: true },
       );
    }
+
+   const editComment = async (commentID, updatedContent) => {
+      try {
+          const accessToken = await AsyncStorage.getItem('access-token');
+          let res = await authAPI(accessToken).put(endPoints['comment-detail'](commentID), { content: updatedContent }, {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          });
+          if (res.status === status.HTTP_200_OK) {
+              setComments((currentComments) =>
+                  currentComments.map((comment) =>
+                      comment.id === commentID ? { ...comment, content: updatedContent } : comment
+                  )
+              );
+          }
+      } catch (err) {
+          console.error(err.response.data);
+      }
+  };
 
    useEffect(() => {
       console.log(bottomSheetRef.current)
@@ -259,7 +281,11 @@ const ActivityDetail = ({ route }) => {
                                           </TouchableOpacity>
                                           {selectedCommentID === comment.id && (
                                              <View style={CommentStyle.FormEdit}>
-                                                <TouchableOpacity onPress={() => handleEditComment(comment.id)}>
+                                                <TouchableOpacity onPress={() => {
+                                                   setCommentContentId(comment.id)
+                                                   setCommentContent(comment.content)
+                                                   bottomSheetRef.current?.expand()
+                                                }}>
                                                    <Text style={CommentStyle.FormEditText}>Chỉnh sửa</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
@@ -318,7 +344,24 @@ const ActivityDetail = ({ route }) => {
                      alignItems: 'center',
                   }}>
                      <View style={{ width: '100%', borderWidth: 1 }}>
-                        <Text>Hello</Text>
+                        <View>
+                           <RichEditor
+                                 ref={richText1}
+                                 initialContentHTML={commentcontent}
+                                 onChange={(text) => setNewComment(text)}
+                                 style={AllStyle.RichText}
+                              />
+                        </View>
+
+                        <View style={CommentStyle.ButtonEditContainer}>
+                              <TouchableOpacity style={CommentStyle.ButtonEdit}>
+                                    <Text style={CommentStyle.ButtonText}>Hủy</Text>
+                              </TouchableOpacity>
+
+                              <TouchableOpacity style={CommentStyle.ButtonEdit} onPress={() => editComment(commentcontentId, commentcontent)}>
+                                    <Text style={CommentStyle.ButtonText}>Cập nhập</Text>
+                              </TouchableOpacity>
+                        </View> 
                      </View>
                   </BottomSheetView>
                </BottomSheet>
