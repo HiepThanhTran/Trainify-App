@@ -43,7 +43,7 @@ const CommentStyle = StyleSheet.create({
     },
     CommentEdit: {
         fontFamily: Theme.Bold,
-        fontSize: 20,
+        fontSize: 25,
         position: 'relative'
     },
     FormEdit: {
@@ -74,7 +74,6 @@ const CommentStyle = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10,
     },
-    
     ButtonEdit: {
         padding: 8,
         borderWidth: 1,
@@ -86,7 +85,7 @@ const CommentStyle = StyleSheet.create({
     },
     ButtonText:{
         fontFamily: Theme.Bold,
-    }
+    },
 })
 
 export default CommentStyle;
