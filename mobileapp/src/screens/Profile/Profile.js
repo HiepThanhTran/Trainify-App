@@ -1,7 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
+import { Roles } from '../../configs/Constants';
 import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
@@ -14,6 +15,14 @@ const Profile = ({ navigation }) => {
 
     const Sections = useMemo(() => {
         return [
+            {
+                title: 'Chức năng',
+                roles: [Roles.ADMINISTRATOR, Roles.SPECIALIST, Roles.ASSISTANT],
+                items: [
+                    { label: 'Quản lý hoạt động', icon: 'wrench-outline', screen: 'ActivitySettings' },
+                    // { label: '', icon: '', screen: '' },
+                ],
+            },
             {
                 title: 'Tiện ích',
                 items: [
@@ -164,8 +173,8 @@ const ProfileStyle = StyleSheet.create({
         marginHorizontal: 12,
     },
     SectionTitle: {
-        fontFamily: Theme.SemiBold,
-        fontSize: 30,
+        fontFamily: Theme.Medium,
+        fontSize: 26,
     },
     SectionBody: {
         borderWidth: 1,

@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-paper';
-import Bulletin from '../../components/Activity/Bulletin';
 import Notification from '../../screens/Notification/Notification';
 import Profile from '../../screens/Profile/Profile';
 import Theme from '../../styles/Theme';
+import Bulletin from '../../screens/Activity/Bulletin';
 
 const Tab = createBottomTabNavigator();
 

@@ -316,7 +316,7 @@ const TrainingPoint = ({ navigation }) => {
 const TrainingPointStyle = StyleSheet.create({
     ChartContainer: {
         backgroundColor: '#333340',
-        paddingBottom: 20,
+        paddingBottom: 32,
         borderRadius: 12,
         paddingHorizontal: 12,
         margin: 4,

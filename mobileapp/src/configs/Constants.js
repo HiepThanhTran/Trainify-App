@@ -5,7 +5,7 @@ export const DefaultImage = {
     ACTIVITY_IMAGE: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715532803/activity-image.png',
 };
 
-export const Role = {
+export const Roles = {
     ADMINISTRATOR: 'AD',
     STUDENT: 'STU',
     ASSISTANT: 'ASST',

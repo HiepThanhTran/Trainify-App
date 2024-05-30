@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ActivityDetail from '../../components/Activity/ActivityDetail';
-import BulletinDetail from '../../components/Activity/BulletinDetail';
 import Theme from '../../styles/Theme';
+import BulletinDetail from '../../screens/Activity/BulletinDetail';
+import ActivityDetail from '../../screens/Activity/ActivityDetail';
 
 const Stack = createNativeStackNavigator();
 

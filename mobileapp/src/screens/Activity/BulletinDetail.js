@@ -88,7 +88,7 @@ const BulletinDetail = ({ navigation, route }) => {
         setPage(1);
         setActivity([]);
         setRefreshing(true);
-        setName("");
+        setName('');
         await loadActivity();
         setRefreshing(false);
     }, [bulletinID]);
@@ -116,9 +116,7 @@ const BulletinDetail = ({ navigation, route }) => {
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                             onScroll={loadMore}
-                            refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                            }
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                         >
                             {bulletindetail && (
                                 <View style={AllStyle.Description}>
@@ -176,12 +174,7 @@ const BulletinDetail = ({ navigation, route }) => {
                                             >
                                                 <View style={AllStyle.Card}>
                                                     <Text style={AllStyle.ActivityTitle}>{activity.name}</Text>
-                                                    <View
-                                                        style={[
-                                                            AllStyle.CardImage,
-                                                            { marginBottom: 10 },
-                                                        ]}
-                                                    >
+                                                    <View style={[AllStyle.CardImage, { marginBottom: 10 }]}>
                                                         <Image
                                                             source={{ uri: activity.image }}
                                                             style={AllStyle.ActivityImage}
@@ -206,7 +199,9 @@ const BulletinDetail = ({ navigation, route }) => {
                                                 </View>
                                             </TouchableOpacity>
                                         ))}
-                                        {activityLoading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
+                                        {activityLoading && (
+                                            <ActivityIndicator size="large" color={Theme.PrimaryColor} />
+                                        )}
                                     </View>
                                 </View>
                             </View>
