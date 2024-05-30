@@ -49,8 +49,9 @@ const CommentStyle = StyleSheet.create({
     FormEdit: {
         backgroundColor: 'white',
         borderRadius: 8,
-        padding: 10,
-        marginTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -60,25 +61,32 @@ const CommentStyle = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
         position: 'absolute',
-        bottom: -80
+        bottom: -80,
+        zIndex: 1
     },
     FormEditText:{
         fontFamily: Theme.Bold,
         fontSize: 15,
-        marginTop: 9
+        marginTop: 12
     },
     ButtonEditContainer: {
-        flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 10
-    },
-    ButtonEdit: {
-        flex: 1, 
-        marginHorizontal: 35
+        marginTop: 10,
     },
     
+    ButtonEdit: {
+        padding: 8,
+        borderWidth: 1,
+        marginHorizontal: 10,
+        width: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'lightgrey',
+    },
+    ButtonText:{
+        fontFamily: Theme.Bold,
+    }
 })
 
 export default CommentStyle;

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Button, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
@@ -15,6 +15,7 @@ import { formatDate, isCloseToBottom } from '../../utils/Utilities';
 import AllStyle from './AllStyle';
 import CommentStyle from './CommentStyle';
 
+
 const screenWidth = Dimensions.get('window').width;
 
 const ActivityDetail = ({ route }) => {
@@ -26,14 +27,12 @@ const ActivityDetail = ({ route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [checkcomment, setCheckComment] = useState(false);
-    const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
-    const [editingCommentId, setEditingCommentId] = useState(null);
     const richText = useRef();
     const [newcomment, setNewComment] = useState('');
     const { data: accountData } = useAccount();
     const activityID = route?.params?.activityID;
-    const [visibleFormEdit, setVisibleFormEdit] = useState(null);
-    
+    const [isFormEditVisible, setIsFormEditVisible] = useState(false);
+
     const loadActivityDetail = async () => {
         try {
             setActivityDetailLoading(true);
@@ -102,6 +101,8 @@ const ActivityDetail = ({ route }) => {
                 setComments((currentComments) =>
                     currentComments.filter((comment) => comment.id !== commentID)
                 );
+                // Ẩn FormEdit khi xóa bình luận
+                setIsFormEditVisible(false);
             }
         } catch (err) {
             console.error(err.response.data);
@@ -133,16 +134,6 @@ const ActivityDetail = ({ route }) => {
         await loadComments(true);
         setRefreshing(false);
     }, [activityID]);
-
-    const toggleFormEdit = (commentId, accountId) => {
-        if (accountId === accountData?.id) {
-            setVisibleFormEdit(commentId === visibleFormEdit ? null : commentId);
-        }
-    };
-
-    const toggleCommentInput = () => {
-        setIsCommentInputVisible(!isCommentInputVisible);
-    };
 
     return (
         <>
@@ -210,7 +201,7 @@ const ActivityDetail = ({ route }) => {
                                     </View>
 
                                     <View>
-                                        <TouchableOpacity onPress={toggleCommentInput}>
+                                        <TouchableOpacity>
                                             <FontAwesome5 name="comment" size={24} color="black" />
                                         </TouchableOpacity>
                                     </View>
@@ -220,91 +211,83 @@ const ActivityDetail = ({ route }) => {
 
                             <View style={CommentStyle.CommentContainer}>
                                 <Text style={CommentStyle.CommentTitle}>Bình luận</Text>
-                                {isCommentInputVisible && (
-                                    <View style={AllStyle.RichEditorContainer}>
-                                        <RichEditor
-                                            ref={richText}
-                                            initialContentHTML={newcomment}
-                                            onChange={(text) => setNewComment(text)}
-                                            style={AllStyle.RichText}
-                                            placeholder='Nhập bình luận của bạn'
-                                        />
+                                <View style={AllStyle.RichEditorContainer}>
+                                    <RichEditor
+                                        ref={richText}
+                                        initialContentHTML={newcomment}
+                                        onChange={(text) => setNewComment(text)}
+                                        style={AllStyle.RichText}
+                                        placeholder='Nhập bình luận của bạn'
+                                    />
 
-                                        <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
-                                            <FontAwesome name="send" size={24} color="black" />
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
+                                    <TouchableOpacity style={AllStyle.SendIcon} onPress={postComment}>
+                                        <FontAwesome name="send" size={24} color={Theme.PrimaryColor} />
+                                    </TouchableOpacity>
+                                </View>
                                 <View style={GlobalStyle.BackGround}>
                                     {comments.map((comment) => (
-                                        <TouchableOpacity
-                                            key={comment.id}
-                                            activeOpacity={1}
-                                            onPressOut={() => setVisibleFormEdit(null)}
-                                        >
-                                            <View style={AllStyle.Card}>
+                                        <View key={comment.id} style={AllStyle.Card}>
+                                            {(comment.account.id === accountData?.id) && (
                                                 <View style={CommentStyle.CommentEditContainer}>
-                                                    {comment.account.id === accountData?.id && (
-                                                        <TouchableOpacity onPress={() => toggleFormEdit(comment.id, comment.account.id)}>
-                                                            <Text style={CommentStyle.CommentEdit}>...</Text>
-                                                        </TouchableOpacity>
-                                                    )}
-
-                                                    {visibleFormEdit === comment.id && (
+                                                    <TouchableOpacity onPress={() => setIsFormEditVisible(!isFormEditVisible)}>
+                                                        <Text style={CommentStyle.CommentEdit}>...</Text>
+                                                    </TouchableOpacity>
+                                                    {isFormEditVisible && (
                                                         <View style={CommentStyle.FormEdit}>
                                                             <TouchableOpacity>
                                                                 <Text style={CommentStyle.FormEditText}>Chỉnh sửa</Text>
                                                             </TouchableOpacity>
-
                                                             <TouchableOpacity onPress={() => deleteComment(comment.id)}>
                                                                 <Text style={CommentStyle.FormEditText}>Xóa</Text>
                                                             </TouchableOpacity>
                                                         </View>
                                                     )}
                                                 </View>
-                                                <View style={CommentStyle.CommentTop}>
-                                                    <View style={CommentStyle.CommentCardImage}>
-                                                        <Image
-                                                            source={{ uri: comment.account.avatar }}
-                                                            style={CommentStyle.CommentImage}
-                                                        />
-                                                    </View>
 
-                                                    <View style={CommentStyle.CommentInfo}>
-                                                        <Text style={CommentStyle.CommentName}>
-                                                            {comment.account.user.last_name}
-                                                            {comment.account.user.middle_name}
-                                                            {comment.account.user.first_name}
-                                                        </Text>
-                                                        <Text style={CommentStyle.CommentTime}>
-                                                            {moment(comment.created_date).fromNow()}
-                                                        </Text>
-                                                    </View>
-                                                </View>
-
-                                                <View>
-                                                    <RenderHTML
-                                                        contentWidth={screenWidth}
-                                                        source={{ html: comment.content }}
-                                                        baseStyle={AllStyle.Content}
-                                                        defaultTextProps={{
-                                                            numberOfLines: 3,
-                                                            ellipsizeMode: 'tail',
-                                                        }}
+                                            )}
+                                            <View style={CommentStyle.CommentTop}>
+                                                <View style={CommentStyle.CommentCardImage}>
+                                                    <Image
+                                                        source={{ uri: comment.account.avatar }}
+                                                        style={CommentStyle.CommentImage}
                                                     />
                                                 </View>
-
-                                                <View style={CommentStyle.ButtonEditContainer}>
-                                                    <View style={CommentStyle.ButtonEdit}>
-                                                        <Button title='Hủy'></Button>
-                                                    </View>
-                                                  
-                                                    <View style={CommentStyle.ButtonEdit}>
-                                                        <Button title='Cập nhập'></Button>
-                                                    </View>
+                                                <View style={CommentStyle.CommentInfo}>
+                                                    <Text style={CommentStyle.CommentName}>
+                                                        {comment.account.user.last_name}
+                                                        {comment.account.user.middle_name}
+                                                        {comment.account.user.first_name}
+                                                    </Text>
+                                                    <Text style={CommentStyle.CommentTime}>
+                                                        {moment(comment.created_date).fromNow()}
+                                                    </Text>
                                                 </View>
                                             </View>
-                                        </TouchableOpacity>
+                                            <View>
+                                                <RenderHTML
+                                                    contentWidth={screenWidth}
+                                                    source={{ html: comment.content }}
+                                                    baseStyle={AllStyle.Content}
+                                                    defaultTextProps={{
+                                                        numberOfLines: 3,
+                                                        ellipsizeMode: 'tail',
+                                                    }}
+                                                />
+                                            </View>
+                                            <View style={CommentStyle.ButtonEditContainer}>
+                                                <TouchableOpacity>
+                                                    <View style={CommentStyle.ButtonEdit}>
+                                                        <Text style={CommentStyle.ButtonText}>Hủy</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity>
+                                                    <View style={CommentStyle.ButtonEdit}>
+                                                        <Text style={CommentStyle.ButtonText}>Cập nhập</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+
                                     ))}
                                     {commentLoading && <ActivityIndicator size="large" color={Theme.PrimaryColor} />}
                                 </View>
