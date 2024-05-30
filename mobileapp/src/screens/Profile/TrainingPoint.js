@@ -1,115 +1,76 @@
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
 import { Button } from 'react-native-paper';
 import Loading from '../../components/Loading';
-import APIs, { endPoints } from '../../configs/APIs';
+import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { Status } from '../../configs/Constants';
-import { useAccount } from '../../store/contexts/AccountContext';
+import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
+import { getNewAccessToken, getTokens } from '../../utils/Utilities';
 
 const TrainingPoint = ({ navigation }) => {
     const { semester, setSemester, loading, setLoading } = useGlobalContext();
+    const dispatch = useAccountDispatch();
     const currentAccount = useAccount();
 
-    const [criterions, setCriterions] = useState([]);
-    const [semesters, setSemesters] = useState([]);
-    const [isRendered, setIsRendered] = useState(false);
     const sheetRef = useRef(BottomSheet);
 
-    const initialBarData = [];
-    const barData = [
-        {
-            label: 'Điều 1',
-            value: 20,
-            frontColor: Theme.PrimaryColor,
-            spacing: 6,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-        {
-            value: 20,
-            frontColor: Theme.MaxPointColor,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
+    const [points, setPoints] = useState([]);
+    const [semesters, setSemesters] = useState([]);
+    const [criterions, setCriterions] = useState([]);
+    const [pointsDataChart, setPointsDataChart] = useState([]);
+    const [criterionDataChart, setCriterionDataChart] = useState([]);
 
-        {
-            label: 'Điều 2',
-            value: 25,
-            frontColor: Theme.PrimaryColor,
-            spacing: 6,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>25</Text>,
-        },
-        {
-            value: 25,
-            frontColor: Theme.MaxPointColor,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-
-        {
-            label: 'Điều 3',
-            value: 20,
-            frontColor: Theme.PrimaryColor,
-            spacing: 6,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-        {
-            value: 20,
-            frontColor: Theme.MaxPointColor,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-
-        {
-            label: 'Điều 4',
-            value: 25,
-            frontColor: Theme.PrimaryColor,
-            spacing: 6,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>25</Text>,
-        },
-        {
-            value: 25,
-            frontColor: Theme.MaxPointColor,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-
-        {
-            label: 'Điều 5',
-            value: 10,
-            frontColor: Theme.PrimaryColor,
-            spacing: 6,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>10</Text>,
-        },
-        {
-            value: 10,
-            frontColor: Theme.MaxPointColor,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-
-        {
-            label: 'Điều 6',
-            value: 10,
-            frontColor: Theme.PrimaryColor,
-            spacing: 6,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>10</Text>,
-        },
-        {
-            value: 10,
-            frontColor: Theme.MaxPointColor,
-            topLabelComponent: () => <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>20</Text>,
-        },
-    ];
+    const [isRendered, setIsRedered] = useState(false);
 
     useEffect(() => {
         loadSemesters();
-        loadCriterion();
-        renderHeaderButton();
-        setIsRendered(true)
-    }, [navigation]);
+        loadCriterions();
+    }, []);
 
-    const loadSemesters = async () => {
+    useEffect(() => {
+        loadPoints();
+        renderHeaderButton();
+    }, [navigation, semester]);
+
+    const loadPoints = useCallback(async () => {
+        if (semester) {
+            setLoading(true);
+            const { accessToken, refreshToken } = await getTokens();
+            try {
+                let res = await authAPI(accessToken).get(
+                    endPoints['student-points'](currentAccount.data.user.id, semester.code),
+                );
+
+                if (res.status === Status.HTTP_200_OK) {
+                    setPoints(res.data);
+                    getPointsDataChart(res.data);
+                }
+            } catch (error) {
+                if (error.response) {
+                    const errorStatus = error.response.status;
+                    if (errorStatus === Status.HTTP_401_UNAUTHORIZED || errorStatus === Status.HTTP_403_FORBIDDEN) {
+                        const newAccessToken = await getNewAccessToken(refreshToken, dispatch);
+                        if (newAccessToken) loadPoints();
+                    }
+                } else if (error.request) {
+                    console.error(error.request);
+                } else {
+                    console.error(`Error message: ${error.message}`);
+                }
+            } finally {
+                setLoading(false);
+                setIsRedered(true);
+            }
+        }
+    }, [semester]);
+
+    const loadSemesters = useCallback(async () => {
         setLoading(true);
         try {
             let res = await APIs.get(endPoints['student-semesters'](currentAccount.data.user.id));
@@ -127,15 +88,19 @@ const TrainingPoint = ({ navigation }) => {
             }
         } finally {
             setLoading(false);
+            setIsRedered(true);
         }
-    };
+    }, []);
 
-    const loadCriterion = async () => {
+    const loadCriterions = useCallback(async () => {
         setLoading(true);
         try {
             let res = await APIs.get(endPoints['criterions']);
 
-            if (res.status === Status.HTTP_200_OK) setCriterions(res.data);
+            if (res.status === Status.HTTP_200_OK) {
+                setCriterions(res.data);
+                getCriterionDataChart(res.data);
+            }
         } catch (error) {
             if (error.response) {
                 console.error(error.response.data);
@@ -148,26 +113,88 @@ const TrainingPoint = ({ navigation }) => {
             }
         } finally {
             setLoading(false);
+            setIsRedered(true);
+        }
+    }, []);
+
+    const getPointsDataChart = useCallback((points) => {
+        let data = [];
+
+        points.training_points.forEach((item) => {
+            data.push({
+                label: item.criterion,
+                value: item.point,
+                frontColor: Theme.PrimaryColor,
+                topLabelComponent: () => (
+                    <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>{item.point}</Text>
+                ),
+            });
+        });
+        setPointsDataChart(data);
+    }, []);
+
+    const getCriterionDataChart = useCallback((criterions) => {
+        let data = [];
+        criterions.forEach((item) => {
+            data.push({
+                value: item.max_point,
+                frontColor: '#f0a419',
+                topLabelComponent: () => (
+                    <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>{item.max_point}</Text>
+                ),
+            });
+        });
+        setCriterionDataChart(data);
+    }, []);
+
+    const dataChart = useMemo(() => {
+        if (pointsDataChart.length > 0) {
+            const interleavedData = pointsDataChart.reduce((acc, val, i) => {
+                return acc.concat(val, criterionDataChart[i]);
+            }, []);
+            return interleavedData;
+        }
+        const initalPointsDataChart = criterions.map((item) => ({
+            label: item.name,
+            value: 0,
+            frontColor: Theme.PrimaryColor,
+        }));
+        const interleavedData = initalPointsDataChart.reduce((acc, val, i) => {
+            return acc.concat(val, criterionDataChart[i]);
+        }, []);
+
+        return interleavedData;
+    }, [pointsDataChart, criterionDataChart]);
+
+    const handleChooseSemester = (item) => {
+        if (item.id !== semester?.id) {
+            setSemester(item);
+            sheetRef?.current?.close();
         }
     };
-    
-    const loadDataOfChart = () => {};
 
-    const handleClosePress = () => {
-        sheetRef?.current.close();
-    };
-
-    const handleChooseSemester = (semesterId) => {
-        setSemester(semesterId);
-        handleClosePress();
+    const renderHeaderButton = () => {
+        navigation.setOptions({
+            title: semester ? `${semester?.original_name} - ${semester?.academic_year}` : 'Điểm rèn luyện',
+            headerRight: semester
+                ? () => (
+                      <TouchableOpacity
+                          onPress={() => sheetRef.current?.expand()}
+                          style={{ ...GlobalStyle.Center, ...GlobalStyle.HeaderButton }}
+                      >
+                          <Text style={GlobalStyle.HeaderButtonText}>Học kỳ</Text>
+                      </TouchableOpacity>
+                  )
+                : null,
+        });
     };
 
     const renderSemester = ({ item }) => (
-        <TouchableOpacity onPress={() => handleChooseSemester(item.id)}>
+        <TouchableOpacity onPress={() => handleChooseSemester(item)}>
             <View
                 style={{
                     ...TrainingPointStyle.ItemContainer,
-                    ...(semester === item.id ? { backgroundColor: Theme.SecondaryColor } : null),
+                    ...(semester && semester.id === item.id ? { backgroundColor: Theme.SecondaryColor } : null),
                 }}
             >
                 <Text style={TrainingPointStyle.ItemText}>
@@ -176,19 +203,6 @@ const TrainingPoint = ({ navigation }) => {
             </View>
         </TouchableOpacity>
     );
-
-    const renderHeaderButton = () => {
-        navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity
-                    onPress={() => sheetRef.current?.snapToIndex(1)}
-                    style={{ ...GlobalStyle.Center, ...GlobalStyle.HeaderButton }}
-                >
-                    <Text style={GlobalStyle.HeaderButtonText}>Học kỳ</Text>
-                </TouchableOpacity>
-            ),
-        });
-    };
 
     const renderChartTitle = () => {
         return (
@@ -200,7 +214,7 @@ const TrainingPoint = ({ navigation }) => {
                         <Text style={TrainingPointStyle.ChartDetailsText}>Điểm đã xác nhận</Text>
                     </View>
                     <View style={TrainingPointStyle.ChartDetailsWrap}>
-                        <View style={{ ...TrainingPointStyle.ChartDetailsDot, backgroundColor: Theme.MaxPointColor }} />
+                        <View style={{ ...TrainingPointStyle.ChartDetailsDot, backgroundColor: '#f0a419' }} />
                         <Text style={TrainingPointStyle.ChartDetailsText}>Điểm tối đa của điều</Text>
                     </View>
                 </View>
@@ -212,22 +226,23 @@ const TrainingPoint = ({ navigation }) => {
 
     return (
         <GestureHandlerRootView>
-            <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={handleClosePress}>
-                <View style={{ flex: 1 }}>
-                    <View style={TrainingPointStyle.ChartContainer}>
-                        {renderChartTitle()}
-                        <View>
+            <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => sheetRef?.current?.close()}>
+                <View style={TrainingPointStyle.ChartContainer}>
+                    {renderChartTitle()}
+                    {loading ? (
+                        <Loading />
+                    ) : (
+                        <>
                             <BarChart
-                                data={barData}
-                                barStyle={{
-                                }}
+                                data={dataChart}
                                 hideRules
-                                height={140}
                                 isAnimated
-                                spacing={12}
+                                height={semester ? 160 : 80}
+                                spacing={8}
                                 barWidth={14}
                                 labelWidth={40}
-                                noOfSections={5}
+                                noOfSections={semester ? 5 : 2}
+                                maxValue={100}
                                 barBorderTopLeftRadius={4}
                                 barBorderTopRightRadius={4}
                                 xAxisColor={'lightgray'}
@@ -235,36 +250,65 @@ const TrainingPoint = ({ navigation }) => {
                                 yAxisTextStyle={{ color: 'lightgray' }}
                                 xAxisLabelTextStyle={{ color: 'lightgray', textAlign: 'center' }}
                             />
-                        </View>
-                    </View>
-
-                    <BottomSheet
-                        // index={!semester ? 1 : -1}
-                        index={-1}
-                        ref={sheetRef}
-                        snapPoints={['25%', '50%', '90%']}
-                        enablePanDownToClose={true}
-                        handleStyle={{ display: 'none' }}
-                    >
-                        <View style={TrainingPointStyle.HandleContainer}>
-                            <View style={TrainingPointStyle.HandleHeader}>
-                                <Text style={TrainingPointStyle.HandleHeaderText}>Chọn học kỳ cần xem thống kê</Text>
-                            </View>
-                            <View style={TrainingPointStyle.HandleButton}>
-                                <Button textColor="white" onPress={handleClosePress}>
-                                    <Text style={TrainingPointStyle.HandleButtonText}>Đóng</Text>
-                                </Button>
-                            </View>
-                        </View>
-                        <BottomSheetFlatList
-                            data={semesters}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={renderSemester}
-                            contentContainerStyle={{ backgroundColor: 'white' }}
-                        />
-                    </BottomSheet>
+                            {!semester ? (
+                                <TouchableOpacity
+                                    style={{
+                                        ...TrainingPointStyle.ChartBottom,
+                                        borderRadius: 8,
+                                        backgroundColor: Theme.PrimaryColor,
+                                    }}
+                                    onPress={() => sheetRef?.current?.expand()}
+                                >
+                                    <Text style={TrainingPointStyle.ChartBottomText}>Vui lòng chọn học kỳ</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View
+                                    style={{
+                                        ...TrainingPointStyle.ChartBottom,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            ...TrainingPointStyle.ChartDetailsDot,
+                                            backgroundColor: '#6ac239',
+                                        }}
+                                    />
+                                    <Text style={TrainingPointStyle.ChartBottomText}>
+                                        Kết quả điểm rèn luyện: {points.total_points}
+                                    </Text>
+                                </View>
+                            )}
+                        </>
+                    )}
                 </View>
             </TouchableOpacity>
+            <BottomSheet
+                index={!semester ? 2 : -1}
+                ref={sheetRef}
+                snapPoints={['25%', '50%', '80%']}
+                enablePanDownToClose={true}
+                handleStyle={{ display: 'none' }}
+            >
+                <View style={TrainingPointStyle.HandleContainer}>
+                    <View style={TrainingPointStyle.HandleHeader}>
+                        <Text style={TrainingPointStyle.HandleHeaderText}>Chọn học kỳ cần xem thống kê</Text>
+                    </View>
+                    <View style={TrainingPointStyle.HandleButton}>
+                        <Button textColor="white" onPress={() => sheetRef?.current?.close()}>
+                            <Text style={TrainingPointStyle.HandleButtonText}>Đóng</Text>
+                        </Button>
+                    </View>
+                </View>
+                <BottomSheetFlatList
+                    data={semesters}
+                    renderItem={renderSemester}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ backgroundColor: 'white' }}
+                />
+            </BottomSheet>
         </GestureHandlerRootView>
     );
 };
@@ -272,13 +316,13 @@ const TrainingPoint = ({ navigation }) => {
 const TrainingPointStyle = StyleSheet.create({
     ChartContainer: {
         backgroundColor: '#333340',
-        paddingBottom: 40,
+        paddingBottom: 20,
         borderRadius: 12,
         paddingHorizontal: 12,
         margin: 4,
     },
     ChartTitle: {
-        marginTop: 32,
+        marginTop: 20,
         marginBottom: 36,
     },
     ChartTitleText: {
@@ -305,6 +349,16 @@ const TrainingPointStyle = StyleSheet.create({
     ChartDetailsText: {
         height: 16,
         color: 'lightgray',
+    },
+    ChartBottom: {
+        marginTop: 16,
+        padding: 8,
+    },
+    ChartBottomText: {
+        color: 'lightgray',
+        fontFamily: Theme.SemiBold,
+        fontSize: 16,
+        textAlign: 'center',
     },
     HandleContainer: {
         flexDirection: 'row',

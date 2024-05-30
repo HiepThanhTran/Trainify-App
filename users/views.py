@@ -97,6 +97,12 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
             academic_year__start_date__year__gte=student_academic_year.start_date.year,
             academic_year__start_date__year__lt=student_academic_year.end_date.year
         )
+        
+        # paginator = paginators.SemesterPagination()
+        # page = paginator.paginate_queryset(queryset=semesters, request=request)
+        # if page is not None:
+        #     serializer = schools_serializer.SemesterSerializer(page, many=True)
+        #     return paginator.get_paginated_response(serializer.data)
 
         serializer = schools_serializer.SemesterSerializer(semesters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

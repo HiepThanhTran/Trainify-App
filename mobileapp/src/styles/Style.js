@@ -53,7 +53,6 @@ const GlobalStyle = StyleSheet.create({
         fontFamily: Theme.Bold,
     },
     HeaderButton: {
-        width: screenWidth / 4,
         height: 40,
         padding: 8,
         borderRadius: 16,

@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
 import { SignOutAction } from '../../store/actions/AccountAction';
@@ -11,30 +12,32 @@ const Profile = ({ navigation }) => {
     const dispatch = useAccountDispatch();
     const currentAccount = useAccount();
 
-    const Sections = [
-        {
-            title: 'Tiện ích',
-            items: [
-                { label: 'Điểm rèn luyện', icon: 'star-outline', screen: 'TrainingPoint' },
-                { label: 'Hoạt động của sinh viên', icon: 'ticket', screen: '' },
-            ],
-        },
-        {
-            title: 'Cài đặt',
-            items: [
-                { label: 'Cài đặt bảo mật', icon: 'shield-account', screen: '' },
-                { label: 'Cài đặt thông báo', icon: 'bell-outline', screen: '' },
-                // { label: 'Cài đặt chung', icon: 'cog-outline', screen: '' },
-            ],
-        },
-        {
-            title: 'Trợ giúp',
-            items: [
-                { label: 'Trung tâm trợ giúp', icon: 'help-circle-outline', screen: '' },
-                // { label: '', icon: '', screen: '' },
-            ],
-        },
-    ];
+    const Sections = useMemo(() => {
+        return [
+            {
+                title: 'Tiện ích',
+                items: [
+                    { label: 'Điểm rèn luyện', icon: 'star-outline', screen: 'TrainingPoint' },
+                    { label: 'Hoạt động của sinh viên', icon: 'ticket', screen: '' },
+                ],
+            },
+            {
+                title: 'Cài đặt',
+                items: [
+                    { label: 'Cài đặt bảo mật', icon: 'shield-account', screen: '' },
+                    { label: 'Cài đặt thông báo', icon: 'bell-outline', screen: '' },
+                    // { label: 'Cài đặt chung', icon: 'cog-outline', screen: '' },
+                ],
+            },
+            {
+                title: 'Trợ giúp',
+                items: [
+                    { label: 'Trung tâm trợ giúp', icon: 'help-circle-outline', screen: 'Test' },
+                    // { label: '', icon: '', screen: '' },
+                ],
+            },
+        ];
+    });
 
     const handleSignout = () => {
         const SignOut = async () => {

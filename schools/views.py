@@ -2,7 +2,7 @@ from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from core.base import perms
+from core.base import paginators, perms
 from core.utils import dao, exporter, factory
 from schools import serializers as schools_serializers
 from schools.models import Class, Criterion, Semester
@@ -32,6 +32,7 @@ class CriterionViewSet(viewsets.ViewSet, generics.ListAPIView):
 class SemesterViewSet(viewsets.ViewSet, generics.ListAPIView):
 	queryset = Semester.objects.filter(is_active=True)
 	serializer_class = schools_serializers.SemesterSerializer
+	pagination_class = paginators.SemesterPagination
 
 
 class StatisticsViewSet(viewsets.ViewSet):
