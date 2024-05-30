@@ -14,8 +14,9 @@ export const endPoints = {
     //// Students
     students: '/students/', // GET: Lấy danh sách sinh viên
     'student-detail': (studentID) => `/students/${studentID}/`, // GET: Lấy thông tin chi tiết của sinh viên
+    'student-semesters': (studentID) => `/students/${studentID}/semesters`,
     'student-activities': (studentID) => `/students/${studentID}/activities/`, // GET: Lấy danh sách hoạt động của sinh viên
-    'student-points': (studentID, semesterCode) => `/students${studentID}/points/${semesterCode}`, // GET: Thống kê điểm rèn luyện của sinh viên
+    'student-points': (studentID, semesterCode) => `/students/${studentID}/points/${semesterCode}`, // GET: Thống kê điểm rèn luyện của sinh viên
 
     //// Assistant
     assistants: '/assistants/', // GET: Lấy danh sách trợ lý sinh viên

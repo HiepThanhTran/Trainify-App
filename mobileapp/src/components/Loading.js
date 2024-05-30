@@ -4,9 +4,9 @@ import Theme from '../styles/Theme';
 
 const Loading = ({ children, ...options }) => {
     return (
-        <View style={{ ...GlobalStyle.Container , ...options.style}}>
+        <View style={{ ...GlobalStyle.Container, ...options.style }}>
             {children}
-            <ActivityIndicator size="large" color={Theme.PrimaryColor} />
+            <ActivityIndicator size={options?.size ?? 'large'} color={Theme.PrimaryColor} />
         </View>
     );
 };

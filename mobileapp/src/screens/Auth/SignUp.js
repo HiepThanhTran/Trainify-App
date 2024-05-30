@@ -6,14 +6,16 @@ import AuthFormButton from '../../components/Auth/AuthFormButton';
 import AuthFormInput from '../../components/Auth/AuthFormInput';
 import Helper from '../../components/Helper';
 import APIs, { endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import AuthStyle from './Style';
 
 const SignUp = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
+
     const [account, setAccount] = useState({});
     const [errorMsg, setErrorMsg] = useState('');
-    const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -80,7 +82,7 @@ const SignUp = ({ navigation }) => {
             if (res.status === 201) setModalVisible(!modalVisible);
         } catch (error) {
             if (error.response) {
-                if (error.response.status === status.HTTP_400_BAD_REQUEST) {
+                if (error.response.status === Status.HTTP_400_BAD_REQUEST) {
                     setErrorVisible(true);
                     setErrorMsg(error.response.data.detail);
                 }
@@ -137,7 +139,7 @@ const SignUp = ({ navigation }) => {
                                     <View style={GlobalStyle.ModalView}>
                                         <Text style={GlobalStyle.ModalTitle}>Đăng ký thành công</Text>
                                         <Button
-                                            onPress={() => navigation.navigate('Signin')}
+                                            onPress={() => navigation.navigate('SignIn')}
                                             icon="account"
                                             textColor="white"
                                             style={AuthStyle.Button}

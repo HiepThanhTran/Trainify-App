@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from activities import serializers as activities_serializers
 from core.base import paginators, perms
 from core.utils import dao
+from schools import serializers as schools_serializer
 from schools.models import Semester
 from users import serializers as users_serializers
 from users.models import Account, Assistant, Student
@@ -82,7 +83,29 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         if self.action in ["get_activities", "get_points"]:
             return [perms.HasInStudentGroup()]
 
+        if self.action in ["get_semesters"]:
+            return [permissions.AllowAny()]
+
         return [perms.HasInAssistantGroup()]
+    
+    @action(methods=['get'],detail=True, url_path='semesters')
+    def get_semesters(self, request, pk=None):
+        student = self.get_object()
+        student_academic_year = student.academic_year
+
+        semesters = Semester.objects.filter(
+            academic_year__start_date__year__gte=student_academic_year.start_date.year,
+            academic_year__start_date__year__lt=student_academic_year.end_date.year
+        )
+        
+        # paginator = paginators.SemesterPagination()
+        # page = paginator.paginate_queryset(queryset=semesters, request=request)
+        # if page is not None:
+        #     serializer = schools_serializer.SemesterSerializer(page, many=True)
+        #     return paginator.get_paginated_response(serializer.data)
+
+        serializer = schools_serializer.SemesterSerializer(semesters, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=True, url_path="activities")
     def get_activities(self, request, pk=None):

@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import Theme from "../../styles/Theme";
+import { StyleSheet } from 'react-native';
+import Theme from '../../styles/Theme';
 
 const CommentStyle = StyleSheet.create({
     CommentContainer: {
@@ -19,7 +19,7 @@ const CommentStyle = StyleSheet.create({
     CommentCardImage: {
         width: 90,
         height: 90,
-        marginLeft: -16
+        marginLeft: -16,
     },
     CommentImage: {
         width: '100%',
@@ -30,7 +30,7 @@ const CommentStyle = StyleSheet.create({
     },
     CommentName: {
         fontFamily: Theme.Bold,
-        fontSize: 20
+        fontSize: 20,
     },
     CommentTime: {
         fontFamily: Theme.Regular,

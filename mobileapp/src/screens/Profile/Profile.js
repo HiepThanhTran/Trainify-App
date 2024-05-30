@@ -1,47 +1,64 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { useMemo } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
+import { Roles } from '../../configs/Constants';
 import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
-import GlobalStyle from '../../styles/Style';
+import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { ProfileStyle } from './Style';
+import { removeTokens } from '../../utils/Utilities';
 
 const Profile = ({ navigation }) => {
     const dispatch = useAccountDispatch();
     const currentAccount = useAccount();
 
-    const Sections = [
-        {
-            title: 'Tiện ích',
-            items: [
-                { label: 'Điểm rèn luyện', icon: 'star-outline' },
-                { label: 'Hoạt động của sinh viên', icon: 'ticket' },
-            ],
-        },
-        {
-            title: 'Cài đặt',
-            items: [
-                { label: 'Cài đặt bảo mật', icon: 'shield-account' },
-                { label: 'Cài đặt thông báo', icon: 'bell-outline' },
-                // { label: 'Cài đặt chung', icon: 'cog-outline' },
-            ],
-        },
-        {
-            title: 'Trợ giúp',
-            items: [
-                { label: 'Trung tâm trợ giúp', icon: 'help-circle-outline' },
-                // { label: '', icon: '' },
-            ],
-        },
-    ];
+    const Sections = useMemo(() => {
+        return [
+            {
+                title: 'Chức năng',
+                roles: [Roles.ADMINISTRATOR, Roles.SPECIALIST, Roles.ASSISTANT],
+                items: [
+                    { label: 'Quản lý hoạt động', icon: 'wrench-outline', screen: 'ActivitySettings' },
+                    // { label: '', icon: '', screen: '' },
+                ],
+            },
+            {
+                title: 'Tiện ích',
+                items: [
+                    { label: 'Điểm rèn luyện', icon: 'star-outline', screen: 'TrainingPoint' },
+                    { label: 'Hoạt động của sinh viên', icon: 'ticket', screen: '' },
+                ],
+            },
+            {
+                title: 'Cài đặt',
+                items: [
+                    { label: 'Cài đặt bảo mật', icon: 'shield-account', screen: '' },
+                    { label: 'Cài đặt thông báo', icon: 'bell-outline', screen: '' },
+                    // { label: 'Cài đặt chung', icon: 'cog-outline', screen: '' },
+                ],
+            },
+            {
+                title: 'Trợ giúp',
+                items: [
+                    { label: 'Trung tâm trợ giúp', icon: 'help-circle-outline', screen: 'Test' },
+                    // { label: '', icon: '', screen: '' },
+                ],
+            },
+        ];
+    });
 
     const handleSignout = () => {
+        const SignOut = async () => {
+            await removeTokens();
+            dispatch(SignOutAction());
+        };
+
         Alert.alert(
             'Đăng xuất',
             'Bạn chắc chắn muốn đăng xuất?',
             [
-                { text: 'Đăng xuất', onPress: () => dispatch(SignOutAction()) },
+                { text: 'Đăng xuất', onPress: SignOut },
                 { text: 'Hủy', style: 'cancel' },
             ],
             { cancelable: true },
@@ -87,7 +104,7 @@ const Profile = ({ navigation }) => {
                                 <TouchableOpacity
                                     activeOpacity={0.6}
                                     key={itemIndex}
-                                    onPress={null}
+                                    onPress={() => goToScreen(item.screen)}
                                     style={ProfileStyle.SectionItem}
                                 >
                                     <View style={ProfileStyle.SectionItemLeft}>
@@ -115,5 +132,88 @@ const Profile = ({ navigation }) => {
         </LinearGradient>
     );
 };
+
+const borderRadiusHeader = 16;
+
+const ProfileStyle = StyleSheet.create({
+    Header: {
+        backgroundColor: 'white',
+        marginTop: screenHeight * 0.1,
+        height: screenHeight * 0.2,
+        borderRadius: borderRadiusHeader,
+        marginHorizontal: 12,
+    },
+    Avatar: {
+        marginTop: -screenHeight * 0.1,
+        width: screenWidth * 0.2,
+        height: screenWidth * 0.2,
+        borderWidth: 4,
+        borderRadius: (screenWidth * 0.2) / 2,
+        borderColor: 'white',
+        backgroundColor: Theme.SecondaryColor,
+    },
+    HeaderButton: {
+        backgroundColor: Theme.PrimaryColor,
+        padding: 8,
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        flexDirection: 'row',
+        borderBottomLeftRadius: borderRadiusHeader,
+        borderBottomRightRadius: borderRadiusHeader,
+    },
+    ButtonText: {
+        color: 'white',
+        fontSize: 14,
+        fontFamily: Theme.Bold,
+        marginHorizontal: 8,
+    },
+    Section: {
+        marginTop: 40,
+        marginHorizontal: 12,
+    },
+    SectionTitle: {
+        fontFamily: Theme.Medium,
+        fontSize: 26,
+    },
+    SectionBody: {
+        borderWidth: 1,
+        marginTop: 24,
+        borderRadius: 8,
+        borderColor: '#eee',
+        overflow: 'hidden',
+        borderBottomWidth: 0,
+    },
+    SectionItem: {
+        backgroundColor: 'white',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 16,
+        paddingHorizontal: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        justifyContent: 'space-between',
+    },
+    SectionItemLeft: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    TextItemLeft: {
+        marginLeft: 8,
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
+    },
+    Footer: {
+        marginVertical: 16,
+    },
+    FooterButton: {
+        width: '60%',
+        flexDirection: 'row',
+        backgroundColor: Theme.PrimaryColor,
+        padding: 12,
+        borderRadius: 12,
+    },
+});
 
 export default Profile;

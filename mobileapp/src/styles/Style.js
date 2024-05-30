@@ -49,22 +49,17 @@ const GlobalStyle = StyleSheet.create({
     },
     ModalButtonText: {
         color: 'white',
-        fontWeight: 'bold',
         textAlign: 'center',
-    },
-    DialogButton: {
-        color: Theme.PrimaryColor,
-        fontSize: 16,
+        fontFamily: Theme.Bold,
     },
     HeaderButton: {
-        width: screenWidth / 4,
         height: 40,
         padding: 8,
         borderRadius: 16,
-        backgroundColor: Theme.PrimaryColor,
+        backgroundColor: '#eee',
     },
     HeaderButtonText: {
-        color: 'white',
+        color: 'black',
         fontFamily: Theme.Bold,
     },
 });

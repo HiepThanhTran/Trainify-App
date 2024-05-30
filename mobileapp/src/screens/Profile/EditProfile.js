@@ -1,148 +1,117 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import mime from 'mime';
-import { useEffect, useState } from 'react';
-import { Alert, Image, Keyboard, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, Image, Keyboard, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, Portal, RadioButton, Snackbar, TextInput } from 'react-native-paper';
 import Loading from '../../components/Loading';
 import { authAPI, endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
 import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
-import GlobalStyle from '../../styles/Style';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
+import GlobalStyle, { screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, getFirstDayOfMoth, getLastDayOfMoth } from '../../utils/Utilities';
-import { EditProfileStyle } from './Style';
+import { formatDate, getFirstDayOfYear, getLastDayOfYear, getNewAccessToken, getTokens } from '../../utils/Utilities';
 
 const EditProfile = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
     const dispatch = useAccountDispatch();
     const currentAccount = useAccount();
 
     const [tempAccount, setTempAccount] = useState(currentAccount.data);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [snackBarMsg, setSnackBarMsg] = useState('sdfsdf');
+    const [snackBarMsg, setSnackBarMsg] = useState('');
     const [canUpdate, setCanUpdate] = useState(false);
+    const [isRendered, setIsRendered] = useState(false);
 
-    const schoolFields = [
-        {
-            label: 'Hệ đào tạo',
-            name: 'educational_system',
-            icon: 'school',
-        },
-        {
-            label: 'Khoa',
-            name: 'faculty',
-            icon: 'school',
-        },
-        {
-            label: 'Khóa',
-            name: 'academic_year',
-            icon: 'calendar',
-        },
-        {
-            label: 'Ngành',
-            name: 'major',
-            icon: 'book-open-page-variant',
-        },
-        {
-            label: 'Lớp',
-            name: 'sclass',
-            icon: 'account-group',
-        },
-    ];
-    const accountFields = [
-        {
-            label: 'Email',
-            name: 'email',
-            value: currentAccount.data.email,
-            icon: 'email',
-            disabled: true,
-        },
-        {
-            label: `Mã số ${currentAccount.data.original_role.toLowerCase()}`,
-            name: 'code',
-            value: currentAccount.data.user.code,
-            icon: 'badge-account',
-            disabled: true,
-        },
-    ];
-    const userFields = [
-        {
-            label: 'Họ',
-            name: 'last_name',
-            icon: 'account-eye',
-        },
-        {
-            label: 'Tên đệm',
-            name: 'middle_name',
-            icon: 'account-eye',
-        },
-        {
-            label: 'Tên',
-            name: 'first_name',
-            icon: 'account-eye',
-        },
-        {
-            label: 'Địa chỉ',
-            name: 'address',
-            icon: 'map-marker',
-        },
-        {
-            label: 'Số điện thoại',
-            name: 'phone_number',
-            icon: 'phone',
-            keyboardType: 'numeric',
-        },
-    ];
+    const schoolFields = useMemo(
+        () => [
+            { label: 'Hệ đào tạo', name: 'educational_system', icon: 'school' },
+            { label: 'Khoa', name: 'faculty', icon: 'school' },
+            { label: 'Khóa', name: 'academic_year', icon: 'calendar' },
+            { label: 'Ngành', name: 'major', icon: 'book-open-page-variant' },
+            { label: 'Lớp', name: 'sclass', icon: 'account-group' },
+        ],
+        [],
+    );
+
+    const accountFields = useMemo(
+        () => [
+            { label: 'Email', name: 'email', value: currentAccount.data.email, icon: 'email', disabled: true },
+            {
+                label: `Mã số ${currentAccount.data.original_role.toLowerCase()}`,
+                name: 'code',
+                value: currentAccount.data.user.code,
+                icon: 'badge-account',
+                disabled: true,
+            },
+        ],
+        [currentAccount],
+    );
+
+    const userFields = useMemo(
+        () => [
+            { label: 'Họ', name: 'last_name', icon: 'account-eye' },
+            { label: 'Tên đệm', name: 'middle_name', icon: 'account-eye' },
+            { label: 'Tên', name: 'first_name', icon: 'account-eye' },
+            { label: 'Địa chỉ', name: 'address', icon: 'map-marker' },
+            { label: 'Số điện thoại', name: 'phone_number', icon: 'phone', keyboardType: 'numeric' },
+        ],
+        [],
+    );
 
     useEffect(() => {
-        checkCanUpdate();
         renderHeaderButton();
+        setIsRendered(true);
     }, [navigation, tempAccount, canUpdate]);
 
     const handleUpdateProfile = async () => {
         let form = new FormData();
-        let count = 0;
         if (currentAccount.data.avatar !== tempAccount.avatar) {
             form.append('avatar', {
                 uri: tempAccount.avatar.uri,
                 type: mime.getType(tempAccount.avatar.uri),
                 name: tempAccount.avatar.fileName,
             });
-            count++;
         }
         for (let key in tempAccount.user) {
             if (currentAccount.data.user[key] !== tempAccount.user[key]) {
                 form.append(key, tempAccount.user[key]);
-                count++;
             }
         }
 
-        if (count > 0) {
-            setLoading(true);
-            setSnackBarVisible(true);
-            try {
-                const accessToken = await AsyncStorage.getItem('access-token');
-                let res = await authAPI(accessToken).patch(endPoints['me-update'], form);
+        setLoading(true);
+        setSnackBarVisible(true);
+        const { accessToken, refreshToken } = await getTokens();
+        try {
+            let res = await authAPI(accessToken).patch(endPoints['me-update'], form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-                if (res.status === status.HTTP_200_OK) {
-                    dispatch(UpdateAccountAction(res.data));
-                    setSnackBarMsg('Cập nhật thành công');
-                }
-            } catch (error) {
-                if (error.response) {
-                    console.error('Response:', error.response.data);
-                } else {
-                    console.error('Error:', error);
-                }
-                setSnackBarMsg('Có lỗi xảy ra khi cập nhật');
-            } finally {
-                setLoading(false);
+            if (res.status === Status.HTTP_200_OK) {
+                dispatch(UpdateAccountAction(res.data));
+                setSnackBarMsg('Cập nhật thành công');
             }
+        } catch (error) {
+            if (error.response) {
+                errorStatus = error.response.status;
+                if (errorStatus === Status.HTTP_401_UNAUTHORIZED || errorStatus === Status.HTTP_403_FORBIDDEN) {
+                    const newAccessToken = await getNewAccessToken(refreshToken, dispatch);
+                    if (newAccessToken) handleUpdateProfile();
+                    else setSnackBarMsg('Có lỗi xảy ra khi cập nhật');
+                }
+            } else if (error.request) {
+                console.error(error.request);
+            } else {
+                console.error(`Error message: ${error.message}`);
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -154,19 +123,8 @@ const EditProfile = ({ navigation }) => {
                 [field]: value,
             },
         }));
-    };
-
-    const checkCanUpdate = () => {
-        let isEdited = currentAccount.data.avatar !== tempAccount.avatar;
-
-        for (let key in tempAccount.user) {
-            if (tempAccount.user[key] !== '' && tempAccount.user[key] !== currentAccount.data.user[key]) {
-                isEdited = true;
-                break;
-            }
-        }
-
-        setCanUpdate(isEdited);
+        if (value !== '' && value !== currentAccount.data.user[field]) setCanUpdate(true);
+        else setCanUpdate(false);
     };
 
     const handleSelection = async (requestPermission, launchFunction) => {
@@ -186,6 +144,7 @@ const EditProfile = ({ navigation }) => {
                     ...current,
                     avatar: res.assets[0],
                 }));
+                setCanUpdate(true);
             }
         }
         setModalVisible(false);
@@ -214,7 +173,14 @@ const EditProfile = ({ navigation }) => {
                         ...(!canUpdate ? { backgroundColor: 'rgba(52, 52, 52, 0.8)' } : {}),
                     }}
                 >
-                    <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
+                    <Text
+                        style={{
+                            ...GlobalStyle.HeaderButtonText,
+                            ...(!canUpdate ? { color: 'lightgrey' } : {}),
+                        }}
+                    >
+                        Cập nhật
+                    </Text>
                 </TouchableOpacity>
             ),
         });
@@ -226,10 +192,61 @@ const EditProfile = ({ navigation }) => {
             onChange: handleDatePickerOnChange,
             mode: 'date',
             is24Hour: true,
-            minimumDate: getFirstDayOfMoth(new Date(tempAccount.user.date_of_birth)),
-            maximumDate: getLastDayOfMoth(new Date(tempAccount.user.date_of_birth)),
+            display: 'spinner',
+            minimumDate: getFirstDayOfYear(new Date(tempAccount.user.date_of_birth)),
+            maximumDate: getLastDayOfYear(new Date(tempAccount.user.date_of_birth)),
         });
     };
+
+    const renderModalPicker = () => {
+        return (
+            <Portal>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View style={GlobalStyle.ModalContainer}>
+                        <View style={GlobalStyle.ModalView}>
+                            <Text style={GlobalStyle.ModalTitle}>Chọn lựa chọn</Text>
+                            <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleGallerySelection}>
+                                <Text style={GlobalStyle.ModalButtonText}>Thư viện</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleCameraSelection}>
+                                <Text style={GlobalStyle.ModalButtonText}>Camera</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={GlobalStyle.ModalButton} onPress={() => setModalVisible(false)}>
+                                <Text style={GlobalStyle.ModalButtonText}>Hủy</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            </Portal>
+        );
+    };
+
+    const renderSnackbar = () => {
+        return (
+            <Portal>
+                <Snackbar
+                    visible={snackBarVisible}
+                    action={!loading ? { label: 'Tắt', onPress: () => setSnackBarVisible(false) } : null}
+                    onDismiss={() => setSnackBarVisible(false)}
+                >
+                    {!loading ? (
+                        snackBarMsg
+                    ) : (
+                        <Loading size="small" style={{ flexDirection: 'row' }}>
+                            <Text style={EditProfileStyle.SnackbarText}>Đang cập nhật...</Text>
+                        </Loading>
+                    )}
+                </Snackbar>
+            </Portal>
+        );
+    };
+
+    if (!isRendered) return <Loading />;
 
     return (
         <View style={GlobalStyle.BackGround}>
@@ -260,31 +277,6 @@ const EditProfile = ({ navigation }) => {
                             {currentAccount.data.user.last_name} {currentAccount.data.user.middle_name}{' '}
                             {currentAccount.data.user.first_name}
                         </Text>
-
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
-                            visible={modalVisible}
-                            onRequestClose={() => setModalVisible(false)}
-                        >
-                            <View style={GlobalStyle.ModalContainer}>
-                                <View style={GlobalStyle.ModalView}>
-                                    <Text style={GlobalStyle.ModalTitle}>Chọn lựa chọn</Text>
-                                    <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleGallerySelection}>
-                                        <Text style={GlobalStyle.ModalButtonText}>Thư viện</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={GlobalStyle.ModalButton} onPress={handleCameraSelection}>
-                                        <Text style={GlobalStyle.ModalButtonText}>Camera</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={GlobalStyle.ModalButton}
-                                        onPress={() => setModalVisible(false)}
-                                    >
-                                        <Text style={GlobalStyle.ModalButtonText}>Hủy</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </Modal>
                     </LinearGradient>
 
                     <View style={{ ...EditProfileStyle.SchoolContainer, ...EditProfileStyle.SectionContainer }}>
@@ -374,26 +366,109 @@ const EditProfile = ({ navigation }) => {
                             </Text>
                         </TouchableOpacity>
 
-                        <Portal>
-                            <Snackbar
-                                visible={snackBarVisible}
-                                action={!loading ? { label: 'Tắt', onPress: () => setSnackBarVisible(false) } : null}
-                                onDismiss={() => setSnackBarVisible(false)}
-                            >
-                                {!loading ? (
-                                    snackBarMsg
-                                ) : (
-                                    <Loading style={{ flexDirection: 'row' }}>
-                                        <Text style={EditProfileStyle.SnackbarText}>Đang cập nhật...</Text>
-                                    </Loading>
-                                )}
-                            </Snackbar>
-                        </Portal>
+                        {renderModalPicker()}
+                        {renderSnackbar()}
                     </View>
                 </TouchableOpacity>
             </ScrollView>
         </View>
     );
 };
+
+export const EditProfileStyle = StyleSheet.create({
+    AvatarContainer: {
+        flexWrap: 'wrap',
+        marginHorizontal: 12,
+        marginVertical: 20,
+        padding: 4,
+        borderRadius: 20,
+        overflow: 'hidden',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#1e1e1e',
+    },
+    FullName: {
+        flex: 1,
+        fontSize: 16,
+        fontFamily: Theme.Bold,
+        textAlign: 'center',
+    },
+    Avatar: {
+        width: 100,
+        height: 100,
+        borderWidth: 2,
+        borderRadius: 20,
+        borderColor: 'lightgrey',
+        backgroundColor: Theme.SecondaryColor,
+    },
+    CameraIcon: {
+        position: 'absolute',
+        bottom: -2,
+        left: screenWidth / 5.2,
+        zIndex: 999,
+        backgroundColor: 'gray',
+        borderRadius: 8,
+    },
+    Header: {
+        fontSize: 20,
+        marginBottom: 12,
+        fontFamily: Theme.Bold,
+    },
+    SectionContainer: {
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: Theme.PrimaryColor,
+        marginHorizontal: 12,
+    },
+    SchoolContainer: {
+        marginBottom: 20,
+        backgroundColor: Theme.SecondaryColor,
+    },
+    SchoolItem: {
+        marginBottom: 12,
+        flexDirection: 'row',
+    },
+    SchoolItemText: {
+        fontSize: 16,
+        marginLeft: 12,
+        fontFamily: Theme.SemiBold,
+    },
+    FormContainer: {
+        marginBottom: 6,
+        flexDirection: 'column',
+    },
+    FormWrap: {
+        marginVertical: 6,
+    },
+    FormText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
+    },
+    FormData: {
+        borderRadius: 0,
+        borderWidth: 2,
+        backgroundColor: Theme.SecondaryColor,
+        borderColor: Theme.PrimaryColor,
+    },
+    RadioGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    RadioWrap: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    RadioText: {
+        fontSize: 16,
+        fontFamily: Theme.SemiBold,
+    },
+    SnackbarText: {
+        fontFamily: Theme.SemiBold,
+        color: 'white',
+        marginRight: 8,
+    },
+});
 
 export default EditProfile;

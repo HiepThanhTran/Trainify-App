@@ -1,10 +1,10 @@
-import { StyleSheet } from "react-native";
-import Theme from "../../styles/Theme";
+import { StyleSheet } from 'react-native';
+import Theme from '../../styles/Theme';
 
 export default AllStyle = StyleSheet.create({
     ContainerScreen: {
         marginHorizontal: 12,
-        marginTop: 70
+        marginTop: 32,
     },
     ContainerScreenDetail: {
         marginHorizontal: 12,
@@ -17,7 +17,7 @@ export default AllStyle = StyleSheet.create({
     BulletinTitle: {
         fontSize: 28,
         color: Theme.PrimaryColor,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     Search: {
         flexDirection: 'row',
@@ -27,7 +27,7 @@ export default AllStyle = StyleSheet.create({
         borderRadius: 10,
         padding: 12,
         marginTop: 20,
-        marginBottom: 20
+        marginBottom: 20,
     },
     SearchInput: {
         width: '100%',
@@ -43,7 +43,7 @@ export default AllStyle = StyleSheet.create({
         borderWidth: 1,
         borderColor: Theme.PrimaryColor,
         padding: 15,
-        borderRadius: 16
+        borderRadius: 16,
     },
     CardImage: {
         justifyContent: 'center',
@@ -62,14 +62,14 @@ export default AllStyle = StyleSheet.create({
         fontSize: 25,
         marginTop: 20,
         marginBottom: 10,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     Content: {
         width: '100%',
         fontSize: 20,
         marginBottom: 5,
         fontFamily: Theme.Regular,
-        lineHeight: 30
+        lineHeight: 30,
     },
     Date: {
         fontSize: 18,
@@ -82,7 +82,7 @@ export default AllStyle = StyleSheet.create({
         borderColor: Theme.PrimaryColor,
         padding: 10,
         borderRadius: 10,
-        marginTop: 20
+        marginTop: 20,
     },
     ContentDetail: {
         fontSize: 18,
@@ -94,13 +94,13 @@ export default AllStyle = StyleSheet.create({
     DateTime: {
         fontSize: 13.2,
         fontFamily: Theme.SemiBold,
-        color: 'gray'
+        color: 'gray',
     },
     Title: {
         fontSize: 25,
         marginTop: 20,
         marginBottom: 10,
-        fontFamily: Theme.Bold
+        fontFamily: Theme.Bold,
     },
     TitleDetail: {
         fontSize: 25,
@@ -109,7 +109,7 @@ export default AllStyle = StyleSheet.create({
     },
     ImageDetail: {
         width: '100%',
-        height: '100%'
+        height: '100%',
     },
     ActivitContainer: {
         marginTop: 20
@@ -117,7 +117,7 @@ export default AllStyle = StyleSheet.create({
     ActivityTitle: {
         fontFamily: Theme.Bold,
         fontSize: 20,
-        marginBottom: 10
+        marginBottom: 10,
     },
     ActivityImage: {
         width: '100%',
@@ -127,19 +127,19 @@ export default AllStyle = StyleSheet.create({
     AcitivityDetailText: {
         fontSize: 18,
         fontFamily: Theme.SemiBold,
-        marginBottom: 10
+        marginBottom: 10,
     },
     More: {
         fontFamily: Theme.Bold,
         fontSize: 17.2,
         marginTop: -15,
-        marginBottom: 10
+        marginBottom: 10,
     },
     Time: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     DateDetail: {
         fontSize: 18,

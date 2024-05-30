@@ -1,5 +1,4 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Keyboard, ScrollView, TouchableOpacity, View } from 'react-native';
@@ -8,18 +7,20 @@ import AuthFormButton from '../../components/Auth/AuthFormButton';
 import AuthFormInput from '../../components/Auth/AuthFormInput';
 import Helper from '../../components/Helper';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
-import { status } from '../../configs/Constants';
+import { Status } from '../../configs/Constants';
 import { SignInAction } from '../../store/actions/AccountAction';
 import { useAccountDispatch } from '../../store/contexts/AccountContext';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
+import { setTokens } from '../../utils/Utilities';
 import AuthStyle from './Style';
 
 const SignIn = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
     const dispatch = useAccountDispatch();
 
     const [account, setAccount] = useState({});
     const [errorMsg, setErrorMsg] = useState('');
-    const [loading, setLoading] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -60,10 +61,7 @@ const SignIn = ({ navigation }) => {
                 client_secret: CLIENT_SECRET,
             });
 
-            await AsyncStorage.multiSet([
-                ['access-token', tokens.data.access_token],
-                ['refresh-token', tokens.data.refresh_token],
-            ]);
+            const { accessToken } = await setTokens(tokens);
 
             console.log(CLIENT_ID)
             console.log(CLIENT_SECRET)
@@ -71,13 +69,13 @@ const SignIn = ({ navigation }) => {
             console.log(tokens.data.refresh_token)
 
             setTimeout(async () => {
-                let user = await authAPI(tokens.data.access_token).get(endPoints['me']);
+                let user = await authAPI(accessToken).get(endPoints['me']);
 
-                if (user.status === status.HTTP_200_OK) dispatch(SignInAction(user.data));
+                if (user.status === Status.HTTP_200_OK) dispatch(SignInAction(user.data));
             }, 100);
         } catch (error) {
             if (error.response) {
-                if (error.response.status === status.HTTP_400_BAD_REQUEST) {
+                if (error.response.status === Status.HTTP_400_BAD_REQUEST) {
                     setErrorVisible(true);
                     setErrorMsg('Email hoặc mật khẩu không chính xác');
                 }

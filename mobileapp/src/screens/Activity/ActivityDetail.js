@@ -1,9 +1,18 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import 'moment/locale/vi';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import RenderHTML from 'react-native-render-html';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';

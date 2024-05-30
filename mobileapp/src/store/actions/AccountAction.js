@@ -14,8 +14,6 @@ const SignInAction = (payload) => {
 };
 
 const SignOutAction = () => {
-    AsyncStorage.multiRemove(['access-token', 'refresh-token']);
-
     return {
         type: SIGN_OUT,
     };

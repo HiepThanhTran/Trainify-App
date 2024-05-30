@@ -41,6 +41,17 @@ const AuthStyle = StyleSheet.create({
         marginLeft: 5,
         fontFamily: Theme.Bold,
     },
+    Button: {
+        width: '100%',
+        backgroundColor: Theme.PrimaryColor,
+        borderRadius: 16,
+        marginBottom: 12,
+    },
+    ButtonText: {
+        color: 'white',
+        fontSize: 20,
+        fontFamily: Theme.Bold,
+    },
 });
 
 export default AuthStyle;

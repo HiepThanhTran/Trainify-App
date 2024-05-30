@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../configs/APIs';
+import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, isCloseToBottom } from '../../utils/Utilities';
@@ -22,18 +23,23 @@ import AllStyle from './AllStyle';
 const screenWidth = Dimensions.get('window').width;
 
 const Bulletin = ({ navigation }) => {
+    const { loading, setLoading } = useGlobalContext();
+
     const [bulletins, setBulletins] = useState([]);
     const [page, setPage] = useState(1);
     const [title, setTitle] = useState('');
-    const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
     const loadBulletins = async () => {
         if (page > 0) {
             setLoading(true);
             try {
-                let url = `${endPoints['bulletins']}?page=${page}&title=${title}`;
-                let res = await APIs.get(url);
+                let res = await APIs.get(endPoints['bulletins'], {
+                    params: {
+                        page: page,
+                        title: title,
+                    },
+                });
                 if (res.data.next === null) {
                     setPage(0);
                 }
@@ -69,7 +75,7 @@ const Bulletin = ({ navigation }) => {
 
     const onRefresh = useCallback(async () => {
         setPage(1);
-        setBulletins([])
+        setBulletins([]);
         setRefreshing(true);
         await loadBulletins();
         setRefreshing(false);
@@ -77,9 +83,9 @@ const Bulletin = ({ navigation }) => {
 
     const goToBulletinDetail = (bulletinID, title) => {
         navigation.navigate('HomeStack', {
-            screen: "BulletinDetail", 
-            params: { bulletinID: bulletinID, title: title}
-         });
+            screen: 'BulletinDetail',
+            params: { bulletinID: bulletinID, title: title },
+        });
     };
 
     return (
@@ -99,7 +105,6 @@ const Bulletin = ({ navigation }) => {
                         value={title}
                     />
                 </View>
-
                 <ScrollView
                     style={AllStyle.Container}
                     onScroll={loadMore}
@@ -122,7 +127,7 @@ const Bulletin = ({ navigation }) => {
                                     <RenderHTML
                                         contentWidth={screenWidth}
                                         source={{ html: bulletin.content }}
-                                        baseStyle= {AllStyle.Content}
+                                        baseStyle={AllStyle.Content}
                                         defaultTextProps={{
                                             numberOfLines: 2,
                                             ellipsizeMode: 'tail',
