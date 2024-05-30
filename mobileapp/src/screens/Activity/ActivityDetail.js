@@ -34,8 +34,17 @@ const ActivityDetail = ({ route }) => {
    const { data: accountData } = useAccount();
    const activityID = route?.params?.activityID;
    const [isFormEditVisible, setIsFormEditVisible] = useState(false);
+   const [selectedCommentID, setSelectedCommentID] = useState(null);
    const bottomSheetRef = useRef(BottomSheet);
    const [commentID, setCommentID] = useState(null);
+
+   const handleToggleCommentForm = (commentID) => {
+      if (selectedCommentID === commentID) {
+         setSelectedCommentID(null);
+      } else {
+         setSelectedCommentID(commentID);
+      }
+   };
 
    const loadActivityDetail = async () => {
       try {
@@ -118,13 +127,15 @@ const ActivityDetail = ({ route }) => {
          'Xóa bình luận',
          'Bạn chắc chắn muốn xóa bình luận này không?',
          [
-             { text: 'Có', onPress: () => {
+            {
+               text: 'Có', onPress: () => {
                   deleteComment(commentID);
-             } },
-             { text: 'Không', style: 'cancel' },
+               }
+            },
+            { text: 'Không', style: 'cancel' },
          ],
          { cancelable: true },
-     );
+      );
    }
 
    useEffect(() => {
@@ -243,16 +254,12 @@ const ActivityDetail = ({ route }) => {
                                  <View key={comment.id} style={AllStyle.Card}>
                                     {(comment.account.id === accountData?.id) && (
                                        <View style={CommentStyle.CommentEditContainer}>
-                                          <TouchableOpacity onPress={() => setIsFormEditVisible(!isFormEditVisible)}>
+                                          <TouchableOpacity onPress={() => handleToggleCommentForm(comment.id)}>
                                              <Text style={CommentStyle.CommentEdit}>...</Text>
                                           </TouchableOpacity>
-                                          {isFormEditVisible && (
+                                          {selectedCommentID === comment.id && (
                                              <View style={CommentStyle.FormEdit}>
-                                                <TouchableOpacity onPress={() => {
-                                                   setCommentID(comment.id)
-                                                   console.log(bottomSheetRef.current)
-                                                   bottomSheetRef.current?.expand()
-                                                }}>
+                                                <TouchableOpacity onPress={() => handleEditComment(comment.id)}>
                                                    <Text style={CommentStyle.FormEditText}>Chỉnh sửa</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
@@ -310,8 +317,8 @@ const ActivityDetail = ({ route }) => {
                      flex: 1,
                      alignItems: 'center',
                   }}>
-                     <View style={{width: '100%', borderWidth: 1}}>
-                           <Text>Hello</Text>
+                     <View style={{ width: '100%', borderWidth: 1 }}>
+                        <Text>Hello</Text>
                      </View>
                   </BottomSheetView>
                </BottomSheet>
