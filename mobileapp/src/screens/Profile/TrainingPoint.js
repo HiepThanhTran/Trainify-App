@@ -1,9 +1,9 @@
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BarChart } from 'react-native-gifted-charts';
-import { Button } from 'react-native-paper';
+import { Button, Chip } from 'react-native-paper';
 import Loading from '../../components/Loading';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { Status } from '../../configs/Constants';
@@ -226,67 +226,93 @@ const TrainingPoint = ({ navigation }) => {
 
     return (
         <GestureHandlerRootView>
-            <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => sheetRef?.current?.close()}>
-                <View style={TrainingPointStyle.ChartContainer}>
-                    {renderChartTitle()}
-                    {loading ? (
-                        <Loading />
-                    ) : (
-                        <>
-                            <BarChart
-                                data={dataChart}
-                                hideRules
-                                isAnimated
-                                height={semester ? 160 : 80}
-                                spacing={8}
-                                barWidth={14}
-                                labelWidth={40}
-                                noOfSections={semester ? 5 : 2}
-                                maxValue={100}
-                                barBorderTopLeftRadius={4}
-                                barBorderTopRightRadius={4}
-                                xAxisColor={'lightgray'}
-                                yAxisColor={'lightgray'}
-                                yAxisTextStyle={{ color: 'lightgray' }}
-                                xAxisLabelTextStyle={{ color: 'lightgray', textAlign: 'center' }}
-                            />
-                            {!semester ? (
-                                <TouchableOpacity
-                                    style={{
-                                        ...TrainingPointStyle.ChartBottom,
-                                        borderRadius: 8,
-                                        backgroundColor: Theme.PrimaryColor,
-                                    }}
-                                    onPress={() => sheetRef?.current?.expand()}
-                                >
-                                    <Text style={TrainingPointStyle.ChartBottomText}>Vui lòng chọn học kỳ</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <View
-                                    style={{
-                                        ...TrainingPointStyle.ChartBottom,
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
+            <ScrollView>
+                <TouchableOpacity activeOpacity={1} onPress={() => sheetRef?.current?.close()}>
+                    <View style={TrainingPointStyle.ChartContainer}>
+                        {renderChartTitle()}
+                        {loading ? (
+                            <Loading />
+                        ) : (
+                            <>
+                                <BarChart
+                                    data={dataChart}
+                                    hideRules
+                                    isAnimated
+                                    height={semester ? 160 : 80}
+                                    spacing={8}
+                                    barWidth={14}
+                                    labelWidth={40}
+                                    noOfSections={semester ? 5 : 2}
+                                    maxValue={100}
+                                    barBorderTopLeftRadius={4}
+                                    barBorderTopRightRadius={4}
+                                    xAxisColor={'lightgray'}
+                                    yAxisColor={'lightgray'}
+                                    yAxisTextStyle={{ color: 'lightgray' }}
+                                    xAxisLabelTextStyle={{ color: 'lightgray', textAlign: 'center' }}
+                                />
+                                {!semester ? (
+                                    <TouchableOpacity
+                                        style={{
+                                            ...TrainingPointStyle.ChartBottom,
+                                            borderRadius: 8,
+                                            backgroundColor: Theme.PrimaryColor,
+                                        }}
+                                        onPress={() => sheetRef?.current?.expand()}
+                                    >
+                                        <Text style={TrainingPointStyle.ChartBottomText}>Vui lòng chọn học kỳ</Text>
+                                    </TouchableOpacity>
+                                ) : (
                                     <View
                                         style={{
-                                            ...TrainingPointStyle.ChartDetailsDot,
-                                            backgroundColor: '#6ac239',
+                                            ...TrainingPointStyle.ChartBottom,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
                                         }}
-                                    />
-                                    <Text style={TrainingPointStyle.ChartBottomText}>
-                                        Kết quả điểm rèn luyện: {points.total_points}
-                                    </Text>
-                                </View>
-                            )}
-                        </>
-                    )}
+                                    >
+                                        <View
+                                            style={{
+                                                ...TrainingPointStyle.ChartDetailsDot,
+                                                backgroundColor: '#6ac239',
+                                            }}
+                                        />
+                                        <Text style={TrainingPointStyle.ChartBottomText}>
+                                            Kết quả điểm rèn luyện: {points.total_points}
+                                        </Text>
+                                    </View>
+                                )}
+                            </>
+                        )}
+                    </View>
+                </TouchableOpacity>
+
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        marginHorizontal: 8,
+                        justifyContent: 'space-evenly',
+                    }}
+                >
+                    {criterions.map((c) => (
+                        <TouchableOpacity>
+                            <Chip
+                                style={{ margin: 4 }}
+                                // mode="outlined"
+                                key={c.id}
+                                icon="shape-outline"
+                            >
+                                {c.name}
+                            </Chip>
+                        </TouchableOpacity>
+                    ))}
                 </View>
-            </TouchableOpacity>
+            </ScrollView>
+
             <BottomSheet
-                index={!semester ? 2 : -1}
+                // index={!semester ? 2 : -1}
+                index={-1}
                 ref={sheetRef}
                 snapPoints={['25%', '50%', '80%']}
                 enablePanDownToClose={true}

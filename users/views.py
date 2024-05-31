@@ -132,8 +132,8 @@ class StudentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         semester = get_object_or_404(queryset=Semester, code=semester_code)
         student_summary, training_points = dao.statistics_by_student(semester=semester, student=self.get_object())
 
-        criterion_name = request.query_params.get("criterion")
-        if criterion_name:
-            student_summary["training_points"] = training_points.filter(criterion__icontains=criterion_name)
+        criterion_id = request.query_params.get("criterion_id")
+        if criterion_id:
+            student_summary["training_points"] = training_points.get(criterion_id=criterion_id)
 
         return Response(data=student_summary, status=status.HTTP_200_OK)
