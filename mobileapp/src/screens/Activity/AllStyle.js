@@ -92,7 +92,7 @@ export default AllStyle = StyleSheet.create({
         marginBottom: 20,
     },
     DateTime: {
-        fontSize: 14,
+        fontSize: 13.2,
         fontFamily: Theme.SemiBold,
         color: 'gray',
     },
@@ -143,13 +143,12 @@ export default AllStyle = StyleSheet.create({
     },
     DateDetail: {
         fontSize: 18,
-        marginTop: 10,
         fontFamily: Theme.SemiBold
     },
     RichEditorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: 'white',
         borderRadius: 10,
         padding: 10,
         marginBottom: 10,
