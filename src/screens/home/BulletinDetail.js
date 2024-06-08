@@ -6,6 +6,7 @@ import Loading from '../../components/common/Loading';
 import Searchbar from '../../components/common/Searchbar';
 import CardList from '../../components/home/CardList';
 import APIs, { endPoints } from '../../configs/APIs';
+import { statusCode } from '../../configs/Constants';
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle, { screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
@@ -38,7 +39,7 @@ const BulletinDetail = ({ navigation, route }) => {
       setBulletinLoading(true);
       try {
          let res = await APIs.get(endPoints['bulletin-detail'](bulletinID));
-         setBulletin(res.data);
+         if (res.status === statusCode.HTTP_200_OK) setBulletin(res.data);
       } catch (error) {
          console.error(error);
       } finally {
@@ -55,7 +56,8 @@ const BulletinDetail = ({ navigation, route }) => {
             params: { bulletin_id: bulletinID, page, name: activityName },
          });
          if (res.data.next === null) setPage(0);
-         setActivities(page === 1 ? res.data.results : [...activities, ...res.data.results]);
+         if (res.status === statusCode.HTTP_200_OK)
+            setActivities(page === 1 ? res.data.results : [...activities, ...res.data.results]);
       } catch (error) {
          console.error(error);
       } finally {
@@ -96,7 +98,7 @@ const BulletinDetail = ({ navigation, route }) => {
                      source={{ html: bulletin.description }}
                      baseStyle={ActivityStyle.DetailDescription}
                      defaultTextProps={{
-                        numberOfLines: isExpanded ? 0 : 4,
+                        numberOfLines: isExpanded ? 0 : 3,
                         ellipsizeMode: 'tail',
                      }}
                   />

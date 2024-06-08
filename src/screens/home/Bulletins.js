@@ -5,6 +5,7 @@ import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Searchbar from '../../components/common/Searchbar';
 import CardList from '../../components/home/CardList';
 import APIs, { endPoints } from '../../configs/APIs';
+import { statusCode } from '../../configs/Constants';
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
@@ -29,7 +30,8 @@ const Bulletin = ({ navigation }) => {
       try {
          const res = await APIs.get(endPoints['bulletins'], { params: { page, name: bulletinName } });
          if (res.data.next === null) setPage(0);
-         setBulletins(page === 1 ? res.data.results : [...bulletins, ...res.data.results]);
+         if (res.status === statusCode.HTTP_200_OK)
+            setBulletins(page === 1 ? res.data.results : [...bulletins, ...res.data.results]);
       } catch (error) {
          console.error(error);
       } finally {

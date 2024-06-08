@@ -107,7 +107,12 @@ export const userFields = [
    { label: 'Số điện thoại', name: 'phone_number', icon: 'phone', keyboardType: 'numeric' },
 ];
 
-export const categoriesEditForm = [
-   { label: 'Thông tin trường', id: 1 },
-   { label: 'Thông tin cá nhân', id: 2 },
+export const tabsEditForm = [
+   { id: 1, label: 'Thông tin trường' },
+   { id: 2, label: 'Thông tin cá nhân' },
+];
+
+export const tabsActivity = [
+   { id: 1, label: 'Tổng quan', name: 'overview' },
+   { id: 2, label: 'Bình luận', name: 'comments' },
 ];

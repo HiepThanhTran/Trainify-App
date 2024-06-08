@@ -11,7 +11,7 @@ import { useAccount, useAccountDispatch } from '../../store/contexts/AccountCont
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { getTokens } from '../../utils/Utilities';
+import { getTokens, refreshAccessToken } from '../../utils/Utilities';
 
 const TrainingPoint = ({ navigation }) => {
    const { semester, setSemester, loading, setLoading, isRendered, setIsRedered } = useGlobalContext();
@@ -55,7 +55,7 @@ const TrainingPoint = ({ navigation }) => {
                (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
                   error.response.status === statusCode.HTTP_403_FORBIDDEN)
             ) {
-               const newAccessToken = await refreshToken(refreshToken, dispatch);
+               const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
                if (newAccessToken) loadPoints();
             } else console.error(error);
          } finally {

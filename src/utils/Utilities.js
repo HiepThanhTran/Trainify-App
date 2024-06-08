@@ -23,7 +23,7 @@ export const removeTokens = async () => {
    return await AsyncStorage.multiRemove(['access-token', 'refresh-token']);
 };
 
-export const refreshToken = async (refreshToken, dispatch) => {
+export const refreshAccessToken = async (refreshToken, dispatch) => {
    try {
       const tokens = await APIs.post(endPoints['token'], {
          refresh_token: refreshToken,

@@ -72,11 +72,7 @@ const ActivityDetail = ({ route }) => {
       if (page > 0) {
          setCommentLoading(true);
          try {
-            let res = await APIs.get(endPoints['activity-comments'](activityID), {
-               params: {
-                  page: page,
-               },
-            });
+            let res = await APIs.get(endPoints['activity-comments'](activityID), { params: { page } });
             if (res.data.next === null) {
                setPage(0);
             }

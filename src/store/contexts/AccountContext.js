@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import { authAPI, endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
-import { getTokens } from '../../utils/Utilities';
+import { getTokens, refreshAccessToken } from '../../utils/Utilities';
 import { SignInAction, SignOutAction } from '../actions/AccountAction';
 import { accountReducer } from '../reducers/AccountReducer';
 
@@ -39,7 +39,7 @@ export const AccountProvider = ({ children }) => {
                return;
             }
 
-            const newAccessToken = await refreshToken(refreshToken, dispatch);
+            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
             if (newAccessToken) checkLogged(retryCount + 1);
          } else console.error(error);
       }

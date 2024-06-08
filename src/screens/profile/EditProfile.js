@@ -15,8 +15,8 @@ import { useAccount, useAccountDispatch } from '../../store/contexts/AccountCont
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { accountFields, categoriesEditForm, schoolFields, userFields } from '../../utils/Fields';
-import { formatDate, getFirstDayOfYear, getLastDayOfYear, getTokens } from '../../utils/Utilities';
+import { accountFields, schoolFields, tabsEditForm, userFields } from '../../utils/Fields';
+import { formatDate, getFirstDayOfYear, getLastDayOfYear, getTokens, refreshAccessToken } from '../../utils/Utilities';
 
 const SchoolInformation = ({ navigation, currentAccount }) => {
    useEffect(() => {
@@ -96,7 +96,7 @@ const EditForm = ({ navigation, currentAccount, loading, setLoading }) => {
             (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
                error.response.status === statusCode.HTTP_403_FORBIDDEN)
          ) {
-            const newAccessToken = await refreshToken(refreshToken, dispatch);
+            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
             if (newAccessToken) handleUpdateProfile();
             else setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
          } else console.error(error);
@@ -307,7 +307,7 @@ const EditProfile = ({ navigation }) => {
                   </LinearGradient>
 
                   <View style={EditProfileStyle.ChoiceContainer}>
-                     {categoriesEditForm.map((f) => (
+                     {tabsEditForm.map((f) => (
                         <TouchableOpacity
                            key={f.id}
                            style={EditProfileStyle.ChoiceButton}
