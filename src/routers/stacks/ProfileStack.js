@@ -3,7 +3,7 @@ import ActivitySettings from '../../screens/profile/ActivitySettings';
 import EditProfile from '../../screens/profile/EditProfile';
 import TrainingPoint from '../../screens/profile/TrainingPoint';
 import Theme from '../../styles/Theme';
-
+import CreateActivityForm from '../../components/profile/CreateActivityForm';
 const Stack = createNativeStackNavigator();
 
 const ProfileStack = () => {
@@ -21,6 +21,7 @@ const ProfileStack = () => {
          />
          <Stack.Screen name="TrainingPoint" component={TrainingPoint} options={{ title: 'Điểm rèn luyện' }} />
          <Stack.Screen name="ActivitySettings" component={ActivitySettings} options={{ title: 'Quản lý hoạt động' }} />
+         <Stack.Screen name="CreateActivityForm" component={CreateActivityForm} options={{ title: 'Tạo hoạt động' }} />
       </Stack.Navigator>
    );
 };

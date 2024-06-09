@@ -4,15 +4,15 @@ import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authAPI, endPoints } from '../../configs/APIs';
 import RenderHTML from 'react-native-render-html';
-import { formatDate } from '../../utils/Utilities';
 import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import Theme from '../../styles/Theme';
 import GlobalStyle, { screenWidth } from '../../styles/Style';
 import { statusCode } from '../../configs/Constants';
 import { useAccount} from '../../store/contexts/AccountContext';
-import { loadMore, onRefresh } from '../../utils/Utilities';
+import { formatDate, loadMore, onRefresh, isCloseToBottom} from '../../utils/Utilities';
+import Loading from '../../components/common/Loading';
 
-const ActivitySettings = () => {
+const ActivitySettings = ({navigation}) => {
    const currentAccount = useAccount();
    const currentAccountID = currentAccount.data.user.id;
    const { loading, setLoading, refreshing, setRefreshing } = useGlobalContext();
@@ -26,7 +26,7 @@ const ActivitySettings = () => {
       try {
          const accessToken = await AsyncStorage.getItem('access-token');
          const res = await authAPI(accessToken).get(endPoints['activities'], {
-            params: { organizer_id: currentAccountID, page }
+            params: { organizer_id: currentAccountID, page}
          });
          if (res.data.next === null) setPage(0);
          if (res.status === statusCode.HTTP_200_OK)
@@ -50,16 +50,18 @@ const ActivitySettings = () => {
       }));
    };
 
-   const handleRefresh = () => {
-      setRefreshing(true);
-      setPage(1);
-   };
+   if(loading) return <Loading/>
 
-   const handleLoadMore = () => {
-      if (!loading && page > 0) {
-         setPage(page + 1);
-      }
-   };
+   const handleScroll = (event) => {
+      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+      if (isCloseToBottom({ layoutMeasurement, contentOffset, contentSize })) {
+         loadMore(event.nativeEvent, loading, page, setPage);
+     }
+   }
+
+   const goToCreateActivity = (name) => {
+      navigation.navigate('CreateActivityForm',{name})
+   }
 
    return (
       <View style={GlobalStyle.BackGround}>
@@ -67,10 +69,11 @@ const ActivitySettings = () => {
             style={ActivitySettingStyle.Container}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
          >
             <View style={ActivitySettingStyle.Top}>
                <Text style={ActivitySettingStyle.Text}>Danh sách hoạt động</Text>
-               <TouchableOpacity style={ActivitySettingStyle.AddActivity}>
+               <TouchableOpacity style={ActivitySettingStyle.AddActivity} onPress={goToCreateActivity}>
                   <AntDesign name="pluscircle" size={24} color='white' />
                </TouchableOpacity>
             </View>
@@ -104,7 +107,7 @@ const ActivitySettings = () => {
                            Ngày kết thúc: <Text>{formatDate(activity.end_date)}</Text>
                         </Text>
                         <Text style={ActivitySettingStyle.TextDes}>Địa điểm: {activity.location}</Text>
-                        <Text style={ActivitySettingStyle.TextDes}>Điểm: {activity.point}, Học kì: {activity.semester}</Text>
+                        <Text style={ActivitySettingStyle.TextDes}>Điểm cộng: {activity.point}, Học kì: {activity.semester}</Text>
                         <Text style={ActivitySettingStyle.TextDes}>Hình thức: {activity.organizational_form}</Text>
                         <View style={ActivitySettingStyle.DateContainer}>
                            <Text style={ActivitySettingStyle.TextDate}>
@@ -201,7 +204,7 @@ const ActivitySettingStyle = StyleSheet.create({
    },
    TextDate: {
       fontFamily: Theme.SemiBold,
-      fontSize: 14.2,
+      fontSize: 14,
       color: 'gray'
    },
    ButtonContainer: {
