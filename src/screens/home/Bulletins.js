@@ -14,11 +14,10 @@
 
    const Bulletin = ({ navigation }) => {
       const { loading, setLoading, refreshing, setRefreshing } = useGlobalContext();
-
       const [bulletins, setBulletins] = useState([]);
       const [page, setPage] = useState(1);
       const [bulletinName, setBulletinName] = useState('');
-
+      
       useEffect(() => {
          loadBulletins();
       }, [page, bulletinName, refreshing]);
