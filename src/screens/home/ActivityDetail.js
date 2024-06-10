@@ -162,7 +162,7 @@ const ActivityDetail = ({ route }) => {
                },
             },
          );
-         if (res.status === status.HTTP_200_OK) {
+         if (res.status === Status.HTTP_200_OK) {
             setComments((currentComments) =>
                currentComments.map((comment) =>
                   comment.id === commentID ? { ...comment, content: updatedContent } : comment,
@@ -175,7 +175,6 @@ const ActivityDetail = ({ route }) => {
    };
 
    useEffect(() => {
-      console.log(bottomSheetRef.current);
       loadActivityDetail();
       loadComments();
    }, []);

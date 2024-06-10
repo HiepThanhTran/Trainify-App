@@ -1,21 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import GlobalStyle from "../../styles/Style";
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import Theme from "../../styles/Theme";
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { formatDate } from "../../utils/Utilities";
+import { RichEditor } from "react-native-pell-rich-editor";
 import * as ImagePicker from 'expo-image-picker';
-
+import { authAPI } from "../../configs/APIs";
 const CreateActivityForm = () => {
    const [startDate, setStartDate] = useState(new Date());
    const [endDate, setEndDate] = useState(new Date());
-   const [image, setImage] = useState(null);
-
-   const openDatePicker = (mode, setDate) => {
+   const [richEditorContent, setRichEditorContent] = useState("");
+   const [selectedImage, setSelectedImage] = useState(null);
+   
+   const openDatePicker = (mode, setDate, currentDate) => {
       DateTimePickerAndroid.open({
-         value: new Date(),
+         value: currentDate || new Date(),
          onChange: (event, selectedDate) => {
             if (selectedDate) {
                setDate(selectedDate);
@@ -27,63 +31,63 @@ const CreateActivityForm = () => {
       });
    };
 
-   const pickImage = async () => {
-      // Request permission to access the camera roll
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (permissionResult.granted === false) {
-         alert("Permission to access camera roll is required!");
-         return;
-      }
-
-      // Open the image picker
+   const handlePickImage = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
-         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+         mediaTypes: ImagePicker.MediaTypeOptions.All,
          allowsEditing: true,
          aspect: [4, 3],
          quality: 1,
       });
 
-      if (!result.canceled) {
-         setImage(result.uri);
+      if (!result.cancelled) {
+         setSelectedImage(result.uri);
       }
    };
+
+   const postActivity = async() => {
+      let form = new FormData();
+      form.append()
+   }
 
    return (
       <View style={GlobalStyle.BackGround}>
          <View style={CreateActivityFormStyle.Container}>
-            <ScrollView>
-                <View style={CreateActivityFormStyle.Image}>
-                   {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-                   <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-                      <Text style={styles.imagePickerText}>Chọn ảnh</Text>
-                   </TouchableOpacity>
-                </View>
-               <View style={styles.inputContainer}>
-                  <MaterialIcons name="drive-file-rename-outline" size={24} color={Theme.PrimaryColor} style={styles.icon} />
+            <ScrollView
+               showsVerticalScrollIndicator={false}
+               showsHorizontalScrollIndicator={false}
+            >
+               <TouchableOpacity style={CreateActivityFormStyle.ImageContainer} onPress={handlePickImage}>
+                  {selectedImage ? (
+                     <Image source={{ uri: selectedImage }} style={{ width: 80, height: 80, borderRadius: 5 }} />
+                  ) : (
+                     <Ionicons name="image-sharp" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
+                  )}
+               </TouchableOpacity>
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <MaterialIcons name="drive-file-rename-outline" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
                   <TextInput
-                     style={styles.input}
+                     style={CreateActivityFormStyle.input}
                      placeholder="Tên hoạt động"
                      placeholderTextColor="gray"
                   />
                </View>
 
-               <View style={styles.inputContainer}>
-                  <Ionicons name="people" size={24} color={Theme.PrimaryColor} style={styles.icon} />
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <Ionicons name="people" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
                   <TextInput
-                     style={styles.input}
+                     style={CreateActivityFormStyle.input}
                      placeholder="Đối tượng tham gia"
                      placeholderTextColor="gray"
                   />
                </View>
 
                <TouchableOpacity
-                  style={styles.inputContainer}
-                  onPress={() => openDatePicker('date', setStartDate)}
+                  style={CreateActivityFormStyle.inputContainer}
+                  onPress={() => openDatePicker('date', setStartDate, startDate)}
                >
-                  <MaterialIcons name="date-range" size={24} color={Theme.PrimaryColor} style={styles.icon} />
+                  <MaterialIcons name="date-range" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
                   <TextInput
-                     style={styles.input}
+                     style={CreateActivityFormStyle.input}
                      placeholder="Ngày bắt đầu"
                      placeholderTextColor="gray"
                      editable={false}
@@ -92,12 +96,12 @@ const CreateActivityForm = () => {
                </TouchableOpacity>
 
                <TouchableOpacity
-                  style={styles.inputContainer}
-                  onPress={() => openDatePicker('date', setEndDate)}
+                  style={CreateActivityFormStyle.inputContainer}
+                  onPress={() => openDatePicker('date', setEndDate, endDate)}
                >
-                  <MaterialIcons name="date-range" size={24} color={Theme.PrimaryColor} style={styles.icon} />
+                  <MaterialIcons name="date-range" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
                   <TextInput
-                     style={styles.input}
+                     style={CreateActivityFormStyle.input}
                      placeholder="Ngày kết thúc"
                      placeholderTextColor="gray"
                      editable={false}
@@ -105,14 +109,61 @@ const CreateActivityForm = () => {
                   />
                </TouchableOpacity>
 
-               <View style={styles.inputContainer}>
-                  <Ionicons name="location" size={24} color={Theme.PrimaryColor} style={styles.icon}  />
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <Ionicons name="location" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
                   <TextInput
-                     style={styles.input}
+                     style={CreateActivityFormStyle.input}
                      placeholder="Địa điểm"
                      placeholderTextColor="gray"
                   />
                </View>
+
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <AntDesign name="gift" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
+                  <TextInput
+                     style={CreateActivityFormStyle.input}
+                     placeholder="Điểm cộng"
+                     placeholderTextColor="gray"
+                  />
+               </View>
+
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <Entypo name="news" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
+                  <TextInput
+                     style={CreateActivityFormStyle.input}
+                     placeholder="Bảng tin"
+                     placeholderTextColor="gray"
+                  />
+               </View>
+
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <Ionicons name="time" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
+                  <TextInput
+                     style={CreateActivityFormStyle.input}
+                     placeholder="Học kì"
+                     placeholderTextColor="gray"
+                  />
+               </View>
+
+               <View style={CreateActivityFormStyle.inputContainer}>
+                  <AntDesign name="minussquareo" size={24} color={Theme.PrimaryColor} style={CreateActivityFormStyle.icon} />
+                  <TextInput
+                     style={CreateActivityFormStyle.input}
+                     placeholder="Hình thức"
+                     placeholderTextColor="gray"
+                  />
+               </View>
+
+               <RichEditor
+                  initialContentHTML={richEditorContent}
+                  onChange={(text) => setRichEditorContent(text)}
+                  placeholder="Mô tả hoạt động"
+                  style={CreateActivityFormStyle.RichEditor}
+               />
+
+               <TouchableOpacity style={CreateActivityFormStyle.ButtonCreateActivity}>
+                  <Text style={CreateActivityFormStyle.ButtonText}>Tạo</Text>
+               </TouchableOpacity>
             </ScrollView>
          </View>
       </View>
@@ -128,10 +179,7 @@ const CreateActivityFormStyle = StyleSheet.create({
    Image: {
       alignItems: 'center',
       marginBottom: 20,
-   }
-});
-
-const styles = StyleSheet.create({
+   },
    inputContainer: {
       flexDirection: "row",
       alignItems: "center",
@@ -150,17 +198,39 @@ const styles = StyleSheet.create({
    icon: {
       marginRight: 10,
    },
-   imagePicker: {
-      backgroundColor: Theme.PrimaryColor,
-      padding: 10,
-      borderRadius: 5,
+
+   RichEditor: {
+      borderWidth: 1,
+      borderColor: Theme.PrimaryColor,
+   },
+   ImageContainer: {
+      flexDirection: 'row',
+      width: '100%',
+      height: 80,
+      borderWidth: 1,
+      borderColor: Theme.PrimaryColor,
+      marginBottom: 10,
       alignItems: 'center',
       justifyContent: 'center',
+      borderRadius: 5
    },
-   imagePickerText: {
-      color: 'white',
+   ButtonCreateActivity: {
+      borderWidth: 1,
+      borderColor: Theme.PrimaryColor,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 10,
+      marginTop: 10,
+      width: 100,
+      alignSelf: 'center',
+      backgroundColor: Theme.PrimaryColor,
+      borderRadius: 5,
+   },
+   ButtonText: {
+      fontFamily: Theme.Bold,
       fontSize: 16,
-   },
+      color: 'white'
+   }
 });
 
 export default CreateActivityForm;

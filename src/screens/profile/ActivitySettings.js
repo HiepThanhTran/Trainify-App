@@ -60,8 +60,12 @@ const ActivitySettings = ({ navigation }) => {
       }
    }
 
+   const handleRefresh = () => {
+      onRefresh(setPage, setActivityName, setRefreshing)
+   }
+
    const goToCreateActivity = (name) => {
-      navigation.navigate('CreateActivityForm', {name});
+      navigation.navigate('CreateActivityForm', { name });
    }
 
    if (loading && page === 1) return <Loading />;
@@ -72,6 +76,9 @@ const ActivitySettings = ({ navigation }) => {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             onScroll={handleScroll}
+            refreshControl={
+               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh}/>
+            }
          >
             <Searchbar
                value={activityName}
@@ -106,6 +113,7 @@ const ActivitySettings = ({ navigation }) => {
                         <TouchableOpacity onPress={() => toggleExpand(activity.id)}>
                            <Text style={ActivitySettingStyle.MoreButton}>{expandedCards[activity.id] ? 'Thu gọn' : 'Xem thêm'}</Text>
                         </TouchableOpacity>
+                        <Text style={ActivitySettingStyle.TextDes}>Bảng tin: {activity.bulletin}</Text>
                         <Text style={ActivitySettingStyle.TextDes}>Người tham gia: {activity.participant}</Text>
                         <Text style={ActivitySettingStyle.TextDes}>
                            Ngày bắt đầu: <Text>{formatDate(activity.start_date)}</Text>
