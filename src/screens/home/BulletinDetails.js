@@ -1,28 +1,101 @@
-import { useEffect, useState } from 'react';
-import { Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { memo, useEffect, useState } from 'react';
+import { Animated, ImageBackground, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Loading from '../../components/common/Loading';
-import Searchbar from '../../components/common/Searchbar';
-import CardList from '../../components/home/CardList';
+import CardActivity from '../../components/home/CardActivity';
 import APIs, { endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
+import { useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate, loadMore, onRefresh, search } from '../../utils/Utilities';
+import { tabsBulletinDetails } from '../../utils/Fields';
+import { formatDate } from '../../utils/Utilities';
+import HomeStyle from './Style';
+
+const Overview = memo(({ bulletin, ...props }) => {
+   const [isExpanded, setIsExpanded] = useState(false);
+
+   if (props?.loading) return <Loading />;
+
+   return (
+      <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+         <View style={{ ...HomeStyle.DetailsContainer, ...GlobalStyle.Container, ...props?.style }}>
+            <View style={{ marginTop: 12 }}>
+               <Text style={{ fontFamily: Theme.Bold, fontSize: 20 }}>Mô tả bản tin</Text>
+               <RenderHTML
+                  contentWidth={screenWidth}
+                  source={{ html: bulletin.description }}
+                  baseStyle={HomeStyle.DetailsDescription}
+               />
+            </View>
+
+            <View style={{ ...HomeStyle.DetailsWrap, marginTop: 12 }}>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.created_date)}</Text>
+                  </View>
+               </View>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.updated_date)}</Text>
+                  </View>
+               </View>
+            </View>
+         </View>
+      </ScrollView>
+   );
+});
+
+const ActivitiesView = memo(({ navigation, activities, ...props }) => {
+   const goActivityDetail = (activityID) => {
+      navigation.navigate('ActivityDetail', { activityID });
+   };
+
+   if (props?.loading && props?.page === 1) return <Loading />;
+
+   return (
+      <ScrollView
+         showsHorizontalScrollIndicator={false}
+         showsVerticalScrollIndicator={false}
+         onScroll={({ nativeEvent }) => loadMore(nativeEvent, props?.loading, props?.page, props?.setPage)}
+         refreshControl={
+            <RefreshControl colors={[Theme.PrimaryColor]} refreshing={props?.refreshing} onRefresh={props?.onRefresh} />
+         }
+      >
+         {activities.map((item, index) => (
+            <CardActivity key={item.id} instance={item} index={index} onPress={() => goActivityDetail(item.id)} />
+         ))}
+         {props?.loading && props?.page > 1 && <Loading />}
+      </ScrollView>
+   );
+});
 
 const BulletinDetails = ({ navigation, route }) => {
    const bulletinID = route?.params?.bulletinID;
+   const dispatch = useAccountDispatch();
 
+   const [tab, setTab] = useState('overview');
    const [bulletin, setBulletin] = useState({});
    const [activities, setActivities] = useState([]);
    const [page, setPage] = useState(1);
    const [activityName, setActivityName] = useState('');
-   const [isExpanded, setIsExpanded] = useState(false);
-   const [refreshing, setRefreshing] = useState(false);
    const [isRendered, setIsRendered] = useState(false);
-   const [activityLoading, setActivityLoading] = useState(false);
+   const [refreshing, setRefreshing] = useState(false);
    const [bulletinLoading, setBulletinLoading] = useState(false);
+   const [activitiesLoading, setActivitiesLoading] = useState(false);
+
+   const [isExpanded, setIsExpanded] = useState(false);
+
+   const animatedHeight = useState(new Animated.Value(screenHeight / 3))[0];
 
    useEffect(() => {
       loadBulletin();
@@ -50,7 +123,7 @@ const BulletinDetails = ({ navigation, route }) => {
    const loadActivities = async () => {
       if (!bulletinID || page <= 0) return;
 
-      setActivityLoading(true);
+      setActivitiesLoading(true);
       try {
          let res = await APIs.get(endPoints['activities'], {
             params: { bulletin_id: bulletinID, page, name: activityName },
@@ -63,130 +136,91 @@ const BulletinDetails = ({ navigation, route }) => {
       } catch (error) {
          console.error(error);
       } finally {
-         setActivityLoading(false);
+         setActivitiesLoading(false);
          setRefreshing(false);
       }
    };
 
-   const goActivityDetail = (activityID) => {
-      navigation.navigate('ActivityDetail', { activityID });
+   const handleTabChange = (name) => {
+      setTab(name);
+
+      if (name !== 'overview') {
+         animateHeight(screenHeight / 6);
+      } else {
+         animateHeight(screenHeight / 3);
+      }
+   };
+
+   const currentTab = (name) => tab === name;
+
+   const animateHeight = (toValue) => {
+      Animated.timing(animatedHeight, {
+         toValue,
+         duration: 500,
+         useNativeDriver: false,
+      }).start();
+   };
+
+   const tabContent = () => {
+      switch (tab) {
+         case 'overview':
+            return <Overview bulletin={bulletin} loading={bulletinLoading} />;
+         case 'activities':
+            return (
+               <ActivitiesView
+                  navigation={navigation}
+                  activities={activities}
+                  loading={activitiesLoading}
+                  page={page}
+                  refreshing={refreshing}
+                  setPage={setPage}
+               />
+            );
+         default:
+            return null;
+      }
    };
 
    if (!isRendered) return <Loading />;
 
    return (
-      <View style={GlobalStyle.BackGround}>
-         <ScrollView
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            style={{ ...BulletinDetailStyle.Container, marginTop: 0 }}
-            onScroll={({ nativeEvent }) => loadMore(nativeEvent, activityLoading, page, setPage)}
-            refreshControl={
-               <RefreshControl
-                  colors={[Theme.PrimaryColor]}
-                  refreshing={refreshing}
-                  onRefresh={() => onRefresh(setPage, setRefreshing, setActivityName)}
-               />
-            }
-         >
-            <DismissKeyboard>
-               <View style={BulletinDetailStyle.DetailContainer}>
-                  <View style={BulletinDetailStyle.DetailImage}>
-                     <Image style={BulletinDetailStyle.ImageDetail} source={{ uri: bulletin.image }} />
-                  </View>
+      <View style={{ ...GlobalStyle.BackGround, flex: 1, backgroundColor: 'blue' }} onPress={() => {}}>
+         <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
+            <ImageBackground source={{ uri: bulletin.image }} style={{ flex: 1 }}>
+               <TouchableOpacity activeOpacity={0.8} style={HomeStyle.BackButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="chevron-back" color="gray" size={30} />
+               </TouchableOpacity>
+            </ImageBackground>
+         </Animated.View>
 
-                  <RenderHTML
-                     contentWidth={screenWidth}
-                     source={{ html: bulletin.description }}
-                     baseStyle={BulletinDetailStyle.DetailDescription}
-                     defaultTextProps={{
-                        numberOfLines: isExpanded ? 0 : 3,
-                        ellipsizeMode: 'tail',
-                     }}
-                  />
-                  <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-                     <Text style={BulletinDetailStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+         <View style={HomeStyle.Body}>
+            <View style={HomeStyle.Header}>
+               <Text style={HomeStyle.HeaderText}>{bulletin.name}</Text>
+            </View>
+
+            <View style={HomeStyle.TabContainer}>
+               {tabsBulletinDetails.map((f) => (
+                  <TouchableOpacity
+                     key={f.name}
+                     style={HomeStyle.TabItem}
+                     disabled={f.name === tab ? true : false}
+                     onPress={() => handleTabChange(f.name)}
+                  >
+                     <Text
+                        style={{
+                           ...HomeStyle.TabText,
+                           color: f.name === tab ? Theme.PrimaryColor : 'black',
+                        }}
+                     >
+                        {f.label}
+                     </Text>
                   </TouchableOpacity>
-
-                  <Text style={BulletinDetailStyle.DetailDate}>
-                     Ngày cập nhập: <Text>{formatDate(bulletin.updated_date)}</Text>
-                  </Text>
-               </View>
-
-               <View style={{ marginTop: 20 }}>
-                  <View style={BulletinDetailStyle.Header}>
-                     <Text style={BulletinDetailStyle.Title}>Danh sách hoạt động</Text>
-                  </View>
-                  <Searchbar
-                     value={activityName}
-                     placeholder="Tìm kiếm hoạt động"
-                     onChangeText={(value) => search(value, setPage, setActivityName)}
-                  />
-                  <CardList
-                     topLoading
-                     data={activities}
-                     page={page}
-                     loading={activityLoading}
-                     style={{ marginBottom: 0 }}
-                     onPress={goActivityDetail}
-                  />
-               </View>
-            </DismissKeyboard>
-         </ScrollView>
+               ))}
+            </View>
+            {tabContent()}
+         </View>
       </View>
    );
 };
-
-const BulletinDetailStyle = StyleSheet.create({
-   Container: {
-      marginHorizontal: 12,
-      marginTop: 32,
-   },
-   Header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-   },
-   Title: {
-      fontSize: 28,
-      color: Theme.PrimaryColor,
-      fontFamily: Theme.Bold,
-   },
-   DetailContainer: {
-      borderWidth: 1,
-      borderColor: Theme.PrimaryColor,
-      padding: 10,
-      borderRadius: 16,
-      marginTop: 20,
-   },
-   DetailImage: {
-      justifyContent: 'center',
-      width: '100%',
-      height: screenHeight / 4,
-   },
-   ImageDetail: {
-      width: '100%',
-      height: '100%',
-      borderRadius: 8,
-   },
-   DetailDescription: {
-      fontSize: 18,
-      fontFamily: Theme.Regular,
-      lineHeight: 30,
-      marginTop: 8,
-      marginBottom: 20,
-   },
-   MoreButton: {
-      fontFamily: Theme.Bold,
-      fontSize: 17.2,
-      marginTop: -15,
-      marginBottom: 10,
-   },
-   DetailDate: {
-      fontSize: 13.2,
-      fontFamily: Theme.SemiBold,
-      color: 'gray',
-   },
-});
 
 export default BulletinDetails;

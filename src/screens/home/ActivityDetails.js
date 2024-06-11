@@ -261,37 +261,37 @@ const CommentsView = memo(({ activityID, comments, ...props }) => {
       >
          <View style={{ ...props?.style }}>
             <View style={{ marginBottom: 8 }}>
-               {comments.map((c, index) => {
-                  const isExpanded = expandedComments[c.id];
-                  const contentLength = c?.content?.length || 0;
+               {comments.map((item, index) => {
+                  const isExpanded = expandedComments[item.id];
+                  const contentLength = item?.content?.length || 0;
                   const shouldShowMoreButton = contentLength > 74;
 
                   return (
                      <View
-                        key={c.id}
+                        key={item.id}
                         style={{
                            ...CommentsStyle.Card,
-                           ...(index !== comments.length - 1 ? { borderBottomWidth: 0.5 } : {}),
+                           borderBottomWidth: index !== comments.length - 1 ? 0.5 : 0,
                         }}
                      >
                         <View style={{ flexDirection: 'row' }}>
                            <View style={{ overflow: 'hidden' }}>
-                              <Image source={{ uri: c?.account.avatar }} style={CommentsStyle.Avatar} />
+                              <Image source={{ uri: item?.account.avatar }} style={CommentsStyle.Avatar} />
                            </View>
                            <View style={CommentsStyle.CardContent}>
-                              {c.account.id === currentAccount.data.id && (
+                              {item.account.id === currentAccount.data.id && (
                                  <TouchableOpacity
                                     style={CommentsStyle.Settings}
-                                    onPress={() => handleOnPressSettings(c)}
+                                    onPress={() => handleOnPressSettings(item)}
                                  >
                                     <Icon source="dots-vertical" size={28} />
                                  </TouchableOpacity>
                               )}
 
-                              <Text style={CommentsStyle.Username}>{c?.account.user.full_name}</Text>
+                              <Text style={CommentsStyle.Username}>{item?.account.user.full_name}</Text>
                               <RenderHTML
                                  contentWidth={screenWidth}
-                                 source={{ html: c?.content }}
+                                 source={{ html: item?.content }}
                                  baseStyle={HomeStyle.DetailsDescription}
                                  defaultTextProps={{
                                     numberOfLines: isExpanded ? 0 : 2,
@@ -299,17 +299,17 @@ const CommentsView = memo(({ activityID, comments, ...props }) => {
                                  }}
                               />
                               {shouldShowMoreButton && (
-                                 <TouchableOpacity onPress={() => toggleExpandComment(c.id)}>
+                                 <TouchableOpacity onPress={() => toggleExpandComment(item.id)}>
                                     <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
                                  </TouchableOpacity>
                               )}
                            </View>
                         </View>
-                        <Text style={CommentsStyle.CreatedDate}>{moment(c?.created_date).fromNow()}</Text>
+                        <Text style={CommentsStyle.CreatedDate}>{moment(item?.created_date).fromNow()}</Text>
                      </View>
                   );
                })}
-               {props?.loading && props?.page > 1 && <Loading />}
+               {props?.loading && props?.page > 1 && <Loading style={{ marginBottom: 32 }} />}
             </View>
          </View>
       </ScrollView>

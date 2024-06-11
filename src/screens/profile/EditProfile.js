@@ -40,10 +40,9 @@ const SchoolInformation = ({ navigation, currentAccount }) => {
    );
 };
 
-const EditForm = ({ navigation, currentAccount, loading, setLoading }) => {
+const EditForm = ({ navigation, currentAccount, tempAccount, setTempAccount, loading, setLoading }) => {
    const dispatch = useAccountDispatch();
 
-   const [tempAccount, setTempAccount] = useState(currentAccount);
    const [snackBarMessage, setSnackBarMessage] = useState('');
    const [snackBarVisible, setSnackBarVisible] = useState(false);
    const [snackBarDuration, setSnackBarDuration] = useState(7000);
@@ -59,7 +58,7 @@ const EditForm = ({ navigation, currentAccount, loading, setLoading }) => {
       if (currentAccount.data.avatar !== tempAccount.data.avatar) {
          form.append('avatar', {
             uri: tempAccount.data.avatar.uri,
-            type: mime.getType(tempAccount.data.avatar.uri),
+            type: tempAccount.data.avatar.mimeType,
             name: tempAccount.data.avatar.fileName,
          });
          size++;
@@ -238,6 +237,8 @@ const EditProfile = ({ navigation }) => {
    const currentAccount = useAccount();
 
    const sheetRef = useRef(BottomSheet);
+
+   const [tempAccount, setTempAccount] = useState(currentAccount);
    const [tab, setTab] = useState('school');
    const [isEdit, setIsEdit] = useState(false);
    const [loading, setLoading] = useState(false);
@@ -268,7 +269,6 @@ const EditProfile = ({ navigation }) => {
                   avatar: res.assets[0],
                },
             }));
-            setCanUpdate(true);
          }
       }
       sheetRef?.current?.close();
@@ -291,7 +291,15 @@ const EditProfile = ({ navigation }) => {
                            disabled={!isEdit}
                            onPress={() => sheetRef?.current?.expand()}
                         >
-                           <Image style={EditProfileStyle.Avatar} source={{ uri: currentAccount.data.avatar }} />
+                           <Image
+                              style={EditProfileStyle.Avatar}
+                              source={{
+                                 uri:
+                                    typeof tempAccount.data.avatar === 'string'
+                                       ? tempAccount.data.avatar
+                                       : tempAccount.data.avatar.uri,
+                              }}
+                           />
                            {isEdit && (
                               <View style={EditProfileStyle.CameraIcon}>
                                  <Icon source="camera" color="white" size={24} />
@@ -330,6 +338,8 @@ const EditProfile = ({ navigation }) => {
                      <EditForm
                         navigation={navigation}
                         currentAccount={currentAccount}
+                        tempAccount={tempAccount}
+                        setTempAccount={setTempAccount}
                         loading={loading}
                         setLoading={setLoading}
                      />

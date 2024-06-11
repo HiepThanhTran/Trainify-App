@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Animated, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import Loading from '../../components/common/Loading';
-import Section from '../../components/profile/Section';
+import SectionItem from '../../components/profile/SectionItem';
 import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
@@ -69,7 +69,7 @@ const Profile = ({ navigation }) => {
          >
             <View style={{ ...GlobalStyle.Container, ...ProfileStyle.Header }}>
                <Image style={ProfileStyle.Avatar} source={{ uri: currentAccount.data.avatar }} />
-               <View style={GlobalStyle.Center}>
+               <View style={{ ...GlobalStyle.Center, marginTop: 8 }}>
                   <Text style={{ ...GlobalStyle.Bold, fontSize: 24 }}>{currentAccount.data.user.full_name}</Text>
                   <Text style={{ ...GlobalStyle.Medium, color: 'gray', fontSize: 16 }}>
                      {currentAccount.data.user.code}
@@ -84,7 +84,20 @@ const Profile = ({ navigation }) => {
                </TouchableOpacity>
             </View>
 
-            <Section data={profileSections} onPress={goToScreen} />
+            {profileSections.map((section, index) => {
+               if (section.roles.includes(currentAccount.data.role)) {
+                  return (
+                     <View key={'section-' + index} style={SectionStyle.Section}>
+                        <Text style={SectionStyle.SectionTitle}>{section.title}</Text>
+                        <View style={SectionStyle.SectionBody}>
+                           {section.items.map((item, itemIndex) => (
+                              <SectionItem key={'item-' + itemIndex} instance={item} onPress={goToScreen} />
+                           ))}
+                        </View>
+                     </View>
+                  );
+               }
+            })}
 
             <View style={{ ...GlobalStyle.Center, ...ProfileStyle.Footer }}>
                <TouchableOpacity
@@ -145,7 +158,7 @@ const ProfileStyle = StyleSheet.create({
       height: screenWidth * 0.3,
       borderWidth: 4,
       borderRadius: (screenWidth * 0.3) / 2,
-      borderColor: Theme.SecondaryColor,
+      borderColor: 'white',
       backgroundColor: Theme.SecondaryColor,
    },
    HeaderButton: {
@@ -181,6 +194,26 @@ const ProfileStyle = StyleSheet.create({
       backgroundColor: Theme.PrimaryColor,
       padding: 12,
       borderRadius: 12,
+   },
+});
+
+const SectionStyle = StyleSheet.create({
+   Section: {
+      marginTop: 40,
+      marginHorizontal: 12,
+   },
+   SectionTitle: {
+      textTransform: 'uppercase',
+      fontFamily: Theme.SemiBold,
+      fontSize: 16,
+   },
+   SectionBody: {
+      borderWidth: 1,
+      marginTop: 12,
+      borderRadius: 8,
+      borderColor: '#eee',
+      overflow: 'hidden',
+      borderBottomWidth: 0,
    },
 });
 

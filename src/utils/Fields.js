@@ -56,6 +56,7 @@ export const profileSections = [
    },
    {
       title: 'Tiện ích',
+      roles: [roles.STUDENT],
       items: [
          { label: 'Điểm rèn luyện', icon: 'star-outline', screen: 'TrainingPoint' },
          { label: 'Hoạt động của sinh viên', icon: 'ticket', screen: '' },
@@ -63,6 +64,7 @@ export const profileSections = [
    },
    {
       title: 'Cài đặt',
+      roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT, roles.STUDENT],
       items: [
          { label: 'Cài đặt bảo mật', icon: 'shield-account', screen: '' },
          { label: 'Cài đặt thông báo', icon: 'bell-outline', screen: '' },
@@ -71,6 +73,7 @@ export const profileSections = [
    },
    {
       title: 'Trợ giúp',
+      roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT, roles.STUDENT],
       items: [
          { label: 'Trung tâm trợ giúp', icon: 'help-circle-outline', screen: 'Test' },
          // { label: '', icon: '', screen: '' },
@@ -119,5 +122,5 @@ export const tabsActivityDetails = [
 
 export const tabsBulletinDetails = [
    { label: 'Tổng quan', name: 'overview' },
-   { label: 'Danh sách hoạt động', name: 'activities' },
+   { label: 'Hoạt động', name: 'activities' },
 ];
