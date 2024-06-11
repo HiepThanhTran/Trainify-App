@@ -1,23 +1,21 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Searchbar from '../../components/common/Searchbar';
 import CardList from '../../components/home/CardList';
 import APIs, { endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
-import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { loadMore, onRefresh, search } from '../../utils/Utilities';
-import ActivityStyle from './Style';
 
 const Bulletin = ({ navigation }) => {
-   const { loading, setLoading, refreshing, setRefreshing } = useGlobalContext();
-
    const [bulletins, setBulletins] = useState([]);
    const [page, setPage] = useState(1);
    const [bulletinName, setBulletinName] = useState('');
+   const [loading, setLoading] = useState(false);
+   const [refreshing, setRefreshing] = useState(false);
 
    useEffect(() => {
       loadBulletins();
@@ -50,9 +48,9 @@ const Bulletin = ({ navigation }) => {
    return (
       <View style={GlobalStyle.BackGround}>
          <DismissKeyboard>
-            <View style={ActivityStyle.Container}>
-               <View style={ActivityStyle.Header}>
-                  <Text style={ActivityStyle.Title}>Bản tin</Text>
+            <View style={BulletinStyle.Container}>
+               <View style={BulletinStyle.Header}>
+                  <Text style={BulletinStyle.Title}>Bản tin</Text>
                   <TouchableOpacity onPress={() => {}}>
                      <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
                   </TouchableOpacity>
@@ -68,7 +66,7 @@ const Bulletin = ({ navigation }) => {
                   loading={loading}
                   refreshing={refreshing}
                   cardOnPress={goToBulletinDetail}
-                  onRefresh={() => onRefresh(setPage, setBulletinName, setRefreshing)}
+                  onRefresh={() => onRefresh(setPage, setRefreshing, setBulletinName)}
                   onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
                />
             </View>
@@ -76,5 +74,22 @@ const Bulletin = ({ navigation }) => {
       </View>
    );
 };
+
+const BulletinStyle = StyleSheet.create({
+   Container: {
+      marginHorizontal: 12,
+      marginTop: 32,
+   },
+   Header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+   },
+   Title: {
+      fontSize: 28,
+      color: Theme.PrimaryColor,
+      fontFamily: Theme.Bold,
+   },
+});
 
 export default Bulletin;

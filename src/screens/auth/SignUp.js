@@ -7,17 +7,15 @@ import AuthHeader from '../../components/auth/AuthHeader';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import APIs, { endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
-import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { signUpFields } from '../../utils/Fields';
 
 const SignUp = ({ navigation }) => {
-   const { loading, setLoading } = useGlobalContext();
-
    const [account, setAccount] = useState({});
    const [errorMessage, setErrorMessage] = useState('');
    const [errorVisible, setErrorVisible] = useState(false);
+   const [loading, setLoading] = useState(false);
 
    const handleSignUp = async () => {
       for (let field of signUpFields) {

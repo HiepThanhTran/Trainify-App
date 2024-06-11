@@ -108,11 +108,11 @@ export const userFields = [
 ];
 
 export const tabsEditForm = [
-   { id: 1, label: 'Thông tin trường' },
-   { id: 2, label: 'Thông tin cá nhân' },
+   { label: 'Thông tin trường', name: 'school' },
+   { label: 'Thông tin cá nhân', name: 'edit' },
 ];
 
 export const tabsActivity = [
-   { id: 1, label: 'Tổng quan', name: 'overview' },
-   { id: 2, label: 'Bình luận', name: 'comments' },
+   { label: 'Tổng quan', name: 'overview' },
+   { label: 'Bình luận', name: 'comments' },
 ];

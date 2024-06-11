@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Loading from '../../components/common/Loading';
@@ -7,14 +7,11 @@ import Searchbar from '../../components/common/Searchbar';
 import CardList from '../../components/home/CardList';
 import APIs, { endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
-import { useGlobalContext } from '../../store/contexts/GlobalContext';
-import GlobalStyle, { screenWidth } from '../../styles/Style';
+import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, loadMore, onRefresh, search } from '../../utils/Utilities';
-import ActivityStyle from './Style';
 
 const BulletinDetail = ({ navigation, route }) => {
-   const { refreshing, setRefreshing } = useGlobalContext();
    const bulletinID = route?.params?.bulletinID;
 
    const [bulletin, setBulletin] = useState({});
@@ -22,6 +19,7 @@ const BulletinDetail = ({ navigation, route }) => {
    const [page, setPage] = useState(1);
    const [activityName, setActivityName] = useState('');
    const [isExpanded, setIsExpanded] = useState(false);
+   const [refreshing, setRefreshing] = useState(false);
    const [activityLoading, setActivityLoading] = useState(false);
    const [bulletinLoading, setBulletinLoading] = useState(false);
 
@@ -77,43 +75,43 @@ const BulletinDetail = ({ navigation, route }) => {
          <ScrollView
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            style={{ ...ActivityStyle.Container, marginTop: 0 }}
+            style={{ ...BulletinDetailStyle.Container, marginTop: 0 }}
             onScroll={({ nativeEvent }) => loadMore(nativeEvent, activityLoading, page, setPage)}
             refreshControl={
                <RefreshControl
                   colors={[Theme.PrimaryColor]}
                   refreshing={refreshing}
-                  onRefresh={() => onRefresh(setPage, setActivityName, setRefreshing)}
+                  onRefresh={() => onRefresh(setPage, setRefreshing, setActivityName)}
                />
             }
          >
             <DismissKeyboard>
-               <View style={ActivityStyle.DetailContainer}>
-                  <View style={ActivityStyle.DetailImage}>
-                     <Image style={ActivityStyle.ImageDetail} source={{ uri: bulletin.image }} />
+               <View style={BulletinDetailStyle.DetailContainer}>
+                  <View style={BulletinDetailStyle.DetailImage}>
+                     <Image style={BulletinDetailStyle.ImageDetail} source={{ uri: bulletin.image }} />
                   </View>
 
                   <RenderHTML
                      contentWidth={screenWidth}
                      source={{ html: bulletin.description }}
-                     baseStyle={ActivityStyle.DetailDescription}
+                     baseStyle={BulletinDetailStyle.DetailDescription}
                      defaultTextProps={{
                         numberOfLines: isExpanded ? 0 : 3,
                         ellipsizeMode: 'tail',
                      }}
                   />
                   <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-                     <Text style={ActivityStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+                     <Text style={BulletinDetailStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
                   </TouchableOpacity>
 
-                  <Text style={ActivityStyle.DetailDate}>
+                  <Text style={BulletinDetailStyle.DetailDate}>
                      Ngày cập nhập: <Text>{formatDate(bulletin.updated_date)}</Text>
                   </Text>
                </View>
 
                <View style={{ marginTop: 20 }}>
-                  <View style={ActivityStyle.Header}>
-                     <Text style={ActivityStyle.Title}>Danh sách hoạt động</Text>
+                  <View style={BulletinDetailStyle.Header}>
+                     <Text style={BulletinDetailStyle.Title}>Danh sách hoạt động</Text>
                   </View>
                   <Searchbar
                      value={activityName}
@@ -133,5 +131,57 @@ const BulletinDetail = ({ navigation, route }) => {
       </View>
    );
 };
+
+const BulletinDetailStyle = StyleSheet.create({
+   Container: {
+      marginHorizontal: 12,
+      marginTop: 32,
+   },
+   Header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+   },
+   Title: {
+      fontSize: 28,
+      color: Theme.PrimaryColor,
+      fontFamily: Theme.Bold,
+   },
+   DetailContainer: {
+      borderWidth: 1,
+      borderColor: Theme.PrimaryColor,
+      padding: 10,
+      borderRadius: 16,
+      marginTop: 20,
+   },
+   DetailImage: {
+      justifyContent: 'center',
+      width: '100%',
+      height: screenHeight / 4,
+   },
+   ImageDetail: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 8,
+   },
+   DetailDescription: {
+      fontSize: 18,
+      fontFamily: Theme.Regular,
+      lineHeight: 30,
+      marginTop: 8,
+      marginBottom: 20,
+   },
+   MoreButton: {
+      fontFamily: Theme.Bold,
+      fontSize: 17.2,
+      marginTop: -15,
+      marginBottom: 10,
+   },
+   DetailDate: {
+      fontSize: 13.2,
+      fontFamily: Theme.SemiBold,
+      color: 'gray',
+   },
+});
 
 export default BulletinDetail;

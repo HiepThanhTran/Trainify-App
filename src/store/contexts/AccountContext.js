@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import { authAPI, endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
-import { getTokens, refreshAccessToken } from '../../utils/Utilities';
+import { getTokens } from '../../utils/Utilities';
 import { SignInAction, SignOutAction } from '../actions/AccountAction';
 import { accountReducer } from '../reducers/AccountReducer';
 
@@ -31,15 +31,12 @@ export const AccountProvider = ({ children }) => {
       } catch (error) {
          if (error.response) {
             errorStatus = error.response.status;
-            if (
-               (errorStatus !== statusCode.HTTP_401_UNAUTHORIZED && errorStatus !== statusCode.HTTP_403_FORBIDDEN) ||
-               retryCount > 3
-            ) {
+            if (errorStatus !== statusCode.HTTP_401_UNAUTHORIZED || retryCount > 3) {
                dispatch(SignOutAction());
                return;
             }
 
-            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+            const newAccessToken = await refreshToken(refreshToken, dispatch);
             if (newAccessToken) checkLogged(retryCount + 1);
          } else console.error(error);
       }

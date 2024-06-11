@@ -52,9 +52,9 @@ export const loadMore = (nativeEvent, loading, page, setPage) => {
    }
 };
 
-export const onRefresh = (setPage, setFilter, setRefreshing) => {
+export const onRefresh = (setPage, setRefreshing, setFilter = null) => {
    setPage(1);
-   setFilter('');
+   if (setFilter) setFilter('');
    setRefreshing(true);
 };
 

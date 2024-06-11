@@ -12,7 +12,6 @@ import { authAPI, endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
 import { UpdateAccountAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
-import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { accountFields, schoolFields, tabsEditForm, userFields } from '../../utils/Fields';
@@ -91,11 +90,7 @@ const EditForm = ({ navigation, currentAccount, loading, setLoading }) => {
             setSnackBarMessage('Cập nhật thành công');
          }
       } catch (error) {
-         if (
-            error.response &&
-            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
-               error.response.status === statusCode.HTTP_403_FORBIDDEN)
-         ) {
+         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
             const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
             if (newAccessToken) handleUpdateProfile();
             else setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
@@ -240,12 +235,12 @@ const EditForm = ({ navigation, currentAccount, loading, setLoading }) => {
 };
 
 const EditProfile = ({ navigation }) => {
-   const { loading, setLoading } = useGlobalContext();
    const currentAccount = useAccount();
 
    const sheetRef = useRef(BottomSheet);
-   const [choice, setChoice] = useState(1);
+   const [tab, setTab] = useState('school');
    const [isEdit, setIsEdit] = useState(false);
+   const [loading, setLoading] = useState(false);
 
    const handleGallerySelection = () =>
       handleSelection(ImagePicker.requestMediaLibraryPermissionsAsync, ImagePicker.launchImageLibraryAsync);
@@ -309,11 +304,11 @@ const EditProfile = ({ navigation }) => {
                   <View style={EditProfileStyle.ChoiceContainer}>
                      {tabsEditForm.map((f) => (
                         <TouchableOpacity
-                           key={f.id}
+                           key={f.name}
                            style={EditProfileStyle.ChoiceButton}
-                           disabled={f.id === choice ? true : false}
+                           disabled={f.name === tab ? true : false}
                            onPress={() => {
-                              setChoice(f.id);
+                              setTab(f.name);
                               setIsEdit(!isEdit);
                               sheetRef?.current?.close();
                            }}
@@ -321,14 +316,12 @@ const EditProfile = ({ navigation }) => {
                            <Text
                               style={{
                                  ...EditProfileStyle.ChoiceText,
-                                 ...(f.id === choice ? { fontFamily: Theme.Bold, color: 'black' } : {}),
+                                 ...(f.name === tab ? { fontFamily: Theme.Bold, color: 'black' } : {}),
                               }}
                            >
                               {f.label}
                            </Text>
-                           <View
-                              style={{ ...EditProfileStyle.ChoiceDot, ...(f.id === choice ? { opacity: 1 } : {}) }}
-                           />
+                           <View style={{ ...EditProfileStyle.ChoiceDot, ...(f.name === tab ? { opacity: 1 } : {}) }} />
                         </TouchableOpacity>
                      ))}
                   </View>
@@ -355,16 +348,16 @@ const EditProfile = ({ navigation }) => {
             backgroundStyle={{ backgroundColor: '#273238' }}
             handleIndicatorStyle={{ backgroundColor: 'white' }}
          >
-            <BottomSheetView style={EditProfileStyle.AvatarSelection}>
-               <TouchableOpacity style={EditProfileStyle.Selection} onPress={handleGallerySelection}>
+            <BottomSheetView style={GlobalStyle.BottomSheetView}>
+               <TouchableOpacity style={GlobalStyle.BottomSheetItem} onPress={handleGallerySelection}>
                   <Icon source="image-multiple" color="white" size={24} />
-                  <Text style={EditProfileStyle.AvatarSelectionText}>Chọn ảnh từ thư viện</Text>
+                  <Text style={GlobalStyle.BottomSheetItemText}>Chọn ảnh từ thư viện</Text>
                </TouchableOpacity>
             </BottomSheetView>
-            <BottomSheetView style={EditProfileStyle.AvatarSelection}>
-               <TouchableOpacity style={EditProfileStyle.Selection} onPress={handleCameraSelection}>
+            <BottomSheetView style={GlobalStyle.BottomSheetView}>
+               <TouchableOpacity style={GlobalStyle.BottomSheetItem} onPress={handleCameraSelection}>
                   <Icon source="camera" color="white" size={24} />
-                  <Text style={EditProfileStyle.AvatarSelectionText}>Chụp ảnh từ camera</Text>
+                  <Text style={GlobalStyle.BottomSheetItemText}>Chụp ảnh từ camera</Text>
                </TouchableOpacity>
             </BottomSheetView>
          </BottomSheet>
@@ -402,21 +395,6 @@ const EditProfileStyle = StyleSheet.create({
       zIndex: 999,
       backgroundColor: '#273238',
       borderRadius: 36 / 2,
-   },
-   AvatarSelection: {
-      padding: 16,
-      marginBottom: 12,
-      backgroundColor: '#273238',
-   },
-   Selection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-   },
-   AvatarSelectionText: {
-      fontFamily: Theme.SemiBold,
-      fontSize: 20,
-      color: 'white',
-      marginLeft: 16,
    },
    ChoiceContainer: {
       flexDirection: 'row',

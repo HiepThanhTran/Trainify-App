@@ -14,7 +14,7 @@ import Theme from '../../styles/Theme';
 import { getTokens, refreshAccessToken } from '../../utils/Utilities';
 
 const TrainingPoint = ({ navigation }) => {
-   const { semester, setSemester, loading, setLoading, isRendered, setIsRedered } = useGlobalContext();
+   const { semester, setSemester } = useGlobalContext();
    const dispatch = useAccountDispatch();
    const currentAccount = useAccount();
 
@@ -25,6 +25,8 @@ const TrainingPoint = ({ navigation }) => {
    const [criterions, setCriterions] = useState([]);
    const [pointsDataChart, setPointsDataChart] = useState([]);
    const [criterionDataChart, setCriterionDataChart] = useState([]);
+   const [loading, setLoading] = useState(false);
+   const [isRendered, setIsRedered] = useState(false);
 
    useEffect(() => {
       loadSemesters();

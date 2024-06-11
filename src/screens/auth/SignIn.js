@@ -10,19 +10,18 @@ import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
 import { SignInAction } from '../../store/actions/AccountAction';
 import { useAccountDispatch } from '../../store/contexts/AccountContext';
-import { useGlobalContext } from '../../store/contexts/GlobalContext';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { signInFields } from '../../utils/Fields';
 import { setTokens } from '../../utils/Utilities';
 
 const SignIn = ({ navigation }) => {
-   const { loading, setLoading } = useGlobalContext();
    const dispatch = useAccountDispatch();
 
    const [account, setAccount] = useState({});
    const [errorMessage, setErrorMessage] = useState('');
    const [errorVisible, setErrorVisible] = useState(false);
+   const [loading, setLoading] = useState(false);
 
    const handleSignIn = async () => {
       for (let field of signInFields) {
