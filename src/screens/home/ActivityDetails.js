@@ -19,7 +19,6 @@ import { screenWidth } from 'react-native-gifted-charts/src/utils';
 import { Icon, Modal, Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import RenderHTML from 'react-native-render-html';
-import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Loading from '../../components/common/Loading';
 import APIs, { authAPI, endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
@@ -30,154 +29,213 @@ import { tabsActivityDetails } from '../../utils/Fields';
 import { formatDate, getTokens, loadMore, refreshAccessToken } from '../../utils/Utilities';
 import HomeStyle from './Style';
 
-const Overview = memo(({ activity, ...props }) => {
+const Overview = memo(({ activityID, activity, setActivity, ...props }) => {
    const [isExpanded, setIsExpanded] = useState(false);
+
+   const handleRegisterActivity = async () => {
+      props?.setModalVisible(true);
+      const { accessToken, refreshToken } = await getTokens();
+      try {
+         let res = await authAPI(accessToken).post(endPoints['activity-register'](activityID));
+
+         if (res.status === statusCode.HTTP_201_CREATED) {
+            Alert.alert('Thông báo', 'Đăng ký hoạt động thành công!');
+            setActivity((prevActivity) => ({
+               ...prevActivity,
+               registered: true,
+            }));
+         }
+         if (res.status === statusCode.HTTP_204_NO_CONTENT) {
+            Alert.alert('Thông báo', 'Hủy đăng ký thành công!');
+            setActivity((prevActivity) => ({
+               ...prevActivity,
+               registered: false,
+            }));
+         }
+      } catch (error) {
+         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
+            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+            if (newAccessToken) handleRegisterActivity();
+         } else console.error(error);
+      } finally {
+         props?.setModalVisible(false);
+      }
+   };
+
+   const alertRegisterActivity = () => {
+      Alert.alert(
+         'Xác nhận',
+         activity.registered ? 'Hủy đăng ký?' : 'Đăng ký hoạt động?',
+         [
+            {
+               text: activity.registered ? 'Xác nhận' : 'Đăng ký',
+               onPress: () => handleRegisterActivity(),
+            },
+            { text: 'Hủy', style: 'cancel' },
+         ],
+         { cancelable: false },
+      );
+   };
 
    if (props?.loading) return <Loading />;
 
    return (
-      <View style={{ ...HomeStyle.DetailsContainer, ...props?.style }}>
-         <View style={HomeStyle.DetailsWrap}>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="clockcircle" size={32} />
+      <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+         <View style={{ ...props?.style, ...HomeStyle.DetailsContainer, paddingBottom: screenHeight / 12 }}>
+            <View style={HomeStyle.DetailsWrap}>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Ngày bắt đầu</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.start_date)}</Text>
+                  </View>
                </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Ngày bắt đầu</Text>
-                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.start_date)}</Text>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Ngày kết thúc</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.end_date)}</Text>
+                  </View>
                </View>
             </View>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="clockcircle" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Ngày kết thúc</Text>
-                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.end_date)}</Text>
-               </View>
-            </View>
-         </View>
 
-         <View style={HomeStyle.DetailsWrap}>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="book" size={32} />
+            <View style={HomeStyle.DetailsWrap}>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <Ionicons name="bookmarks" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>ĐRL điều</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.criterion}</Text>
+                  </View>
                </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>ĐRL điều</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.criterion}</Text>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="star" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Điểm cộng</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.point}</Text>
+                  </View>
                </View>
             </View>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="star" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Điểm cộng</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.point}</Text>
-               </View>
-            </View>
-         </View>
 
-         <View style={HomeStyle.DetailsWrap}>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <Ionicons name="people" size={32} />
+            <View style={HomeStyle.DetailsWrap}>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <Ionicons name="people" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Đối tượng</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.participant}</Text>
+                  </View>
                </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Đối tượng</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.participant}</Text>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="appstore1" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Hình thức</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.organizational_form}</Text>
+                  </View>
                </View>
             </View>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="appstore1" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Hình thức</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.organizational_form}</Text>
-               </View>
-            </View>
-         </View>
 
-         <View style={HomeStyle.DetailsWrap}>
-            <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <Ionicons name="location" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Địa điểm</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.location}</Text>
+            <View style={HomeStyle.DetailsWrap}>
+               <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <Ionicons name="location" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Địa điểm</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.location}</Text>
+                  </View>
                </View>
             </View>
-         </View>
 
-         <View style={HomeStyle.DetailsWrap}>
-            <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <Ionicons name="school" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Khoa</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.faculty}</Text>
+            <View style={HomeStyle.DetailsWrap}>
+               <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <Ionicons name="school" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Khoa</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.faculty}</Text>
+                  </View>
                </View>
             </View>
-         </View>
 
-         <View style={HomeStyle.DetailsWrap}>
-            <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <Ionicons name="hourglass-outline" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Học kỳ</Text>
-                  <Text style={HomeStyle.DetailsValue}>{activity.semester}</Text>
+            <View style={HomeStyle.DetailsWrap}>
+               <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="hourglass" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Học kỳ</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.semester}</Text>
+                  </View>
                </View>
             </View>
-         </View>
 
-         <View style={{ marginTop: 12 }}>
-            <Text style={{ fontFamily: Theme.Bold, fontSize: 20 }}>Mô tả hoạt động</Text>
-            <RenderHTML
-               contentWidth={screenWidth}
-               source={{ html: activity.description }}
-               baseStyle={HomeStyle.DetailsDescription}
-               defaultTextProps={{
-                  numberOfLines: isExpanded ? 0 : 3,
-                  ellipsizeMode: 'tail',
-               }}
-            />
-            <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-               <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
-            </TouchableOpacity>
-         </View>
+            <View style={{ marginTop: 12 }}>
+               <Text style={{ fontFamily: Theme.Bold, fontSize: 20 }}>Mô tả hoạt động</Text>
+               <RenderHTML
+                  contentWidth={screenWidth}
+                  source={{ html: activity.description }}
+                  baseStyle={HomeStyle.DetailsDescription}
+                  defaultTextProps={{
+                     numberOfLines: isExpanded ? 0 : 3,
+                     ellipsizeMode: 'tail',
+                  }}
+               />
+               {activity.description.length > 144 && (
+                  <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
+                     <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+                  </TouchableOpacity>
+               )}
+            </View>
 
-         <View style={{ ...HomeStyle.DetailsWrap, marginTop: 12 }}>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="clockcircle" size={32} />
+            <View style={{ ...HomeStyle.DetailsWrap, marginTop: 12 }}>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.created_date)}</Text>
+                  </View>
                </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
-                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.created_date)}</Text>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.updated_date)}</Text>
+                  </View>
                </View>
             </View>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="clockcircle" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
-                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.updated_date)}</Text>
-               </View>
+
+            <View style={ActivityDetailsStyle.Register}>
+               <TouchableOpacity style={ActivityDetailsStyle.RegisterButton} onPress={alertRegisterActivity}>
+                  <Text style={ActivityDetailsStyle.RegisterButtonText}>
+                     {activity.registered ? 'Hủy đăng ký' : 'Đăng ký'}
+                  </Text>
+                  <Ionicons name="arrow-forward" size={32} color="white" />
+               </TouchableOpacity>
             </View>
          </View>
-      </View>
+      </ScrollView>
    );
 });
 
 const CommentsView = memo(({ activityID, comments, ...props }) => {
    const currentAccount = useAccount();
+
    const [expandedComments, setExpandedComments] = useState({});
 
    const toggleExpandComment = (commentId) => {
@@ -187,66 +245,74 @@ const CommentsView = memo(({ activityID, comments, ...props }) => {
       }));
    };
 
+   const handleOnPressSettings = (comment) => {
+      props?.setSelectedComment(comment);
+      props?.refBottomSettings?.current?.expand();
+      if (props?.refEditorComment?.current?.isKeyboardOpen) props?.refEditorComment?.current?.dismissKeyboard();
+   };
+
    if (props?.loading && props?.page === 1) return <Loading />;
 
    return (
-      <View style={{ ...props?.style }}>
-         <View style={{ marginBottom: 8 }}>
-            {comments.map((c, index) => {
-               const isExpanded = expandedComments[c.id];
-               const contentLength = c?.content?.length || 0;
-               const shouldShowMoreButton = contentLength > 100;
+      <ScrollView
+         showsHorizontalScrollIndicator={false}
+         showsVerticalScrollIndicator={false}
+         onScroll={({ nativeEvent }) => loadMore(nativeEvent, props?.loading, props?.page, props?.setPage)}
+      >
+         <View style={{ ...props?.style }}>
+            <View style={{ marginBottom: 8 }}>
+               {comments.map((c, index) => {
+                  const isExpanded = expandedComments[c.id];
+                  const contentLength = c?.content?.length || 0;
+                  const shouldShowMoreButton = contentLength > 74;
 
-               return (
-                  <View
-                     key={c.id}
-                     style={{
-                        ...CommentsStyle.Card,
-                        ...(index !== comments.length - 1 ? { borderBottomWidth: 0.5 } : {}),
-                     }}
-                  >
-                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{ overflow: 'hidden' }}>
-                           <Image source={{ uri: c?.account.avatar }} style={CommentsStyle.Avatar} />
-                        </View>
-                        <View style={CommentsStyle.CardContent}>
-                           {c.account.id === currentAccount.data.id && (
-                              <TouchableOpacity
-                                 style={CommentsStyle.Settings}
-                                 onPress={() => {
-                                    props?.setSelectedComment(c);
-                                    props?.refBottomSheetSettings?.current?.expand();
-                                    props?.refEditorComment?.current?.dismissKeyboard();
+                  return (
+                     <View
+                        key={c.id}
+                        style={{
+                           ...CommentsStyle.Card,
+                           ...(index !== comments.length - 1 ? { borderBottomWidth: 0.5 } : {}),
+                        }}
+                     >
+                        <View style={{ flexDirection: 'row' }}>
+                           <View style={{ overflow: 'hidden' }}>
+                              <Image source={{ uri: c?.account.avatar }} style={CommentsStyle.Avatar} />
+                           </View>
+                           <View style={CommentsStyle.CardContent}>
+                              {c.account.id === currentAccount.data.id && (
+                                 <TouchableOpacity
+                                    style={CommentsStyle.Settings}
+                                    onPress={() => handleOnPressSettings(c)}
+                                 >
+                                    <Icon source="dots-vertical" size={28} />
+                                 </TouchableOpacity>
+                              )}
+
+                              <Text style={CommentsStyle.Username}>{c?.account.user.full_name}</Text>
+                              <RenderHTML
+                                 contentWidth={screenWidth}
+                                 source={{ html: c?.content }}
+                                 baseStyle={HomeStyle.DetailsDescription}
+                                 defaultTextProps={{
+                                    numberOfLines: isExpanded ? 0 : 2,
+                                    ellipsizeMode: 'tail',
                                  }}
-                              >
-                                 <Icon source="dots-vertical" size={28} />
-                              </TouchableOpacity>
-                           )}
-
-                           <Text style={CommentsStyle.Username}>{c?.account.user.full_name}</Text>
-                           <RenderHTML
-                              contentWidth={screenWidth}
-                              source={{ html: c?.content }}
-                              baseStyle={HomeStyle.DetailsDescription}
-                              defaultTextProps={{
-                                 numberOfLines: isExpanded ? 0 : 2,
-                                 ellipsizeMode: 'tail',
-                              }}
-                           />
-                           {shouldShowMoreButton && (
-                              <TouchableOpacity onPress={() => toggleExpandComment(c.id)}>
-                                 <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
-                              </TouchableOpacity>
-                           )}
+                              />
+                              {shouldShowMoreButton && (
+                                 <TouchableOpacity onPress={() => toggleExpandComment(c.id)}>
+                                    <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+                                 </TouchableOpacity>
+                              )}
+                           </View>
                         </View>
+                        <Text style={CommentsStyle.CreatedDate}>{moment(c?.created_date).fromNow()}</Text>
                      </View>
-                     <Text style={CommentsStyle.CreatedDate}>{moment(c?.created_date).fromNow()}</Text>
-                  </View>
-               );
-            })}
-            {props?.loading && props?.page > 1 && <Loading />}
+                  );
+               })}
+               {props?.loading && props?.page > 1 && <Loading />}
+            </View>
          </View>
-      </View>
+      </ScrollView>
    );
 });
 
@@ -273,7 +339,6 @@ const ActivityDetails = ({ navigation, route }) => {
    const [activityLoading, setActivityLoading] = useState(false);
    const [commentsLoading, setCommentsLoading] = useState(false);
    const [indexBottomSettings, setIndexBottomSettings] = useState(-1);
-   const [indexBottomEditComment, setIndexBottomEditComment] = useState(-1);
 
    const animatedHeight = useState(new Animated.Value(screenHeight / 3))[0];
 
@@ -322,36 +387,6 @@ const ActivityDetails = ({ navigation, route }) => {
          console.error(error);
       } finally {
          setCommentsLoading(false);
-      }
-   };
-
-   const handleRegisterActivity = async () => {
-      setModalVisible(true);
-      const { accessToken, refreshToken } = await getTokens();
-      try {
-         let res = await authAPI(accessToken).post(endPoints['activity-register'](activityID));
-
-         if (res.status === statusCode.HTTP_201_CREATED) {
-            Alert.alert('Thông báo', 'Đăng ký hoạt động thành công!');
-            setActivity((prevActivity) => ({
-               ...prevActivity,
-               registered: true,
-            }));
-         }
-         if (res.status === statusCode.HTTP_204_NO_CONTENT) {
-            Alert.alert('Thông báo', 'Hủy đăng ký thành công!');
-            setActivity((prevActivity) => ({
-               ...prevActivity,
-               registered: false,
-            }));
-         }
-      } catch (error) {
-         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
-            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) handleRegisterActivity();
-         } else console.error(error);
-      } finally {
-         setModalVisible(false);
       }
    };
 
@@ -451,21 +486,6 @@ const ActivityDetails = ({ navigation, route }) => {
       }
    };
 
-   const alertRegisterActivity = () => {
-      Alert.alert(
-         'Xác nhận',
-         activity.registered ? 'Hủy đăng ký?' : 'Đăng ký hoạt động?',
-         [
-            {
-               text: activity.registered ? 'Xác nhận' : 'Đăng ký',
-               onPress: () => handleRegisterActivity(),
-            },
-            { text: 'Hủy', style: 'cancel' },
-         ],
-         { cancelable: false },
-      );
-   };
-
    const alertDeleteComment = () => {
       refBottomSettings?.current?.close();
       Alert.alert(
@@ -488,24 +508,24 @@ const ActivityDetails = ({ navigation, route }) => {
    };
 
    const handleOnPressWithoutFeedback = () => {
-      if (tab === 'comments') {
-         refEditorComment?.current?.dismissKeyboard();
-         refEditorEditComment?.current?.dismissKeyboard();
+      if (currentTab('comments')) {
          if (indexBottomSettings > -1) refBottomSettings?.current?.close();
-         if (indexBottomEditComment > -1) refBottomEditComment?.current?.close();
+         if (refEditorComment?.current?.isKeyboardOpen) refEditorComment?.current?.dismissKeyboard();
       }
+   };
+
+   const handleOnPressEditComment = () => {
+      setComment('');
+      refBottomSettings?.current?.close();
+      refBottomEditComment?.current?.expand();
+      refEditorEditComment?.current.setContentHTML(selectedComment?.content);
    };
 
    const handleTabChange = (name) => {
       setTab(name);
 
-      if (name !== 'comments') {
-         animateHeight(screenHeight / 3);
-         if (indexBottomSettings > -1) refBottomSettings?.current?.close();
-         if (indexBottomEditComment > -1) refBottomEditComment?.current?.close();
-         if (refEditorComment?.current?.isKeyboardOpen) refEditorComment?.current?.dismissKeyboard();
-      } else {
-         setPage(1);
+      if (name !== 'comments') animateHeight(screenHeight / 3);
+      else {
          animateHeight(screenHeight / 6);
       }
    };
@@ -523,17 +543,26 @@ const ActivityDetails = ({ navigation, route }) => {
    const tabContent = () => {
       switch (tab) {
          case 'overview':
-            return <Overview activity={activity} loading={activityLoading} />;
+            return (
+               <Overview
+                  activityID={activityID}
+                  activity={activity}
+                  setActivity={setActivity}
+                  loading={activityLoading}
+                  setModalVisible={setModalVisible}
+               />
+            );
          case 'comments':
             return (
                <CommentsView
-                  refBottomSheetSettings={refBottomSettings}
-                  refEditorComment={refEditorComment}
                   activityID={activityID}
                   comments={comments}
                   page={page}
+                  setPage={setPage}
                   loading={commentsLoading}
                   setSelectedComment={setSelectedComment}
+                  refEditorComment={refEditorComment}
+                  refBottomSettings={refBottomSettings}
                />
             );
          default:
@@ -545,84 +574,57 @@ const ActivityDetails = ({ navigation, route }) => {
 
    return (
       <GestureHandlerRootView>
-         <View style={GlobalStyle.BackGround}>
-            <ScrollView
-               showsVerticalScrollIndicator={false}
-               showsHorizontalScrollIndicator={false}
-               onScroll={({ nativeEvent }) => {
-                  if (currentTab('comments')) loadMore(nativeEvent, commentsLoading, page, setPage);
-               }}
-            >
-               <DismissKeyboard onPress={handleOnPressWithoutFeedback}>
-                  <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
-                     <ImageBackground source={{ uri: activity.image }} style={{ flex: 1 }}>
-                        <TouchableOpacity
-                           activeOpacity={0.8}
-                           style={HomeStyle.BackButton}
-                           onPress={() => navigation.goBack()}
-                        >
-                           <Ionicons name="chevron-back" color="gray" size={30} />
-                        </TouchableOpacity>
-                     </ImageBackground>
-                  </Animated.View>
-                  <View
-                     style={{ ...HomeStyle.Body, ...{ paddingBottom: currentTab('overview') ? screenHeight / 16 : 0 } }}
+         <View style={GlobalStyle.BackGround} onTouchStart={handleOnPressWithoutFeedback}>
+            <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
+               <ImageBackground source={{ uri: activity.image }} style={{ flex: 1 }}>
+                  <TouchableOpacity
+                     activeOpacity={0.8}
+                     style={HomeStyle.BackButton}
+                     onPress={() => navigation.goBack()}
                   >
-                     <View style={HomeStyle.Header}>
-                        <Text style={HomeStyle.HeaderText}>{activity.name}</Text>
-                        <View style={ActivityDetailsStyle.Like}>
-                           <Text style={ActivityDetailsStyle.LikeDetail}>{totalLikes}</Text>
-                           <TouchableOpacity onPress={handleLikeActivity}>
-                              <AntDesign
-                                 size={28}
-                                 name={liked ? 'like1' : 'like2'}
-                                 color={liked ? Theme.PrimaryColor : 'black'}
-                              />
-                           </TouchableOpacity>
-                        </View>
-                     </View>
-
-                     <View style={HomeStyle.TabContainer}>
-                        {tabsActivityDetails.map((f) => (
-                           <TouchableOpacity
-                              key={f.name}
-                              style={HomeStyle.TabItem}
-                              disabled={f.name === tab ? true : false}
-                              onPress={() => handleTabChange(f.name)}
-                           >
-                              <Text
-                                 style={{
-                                    ...HomeStyle.TabText,
-                                    ...{ color: f.name === tab ? Theme.PrimaryColor : 'black' },
-                                 }}
-                              >
-                                 {f.label}
-                              </Text>
-                           </TouchableOpacity>
-                        ))}
-                     </View>
-                     {tabContent()}
-                  </View>
-               </DismissKeyboard>
-
-               {currentTab('overview') && !activityLoading && (
-                  <View style={ActivityDetailsStyle.Register}>
-                     <TouchableOpacity style={ActivityDetailsStyle.RegisterButton} onPress={alertRegisterActivity}>
-                        <Text style={ActivityDetailsStyle.RegisterButtonText}>
-                           {activity.registered ? 'Hủy đăng ký' : 'Đăng ký'}
-                        </Text>
-                        <Ionicons name="arrow-forward" size={32} color="white" />
+                     <Ionicons name="chevron-back" color="gray" size={30} />
+                  </TouchableOpacity>
+               </ImageBackground>
+            </Animated.View>
+            <View style={{ ...HomeStyle.Body, paddingBottom: currentTab('overview') ? 0 : screenHeight / 16 }}>
+               <View style={HomeStyle.Header}>
+                  <Text style={HomeStyle.HeaderText}>{activity.name}</Text>
+                  <View style={ActivityDetailsStyle.Like}>
+                     <Text style={ActivityDetailsStyle.LikeDetail}>{totalLikes}</Text>
+                     <TouchableOpacity onPress={handleLikeActivity}>
+                        <AntDesign
+                           size={28}
+                           name={liked ? 'like1' : 'like2'}
+                           color={liked ? Theme.PrimaryColor : 'black'}
+                        />
                      </TouchableOpacity>
                   </View>
-               )}
-            </ScrollView>
+               </View>
+
+               <View style={HomeStyle.TabContainer}>
+                  {tabsActivityDetails.map((f) => (
+                     <TouchableOpacity
+                        key={f.name}
+                        style={HomeStyle.TabItem}
+                        disabled={f.name === tab ? true : false}
+                        onPress={() => handleTabChange(f.name)}
+                     >
+                        <Text
+                           style={{
+                              ...HomeStyle.TabText,
+                              color: f.name === tab ? Theme.PrimaryColor : 'black',
+                           }}
+                        >
+                           {f.label}
+                        </Text>
+                     </TouchableOpacity>
+                  ))}
+               </View>
+               {tabContent()}
+            </View>
 
             {currentTab('comments') && (
-               <View
-                  style={{
-                     ...CommentsStyle.CommentInput,
-                  }}
-               >
+               <View style={CommentsStyle.CommentInput}>
                   <ScrollView
                      ref={refScrollView}
                      style={CommentsStyle.RichText}
@@ -646,81 +648,76 @@ const ActivityDetails = ({ navigation, route }) => {
             )}
          </View>
 
-         <BottomSheet
-            ref={refBottomSettings}
-            index={-1}
-            snapPoints={['20%']}
-            enablePanDownToClose
-            onChange={setIndexBottomSettings}
-            backgroundStyle={{ backgroundColor: '#273238' }}
-            handleIndicatorStyle={{ backgroundColor: 'white' }}
-         >
-            <BottomSheetView style={GlobalStyle.BottomSheetView}>
-               <TouchableOpacity
-                  style={GlobalStyle.BottomSheetItem}
-                  onPress={() => {
-                     setComment('');
-                     refEditorEditComment?.current.setContentHTML(selectedComment?.content);
-                     refBottomEditComment?.current?.expand();
-                     refBottomSettings?.current?.close();
-                  }}
+         {currentTab('comments') && (
+            <>
+               <BottomSheet
+                  ref={refBottomSettings}
+                  index={-1}
+                  snapPoints={['20%']}
+                  enablePanDownToClose
+                  onChange={setIndexBottomSettings}
+                  backgroundStyle={{ backgroundColor: '#273238' }}
+                  handleIndicatorStyle={{ backgroundColor: 'white' }}
                >
-                  <Icon source="pencil" color="white" size={24} />
-                  <Text style={GlobalStyle.BottomSheetItemText}>Chỉnh sửa bình luận</Text>
-               </TouchableOpacity>
-            </BottomSheetView>
-            <BottomSheetView style={GlobalStyle.BottomSheetView}>
-               <TouchableOpacity style={GlobalStyle.BottomSheetItem} onPress={alertDeleteComment}>
-                  <Icon source="trash-can" color="white" size={24} />
-                  <Text style={GlobalStyle.BottomSheetItemText}>Xóa bình luận</Text>
-               </TouchableOpacity>
-            </BottomSheetView>
-         </BottomSheet>
+                  <BottomSheetView style={GlobalStyle.BottomSheetView}>
+                     <TouchableOpacity style={GlobalStyle.BottomSheetItem} onPress={handleOnPressEditComment}>
+                        <AntDesign name="edit" color="white" size={24} />
+                        <Text style={GlobalStyle.BottomSheetItemText}>Chỉnh sửa bình luận</Text>
+                     </TouchableOpacity>
+                  </BottomSheetView>
+                  <BottomSheetView style={GlobalStyle.BottomSheetView}>
+                     <TouchableOpacity style={GlobalStyle.BottomSheetItem} onPress={alertDeleteComment}>
+                        <Ionicons name="trash" color="white" size={24} />
+                        <Text style={GlobalStyle.BottomSheetItemText}>Xóa bình luận</Text>
+                     </TouchableOpacity>
+                  </BottomSheetView>
+               </BottomSheet>
 
-         <BottomSheet
-            ref={refBottomEditComment}
-            index={-1}
-            snapPoints={['100%']}
-            onChange={setIndexBottomEditComment}
-            backgroundStyle={{ backgroundColor: '#273238' }}
-            handleIndicatorStyle={{ display: 'none' }}
-         >
-            <BottomSheetView
-               style={{ ...GlobalStyle.BottomSheetView, flex: 1 }}
-               onTouchStart={() => refEditorEditComment?.current?.dismissKeyboard()}
-            >
-               <View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                     <View style={{ marginRight: 12 }}>
-                        <Image source={{ uri: selectedComment?.account?.avatar }} style={CommentsStyle.Avatar} />
+               <BottomSheet
+                  ref={refBottomEditComment}
+                  index={-1}
+                  snapPoints={['100%']}
+                  backgroundStyle={{ backgroundColor: '#273238' }}
+                  handleIndicatorStyle={{ display: 'none' }}
+               >
+                  <BottomSheetView
+                     style={{ ...GlobalStyle.BottomSheetView, flex: 1 }}
+                     onTouchStart={() => refEditorEditComment?.current?.dismissKeyboard()}
+                  >
+                     <View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                           <View style={{ marginRight: 12 }}>
+                              <Image source={{ uri: selectedComment?.account?.avatar }} style={CommentsStyle.Avatar} />
+                           </View>
+                           <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+                              <RichEditor
+                                 ref={refEditorEditComment}
+                                 onChange={handleRichTextOnChange}
+                                 placeholder="Nhập bình luận của bạn..."
+                                 showsVerticalScrollIndicator={false}
+                                 showsHorizontalScrollIndicator={false}
+                                 style={{ borderRadius: 16, overflow: 'hidden' }}
+                                 editorStyle={{ backgroundColor: '#d5deef', placeholderColor: 'gray' }}
+                              />
+                           </ScrollView>
+                        </View>
+                        <View style={CommentsStyle.EditButtonsContainer}>
+                           <TouchableOpacity
+                              style={CommentsStyle.EditButton}
+                              onPress={() => refBottomEditComment?.current?.close()}
+                           >
+                              <Text style={CommentsStyle.EditButtonText}>Hủy</Text>
+                           </TouchableOpacity>
+
+                           <TouchableOpacity style={CommentsStyle.EditButton} onPress={handleEditComment}>
+                              <Text style={CommentsStyle.EditButtonText}>Cập nhập</Text>
+                           </TouchableOpacity>
+                        </View>
                      </View>
-                     <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-                        <RichEditor
-                           ref={refEditorEditComment}
-                           onChange={handleRichTextOnChange}
-                           placeholder="Nhập bình luận của bạn..."
-                           showsVerticalScrollIndicator={false}
-                           showsHorizontalScrollIndicator={false}
-                           style={{ borderRadius: 16, overflow: 'hidden' }}
-                           editorStyle={{ backgroundColor: '#d5deef', placeholderColor: 'gray' }}
-                        />
-                     </ScrollView>
-                  </View>
-                  <View style={CommentsStyle.EditButtonsContainer}>
-                     <TouchableOpacity
-                        style={CommentsStyle.EditButton}
-                        onPress={() => refBottomEditComment?.current?.close()}
-                     >
-                        <Text style={CommentsStyle.EditButtonText}>Hủy</Text>
-                     </TouchableOpacity>
-
-                     <TouchableOpacity style={CommentsStyle.EditButton} onPress={handleEditComment}>
-                        <Text style={CommentsStyle.EditButtonText}>Cập nhập</Text>
-                     </TouchableOpacity>
-                  </View>
-               </View>
-            </BottomSheetView>
-         </BottomSheet>
+                  </BottomSheetView>
+               </BottomSheet>
+            </>
+         )}
 
          <Portal>
             <Modal visible={modalVisible} style={GlobalStyle.Container}>
@@ -750,7 +747,6 @@ const ActivityDetailsStyle = StyleSheet.create({
    RegisterButton: {
       backgroundColor: Theme.PrimaryColor,
       padding: 12,
-      marginHorizontal: 16,
       borderRadius: 20,
       flexDirection: 'row',
       justifyContent: 'center',

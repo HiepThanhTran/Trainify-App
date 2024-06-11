@@ -2,7 +2,6 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { memo, useEffect, useState } from 'react';
 import { Animated, ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
-import DismissKeyboard from '../components/common/DismissKeyboard';
 import Loading from '../components/common/Loading';
 import APIs, { endPoints } from '../configs/APIs';
 import { statusCode } from '../configs/Constants';
@@ -19,44 +18,48 @@ const Overview = memo(({ bulletin, ...props }) => {
    if (props?.loading) return <Loading />;
 
    return (
-      <View style={{ ...HomeStyle.DetailsContainer, ...props?.style }}>
-         <View style={{ marginTop: 12 }}>
-            <Text style={{ fontFamily: Theme.Bold, fontSize: 20 }}>Mô tả hoạt động</Text>
-            <RenderHTML
-               contentWidth={screenWidth}
-               source={{ html: bulletin.description }}
-               baseStyle={HomeStyle.DetailsDescription}
-               defaultTextProps={{
-                  numberOfLines: isExpanded ? 0 : 3,
-                  ellipsizeMode: 'tail',
-               }}
-            />
-            <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-               <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
-            </TouchableOpacity>
-         </View>
+      <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+         <View style={{ ...HomeStyle.DetailsContainer, ...props?.style }}>
+            <View style={{ marginTop: 12 }}>
+               <Text style={{ fontFamily: Theme.Bold, fontSize: 20 }}>Mô tả hoạt động</Text>
+               <RenderHTML
+                  contentWidth={screenWidth}
+                  source={{ html: bulletin.description }}
+                  baseStyle={HomeStyle.DetailsDescription}
+                  defaultTextProps={{
+                     numberOfLines: isExpanded ? 0 : 3,
+                     ellipsizeMode: 'tail',
+                  }}
+               />
+               {bulletin.description.length > 144 && (
+                  <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
+                     <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+                  </TouchableOpacity>
+               )}
+            </View>
 
-         <View style={{ ...HomeStyle.DetailsWrap, marginTop: 12 }}>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="clockcircle" size={32} />
+            <View style={{ ...HomeStyle.DetailsWrap, marginTop: 12 }}>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.created_date)}</Text>
+                  </View>
                </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
-                  <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.created_date)}</Text>
-               </View>
-            </View>
-            <View style={HomeStyle.DetailsItem}>
-               <View style={HomeStyle.DetailsIcon}>
-                  <AntDesign name="clockcircle" size={32} />
-               </View>
-               <View style={HomeStyle.Details}>
-                  <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
-                  <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.updated_date)}</Text>
+               <View style={HomeStyle.DetailsItem}>
+                  <View style={HomeStyle.DetailsIcon}>
+                     <AntDesign name="clockcircle" size={32} />
+                  </View>
+                  <View style={HomeStyle.Details}>
+                     <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
+                     <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.updated_date)}</Text>
+                  </View>
                </View>
             </View>
          </View>
-      </View>
+      </ScrollView>
    );
 });
 
@@ -165,48 +168,41 @@ const Test = ({ navigation, route }) => {
    if (!isRendered) return <Loading />;
 
    return (
-      <View style={GlobalStyle.BackGround}>
-         <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-            <DismissKeyboard>
-               <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
-                  <ImageBackground source={{ uri: bulletin.image }} style={{ flex: 1 }}>
-                     <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={HomeStyle.BackButton}
-                        onPress={() => navigation.goBack()}
-                     >
-                        <Ionicons name="chevron-back" color="gray" size={30} />
-                     </TouchableOpacity>
-                  </ImageBackground>
-               </Animated.View>
-               <View style={HomeStyle.Body}>
-                  <View style={HomeStyle.Header}>
-                     <Text style={HomeStyle.HeaderText}>{bulletin.name}</Text>
-                  </View>
+      <View style={{ ...GlobalStyle.BackGround, flex: 1, backgroundColor: 'blue' }} onPress={() => {}}>
+         <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
+            <ImageBackground source={{ uri: bulletin.image }} style={{ flex: 1 }}>
+               <TouchableOpacity activeOpacity={0.8} style={HomeStyle.BackButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="chevron-back" color="gray" size={30} />
+               </TouchableOpacity>
+            </ImageBackground>
+         </Animated.View>
 
-                  <View style={HomeStyle.TabContainer}>
-                     {tabsBulletinDetails.map((f) => (
-                        <TouchableOpacity
-                           key={f.name}
-                           style={HomeStyle.TabItem}
-                           disabled={f.name === tab ? true : false}
-                           onPress={() => handleTabChange(f.name)}
-                        >
-                           <Text
-                              style={{
-                                 ...HomeStyle.TabText,
-                                 ...{ color: f.name === tab ? Theme.PrimaryColor : 'black' },
-                              }}
-                           >
-                              {f.label}
-                           </Text>
-                        </TouchableOpacity>
-                     ))}
-                  </View>
-                  {tabContent()}
-               </View>
-            </DismissKeyboard>
-         </ScrollView>
+         <View style={HomeStyle.Body}>
+            <View style={HomeStyle.Header}>
+               <Text style={HomeStyle.HeaderText}>{bulletin.name}</Text>
+            </View>
+
+            <View style={HomeStyle.TabContainer}>
+               {tabsBulletinDetails.map((f) => (
+                  <TouchableOpacity
+                     key={f.name}
+                     style={HomeStyle.TabItem}
+                     disabled={f.name === tab ? true : false}
+                     onPress={() => handleTabChange(f.name)}
+                  >
+                     <Text
+                        style={{
+                           ...HomeStyle.TabText,
+                           color: f.name === tab ? Theme.PrimaryColor : 'black',
+                        }}
+                     >
+                        {f.label}
+                     </Text>
+                  </TouchableOpacity>
+               ))}
+            </View>
+            {tabContent()}
+         </View>
       </View>
    );
 };

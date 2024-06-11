@@ -20,9 +20,11 @@ const HomeStyle = StyleSheet.create({
       marginLeft: 12,
    },
    Body: {
+      flex: 1,
       padding: 20,
-      bottom: 30,
-      borderRadius: 32,
+      marginTop: -30,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
       backgroundColor: 'white',
    },
    Header: {
