@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-paper';
+import Test from '../screens/Test';
 import Bulletin from '../screens/home/Bulletins';
 import Notification from '../screens/notification/Notification';
 import Profile from '../screens/profile/Profile';
@@ -28,6 +29,9 @@ const MainTab = () => {
                   case 'Profile':
                      iconName = focused ? 'account' : 'account-outline';
                      break;
+                  case 'Test':
+                     iconName = 'history';
+                     break;
                   default:
                      iconName = '';
                }
@@ -38,13 +42,14 @@ const MainTab = () => {
             },
          })}
       >
-         <Tab.Screen name="Home" component={Bulletin} options={{ tabBarLabel: 'Trang chủ' }}></Tab.Screen>
+         <Tab.Screen name="Home" component={Bulletin} options={{ tabBarLabel: 'Trang chủ' }} />
          <Tab.Screen
             name="Notification"
             component={Notification}
             options={{ tabBarLabel: 'Thông báo', tabBarBadge: 3 }}
-         ></Tab.Screen>
-         <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Tôi' }}></Tab.Screen>
+         />
+         <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Tôi' }} />
+         <Tab.Screen name="Test" component={Test} options={{ tabBarLabel: 'Test Screen' }} />
       </Tab.Navigator>
    );
 };

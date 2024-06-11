@@ -14,9 +14,9 @@ const CardList = ({ data, ...props }) => {
             <RefreshControl colors={[Theme.PrimaryColor]} refreshing={props?.refreshing} onRefresh={props?.onRefresh} />
          }
       >
-         {props?.topLoading && props?.loading && <Loading />}
+         {props?.topLoading && !props?.refreshing && props?.loading && props?.page === 1 && <Loading />}
          {data?.map((d) => (
-            <Card key={d.id} instance={d} onPress={() => props?.cardOnPress(d.id, d.name) ?? null} />
+            <Card key={d.id} instance={d} onPress={() => props?.onPress(d.id) ?? null} />
          ))}
          {props?.loading && props?.page > 1 && <Loading />}
       </ScrollView>

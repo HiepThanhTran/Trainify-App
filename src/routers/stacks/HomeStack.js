@@ -1,14 +1,14 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ActivityDetail from '../../screens/home/ActivityDetail';
-import BulletinDetail from '../../screens/home/BulletinDetail';
+import ActivityDetails from '../../screens/home/ActivityDetails';
+import BulletinDetails from '../../screens/home/BulletinDetails';
 
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
    return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-         <Stack.Screen name="BulletinDetail" component={BulletinDetail} />
-         <Stack.Screen name="ActivityDetail" component={ActivityDetail} />
+         <Stack.Screen name="BulletinDetail" component={BulletinDetails} />
+         <Stack.Screen name="ActivityDetail" component={ActivityDetails} />
       </Stack.Navigator>
    );
 };

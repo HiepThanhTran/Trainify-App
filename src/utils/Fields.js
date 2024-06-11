@@ -112,7 +112,12 @@ export const tabsEditForm = [
    { label: 'Thông tin cá nhân', name: 'edit' },
 ];
 
-export const tabsActivity = [
+export const tabsActivityDetails = [
    { label: 'Tổng quan', name: 'overview' },
    { label: 'Bình luận', name: 'comments' },
+];
+
+export const tabsBulletinDetails = [
+   { label: 'Tổng quan', name: 'overview' },
+   { label: 'Danh sách hoạt động', name: 'activities' },
 ];

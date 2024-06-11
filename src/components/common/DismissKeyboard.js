@@ -3,7 +3,7 @@ import { Keyboard, TouchableOpacity } from 'react-native';
 const DismissKeyboard = ({ children, ...props }) => {
    return (
       <TouchableOpacity
-         style={{ flex: 1 }}
+         style={{ ...props?.style, flex: 1 }}
          activeOpacity={1}
          onPress={() => {
             Keyboard.dismiss();

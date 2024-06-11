@@ -11,7 +11,7 @@ import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate, loadMore, onRefresh, search } from '../../utils/Utilities';
 
-const BulletinDetail = ({ navigation, route }) => {
+const BulletinDetails = ({ navigation, route }) => {
    const bulletinID = route?.params?.bulletinID;
 
    const [bulletin, setBulletin] = useState({});
@@ -20,6 +20,7 @@ const BulletinDetail = ({ navigation, route }) => {
    const [activityName, setActivityName] = useState('');
    const [isExpanded, setIsExpanded] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
+   const [isRendered, setIsRendered] = useState(false);
    const [activityLoading, setActivityLoading] = useState(false);
    const [bulletinLoading, setBulletinLoading] = useState(false);
 
@@ -42,6 +43,7 @@ const BulletinDetail = ({ navigation, route }) => {
          console.error(error);
       } finally {
          setBulletinLoading(false);
+         setIsRendered(true);
       }
    };
 
@@ -54,8 +56,10 @@ const BulletinDetail = ({ navigation, route }) => {
             params: { bulletin_id: bulletinID, page, name: activityName },
          });
          if (res.data.next === null) setPage(0);
-         if (res.status === statusCode.HTTP_200_OK)
-            setActivities(page === 1 ? res.data.results : [...activities, ...res.data.results]);
+         if (res.status === statusCode.HTTP_200_OK) {
+            if (page === 1) setActivities(res.data.results);
+            else setActivities((prevActivities) => [...prevActivities, ...res.data.results]);
+         }
       } catch (error) {
          console.error(error);
       } finally {
@@ -64,11 +68,11 @@ const BulletinDetail = ({ navigation, route }) => {
       }
    };
 
-   const goActivityDetail = (activityID, name) => {
-      navigation.navigate('ActivityDetail', { activityID, name });
+   const goActivityDetail = (activityID) => {
+      navigation.navigate('ActivityDetail', { activityID });
    };
 
-   if (bulletinLoading) return <Loading />;
+   if (!isRendered) return <Loading />;
 
    return (
       <View style={GlobalStyle.BackGround}>
@@ -119,11 +123,12 @@ const BulletinDetail = ({ navigation, route }) => {
                      onChangeText={(value) => search(value, setPage, setActivityName)}
                   />
                   <CardList
+                     topLoading
                      data={activities}
                      page={page}
                      loading={activityLoading}
                      style={{ marginBottom: 0 }}
-                     cardOnPress={goActivityDetail}
+                     onPress={goActivityDetail}
                   />
                </View>
             </DismissKeyboard>
@@ -184,4 +189,4 @@ const BulletinDetailStyle = StyleSheet.create({
    },
 });
 
-export default BulletinDetail;
+export default BulletinDetails;

@@ -6,7 +6,6 @@ import { memo, useEffect, useRef, useState } from 'react';
 import {
    Alert,
    Animated,
-   Easing,
    Image,
    ImageBackground,
    ScrollView,
@@ -27,8 +26,9 @@ import { statusCode } from '../../configs/Constants';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { tabsActivity } from '../../utils/Fields';
+import { tabsActivityDetails } from '../../utils/Fields';
 import { formatDate, getTokens, loadMore, refreshAccessToken } from '../../utils/Utilities';
+import HomeStyle from './Style';
 
 const Overview = memo(({ activity, ...props }) => {
    const [isExpanded, setIsExpanded] = useState(false);
@@ -36,102 +36,102 @@ const Overview = memo(({ activity, ...props }) => {
    if (props?.loading) return <Loading />;
 
    return (
-      <View style={{ ...ActivityDetailStyle.ActivityInfo, ...props?.style }}>
-         <View style={ActivityDetailStyle.SummaryContainer}>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="timer" size={32} />
+      <View style={{ ...HomeStyle.DetailsContainer, ...props?.style }}>
+         <View style={HomeStyle.DetailsWrap}>
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="clockcircle" size={32} />
                </View>
-               <View>
-                  <Text style={ActivityDetailStyle.SummaryText}>Ngày bắt đầu</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{formatDate(activity.start_date)}</Text>
-               </View>
-            </View>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="timer" size={32} />
-               </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Ngày kết thúc</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{formatDate(activity.end_date)}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Ngày bắt đầu</Text>
+                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.start_date)}</Text>
                </View>
             </View>
-         </View>
-
-         <View style={ActivityDetailStyle.SummaryContainer}>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="reader" size={32} />
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="clockcircle" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>ĐRL điều</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.criterion}</Text>
-               </View>
-            </View>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="bookmark" size={32} />
-               </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Điểm cộng</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.point}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Ngày kết thúc</Text>
+                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.end_date)}</Text>
                </View>
             </View>
          </View>
 
-         <View style={ActivityDetailStyle.SummaryContainer}>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
+         <View style={HomeStyle.DetailsWrap}>
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="book" size={32} />
+               </View>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>ĐRL điều</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.criterion}</Text>
+               </View>
+            </View>
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="star" size={32} />
+               </View>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Điểm cộng</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.point}</Text>
+               </View>
+            </View>
+         </View>
+
+         <View style={HomeStyle.DetailsWrap}>
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
                   <Ionicons name="people" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Đối tượng</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.participant}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Đối tượng</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.participant}</Text>
                </View>
             </View>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="contrast" size={32} />
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="appstore1" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Hình thức</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.organizational_form}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Hình thức</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.organizational_form}</Text>
                </View>
             </View>
          </View>
 
-         <View style={ActivityDetailStyle.SummaryContainer}>
-            <View style={{ ...ActivityDetailStyle.SummaryItem, width: '100%' }}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
+         <View style={HomeStyle.DetailsWrap}>
+            <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
+               <View style={HomeStyle.DetailsIcon}>
                   <Ionicons name="location" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Địa điểm</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.location}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Địa điểm</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.location}</Text>
                </View>
             </View>
          </View>
 
-         <View style={ActivityDetailStyle.SummaryContainer}>
-            <View style={{ ...ActivityDetailStyle.SummaryItem, width: '100%' }}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
+         <View style={HomeStyle.DetailsWrap}>
+            <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
+               <View style={HomeStyle.DetailsIcon}>
                   <Ionicons name="school" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Khoa</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.faculty}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Khoa</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.faculty}</Text>
                </View>
             </View>
          </View>
 
-         <View style={ActivityDetailStyle.SummaryContainer}>
-            <View style={{ ...ActivityDetailStyle.SummaryItem, width: '100%' }}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
+         <View style={HomeStyle.DetailsWrap}>
+            <View style={{ ...HomeStyle.DetailsItem, width: '100%' }}>
+               <View style={HomeStyle.DetailsIcon}>
                   <Ionicons name="hourglass-outline" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Học kỳ</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{activity.semester}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Học kỳ</Text>
+                  <Text style={HomeStyle.DetailsValue}>{activity.semester}</Text>
                </View>
             </View>
          </View>
@@ -141,34 +141,34 @@ const Overview = memo(({ activity, ...props }) => {
             <RenderHTML
                contentWidth={screenWidth}
                source={{ html: activity.description }}
-               baseStyle={ActivityDetailStyle.Description}
+               baseStyle={HomeStyle.DetailsDescription}
                defaultTextProps={{
                   numberOfLines: isExpanded ? 0 : 3,
                   ellipsizeMode: 'tail',
                }}
             />
             <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-               <Text style={ActivityDetailStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
+               <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
             </TouchableOpacity>
          </View>
 
-         <View style={{ ...ActivityDetailStyle.SummaryContainer, marginTop: 12 }}>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="time" size={32} />
+         <View style={{ ...HomeStyle.DetailsWrap, marginTop: 12 }}>
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="clockcircle" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Ngày tạo</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{formatDate(activity.created_date)}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
+                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.created_date)}</Text>
                </View>
             </View>
-            <View style={ActivityDetailStyle.SummaryItem}>
-               <View style={ActivityDetailStyle.SummaryIcon}>
-                  <Ionicons name="time" size={32} />
+            <View style={HomeStyle.DetailsItem}>
+               <View style={HomeStyle.DetailsIcon}>
+                  <AntDesign name="clockcircle" size={32} />
                </View>
-               <View style={ActivityDetailStyle.Summary}>
-                  <Text style={ActivityDetailStyle.SummaryText}>Ngày cập nhật</Text>
-                  <Text style={ActivityDetailStyle.SummaryValue}>{formatDate(activity.updated_date)}</Text>
+               <View style={HomeStyle.Details}>
+                  <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
+                  <Text style={HomeStyle.DetailsValue}>{formatDate(activity.updated_date)}</Text>
                </View>
             </View>
          </View>
@@ -227,7 +227,7 @@ const CommentsView = memo(({ activityID, comments, ...props }) => {
                            <RenderHTML
                               contentWidth={screenWidth}
                               source={{ html: c?.content }}
-                              baseStyle={ActivityDetailStyle.Description}
+                              baseStyle={HomeStyle.DetailsDescription}
                               defaultTextProps={{
                                  numberOfLines: isExpanded ? 0 : 2,
                                  ellipsizeMode: 'tail',
@@ -235,9 +235,7 @@ const CommentsView = memo(({ activityID, comments, ...props }) => {
                            />
                            {shouldShowMoreButton && (
                               <TouchableOpacity onPress={() => toggleExpandComment(c.id)}>
-                                 <Text style={ActivityDetailStyle.MoreButton}>
-                                    {isExpanded ? 'Thu gọn' : 'Xem thêm'}
-                                 </Text>
+                                 <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
                               </TouchableOpacity>
                            )}
                         </View>
@@ -252,8 +250,7 @@ const CommentsView = memo(({ activityID, comments, ...props }) => {
    );
 });
 
-const ActivityDetail = ({ navigation, route }) => {
-   console.log('re-render');
+const ActivityDetails = ({ navigation, route }) => {
    const activityID = route?.params?.activityID;
    const dispatch = useAccountDispatch();
 
@@ -264,18 +261,20 @@ const ActivityDetail = ({ navigation, route }) => {
    const refBottomEditComment = useRef(null);
 
    const [selectedComment, setSelectedComment] = useState({});
+   const [tab, setTab] = useState('overview');
    const [activity, setActivity] = useState({});
    const [comments, setComments] = useState([]);
+   const [page, setPage] = useState(1);
    const [comment, setComment] = useState('');
    const [liked, setLiked] = useState(false);
    const [totalLikes, setTotalLikes] = useState(0);
-   const [page, setPage] = useState(1);
-   const [tab, setTab] = useState('overview');
    const [modalVisible, setModalVisible] = useState(false);
+   const [isRendered, setIsRendered] = useState(false);
    const [activityLoading, setActivityLoading] = useState(false);
    const [commentsLoading, setCommentsLoading] = useState(false);
    const [indexBottomSettings, setIndexBottomSettings] = useState(-1);
    const [indexBottomEditComment, setIndexBottomEditComment] = useState(-1);
+
    const animatedHeight = useState(new Animated.Value(screenHeight / 3))[0];
 
    useEffect(() => {
@@ -287,6 +286,8 @@ const ActivityDetail = ({ navigation, route }) => {
    }, [page]);
 
    const loadActivity = async () => {
+      if (!activityID) return;
+
       setActivityLoading(true);
       try {
          const { accessToken } = await getTokens();
@@ -301,11 +302,12 @@ const ActivityDetail = ({ navigation, route }) => {
          console.error(error);
       } finally {
          setActivityLoading(false);
+         setIsRendered(true);
       }
    };
 
    const loadComments = async () => {
-      if (page < 1) return;
+      if (!activityID || page < 1) return;
 
       setCommentsLoading(true);
       try {
@@ -494,8 +496,9 @@ const ActivityDetail = ({ navigation, route }) => {
       }
    };
 
-   const changeTab = (name) => {
+   const handleTabChange = (name) => {
       setTab(name);
+
       if (name !== 'comments') {
          animateHeight(screenHeight / 3);
          if (indexBottomSettings > -1) refBottomSettings?.current?.close();
@@ -507,20 +510,38 @@ const ActivityDetail = ({ navigation, route }) => {
       }
    };
 
-   const currentTab = (name) => {
-      return tab === name;
-   };
+   const currentTab = (name) => tab === name;
 
    const animateHeight = (toValue) => {
       Animated.timing(animatedHeight, {
-         toValue: toValue,
-         duration: 300,
+         toValue,
+         duration: 500,
          useNativeDriver: false,
-         easing: Easing.out(Easing.quad),
       }).start();
    };
 
-   if (activityLoading) return <Loading />;
+   const tabContent = () => {
+      switch (tab) {
+         case 'overview':
+            return <Overview activity={activity} loading={activityLoading} />;
+         case 'comments':
+            return (
+               <CommentsView
+                  refBottomSheetSettings={refBottomSettings}
+                  refEditorComment={refEditorComment}
+                  activityID={activityID}
+                  comments={comments}
+                  page={page}
+                  loading={commentsLoading}
+                  setSelectedComment={setSelectedComment}
+               />
+            );
+         default:
+            return null;
+      }
+   };
+
+   if (!isRendered) return <Loading />;
 
    return (
       <GestureHandlerRootView>
@@ -533,11 +554,11 @@ const ActivityDetail = ({ navigation, route }) => {
                }}
             >
                <DismissKeyboard onPress={handleOnPressWithoutFeedback}>
-                  <Animated.View style={{ ...ActivityDetailStyle.Image, height: animatedHeight }}>
+                  <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
                      <ImageBackground source={{ uri: activity.image }} style={{ flex: 1 }}>
                         <TouchableOpacity
                            activeOpacity={0.8}
-                           style={ActivityDetailStyle.BackButton}
+                           style={HomeStyle.BackButton}
                            onPress={() => navigation.goBack()}
                         >
                            <Ionicons name="chevron-back" color="gray" size={30} />
@@ -545,12 +566,12 @@ const ActivityDetail = ({ navigation, route }) => {
                      </ImageBackground>
                   </Animated.View>
                   <View
-                     style={{ ...ActivityDetailStyle.Body, ...(!currentTab('overview') ? { paddingBottom: 0 } : {}) }}
+                     style={{ ...HomeStyle.Body, ...{ paddingBottom: currentTab('overview') ? screenHeight / 16 : 0 } }}
                   >
-                     <View style={ActivityDetailStyle.Header}>
-                        <Text style={ActivityDetailStyle.HeaderText}>{activity.name}</Text>
-                        <View style={ActivityDetailStyle.Like}>
-                           <Text style={ActivityDetailStyle.LikeDetail}>{totalLikes}</Text>
+                     <View style={HomeStyle.Header}>
+                        <Text style={HomeStyle.HeaderText}>{activity.name}</Text>
+                        <View style={ActivityDetailsStyle.Like}>
+                           <Text style={ActivityDetailsStyle.LikeDetail}>{totalLikes}</Text>
                            <TouchableOpacity onPress={handleLikeActivity}>
                               <AntDesign
                                  size={28}
@@ -561,18 +582,18 @@ const ActivityDetail = ({ navigation, route }) => {
                         </View>
                      </View>
 
-                     <View style={ActivityDetailStyle.TabContainer}>
-                        {tabsActivity.map((f) => (
+                     <View style={HomeStyle.TabContainer}>
+                        {tabsActivityDetails.map((f) => (
                            <TouchableOpacity
                               key={f.name}
-                              style={ActivityDetailStyle.TabItem}
+                              style={HomeStyle.TabItem}
                               disabled={f.name === tab ? true : false}
-                              onPress={() => changeTab(f.name)}
+                              onPress={() => handleTabChange(f.name)}
                            >
                               <Text
                                  style={{
-                                    ...ActivityDetailStyle.TabText,
-                                    ...(f.name === tab ? { color: Theme.PrimaryColor } : {}),
+                                    ...HomeStyle.TabText,
+                                    ...{ color: f.name === tab ? Theme.PrimaryColor : 'black' },
                                  }}
                               >
                                  {f.label}
@@ -580,26 +601,14 @@ const ActivityDetail = ({ navigation, route }) => {
                            </TouchableOpacity>
                         ))}
                      </View>
-
-                     {currentTab('overview') && <Overview activity={activity} loading={activityLoading} />}
-                     {currentTab('comments') && (
-                        <CommentsView
-                           refBottomSheetSettings={refBottomSettings}
-                           refEditorComment={refEditorComment}
-                           activityID={activityID}
-                           comments={comments}
-                           page={page}
-                           loading={commentsLoading}
-                           setSelectedComment={setSelectedComment}
-                        />
-                     )}
+                     {tabContent()}
                   </View>
                </DismissKeyboard>
 
                {currentTab('overview') && !activityLoading && (
-                  <View style={ActivityDetailStyle.Register}>
-                     <TouchableOpacity style={ActivityDetailStyle.RegisterButton} onPress={alertRegisterActivity}>
-                        <Text style={ActivityDetailStyle.RegisterButtonText}>
+                  <View style={ActivityDetailsStyle.Register}>
+                     <TouchableOpacity style={ActivityDetailsStyle.RegisterButton} onPress={alertRegisterActivity}>
+                        <Text style={ActivityDetailsStyle.RegisterButtonText}>
                            {activity.registered ? 'Hủy đăng ký' : 'Đăng ký'}
                         </Text>
                         <Ionicons name="arrow-forward" size={32} color="white" />
@@ -722,92 +731,7 @@ const ActivityDetail = ({ navigation, route }) => {
    );
 };
 
-const ActivityDetailStyle = StyleSheet.create({
-   Image: {
-      width: '100%',
-      height: screenHeight / 3,
-   },
-   BackButton: {
-      backgroundColor: 'white',
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 4,
-      borderColor: '#d5deef',
-      marginTop: 12,
-      marginLeft: 12,
-   },
-   Body: {
-      padding: 20,
-      bottom: 30,
-      borderRadius: 32,
-      backgroundColor: 'white',
-      paddingBottom: screenHeight / 16,
-   },
-   Header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-   },
-   HeaderText: {
-      flex: 1,
-      flexWrap: 'wrap',
-      fontSize: 24,
-      fontFamily: Theme.Bold,
-   },
-   TabContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderBottomWidth: 0.5,
-      borderTopWidth: 0.5,
-      marginVertical: 12,
-      justifyContent: 'space-between',
-   },
-   TabItem: {
-      marginHorizontal: 12,
-      paddingVertical: 16,
-   },
-   TabText: {
-      fontSize: 16,
-      fontFamily: Theme.SemiBold,
-   },
-   SummaryContainer: {
-      marginBottom: 12,
-      flexDirection: 'row',
-   },
-   SummaryItem: {
-      width: '50%',
-      alignItems: 'center',
-      flexDirection: 'row',
-   },
-   SummaryIcon: {
-      padding: 8,
-      marginRight: 12,
-      borderRadius: 8,
-      backgroundColor: 'lightgrey',
-   },
-   Summary: {
-      flex: 1,
-   },
-   SummaryText: {
-      fontSize: 16,
-   },
-   SummaryValue: {
-      fontSize: 16,
-      fontWeight: '700',
-   },
-   Description: {
-      fontSize: 16,
-      lineHeight: 28,
-      fontFamily: Theme.Regular,
-   },
-   MoreButton: {
-      fontFamily: Theme.Bold,
-      fontSize: 16,
-      color: 'grey',
-   },
+const ActivityDetailsStyle = StyleSheet.create({
    Like: {
       padding: 4,
       flexDirection: 'row',
@@ -920,4 +844,4 @@ const CommentsStyle = StyleSheet.create({
    },
 });
 
-export default ActivityDetail;
+export default ActivityDetails;

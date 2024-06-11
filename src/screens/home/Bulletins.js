@@ -38,10 +38,10 @@ const Bulletin = ({ navigation }) => {
       }
    };
 
-   const goToBulletinDetail = (bulletinID, name) => {
+   const goToBulletinDetail = (bulletinID) => {
       navigation.navigate('HomeStack', {
          screen: 'BulletinDetail',
-         params: { bulletinID, name },
+         params: { bulletinID },
       });
    };
 
@@ -61,11 +61,12 @@ const Bulletin = ({ navigation }) => {
                   onChangeText={(value) => search(value, setPage, setBulletinName)}
                />
                <CardList
+                  topLoading
                   data={bulletins}
                   page={page}
                   loading={loading}
                   refreshing={refreshing}
-                  cardOnPress={goToBulletinDetail}
+                  onPress={goToBulletinDetail}
                   onRefresh={() => onRefresh(setPage, setRefreshing, setBulletinName)}
                   onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
                />
