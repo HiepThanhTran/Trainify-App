@@ -1,258 +1,178 @@
-import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View, Image, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import GlobalStyle from "../../styles/Style";
+import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import Theme from "../../styles/Theme";
+import Searchbar from "../../components/common/Searchbar"
+import { useEffect, useState } from "react";
 import { authAPI, endPoints } from '../../configs/APIs';
-import RenderHTML from 'react-native-render-html';
-import { useGlobalContext } from '../../store/contexts/GlobalContext';
-import Theme from '../../styles/Theme';
-import GlobalStyle, { screenWidth } from '../../styles/Style';
-import { statusCode } from '../../configs/Constants';
-import { useAccount } from '../../store/contexts/AccountContext';
-import { formatDate, loadMore, onRefresh, isCloseToBottom, search } from '../../utils/Utilities';
-import Loading from '../../components/common/Loading';
-import Searchbar from '../../components/common/Searchbar';
+import { formatDate } from "../../utils/Utilities";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ActivitySettings = ({ navigation }) => {
-   const currentAccount = useAccount();
-   const currentAccountID = currentAccount.data.user.id;
-   const { loading, setLoading, refreshing, setRefreshing } = useGlobalContext();
-   const [page, setPage] = useState(1);
-   const [activityUserCreate, setActivityUserCreate] = useState([]);
-   const [expandedCards, setExpandedCards] = useState({});
-   const [activityName, setActivityName] = useState('');
+const ActivitySettings = () => {
+    const [activityList, setActivityList] = useState([]);
+    const [page, setPage] = useState(1);
+    const [activityName, setActivityName] = useState('');
+    
+    const loadActivityList = async() => {
+        try{
+            const accessToken = await AsyncStorage.getItem('access-token');
+            let res = await authAPI(accessToken).get(endPoints['activities']);
+            setActivityList(res.data.results);
+        }catch(error){
+            console.error(error);
+        }
+    };
 
-   const loadActivityUserCreate = async () => {
-      if (page <= 0) return;
-      setLoading(true);
-      try {
-         const accessToken = await AsyncStorage.getItem('access-token');
-         const res = await authAPI(accessToken).get(endPoints['activities'], {
-            params: { organizer_id: currentAccountID, page, name: activityName }
-         });
-         if (res.data.next === null) setPage(0);
-         if (res.status === statusCode.HTTP_200_OK) {
-            setActivityUserCreate(page === 1 ? res.data.results : [...activityUserCreate, ...res.data.results]);
-         }
-      } catch (error) {
-         console.error(error);
-      } finally {
-         setLoading(false);
-         setRefreshing(false);
-      }
-   };
+    useEffect(() => {
+        loadActivityList();
+    });
 
-   useEffect(() => {
-      loadActivityUserCreate();
-   }, [currentAccountID, page, activityName, refreshing]);
+    return(
+        <View style={GlobalStyle.BackGround}>
+            <View style={ActivitySettingStyle.Container}>
+                <Searchbar
+                    placeholder="Tìm kiếm hoạt động"
+                />
 
-   const toggleExpand = (id) => {
-      setExpandedCards(prevState => ({
-         ...prevState,
-         [id]: !prevState[id]
-      }));
-   };
+                <View style={ActivitySettingStyle.Top}>
+                    <Text style={ActivitySettingStyle.TitleTop}>Danh sách hoạt động</Text>
+                    <TouchableOpacity>
+                        <FontAwesome name="plus-square" size={32} color={Theme.PrimaryColor} />
+                    </TouchableOpacity>
+                </View>
 
-   const handleScroll = (event) => {
-      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-      if (isCloseToBottom({ layoutMeasurement, contentOffset, contentSize })) {
-         loadMore(event.nativeEvent, loading, page, setPage);
-      }
-   }
+                <View style={ActivitySettingStyle.Middle}>
+                    <TouchableOpacity style={ActivitySettingStyle.ButtonMiddle}>
+                        <Text style={ActivitySettingStyle.ButtonMiddleText}>Tất cả</Text>
+                    </TouchableOpacity>
 
-   const handleRefresh = () => {
-      onRefresh(setPage, setActivityName, setRefreshing)
-   }
+                    <TouchableOpacity style={[ActivitySettingStyle.ButtonMiddle, {marginLeft: 10}]}>
+                        <Text style={ActivitySettingStyle.ButtonMiddleText}>Của tôi</Text>
+                    </TouchableOpacity>
+                </View>
 
-   const goToCreateActivity = (name) => {
-      navigation.navigate('CreateActivityForm', { name });
-   }
+                <View style={ActivitySettingStyle.Bottom}>
+                    {activityList.map(activity => (
+                        <View key={activity.id} style={ActivitySettingStyle.Card}>
+                            <Text style={ActivitySettingStyle.CardTitle}>{activity.name}</Text>
+                            <View style={ActivitySettingStyle.CardDes}>
+                                <View style={ActivitySettingStyle.CardDate}>
+                                    <View style={ActivitySettingStyle.CardDateItem}>
+                                        <AntDesign name="clockcircle" size={32} color="black" />
+                                        <View style={ActivitySettingStyle.DateDes}>
+                                            <Text style={ActivitySettingStyle.DateDesTitle}>Ngày bắt đầu:</Text>
+                                            <Text style={ActivitySettingStyle.Date}>{formatDate(activity.start_date)}</Text>
+                                        </View>
+                                    </View>
 
-   if (loading && page === 1) return <Loading />;
-   return (
-      <View style={GlobalStyle.BackGround}>
-         <ScrollView
-            style={ActivitySettingStyle.Container}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            onScroll={handleScroll}
-            refreshControl={
-               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh}/>
-            }
-         >
-            <Searchbar
-               value={activityName}
-               placeholder="Tìm kiếm hoạt động"
-               onChangeText={(value) => search(value, setPage, setActivityName)}
-            />
-            <View style={ActivitySettingStyle.Top}>
-               <Text style={ActivitySettingStyle.Text}>Danh sách hoạt động</Text>
-               <TouchableOpacity style={ActivitySettingStyle.AddActivity} onPress={goToCreateActivity}>
-                  <AntDesign name="pluscircle" size={24} color='white' />
-               </TouchableOpacity>
-            </View>
+                                    <View style={ActivitySettingStyle.CardDateItem}>
+                                        <AntDesign name="clockcircle" size={32} color="black" />
+                                        <View style={ActivitySettingStyle.DateDes}>
+                                            <Text style={ActivitySettingStyle.DateDesTitle}>Ngày kết thúc:</Text>
+                                            <Text style={ActivitySettingStyle.Date}>{formatDate(activity.end_date)}</Text>
+                                        </View>
+                                    </View>
+                                </View>
 
-            <View style={ActivitySettingStyle.Bottom}>
-               {activityUserCreate.map((activity, index) => (
-                  <View key={activity.id} style={ActivitySettingStyle.Card}>
-                     <View style={ActivitySettingStyle.CardImage}>
-                        <Image source={{ uri: activity.image }} style={ActivitySettingStyle.Image} />
-                     </View>
+                                <View style={ActivitySettingStyle.CardLocation}>
+                                    <Ionicons name="location" size={30} color="black" />
+                                    <Text style={ActivitySettingStyle.CardLocationTitle}>Địa điểm: {activity.location}</Text>
+                                </View>
 
-                     <View style={ActivitySettingStyle.CardDes}>
-                        <Text style={ActivitySettingStyle.Name}>{activity.name}</Text>
-                        <RenderHTML
-                           contentWidth={screenWidth}
-                           source={{ html: activity.description }}
-                           defaultTextProps={{
-                              numberOfLines: expandedCards[activity.id] ? 0 : 3,
-                              ellipsizeMode: 'tail',
-                           }}
-                           baseStyle={ActivitySettingStyle.Description}
-                        />
-                        <TouchableOpacity onPress={() => toggleExpand(activity.id)}>
-                           <Text style={ActivitySettingStyle.MoreButton}>{expandedCards[activity.id] ? 'Thu gọn' : 'Xem thêm'}</Text>
-                        </TouchableOpacity>
-                        <Text style={ActivitySettingStyle.TextDes}>Bảng tin: {activity.bulletin}</Text>
-                        <Text style={ActivitySettingStyle.TextDes}>Người tham gia: {activity.participant}</Text>
-                        <Text style={ActivitySettingStyle.TextDes}>
-                           Ngày bắt đầu: <Text>{formatDate(activity.start_date)}</Text>
-                        </Text>
-                        <Text style={ActivitySettingStyle.TextDes}>
-                           Ngày kết thúc: <Text>{formatDate(activity.end_date)}</Text>
-                        </Text>
-                        <Text style={ActivitySettingStyle.TextDes}>Địa điểm: {activity.location}</Text>
-                        <Text style={ActivitySettingStyle.TextDes}>Điểm cộng: {activity.point}</Text>
-                        <Text style={ActivitySettingStyle.TextDes}>Học kì: {activity.semester}</Text>
-                        <Text style={ActivitySettingStyle.TextDes}>Hình thức: {activity.organizational_form}</Text>
-                        <View style={ActivitySettingStyle.DateContainer}>
-                           <Text style={ActivitySettingStyle.TextDate}>
-                              Ngày tạo: <Text>{formatDate(activity.created_date)}</Text>
-                           </Text>
-                           <Text style={ActivitySettingStyle.TextDate}>
-                              Ngày cập nhập: <Text>{formatDate(activity.updated_date)}</Text>
-                           </Text>
+                                <View style={ActivitySettingStyle.Create}>
+                                    <MaterialIcons name="people-alt" size={32} color="black" />
+                                </View>
+                            </View>
                         </View>
-                     </View>
-
-                     <View style={ActivitySettingStyle.ButtonContainer}>
-                        <TouchableOpacity style={ActivitySettingStyle.Button}>
-                           <Text style={ActivitySettingStyle.TextButton}>Chỉnh sửa</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={ActivitySettingStyle.Button}>
-                           <Text style={ActivitySettingStyle.TextButton}>Xóa</Text>
-                        </TouchableOpacity>
-                     </View>
-
-                     {index !== activityUserCreate.length - 1 && (
-                        <Text style={ActivitySettingStyle.Line}></Text>
-                     )}
-                  </View>
-               ))}
-               {loading && page > 1 && <Loading />}
+                    ))}
+                </View>
             </View>
-         </ScrollView>
-      </View>
-   );
+        </View>
+    )
 };
 
 const ActivitySettingStyle = StyleSheet.create({
-   Container: {
-      marginHorizontal: 12,
-      marginTop: 5,
-      marginBottom: 50,
-   },
-   Top: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      borderWidth: 1,
-      borderColor: Theme.PrimaryColor,
-      backgroundColor: Theme.PrimaryColor,
-      padding: 12,
-      alignItems: 'center',
-      borderTopLeftRadius: 5,
-      borderTopRightRadius: 5,
-   },
-   Text: {
-      fontFamily: Theme.Bold,
-      fontSize: 20,
-      color: 'white',
-   },
-   Bottom: {
-      borderColor: Theme.PrimaryColor,
-      borderWidth: 2,
-   },
-   Card: {
-      margin: 10,
-   },
-   CardImage: {
-      width: '100%',
-      height: 120,
-   },
-   Image: {
-      width: '100%',
-      height: '100%'
-   },
-   CardDes: {
-      marginTop: 10
-   },
-   Name: {
-      fontFamily: Theme.Bold,
-      fontSize: 20,
-   },
-   Description: {
-      fontFamily: Theme.SemiBold,
-      fontSize: 18,
-      marginTop: 5,
-      lineHeight: 25
-   },
-   MoreButton: {
-      fontFamily: Theme.Bold,
-      fontSize: 17,
-      marginBottom: 5,
-      marginTop: 2
-   },
-   TextDes: {
-      fontFamily: Theme.SemiBold,
-      fontSize: 18,
-      marginBottom: 5
-   },
-   DateContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-   },
-   TextDate: {
-      fontFamily: Theme.SemiBold,
-      fontSize: 14,
-      color: 'gray'
-   },
-   ButtonContainer: {
-      flexDirection: 'row',
-      marginTop: 10,
-   },
-   Button: {
-      flex: 1,
-      borderWidth: 1,
-      padding: 10,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 20,
-      borderColor: Theme.PrimaryColor,
-      backgroundColor: Theme.PrimaryColor,
-      borderRadius: 5
-   },
-   TextButton: {
-      fontFamily: Theme.Bold,
-      color: 'white',
-      fontSize: 16
-   },
-   Line: {
-      borderWidth: 1,
-      borderColor: '#eee',
-      backgroundColor: Theme.PrimaryColor,
-      height: 1,
-      marginTop: 10
-   }
-});
+    Container:{
+        marginTop: 16,
+        marginRight: 16,
+        marginLeft: 16,
+        marginBottom: 50
+    },
+    Top:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    TitleTop:{
+        fontFamily: Theme.Bold,
+        fontSize: 20
+    },
+    Middle:{
+        flexDirection: 'row',
+        marginTop: 15
+    },
+    ButtonMiddle:{
+        borderWidth: 1.5,
+        borderColor: 'black',
+        width: 80,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8
+    },
+    ButtonMiddleText:{
+        fontFamily: Theme.Bold,
+        fontSize: 16
+    },
+    Bottom:{
+        marginTop: 20
+    },
+    Card:{
+        borderWidth: 1,
+        borderColor: Theme.PrimaryColor,
+        padding: 10,
+        marginBottom: 20,
+        borderRadius: 12
+    },
+    CardTitle:{
+        fontFamily: Theme.Bold,
+        fontSize: 20
+    },
+    CardDate:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10
+    },
+    CardDateItem:{
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    DateDes:{
+        marginLeft: 8
+    },
+    DateDesTitle:{
+        fontFamily: Theme.SemiBold,
+        fontSize: 16
+    },
+    Date:{
+        fontFamily: Theme.Bold,
+        fontSize: 16
+    },
+    CardLocation:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10
+    },
+    CardLocationTitle:{
+        fontFamily: Theme.Bold,
+        fontSize: 18
+    },
+    Create:{
+        marginTop: 10
+    }
+})
 
 export default ActivitySettings;
