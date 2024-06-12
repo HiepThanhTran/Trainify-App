@@ -13,7 +13,7 @@ import { screenWidth } from "react-native-gifted-charts/src/utils";
 import { search, isCloseToBottom, loadMore, onRefresh } from "../../utils/Utilities";
 import Loading from "../../components/common/Loading";
 
-const ActivitySettings = () => {
+const ActivitySettings = ({navigation}) => {
     const currentUser = useAccount();
     const currentUserID = currentUser.data.user.id;
     const [activityUserCreate, setActivityUserCreate] = useState([]);
@@ -56,6 +56,10 @@ const ActivitySettings = () => {
         onRefresh(setPage, setRefreshing, setActivityName)
     }
 
+    const goToCreateActivityForm = () => {
+        navigation.navigate('CreateActivityForm')
+    }
+
     return (
         <View style={GlobalStyle.BackGround}>
             <View style={ActivitySettingStyle.Container}>
@@ -67,7 +71,7 @@ const ActivitySettings = () => {
 
                 <View style={ActivitySettingStyle.Alignment}>
                     <Text style={ActivitySettingStyle.Text}>Danh sách hoạt động</Text>
-                    <TouchableOpacity style={ActivitySettingStyle.AddActivity}>
+                    <TouchableOpacity style={ActivitySettingStyle.AddActivity} onPress={goToCreateActivityForm}>
                         <MaterialIcons name="assignment-add" size={36} color={Theme.PrimaryColor} />
                     </TouchableOpacity>
                 </View>
