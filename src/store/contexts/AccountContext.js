@@ -43,7 +43,7 @@ export const AccountProvider = ({ children }) => {
    };
 
    useEffect(() => {
-      checkLogged();
+      checkLogged(0);
    }, []);
 
    return (

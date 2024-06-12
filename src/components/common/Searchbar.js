@@ -1,9 +1,9 @@
 import { StyleSheet, TextInput, View } from 'react-native';
 import Theme from '../../styles/Theme';
 
-const Searchbar = ({ placeholder, value, onChangeText }) => {
+const Searchbar = ({ placeholder, value, onChangeText, ...props }) => {
    return (
-      <View style={SearchbarStyle.Searchbar}>
+      <View style={{ ...SearchbarStyle.Searchbar, ...props?.style }}>
          <TextInput
             value={value}
             onChangeText={onChangeText}
@@ -22,12 +22,11 @@ const SearchbarStyle = StyleSheet.create({
       borderColor: Theme.PrimaryColor,
       borderRadius: 10,
       padding: 12,
-      marginTop: 20,
-      marginBottom: 20,
+      marginVertical: 20,
    },
    SearchInput: {
       width: '100%',
-      fontSize: 15,
+      fontSize: 16,
       fontFamily: Theme.SemiBold,
    },
 });

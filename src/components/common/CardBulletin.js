@@ -4,9 +4,9 @@ import { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate } from '../../utils/Utilities';
 
-const Card = ({ instance, onPress }) => {
+const CardBulletin = ({ instance, ...props }) => {
    return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={props?.onPress}>
          <View style={CardStyle.Card}>
             <View style={CardStyle.CardImage}>
                <Image style={CardStyle.Image} source={{ uri: instance.image }} />
@@ -65,4 +65,4 @@ const CardStyle = StyleSheet.create({
    },
 });
 
-export default Card;
+export default CardBulletin;

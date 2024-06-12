@@ -7,9 +7,16 @@ export const defaultImage = {
 
 export const roles = {
    ADMINISTRATOR: 'AD',
-   STUDENT: 'STU',
-   ASSISTANT: 'ASST',
    SPECIALIST: 'SPC',
+   ASSISTANT: 'ASST',
+   STUDENT: 'STU',
+};
+
+export const rolesName = {
+   AD: 'Quản trị viên',
+   SPC: 'Chuyên viên cộng tác sinh viên',
+   ASST: 'Trợ lý sinh viên',
+   STU: 'Sinh viên',
 };
 
 export const statusCode = {
