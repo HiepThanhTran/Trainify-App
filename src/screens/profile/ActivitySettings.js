@@ -20,7 +20,7 @@ const ActivitySettings = () => {
     const [page, setPage] = useState(1);
     const [activityName, setActivityName] = useState('');
     const [loading, setLoading] = useState(false);
-    const [refreshing, setRefreshing] = useState(false); // sửa refresing thành refreshing
+    const [refreshing, setRefreshing] = useState(false);
 
     const loadActivityUserCreate = async () => {
         if (page <= 0) return;
