@@ -1,16 +1,17 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, RefreshControl } from "react-native";
 import GlobalStyle from "../../styles/Style";
 import { MaterialIcons } from '@expo/vector-icons';
 import { endPoints, authAPI } from "../../configs/APIs";
 import Theme from "../../styles/Theme";
-import { formatDate } from "../../utils/Utilities";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAccount } from "../../store/contexts/AccountContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { statusCode } from "../../configs/Constants";
 import Searchbar from "../../components/common/Searchbar"
 import RenderHTML from "react-native-render-html";
 import { screenWidth } from "react-native-gifted-charts/src/utils";
+import { search, isCloseToBottom, loadMore, onRefresh } from "../../utils/Utilities";
+import Loading from "../../components/common/Loading";
 
 const ActivitySettings = () => {
     const currentUser = useAccount();
@@ -19,22 +20,22 @@ const ActivitySettings = () => {
     const [page, setPage] = useState(1);
     const [activityName, setActivityName] = useState('');
     const [loading, setLoading] = useState(false);
-    const [refresing, setRefreshing] = useState(false);
-    
-    const loadActivityUserCreate = async() => {
-        if(page<=0) return;
+    const [refreshing, setRefreshing] = useState(false); // sửa refresing thành refreshing
+
+    const loadActivityUserCreate = async () => {
+        if (page <= 0) return;
         setLoading(true);
-        try{
+        try {
             const accessToken = await AsyncStorage.getItem('access-token');
-            let res = await authAPI(accessToken).get(endPoints['activities'],{
-                params: {organizer_id: currentUserID, page, name: activityName}
+            let res = await authAPI(accessToken).get(endPoints['activities'], {
+                params: { organizer_id: currentUserID, page, name: activityName }
             })
-            if(res.data.next===null) setPage(0);
-            if(res.status === statusCode.HTTP_200_OK)
+            if (res.data.next === null) setPage(0);
+            if (res.status === statusCode.HTTP_200_OK)
                 setActivityUserCreate(page === 1 ? res.data.results : [...activityUserCreate, ...res.data.results]);
-        }catch(error){
+        } catch (error) {
             console.error(error);
-        }finally{
+        } finally {
             setLoading(false);
             setRefreshing(false);
         }
@@ -42,13 +43,26 @@ const ActivitySettings = () => {
 
     useEffect(() => {
         loadActivityUserCreate();
-    },[currentUserID, page, activityName]);
+    }, [currentUserID, page, activityName, refreshing]);
 
-    return(
+    const handleScroll = (event) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        if (isCloseToBottom({ layoutMeasurement, contentOffset, contentSize })) {
+            loadMore(event.nativeEvent, loading, page, setPage);
+        }
+    }
+
+    const handleRefresh = () => {
+        onRefresh(setPage, setRefreshing, setActivityName)
+    }
+
+    return (
         <View style={GlobalStyle.BackGround}>
             <View style={ActivitySettingStyle.Container}>
                 <Searchbar
                     placeholder="Tìm kiếm hoạt động"
+                    value={activityName}
+                    onChangeText={(value) => search(value, setPage, setActivityName)}
                 />
 
                 <View style={ActivitySettingStyle.Alignment}>
@@ -58,32 +72,34 @@ const ActivitySettings = () => {
                     </TouchableOpacity>
                 </View>
 
-                <ScrollView style={ActivitySettingStyle.Content}
+                <ScrollView
+                    style={ActivitySettingStyle.Content}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
+                    onScroll={handleScroll}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={handleRefresh}
+                        />
+                    }
                 >
+                    {!refreshing && loading && page === 1 && <Loading />}
                     {activityUserCreate.map(activity => (
-                        <View style={ActivitySettingStyle.Card}>
-                            <View style={ActivitySettingStyle.Top}>
-                                <View style={ActivitySettingStyle.CardImage}>
-                                    <Image source={{uri: activity.image}} style={ActivitySettingStyle.Image}/>
-                                </View>
-
-                                <View style={[ActivitySettingStyle.CardPoint, ActivitySettingStyle.Shadow]}>
-                                    <Text style={ActivitySettingStyle.CardPointTitle}>Điểm</Text>
-                                    <Text style={ActivitySettingStyle.Point}>{activity.point}</Text>
-                                </View>
+                        <View key={activity.id} style={ActivitySettingStyle.Card}>
+                            <View style={ActivitySettingStyle.CardImage}>
+                                <Image source={{ uri: activity.image }} style={ActivitySettingStyle.Image} />
                             </View>
 
                             <View style={ActivitySettingStyle.CardDes}>
                                 <Text style={ActivitySettingStyle.CardDesName}>{activity.name}</Text>
                                 <RenderHTML
                                     contentWidth={screenWidth}
-                                    source={{html: activity.description}}
+                                    source={{ html: activity.description }}
                                     defaultTextProps={{
                                         numberOfLines: 3,
                                         ellipsizeMode: 'tail',
-                                     }}
+                                    }}
                                     baseStyle={ActivitySettingStyle.Des}
                                 />
                             </View>
@@ -99,6 +115,7 @@ const ActivitySettings = () => {
                             </View>
                         </View>
                     ))}
+                    {loading && page > 1 && <Loading />}
                 </ScrollView>
             </View>
         </View>
@@ -106,102 +123,67 @@ const ActivitySettings = () => {
 };
 
 const ActivitySettingStyle = StyleSheet.create({
-    Container:{
+    Container: {
         marginTop: 20,
         marginRight: 16,
         marginLeft: 16,
         marginBottom: 130
     },
-    Alignment:{
+    Alignment: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    Shadow:{
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    Text:{
+    Text: {
         fontFamily: Theme.Bold,
         fontSize: 18
     },
-    AddActivity:{
+    AddActivity: {
         borderWidth: 1,
         borderColor: Theme.PrimaryColor,
         borderRadius: 8
     },
-    Content:{
+    Content: {
         marginTop: 25
     },
-    Card:{
+    Card: {
         borderWidth: 1,
         borderColor: '#e1e1e1',
         borderRadius: 12,
         marginBottom: 20,
-        overflow: 'hidden'
     },
-    Top:{
-        position: 'relative',
-    },
-    CardImage:{
+    CardImage: {
         height: 100
     },
-    Image:{
+    Image: {
         width: '100%',
         height: '100%',
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
     },
-    CardPoint:{
-        borderWidth : 1,
-        borderColor: '#e1e1e1',
-        position: 'absolute',
-        bottom: -35,
-        left: 20,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 12,
-        width: 75,
-        height: 70,
-    },
-    CardPointTitle:{
-        fontFamily: Theme.SemiBold,
-        fontSize: 16
-    },
-    Point:{
-        fontFamily: Theme.Bold,
-        fontSize: 25,
-        color: Theme.PrimaryColor
-    },
-    CardDes:{
-        marginTop: 55,
+    CardDes: {
+        marginTop: 20,
         marginLeft: 20,
+        marginRight: 20,
         marginBottom: 10
     },
-    CardDesName:{
+    CardDesName: {
         fontFamily: Theme.Bold,
         fontSize: 25,
         marginBottom: 10
     },
-    Des:{
+    Des: {
         fontFamily: Theme.SemiBold,
         fontSize: 18,
         lineHeight: 25
     },
-    CardButton:{
+    CardButton: {
         flexDirection: 'row',
         marginLeft: 20,
         marginTop: 10,
         marginBottom: 20
     },
-    Button:{
+    Button: {
         borderWidth: 1,
         borderColor: Theme.PrimaryColor,
         width: 100,
@@ -212,7 +194,7 @@ const ActivitySettingStyle = StyleSheet.create({
         backgroundColor: Theme.PrimaryColor,
         borderRadius: 8
     },
-    ButtonText:{
+    ButtonText: {
         fontFamily: Theme.Bold,
         fontSize: 16,
         color: 'white'
