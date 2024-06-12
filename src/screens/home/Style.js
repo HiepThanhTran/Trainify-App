@@ -32,6 +32,11 @@ const HomeStyle = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'space-between',
    },
+   HeaderTitle: {
+      fontSize: 28,
+      color: Theme.PrimaryColor,
+      fontFamily: Theme.Bold,
+   },
    HeaderText: {
       flex: 1,
       flexWrap: 'wrap',
@@ -79,6 +84,11 @@ const HomeStyle = StyleSheet.create({
    DetailsValue: {
       fontSize: 16,
       fontWeight: '700',
+   },
+   DetailsCreatedBy: {
+      fontStyle: 'italic',
+      color: 'gray',
+      fontWeight: 'normal',
    },
    DetailsDescription: {
       fontSize: 16,

@@ -52,10 +52,11 @@ export const loadMore = (nativeEvent, loading, page, setPage) => {
    }
 };
 
-export const onRefresh = (setPage, setRefreshing, setFilter = null) => {
-   setPage(1);
-   if (setFilter) setFilter('');
+export const onRefresh = ({ setPage, setRefreshing, setFilter = null, setData = null }) => {
+   setPage((prevPage) => 1);
    setRefreshing(true);
+   if (setData) setData([]);
+   if (setFilter) setFilter('');
 };
 
 export const search = (value, setPage, callback) => {
