@@ -74,10 +74,10 @@ const ActivityDetails = ({ navigation, route }) => {
       }
    };
 
-   const handleChangeTab = (name) => {
-      setTab(name);
+   const handleChangeTab = (tabName) => {
+      setTab(tabName);
 
-      if (name !== 'overview') animateHeight(screenHeight / 6);
+      if (tabName !== 'overview') animateHeight(screenHeight / 6);
       else animateHeight(screenHeight / 3);
    };
 

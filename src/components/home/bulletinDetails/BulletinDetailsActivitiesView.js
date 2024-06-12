@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import APIs, { endPoints } from '../../../configs/APIs';
 import { statusCode } from '../../../configs/Constants';
@@ -8,7 +8,7 @@ import CardActivity from '../../common/CardActivity';
 import Loading from '../../common/Loading';
 import Searchbar from '../../common/Searchbar';
 
-const BulletinDetailsActivitiesView = memo(({ navigation, bulletinID, ...props }) => {
+const BulletinDetailsActivitiesView = ({ navigation, bulletinID, ...props }) => {
    const [activities, setActivities] = useState([]);
    const [page, setPage] = useState(1);
    const [activityName, setActivityName] = useState('');
@@ -72,6 +72,6 @@ const BulletinDetailsActivitiesView = memo(({ navigation, bulletinID, ...props }
          </ScrollView>
       </>
    );
-});
+};
 
 export default BulletinDetailsActivitiesView;

@@ -1,5 +1,4 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { memo } from 'react';
 import { Alert, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { authAPI, endPoints } from '../../../configs/APIs';
@@ -9,7 +8,7 @@ import GlobalStyle from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
 import { getTokens, refreshAccessToken } from '../../../utils/Utilities';
 
-const OptionsModal = memo((props) => {
+const OptionsModal = (props) => {
    const dispatch = useAccountDispatch();
 
    const handleDeleteComment = async () => {
@@ -77,7 +76,7 @@ const OptionsModal = memo((props) => {
          </Modal>
       </Portal>
    );
-});
+};
 
 const OptionsModalStyle = StyleSheet.create({
    Options: {

@@ -1,0 +1,10 @@
+{
+   "depcheck": {
+      "ignoreMatches": [
+         "@react-navigation/stack",
+         "npm",
+         "react-native-dotenv",
+         "@babel/core"
+      ]
+   }
+}

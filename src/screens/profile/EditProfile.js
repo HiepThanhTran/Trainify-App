@@ -1,247 +1,27 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Icon, Portal, RadioButton, Snackbar, TextInput } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
-import Loading from '../../components/common/Loading';
-import { authAPI, endPoints } from '../../configs/APIs';
-import { statusCode } from '../../configs/Constants';
-import { UpdateAccountAction } from '../../store/actions/AccountAction';
-import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
+import EditView from '../../components/profile/editProfile/EditView';
+import SchoolInformationView from '../../components/profile/editProfile/SchoolInformationView';
+import { useAccount } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { accountFields, schoolFields, tabsEditForm, userFields } from '../../utils/Fields';
-import { formatDate, getFirstDayOfYear, getLastDayOfYear, getTokens, refreshAccessToken } from '../../utils/Utilities';
-
-const SchoolInformation = ({ navigation, currentAccount }) => {
-   useEffect(() => {
-      navigation.setOptions({ headerRight: null });
-   }, [navigation]);
-
-   return (
-      <View style={{ ...EditProfileStyle.SchoolContainer, ...EditProfileStyle.SectionContainer }}>
-         <Text style={EditProfileStyle.Header}>Thông tin trường</Text>
-         {schoolFields.map((f) => {
-            const name = currentAccount?.data?.user[f.name] ?? 'Không có';
-            return (
-               <View key={f.name} style={EditProfileStyle.SchoolItem}>
-                  <Icon color={Theme.PrimaryColor} source={f.icon} size={28} />
-                  <View style={{ flex: 1 }}>
-                     <Text style={EditProfileStyle.SchoolItemText}>{`${f.label}: ${name}`}</Text>
-                  </View>
-               </View>
-            );
-         })}
-      </View>
-   );
-};
-
-const EditForm = ({ navigation, currentAccount, tempAccount, setTempAccount, loading, setLoading }) => {
-   const dispatch = useAccountDispatch();
-
-   const [snackBarMessage, setSnackBarMessage] = useState('');
-   const [snackBarVisible, setSnackBarVisible] = useState(false);
-   const [snackBarDuration, setSnackBarDuration] = useState(7000);
-
-   useEffect(() => {
-      renderHeaderButton();
-   }, [navigation, currentAccount, tempAccount]);
-
-   const handleUpdateProfile = async () => {
-      let form = new FormData();
-      let size = 0;
-
-      if (currentAccount.data.avatar !== tempAccount.data.avatar) {
-         form.append('avatar', {
-            uri: tempAccount.data.avatar.uri,
-            type: tempAccount.data.avatar.mimeType,
-            name: tempAccount.data.avatar.fileName,
-         });
-         size++;
-      }
-
-      for (let key in tempAccount.data.user) {
-         if (currentAccount.data.user[key] !== tempAccount.data.user[key]) {
-            form.append(key, tempAccount.data.user[key]);
-            size++;
-         }
-      }
-
-      if (size <= 0) return;
-
-      setLoading(true);
-      setSnackBarVisible(true);
-      setSnackBarDuration(300000);
-      const { accessToken, refreshToken } = await getTokens();
-      try {
-         let res = await authAPI(accessToken).patch(endPoints['me-update'], form, {
-            headers: {
-               'Content-Type': 'multipart/form-data',
-            },
-         });
-
-         if (res.status === statusCode.HTTP_200_OK) {
-            dispatch(UpdateAccountAction(res.data));
-            setSnackBarMessage('Cập nhật thành công');
-         }
-      } catch (error) {
-         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
-            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) handleUpdateProfile();
-            else setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
-         } else console.error(error);
-      } finally {
-         setLoading(false);
-         setSnackBarDuration(7000);
-      }
-   };
-
-   const updateUserOfTempAccount = (field, value) => {
-      setTempAccount((prevTempAccount) => ({
-         ...prevTempAccount,
-         data: {
-            ...prevTempAccount.data,
-            user: {
-               ...prevTempAccount.data.user,
-               [field]: value,
-            },
-         },
-      }));
-   };
-
-   const handleDatePickerOnChange = (event, selectedDate) => {
-      const dateInDesiredFormat = selectedDate.toISOString().split('T')[0];
-      updateUserOfTempAccount('date_of_birth', dateInDesiredFormat);
-   };
-
-   const renderHeaderButton = () => {
-      navigation.setOptions({
-         headerRight: () => (
-            <TouchableOpacity
-               onPress={handleUpdateProfile}
-               style={{
-                  ...GlobalStyle.Center,
-                  ...GlobalStyle.HeaderButton,
-               }}
-            >
-               <Text style={{ ...GlobalStyle.HeaderButtonText }}>Cập nhật</Text>
-            </TouchableOpacity>
-         ),
-      });
-   };
-
-   const renderDatePicker = () => {
-      DateTimePickerAndroid.open({
-         value: new Date(tempAccount.data.user.date_of_birth),
-         onChange: handleDatePickerOnChange,
-         mode: 'date',
-         is24Hour: true,
-         display: 'spinner',
-         minimumDate: getFirstDayOfYear(new Date(tempAccount.data.user.date_of_birth)),
-         maximumDate: getLastDayOfYear(new Date(tempAccount.data.user.date_of_birth)),
-      });
-   };
-
-   return (
-      <View style={{ ...EditProfileStyle.FormContainer, ...EditProfileStyle.SectionContainer }}>
-         <Text style={EditProfileStyle.Header}>Thông tin cá nhân</Text>
-         {accountFields(currentAccount).map((f) => (
-            <View key={f.name} style={EditProfileStyle.FormWrap}>
-               <Text style={EditProfileStyle.FormText}>{f.label}</Text>
-               <TextInput
-                  value={f.value}
-                  disabled={f.disabled}
-                  placeholder={f.label}
-                  style={EditProfileStyle.FormData}
-                  cursorColor={Theme.PrimaryColor}
-                  underlineColor="transparent"
-                  activeUnderlineColor="transparent"
-                  right={<TextInput.Icon icon={f.icon} pointerEvents="none" />}
-               />
-            </View>
-         ))}
-         {userFields.map((f) => (
-            <View key={f.name} style={EditProfileStyle.FormWrap}>
-               <Text style={EditProfileStyle.FormText}>{f.label}</Text>
-               <TextInput
-                  value={tempAccount.data.user[f.name]}
-                  disabled={f.disabled}
-                  placeholder={f.label}
-                  style={EditProfileStyle.FormData}
-                  keyboardType={f.keyboardType}
-                  cursorColor={Theme.PrimaryColor}
-                  underlineColor="transparent"
-                  activeUnderlineColor="transparent"
-                  onChangeText={(value) => updateUserOfTempAccount(f.name, value)}
-                  right={<TextInput.Icon icon={f.icon} pointerEvents="none" />}
-               />
-            </View>
-         ))}
-         <View>
-            <Text style={EditProfileStyle.FormText}>Giới tính</Text>
-            <View style={EditProfileStyle.FormWrap}>
-               <View style={EditProfileStyle.RadioGroup}>
-                  <View style={EditProfileStyle.RadioWrap}>
-                     <Text style={EditProfileStyle.RadioText}>Nam</Text>
-                     <RadioButton
-                        value="M"
-                        color={Theme.PrimaryColor}
-                        status={tempAccount.data.user.gender === 'M' ? 'checked' : 'unchecked'}
-                        onPress={() => updateUserOfTempAccount('gender', 'M')}
-                     />
-                  </View>
-                  <View style={EditProfileStyle.RadioWrap}>
-                     <Text style={EditProfileStyle.RadioText}>Nữ</Text>
-                     <RadioButton
-                        value="F"
-                        color={Theme.PrimaryColor}
-                        status={tempAccount.data.user.gender === 'F' ? 'checked' : 'unchecked'}
-                        onPress={() => updateUserOfTempAccount('gender', 'F')}
-                     />
-                  </View>
-               </View>
-            </View>
-         </View>
-         <Text style={EditProfileStyle.FormText}>Ngày sinh</Text>
-         <TouchableOpacity onPress={renderDatePicker} style={EditProfileStyle.FormWrap}>
-            <Text style={{ ...EditProfileStyle.FormData, padding: 16, fontSize: 16 }}>
-               {formatDate(tempAccount.data.user.date_of_birth)}
-            </Text>
-         </TouchableOpacity>
-
-         <Portal>
-            <Snackbar
-               duration={snackBarDuration}
-               visible={snackBarVisible}
-               onDismiss={() => setSnackBarVisible(false)}
-               action={!loading ? { label: 'Tắt', onPress: () => setSnackBarVisible(false) } : null}
-            >
-               {!loading ? (
-                  snackBarMessage
-               ) : (
-                  <Loading size="small" style={{ flexDirection: 'row' }}>
-                     <Text style={EditProfileStyle.SnackbarText}>Đang cập nhật...</Text>
-                  </Loading>
-               )}
-            </Snackbar>
-         </Portal>
-      </View>
-   );
-};
+import { tabsEditForm } from '../../utils/Fields';
 
 const EditProfile = ({ navigation }) => {
    const currentAccount = useAccount();
 
    const sheetRef = useRef(BottomSheet);
 
-   const [tempAccount, setTempAccount] = useState(currentAccount);
    const [tab, setTab] = useState('school');
-   const [isEdit, setIsEdit] = useState(false);
    const [loading, setLoading] = useState(false);
+   const [isRendered, setIsRendered] = useState(false);
+   const [tempAccount, setTempAccount] = useState(currentAccount);
 
    const handleGallerySelection = () =>
       handleSelection(ImagePicker.requestMediaLibraryPermissionsAsync, ImagePicker.launchImageLibraryAsync);
@@ -274,6 +54,32 @@ const EditProfile = ({ navigation }) => {
       sheetRef?.current?.close();
    };
 
+   const handleChangeTab = (tabName) => {
+      setTab(tabName);
+      sheetRef?.current?.close();
+   };
+
+   const currentTab = (name) => tab === name;
+
+   const tabContent = () => {
+      switch (tab) {
+         case 'school':
+            return <SchoolInformationView navigation={navigation} />;
+         case 'edit':
+            return (
+               <EditView
+                  navigation={navigation}
+                  tempAccount={tempAccount}
+                  setTempAccount={setTempAccount}
+                  loading={loading}
+                  setLoading={setLoading}
+               />
+            );
+         default:
+            return null;
+      }
+   };
+
    return (
       <GestureHandlerRootView>
          <View style={GlobalStyle.BackGround}>
@@ -288,7 +94,7 @@ const EditProfile = ({ navigation }) => {
                      <View style={EditProfileStyle.AvatarTouch}>
                         <TouchableOpacity
                            activeOpacity={0.5}
-                           disabled={!isEdit}
+                           disabled={!currentTab('edit')}
                            onPress={() => sheetRef?.current?.expand()}
                         >
                            <Image
@@ -300,7 +106,7 @@ const EditProfile = ({ navigation }) => {
                                        : tempAccount.data.avatar.uri,
                               }}
                            />
-                           {isEdit && (
+                           {currentTab('edit') && (
                               <View style={EditProfileStyle.CameraIcon}>
                                  <Icon source="camera" color="white" size={24} />
                               </View>
@@ -315,11 +121,7 @@ const EditProfile = ({ navigation }) => {
                            key={f.name}
                            style={EditProfileStyle.ChoiceButton}
                            disabled={f.name === tab ? true : false}
-                           onPress={() => {
-                              setTab(f.name);
-                              setIsEdit(!isEdit);
-                              sheetRef?.current?.close();
-                           }}
+                           onPress={() => handleChangeTab(f.name)}
                         >
                            <Text
                               style={{
@@ -329,23 +131,12 @@ const EditProfile = ({ navigation }) => {
                            >
                               {f.label}
                            </Text>
-                           <View style={{ ...EditProfileStyle.ChoiceDot, ...(f.name === tab ? { opacity: 1 } : {}) }} />
+                           <View style={{ ...EditProfileStyle.ChoiceDot, opacity: f.name === tab ? 1 : 0 }} />
                         </TouchableOpacity>
                      ))}
                   </View>
 
-                  {isEdit ? (
-                     <EditForm
-                        navigation={navigation}
-                        currentAccount={currentAccount}
-                        tempAccount={tempAccount}
-                        setTempAccount={setTempAccount}
-                        loading={loading}
-                        setLoading={setLoading}
-                     />
-                  ) : (
-                     <SchoolInformation navigation={navigation} currentAccount={currentAccount} />
-                  )}
+                  {tabContent()}
                </DismissKeyboard>
             </ScrollView>
          </View>
@@ -442,56 +233,6 @@ const EditProfileStyle = StyleSheet.create({
       borderWidth: 2,
       borderColor: Theme.PrimaryColor,
       marginHorizontal: 12,
-   },
-   SchoolContainer: {
-      marginBottom: 20,
-      backgroundColor: Theme.SecondaryColor,
-   },
-   SchoolItem: {
-      marginBottom: 12,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-   },
-   SchoolItemText: {
-      fontSize: 16,
-      marginLeft: 12,
-      fontFamily: Theme.SemiBold,
-   },
-   FormContainer: {
-      marginBottom: 6,
-      flexDirection: 'column',
-   },
-   FormWrap: {
-      marginVertical: 6,
-   },
-   FormText: {
-      fontSize: 16,
-      marginBottom: 4,
-      fontFamily: Theme.SemiBold,
-   },
-   FormData: {
-      borderRadius: 0,
-      borderWidth: 2,
-      backgroundColor: Theme.SecondaryColor,
-      borderColor: Theme.PrimaryColor,
-   },
-   RadioGroup: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-   },
-   RadioWrap: {
-      flexDirection: 'row',
-      alignItems: 'center',
-   },
-   RadioText: {
-      fontSize: 16,
-      fontFamily: Theme.SemiBold,
-   },
-   SnackbarText: {
-      fontFamily: Theme.SemiBold,
-      color: 'white',
-      marginRight: 8,
    },
 });
 

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import RenderHTML from 'react-native-render-html';
@@ -15,7 +15,7 @@ import CommentInput from './CommentInput';
 import EditCommentInput from './EditCommentInput';
 import OptionsModal from './OptionsModal';
 
-const ActivityDetailsCommentsView = memo(({ activityID, ...props }) => {
+const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
    const currentAccount = useAccount();
 
    const [expandedComments, setExpandedComments] = useState({});
@@ -166,7 +166,7 @@ const ActivityDetailsCommentsView = memo(({ activityID, ...props }) => {
          />
       </ScrollView>
    );
-});
+};
 
 export const ActivityDetailsCommentsViewStyle = StyleSheet.create({
    Card: {

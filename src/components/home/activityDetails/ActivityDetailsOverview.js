@@ -1,5 +1,5 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { authAPI, endPoints } from '../../../configs/APIs';
@@ -11,7 +11,7 @@ import Theme from '../../../styles/Theme';
 import { formatDate, getTokens, refreshAccessToken } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
-const TwoItemDetailsHeader = memo(({ activity }) => {
+const TwoItemDetailsHeader = ({ activity }) => {
    return (
       <>
          <View style={HomeStyle.DetailsWrap}>
@@ -78,9 +78,9 @@ const TwoItemDetailsHeader = memo(({ activity }) => {
          </View>
       </>
    );
-});
+};
 
-const OneItemDetails = memo(({ activity }) => {
+const OneItemDetails = ({ activity }) => {
    return (
       <>
          <View style={HomeStyle.DetailsWrap}>
@@ -120,9 +120,9 @@ const OneItemDetails = memo(({ activity }) => {
          </View>
       </>
    );
-});
+};
 
-const TwoItemDetailsFooter = memo(({ activity }) => {
+const TwoItemDetailsFooter = ({ activity }) => {
    return (
       <>
          <View style={HomeStyle.DetailsWrap}>
@@ -147,9 +147,9 @@ const TwoItemDetailsFooter = memo(({ activity }) => {
          </View>
       </>
    );
-});
+};
 
-const ActivityDetailsOverview = memo(({ activityID, activity, setActivity, ...props }) => {
+const ActivityDetailsOverview = ({ activityID, activity, setActivity, ...props }) => {
    const dispatch = useAccountDispatch();
    const currentAccount = useAccount();
 
@@ -264,7 +264,7 @@ const ActivityDetailsOverview = memo(({ activityID, activity, setActivity, ...pr
          </View>
       </ScrollView>
    );
-});
+};
 
 const ActivityDetailsOverviewStyle = StyleSheet.create({
    Register: {

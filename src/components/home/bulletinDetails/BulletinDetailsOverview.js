@@ -1,5 +1,4 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { memo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { rolesName } from '../../../configs/Constants';
@@ -9,7 +8,7 @@ import Theme from '../../../styles/Theme';
 import { formatDate } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
-const BulletinDetailsOverview = memo(({ bulletin, ...props }) => {
+const BulletinDetailsOverview = ({ bulletin, ...props }) => {
    if (props?.loading) return <Loading />;
 
    return (
@@ -63,6 +62,6 @@ const BulletinDetailsOverview = memo(({ bulletin, ...props }) => {
          </View>
       </ScrollView>
    );
-});
+};
 
 export default BulletinDetailsOverview;

@@ -1,5 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
@@ -9,7 +9,7 @@ import { useAccountDispatch } from '../../../store/contexts/AccountContext';
 import Theme from '../../../styles/Theme';
 import { getTokens, refreshAccessToken } from '../../../utils/Utilities';
 
-const CommentInput = memo((props) => {
+const CommentInput = (props) => {
    const dispatch = useAccountDispatch();
 
    const refScrollView = useRef(ScrollView);
@@ -77,7 +77,7 @@ const CommentInput = memo((props) => {
          </View>
       </Portal>
    );
-});
+};
 
 const CommentInputStyle = StyleSheet.create({
    CommentInput: {

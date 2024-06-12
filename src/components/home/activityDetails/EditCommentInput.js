@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
@@ -9,7 +9,7 @@ import GlobalStyle from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
 import { getTokens, refreshAccessToken } from '../../../utils/Utilities';
 
-const EditCommentInput = memo((props) => {
+const EditCommentInput = (props) => {
    const dispatch = useAccountDispatch();
 
    const refEditorEditComment = useRef(RichEditor);
@@ -88,7 +88,7 @@ const EditCommentInput = memo((props) => {
          </Modal>
       </Portal>
    );
-});
+};
 
 const EditCommentInputStyle = StyleSheet.create({
    EditCommentInput: {
