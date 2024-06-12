@@ -52,10 +52,6 @@ const ActivitySettings = ({navigation}) => {
         }
     }
 
-    const handleRefresh = () => {
-        onRefresh(setPage, setRefreshing, setActivityName)
-    }
-
     const goToCreateActivityForm = () => {
         navigation.navigate('CreateActivityForm')
     }
@@ -84,7 +80,7 @@ const ActivitySettings = ({navigation}) => {
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
-                            onRefresh={handleRefresh}
+                            onRefresh={() => onRefresh({setPage, setRefreshing, setFilter: setActivityName})}
                         />
                     }
                 >
