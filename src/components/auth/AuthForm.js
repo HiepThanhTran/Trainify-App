@@ -9,7 +9,7 @@ const AuthForm = ({ fields, account, setAccount, ...props }) => {
       <View style={FormStyle.Form}>
          <HelperText type="error" visible={props?.errorVisible} message={props?.errorMessage} />
          {fields.map((f) => (
-            <AuthInput field={f} account={account} setAccount={setAccount} />
+            <AuthInput key={f.name} field={f} account={account} setAccount={setAccount} />
          ))}
          <AuthButton text={props?.buttonText} loading={props?.loading} onPressFunc={props?.onPressFunc} />
       </View>

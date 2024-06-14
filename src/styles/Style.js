@@ -16,7 +16,7 @@ const GlobalStyle = StyleSheet.create({
    BackGround: {
       width: '100%',
       height: '100%',
-      backgroundColor: 'white',
+      backgroundColor: '#fff',
    },
    HeaderButton: {
       height: 40,
@@ -46,6 +46,18 @@ const GlobalStyle = StyleSheet.create({
    ModalContainer: {
       flex: 1,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+   },
+   BackButton: {
+      backgroundColor: 'white',
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 4,
+      borderColor: '#d5deef',
+      marginTop: 12,
+      marginLeft: 12,
    },
 });
 

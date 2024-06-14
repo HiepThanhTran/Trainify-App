@@ -28,11 +28,16 @@ const Bulletin = ({ navigation }) => {
 
       setLoading(true);
       try {
-         const res = await APIs.get(endPoints['bulletins'], { params: { page, name: bulletinName } });
-         if (res.data.next === null) setPage(0);
-         if (res.status === statusCode.HTTP_200_OK) {
-            if (page === 1) setBulletins(res.data.results);
-            else setBulletins((prevBulletins) => [...prevBulletins, ...res.data.results]);
+         const response = await APIs.get(endPoints['bulletins'], { params: { page, name: bulletinName } });
+         if (response.status === statusCode.HTTP_200_OK) {
+            if (page === 1) {
+               setBulletins(response.data.results);
+            } else {
+               setBulletins((prevBulletins) => [...prevBulletins, ...response.data.results]);
+            }
+         }
+         if (response.data.next === null) {
+            setPage(0);
          }
       } catch (error) {
          console.error('Bulletin API', error);

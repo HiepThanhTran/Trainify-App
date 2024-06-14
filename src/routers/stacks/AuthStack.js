@@ -20,7 +20,7 @@ const AuthStack = () => {
    }, []);
 
    return (
-      <Stack.Navigator screenOptions={{ headerShown: false, tabBarStyle: { display: 'none' } }}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
          {splash && <Stack.Screen name="Splash" component={Splash} />}
          <Stack.Screen name="SignIn" component={SignIn} />
          <Stack.Screen name="SignUp" component={SignUp} />

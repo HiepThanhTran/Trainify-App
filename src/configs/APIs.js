@@ -85,10 +85,14 @@ export const authAPI = (token) => {
       baseURL: API_URL,
       headers: {
          Authorization: `Bearer ${token}`,
+         'Content-Type': 'multipart/form-data',
       },
    });
 };
 
 export default axios.create({
    baseURL: API_URL,
+   headers: {
+      'Content-Type': 'multipart/form-data',
+   },
 });

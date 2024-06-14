@@ -1,27 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useAccount } from '../../../store/contexts/AccountContext';
 import Theme from '../../../styles/Theme';
 import { schoolFields } from '../../../utils/Fields';
+import Loading from '../../common/Loading';
 
-const SchoolInformationView = ({ navigation }) => {
+const SchoolView = ({ navigation }) => {
    const currentAccount = useAccount();
+
+   const [isRendered, setIsRedered] = useState(false);
 
    useEffect(() => {
       navigation.setOptions({ headerRight: null });
+      setTimeout(() => {
+         setIsRedered(true);
+      }, 500);
    }, [navigation]);
 
+   if (!isRendered) return <Loading />;
+
    return (
-      <View style={{ ...SchoolInformationViewStyle.SchoolContainer, ...SchoolInformationViewStyle.SectionContainer }}>
-         <Text style={SchoolInformationViewStyle.Header}>Thông tin trường</Text>
+      <View style={{ ...SchoolViewStyle.SchoolContainer, ...SchoolViewStyle.SectionContainer }}>
+         <Text style={SchoolViewStyle.Header}>Thông tin trường</Text>
          {schoolFields.map((f) => {
             const name = currentAccount?.data?.user[f.name] ?? 'Không có';
             return (
-               <View key={f.name} style={SchoolInformationViewStyle.SchoolItem}>
+               <View key={f.name} style={SchoolViewStyle.SchoolItem}>
                   <Icon color={Theme.PrimaryColor} source={f.icon} size={28} />
                   <View style={{ flex: 1 }}>
-                     <Text style={SchoolInformationViewStyle.SchoolItemText}>{`${f.label}: ${name}`}</Text>
+                     <Text style={SchoolViewStyle.SchoolItemText}>{`${f.label}: ${name}`}</Text>
                   </View>
                </View>
             );
@@ -30,7 +38,7 @@ const SchoolInformationView = ({ navigation }) => {
    );
 };
 
-const SchoolInformationViewStyle = StyleSheet.create({
+const SchoolViewStyle = StyleSheet.create({
    Header: {
       fontSize: 20,
       marginBottom: 12,
@@ -60,4 +68,4 @@ const SchoolInformationViewStyle = StyleSheet.create({
    },
 });
 
-export default SchoolInformationView;
+export default SchoolView;

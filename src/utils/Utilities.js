@@ -35,7 +35,7 @@ export const refreshAccessToken = async (refreshToken, dispatch) => {
       const { accessToken } = await setTokens(tokens);
       return accessToken;
    } catch (error) {
-      console.log(error);
+      console.log('Refresh token', error);
       dispatch(SignOutAction());
       return null;
    }

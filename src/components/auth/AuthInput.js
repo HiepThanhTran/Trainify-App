@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { Icon, TextInput } from 'react-native-paper';
 import Theme from '../../styles/Theme';
 
 const AuthInput = ({ field, account, setAccount }) => {
    const [passwordVisible, setPasswordVisible] = useState(false);
    const [icon, setIcon] = useState(field.icon);
 
-   const updateAccount = (field, value) => setAccount({ ...account, [field]: value });
+   const updateAccount = (field, value) => {
+      setAccount({
+         ...account,
+         [field]: value
+      });
+   }
 
    const handlePress = () => {
       setPasswordVisible(!passwordVisible);
@@ -41,10 +46,10 @@ const AuthInput = ({ field, account, setAccount }) => {
 
 const InputStyle = StyleSheet.create({
    Input: {
-      backgroundColor: '#f1f4ff',
       borderWidth: 2,
       marginBottom: 20,
       borderColor: Theme.PrimaryColor,
+      backgroundColor: Theme.SecondaryColor,
    },
 });
 

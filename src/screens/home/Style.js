@@ -7,18 +7,6 @@ const HomeStyle = StyleSheet.create({
       width: '100%',
       height: screenHeight / 3,
    },
-   BackButton: {
-      backgroundColor: 'white',
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 4,
-      borderColor: '#d5deef',
-      marginTop: 12,
-      marginLeft: 12,
-   },
    Body: {
       flex: 1,
       padding: 20,

@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NotificationDetail from '../../screens/notification/NotificationDetail';
-import Theme from '../../styles/Theme';
 
 const Stack = createNativeStackNavigator();
 
@@ -10,6 +9,7 @@ const NotificationStack = () => {
          screenOptions={{
             headerStyle: { backgroundColor: Theme.PrimaryColor },
             headerTintColor: 'white',
+            headerShown: false,
          }}
       >
          <Stack.Screen name="NotificationDetail" component={NotificationDetail} />

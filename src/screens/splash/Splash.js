@@ -7,7 +7,7 @@ import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 
 const Splash = ({ navigation }) => {
-   const animation = useRef(null);
+   const refLottieView = useRef(LottieView);
 
    const animations = [
       {
@@ -59,7 +59,7 @@ const Splash = ({ navigation }) => {
                      <LottieView
                         style={SplashStyle.OnboardingImage}
                         source={item.image}
-                        ref={animation}
+                        ref={refLottieView}
                         autoPlay
                         loop
                      />

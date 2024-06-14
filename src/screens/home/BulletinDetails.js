@@ -2,21 +2,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Animated, ImageBackground, Keyboard, Text, TouchableOpacity, View } from 'react-native';
 import Loading from '../../components/common/Loading';
-import BulletinDetailsActivitiesView from '../../components/home/bulletinDetails/BulletinDetailsActivitiesView';
-import BulletinDetailsOverview from '../../components/home/bulletinDetails/BulletinDetailsOverview';
+import ActivitiesListView from '../../components/home/BulletinDetails/ActivitiesListView';
+import BulletinSummary from '../../components/home/BulletinDetails/BulletinSummary';
 import APIs, { endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
 import GlobalStyle, { screenHeight } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { tabsBulletinDetails } from '../../utils/Fields';
+import { tabsContent } from '../../utils/Fields';
 import HomeStyle from './Style';
 
 const BulletinDetails = ({ navigation, route }) => {
    const bulletinID = route?.params?.bulletinID;
 
+   const [isRendered, setIsRendered] = useState(false);
    const [tab, setTab] = useState('overview');
    const [bulletin, setBulletin] = useState({});
-   const [isRendered, setIsRendered] = useState(false);
    const [bulletinLoading, setBulletinLoading] = useState(false);
 
    const animatedHeight = useState(new Animated.Value(screenHeight / 3))[0];
@@ -30,8 +30,10 @@ const BulletinDetails = ({ navigation, route }) => {
 
       setBulletinLoading(true);
       try {
-         let res = await APIs.get(endPoints['bulletin-detail'](bulletinID));
-         if (res.status === statusCode.HTTP_200_OK) setBulletin(res.data);
+         let response = await APIs.get(endPoints['bulletin-detail'](bulletinID));
+         if (response.status === statusCode.HTTP_200_OK) {
+            setBulletin(response.data);
+         }
       } catch (error) {
          console.error('Bulletin details', error);
       } finally {
@@ -43,8 +45,11 @@ const BulletinDetails = ({ navigation, route }) => {
    const handleChangeTab = (name) => {
       setTab(name);
 
-      if (name !== 'overview') animateHeight(screenHeight / 6);
-      else animateHeight(screenHeight / 3);
+      if (name !== 'overview') {
+         animateHeight(screenHeight / 6);
+      } else {
+         animateHeight(screenHeight / 3);
+      }
    };
 
    const animateHeight = (toValue) => {
@@ -58,9 +63,9 @@ const BulletinDetails = ({ navigation, route }) => {
    const tabContent = () => {
       switch (tab) {
          case 'overview':
-            return <BulletinDetailsOverview bulletin={bulletin} loading={bulletinLoading} />;
+            return <BulletinSummary bulletin={bulletin} loading={bulletinLoading} />;
          case 'activities':
-            return <BulletinDetailsActivitiesView navigation={navigation} bulletinID={bulletinID} />;
+            return <ActivitiesListView navigation={navigation} bulletinID={bulletinID} />;
          default:
             return null;
       }
@@ -72,7 +77,7 @@ const BulletinDetails = ({ navigation, route }) => {
       <View style={GlobalStyle.BackGround} onTouchStart={() => Keyboard.dismiss()}>
          <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
             <ImageBackground source={{ uri: bulletin.image }} style={{ flex: 1 }}>
-               <TouchableOpacity activeOpacity={0.8} style={HomeStyle.BackButton} onPress={() => navigation.goBack()}>
+               <TouchableOpacity activeOpacity={0.8} style={GlobalStyle.BackButton} onPress={() => navigation.goBack()}>
                   <Ionicons name="chevron-back" color="gray" size={30} />
                </TouchableOpacity>
             </ImageBackground>
@@ -84,7 +89,7 @@ const BulletinDetails = ({ navigation, route }) => {
             </View>
 
             <View style={HomeStyle.TabContainer}>
-               {tabsBulletinDetails.map((f) => (
+               {tabsContent.bulletin.map((f) => (
                   <TouchableOpacity
                      key={f.name}
                      style={HomeStyle.TabItem}

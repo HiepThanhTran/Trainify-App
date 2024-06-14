@@ -16,16 +16,24 @@ const OptionsModal = (props) => {
       props?.setModalSettingsVisible(false);
       const { accessToken, refreshToken } = await getTokens();
       try {
-         let res = await authAPI(accessToken).delete(endPoints['comment-detail'](props?.selectedComment.id));
+         let response = await authAPI(accessToken).delete(endPoints['comment-detail'](props?.selectedComment.id));
 
-         if (res.status === statusCode.HTTP_204_NO_CONTENT) {
+         if (response.status === statusCode.HTTP_204_NO_CONTENT) {
             props?.setComments(props?.comments.filter((c) => c.id !== props?.selectedComment.id));
          }
       } catch (error) {
-         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
+         if (
+            error.response &&
+            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN)
+         ) {
             const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) handleDeleteComment();
-         } else console.error('Delete comment', error);
+            if (newAccessToken) {
+               handleDeleteComment();
+            }
+         } else {
+            console.error('Delete comment', error);
+         }
       } finally {
          props?.setModalVisible(false);
       }
@@ -40,7 +48,10 @@ const OptionsModal = (props) => {
                text: 'Xóa',
                onPress: () => handleDeleteComment(),
             },
-            { text: 'Hủy', style: 'cancel' },
+            {
+               text: 'Hủy',
+               style: 'cancel',
+            },
          ],
          { cancelable: true },
       );
@@ -48,7 +59,12 @@ const OptionsModal = (props) => {
 
    return (
       <Portal>
-         <Modal visible={props?.modalSettingsVisible} transparent={true} animationType="fade">
+         <Modal
+            visible={props?.modalSettingsVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => props?.setModalSettingsVisible(false)}
+         >
             <TouchableWithoutFeedback onPress={() => props?.setModalSettingsVisible(false)}>
                <View style={GlobalStyle.ModalContainer}>
                   <View style={OptionsModalStyle.Options}>

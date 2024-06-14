@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
-import { Alert, Animated, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import Loading from '../../components/common/Loading';
 import SectionItem from '../../components/profile/SectionItem';
@@ -19,19 +19,19 @@ const Profile = ({ navigation }) => {
 
    useEffect(() => {
       setIsRendered(true);
-   }, [navigation, currentAccount]);
+   }, []);
 
-   const scrollY = new Animated.Value(0.01);
-   const stickyTop = scrollY.interpolate({
-      inputRange: [0, screenHeight * 0.2 + screenHeight * 0.05],
-      outputRange: [-200, 0],
-      extrapolate: 'clamp',
-   });
-   const stickyOpacity = scrollY.interpolate({
-      inputRange: [0, screenHeight * 0.2 + screenHeight * 0.05],
-      outputRange: [0, 1],
-      extrapolate: 'clamp',
-   });
+   // const scrollY = new Animated.Value(0.01);
+   // const stickyTop = scrollY.interpolate({
+   //    inputRange: [0, screenHeight * 0.2 + screenHeight * 0.05],
+   //    outputRange: [-200, 0],
+   //    extrapolate: 'clamp',
+   // });
+   // const stickyOpacity = scrollY.interpolate({
+   //    inputRange: [0, screenHeight * 0.2 + screenHeight * 0.05],
+   //    outputRange: [0, 1],
+   //    extrapolate: 'clamp',
+   // });
 
    const handleSignout = () => {
       Alert.alert(
@@ -45,15 +45,16 @@ const Profile = ({ navigation }) => {
                   dispatch(SignOutAction());
                },
             },
-            { text: 'Hủy', style: 'cancel' },
+            {
+               text: 'Hủy',
+               style: 'cancel',
+            },
          ],
          { cancelable: true },
       );
    };
 
-   const goToScreen = (screen, params) => {
-      navigation.navigate('ProfileStack', { screen, params });
-   };
+   const goToScreen = (screen, params) => navigation.navigate('ProfileStack', { screen, params });
 
    if (!isRendered) return <Loading />;
 
@@ -63,9 +64,9 @@ const Profile = ({ navigation }) => {
             bounces={false}
             scrollEventThrottle={16}
             showsHorizontalScrollIndicator={false}
-            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-               useNativeDriver: false,
-            })}
+            // onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+            //    useNativeDriver: false,
+            // })}
          >
             <View style={{ ...GlobalStyle.Container, ...ProfileStyle.Header }}>
                <Image style={ProfileStyle.Avatar} source={{ uri: currentAccount.data.avatar }} />
@@ -109,7 +110,7 @@ const Profile = ({ navigation }) => {
                </TouchableOpacity>
             </View>
          </ScrollView>
-         <Animated.View style={{ ...ProfileStyle.HeaderAnimated, top: stickyTop, opacity: stickyOpacity }}>
+         {/* <Animated.View style={{ ...ProfileStyle.HeaderAnimated, top: stickyTop, opacity: stickyOpacity }}>
             <TouchableOpacity
                activeOpacity={1}
                onPress={() => goToScreen('EditProfile', { full_name: currentAccount.data.user.full_name })}
@@ -118,7 +119,7 @@ const Profile = ({ navigation }) => {
                <Text style={ProfileStyle.ButtonText}>Trang cá nhân</Text>
                <Icon color="white" source="chevron-right" size={20} />
             </TouchableOpacity>
-         </Animated.View>
+         </Animated.View> */}
       </LinearGradient>
    );
 };

@@ -11,17 +11,18 @@ import { screenWidth } from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
 import { loadMore, onRefresh } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
-import CommentInput from './CommentInput';
+import AddCommentInput from './AddCommentInput';
 import EditCommentInput from './EditCommentInput';
 import OptionsModal from './OptionsModal';
 
-const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
+const CommentsListView = ({ activityID, ...props }) => {
    const currentAccount = useAccount();
 
    const [expandedComments, setExpandedComments] = useState({});
    const [selectedComment, setSelectedComment] = useState({});
    const [comments, setComments] = useState([]);
    const [page, setPage] = useState(1);
+   const [isRendered, setIsRendered] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
    const [commentsLoading, setCommentsLoading] = useState(false);
    const [modalSettingsVisible, setModalSettingsVisible] = useState(false);
@@ -38,16 +39,22 @@ const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
       try {
          let res = await APIs.get(endPoints['activity-comments'](activityID), { params: { page } });
 
-         if (res.data.next === null) setPage(0);
          if (res.status === statusCode.HTTP_200_OK) {
-            if (page === 1) setComments(res.data.results);
-            else setComments((prevComments) => [...prevComments, ...res.data.results]);
+            if (page === 1) {
+               setComments(res.data.results);
+            } else {
+               setComments((prevComments) => [...prevComments, ...res.data.results]);
+            }
+         }
+         if (res.data.next === null) {
+            setPage(0);
          }
       } catch (error) {
          console.error('Comments of activity', error);
       } finally {
          setCommentsLoading(false);
          setRefreshing(false);
+         setIsRendered(true);
       }
    };
 
@@ -62,6 +69,8 @@ const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
          [commentId]: !prevState[commentId],
       }));
    };
+
+   if (!isRendered) return <Loading />;
 
    return (
       <ScrollView
@@ -80,38 +89,34 @@ const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
       >
          <View style={{ ...props?.style }}>
             <View style={{ marginBottom: 8 }}>
-               {!refreshing && commentsLoading && page === 1 && <Loading style={{ marginBottom: 32 }} />}
                {comments.map((item, index) => {
                   const isExpanded = expandedComments[item.id];
                   const contentLength = item?.content?.length || 0;
-                  const shouldShowMoreButton = contentLength > 74;
+                  const shouldShowMoreButton = contentLength > 71;
 
                   return (
                      <View
                         key={item.id}
                         style={{
-                           ...ActivityDetailsCommentsViewStyle.Card,
+                           ...CommentListViewStyle.Card,
                            borderBottomWidth: index !== comments.length - 1 ? 0.5 : 0,
                         }}
                      >
                         <View style={{ flexDirection: 'row' }}>
                            <View style={{ overflow: 'hidden' }}>
-                              <Image
-                                 source={{ uri: item?.account.avatar }}
-                                 style={ActivityDetailsCommentsViewStyle.Avatar}
-                              />
+                              <Image source={{ uri: item?.account.avatar }} style={CommentListViewStyle.Avatar} />
                            </View>
-                           <View style={ActivityDetailsCommentsViewStyle.CardContent}>
+                           <View style={CommentListViewStyle.CardContent}>
                               {item?.account.id === currentAccount.data.id && (
                                  <TouchableOpacity
-                                    style={ActivityDetailsCommentsViewStyle.OptionsButton}
+                                    style={CommentListViewStyle.OptionsButton}
                                     onPress={() => handleOnPressSettings(item)}
                                  >
                                     <Icon source="dots-vertical" size={28} />
                                  </TouchableOpacity>
                               )}
 
-                              <Text style={ActivityDetailsCommentsViewStyle.Username}>{item?.account.full_name}</Text>
+                              <Text style={CommentListViewStyle.Username}>{item?.account.full_name}</Text>
                               <RenderHTML
                                  contentWidth={screenWidth}
                                  source={{ html: item?.content }}
@@ -128,9 +133,7 @@ const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
                               )}
                            </View>
                         </View>
-                        <Text style={ActivityDetailsCommentsViewStyle.CreatedDate}>
-                           {moment(item?.created_date).fromNow()}
-                        </Text>
+                        <Text style={CommentListViewStyle.CreatedDate}>{moment(item?.created_date).fromNow()}</Text>
                      </View>
                   );
                })}
@@ -138,7 +141,7 @@ const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
             </View>
          </View>
 
-         <CommentInput
+         <AddCommentInput
             activityID={activityID}
             setComments={setComments}
             refEditorComment={props?.refEditorComment}
@@ -168,7 +171,7 @@ const ActivityDetailsCommentsView = ({ activityID, ...props }) => {
    );
 };
 
-export const ActivityDetailsCommentsViewStyle = StyleSheet.create({
+export const CommentListViewStyle = StyleSheet.create({
    Card: {
       paddingBottom: 4,
       marginBottom: 20,
@@ -209,4 +212,4 @@ export const ActivityDetailsCommentsViewStyle = StyleSheet.create({
    },
 });
 
-export default ActivityDetailsCommentsView;
+export default CommentsListView;

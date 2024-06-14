@@ -27,21 +27,29 @@ const EditCommentInput = (props) => {
       props?.setModalEditCommentVisible(false);
       const { accessToken, refreshToken } = await getTokens();
       try {
-         let res = await authAPI(accessToken).put(endPoints['comment-detail'](props?.selectedComment.id), form, {
-            headers: {
-               'Content-Type': 'multipart/form-data',
-            },
-         });
+         let response = await authAPI(accessToken).put(endPoints['comment-detail'](props?.selectedComment.id), form);
 
-         if (res.status === statusCode.HTTP_200_OK) {
+         if (response.status === statusCode.HTTP_200_OK) {
             const index = props?.comments.findIndex((comment) => comment.id === props?.selectedComment.id);
-            props?.setComments([...props?.comments.slice(0, index), res.data, ...props?.comments.slice(index + 1)]);
+            props?.setComments([
+               ...props?.comments.slice(0, index),
+               response.data,
+               ...props?.comments.slice(index + 1),
+            ]);
          }
       } catch (error) {
-         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
+         if (
+            error.response &&
+            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN)
+         ) {
             const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) handleEditComment();
-         } else console.error('Edit comment', error);
+            if (newAccessToken) {
+               handleEditComment();
+            }
+         } else {
+            console.error('Edit comment', error);
+         }
       } finally {
          props?.setModalVisible(false);
       }
@@ -49,7 +57,12 @@ const EditCommentInput = (props) => {
 
    return (
       <Portal>
-         <Modal visible={props?.modalEditCommentVisible} transparent={true} animationType="fade">
+         <Modal
+            visible={props?.modalEditCommentVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => props?.setModalEditCommentVisible(false)}
+         >
             <View style={{ flex: 1 }}>
                <View style={{ ...GlobalStyle.ModalContainer, backgroundColor: '#273238' }}>
                   <View style={EditCommentInputStyle.EditCommentInput}>

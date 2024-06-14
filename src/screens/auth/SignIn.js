@@ -1,6 +1,6 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import AuthFooter from '../../components/auth/AuthFooter';
 import AuthForm from '../../components/auth/AuthForm';
@@ -19,9 +19,9 @@ const SignIn = ({ navigation }) => {
    const dispatch = useAccountDispatch();
 
    const [account, setAccount] = useState({});
+   const [loading, setLoading] = useState(false);
    const [errorMessage, setErrorMessage] = useState('');
    const [errorVisible, setErrorVisible] = useState(false);
-   const [loading, setLoading] = useState(false);
 
    const handleSignIn = async () => {
       for (let field of signInFields) {
@@ -35,25 +35,37 @@ const SignIn = ({ navigation }) => {
       setLoading(true);
       setErrorVisible(false);
       try {
-         let tokens = await APIs.post(endPoints['token'], {
-            ...account,
-            grant_type: 'password',
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-         });
+         let tokens = await APIs.post(
+            endPoints['token'],
+            {
+               ...account,
+               grant_type: 'password',
+               client_id: CLIENT_ID,
+               client_secret: CLIENT_SECRET,
+            },
+            {
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+            },
+         );
 
          const { accessToken } = await setTokens(tokens);
 
          setTimeout(async () => {
-            let user = await authAPI(accessToken).get(endPoints['me']);
+            let response = await authAPI(accessToken).get(endPoints['me']);
 
-            if (user.status === statusCode.HTTP_200_OK) dispatch(SignInAction(user.data));
+            if (response.status === statusCode.HTTP_200_OK) {
+               dispatch(SignInAction(response.data));
+            }
          }, 100);
       } catch (error) {
          if (error.response && error.response.status === statusCode.HTTP_400_BAD_REQUEST) {
             setErrorVisible(true);
             setErrorMessage('Email hoặc mật khẩu không chính xác');
-         } else console.error(error);
+         } else {
+            console.error('Sign in', error);
+         }
       } finally {
          setLoading(false);
       }

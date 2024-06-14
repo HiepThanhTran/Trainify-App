@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import CreateActivityForm from '../../components/profile/CreateActivityForm';
 import ActivitySettings from '../../screens/profile/ActivitySettings';
 import EditProfile from '../../screens/profile/EditProfile';
-import TrainingPoint from '../../screens/profile/TrainingPoint';
+import TrainingPoints from '../../screens/profile/TrainingPoints';
 import Theme from '../../styles/Theme';
-import CreateActivityForm from '../../components/profile/CreateActivityForm';
 const Stack = createNativeStackNavigator();
 
 const ProfileStack = () => {
@@ -19,7 +19,7 @@ const ProfileStack = () => {
             component={EditProfile}
             options={({ route }) => ({ title: route?.params?.full_name ?? 'Trang cá nhân' })}
          />
-         <Stack.Screen name="TrainingPoint" component={TrainingPoint} options={{ title: 'Điểm rèn luyện' }} />
+         <Stack.Screen name="TrainingPoint" component={TrainingPoints} options={{ title: 'Điểm rèn luyện' }} />
          <Stack.Screen name="ActivitySettings" component={ActivitySettings} options={{ title: 'Quản lý hoạt động' }} />
          <Stack.Screen name="CreateActivityForm" component={CreateActivityForm} options={{ title: 'Tạo hoạt động' }} />
       </Stack.Navigator>

@@ -9,7 +9,7 @@ import { useAccountDispatch } from '../../../store/contexts/AccountContext';
 import Theme from '../../../styles/Theme';
 import { getTokens, refreshAccessToken } from '../../../utils/Utilities';
 
-const CommentInput = (props) => {
+const AddCommentInput = (props) => {
    const dispatch = useAccountDispatch();
 
    const refScrollView = useRef(ScrollView);
@@ -26,22 +26,26 @@ const CommentInput = (props) => {
       props?.refEditorComment?.current?.dismissKeyboard();
       const { accessToken, refreshToken } = await getTokens();
       try {
-         let res = await authAPI(accessToken).post(endPoints['activity-comments'](props?.activityID), form, {
-            headers: {
-               'Content-Type': 'multipart/form-data',
-            },
-         });
+         let response = await authAPI(accessToken).post(endPoints['activity-comments'](props?.activityID), form);
 
-         if (res.status === statusCode.HTTP_201_CREATED) {
+         if (response.status === statusCode.HTTP_201_CREATED) {
             setNewComment('');
-            props?.setComments((prevComments) => [res.data, ...prevComments]);
             props?.refEditorComment?.current?.setContentHTML('');
+            props?.setComments((prevComments) => [response.data, ...prevComments]);
          }
       } catch (error) {
-         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
+         if (
+            error.response &&
+            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN)
+         ) {
             const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) handleAddComment();
-         } else console.error('Add commnet', error);
+            if (newAccessToken) {
+               handleAddComment();
+            }
+         } else {
+            console.error('Add commnet', error);
+         }
       } finally {
          props?.setModalVisible(false);
       }
@@ -105,4 +109,4 @@ const CommentInputStyle = StyleSheet.create({
    },
 });
 
-export default CommentInput;
+export default AddCommentInput;

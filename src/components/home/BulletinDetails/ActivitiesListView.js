@@ -8,7 +8,7 @@ import CardActivity from '../../common/CardActivity';
 import Loading from '../../common/Loading';
 import Searchbar from '../../common/Searchbar';
 
-const BulletinDetailsActivitiesView = ({ navigation, bulletinID, ...props }) => {
+const ActivitiesListView = ({ navigation, bulletinID }) => {
    const [activities, setActivities] = useState([]);
    const [page, setPage] = useState(1);
    const [activityName, setActivityName] = useState('');
@@ -24,13 +24,19 @@ const BulletinDetailsActivitiesView = ({ navigation, bulletinID, ...props }) => 
 
       setActivitiesLoading(true);
       try {
-         let res = await APIs.get(endPoints['activities'], {
+         let response = await APIs.get(endPoints['activities'], {
             params: { bulletin_id: bulletinID, page, name: activityName },
          });
-         if (res.data.next === null) setPage(0);
-         if (res.status === statusCode.HTTP_200_OK) {
-            if (page === 1) setActivities(res.data.results);
-            else setActivities((prevActivities) => [...prevActivities, ...res.data.results]);
+
+         if (response.status === statusCode.HTTP_200_OK) {
+            if (page === 1) {
+               setActivities(response.data.results);
+            } else {
+               setActivities((prevActivities) => [...prevActivities, ...response.data.results]);
+            }
+         }
+         if (response.data.next === null) {
+            setPage(0);
          }
       } catch (error) {
          console.error('Activities of bulletin', error);
@@ -74,4 +80,4 @@ const BulletinDetailsActivitiesView = ({ navigation, bulletinID, ...props }) => 
    );
 };
 
-export default BulletinDetailsActivitiesView;
+export default ActivitiesListView;

@@ -8,7 +8,7 @@ import Theme from '../../../styles/Theme';
 import { formatDate } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
-const BulletinDetailsOverview = ({ bulletin, ...props }) => {
+const BulletinSummary = ({ bulletin, ...props }) => {
    if (props?.loading) return <Loading />;
 
    return (
@@ -64,4 +64,4 @@ const BulletinDetailsOverview = ({ bulletin, ...props }) => {
    );
 };
 
-export default BulletinDetailsOverview;
+export default BulletinSummary;

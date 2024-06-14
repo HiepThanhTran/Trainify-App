@@ -1,27 +1,32 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRef, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-paper';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
-import EditView from '../../components/profile/editProfile/EditView';
-import SchoolInformationView from '../../components/profile/editProfile/SchoolInformationView';
+import Loading from '../../components/common/Loading';
+import EditView from '../../components/profile/EditProfile/EditView';
+import SchoolView from '../../components/profile/EditProfile/SchoolView';
+import { defaultImage } from '../../configs/Constants';
 import { useAccount } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { tabsEditForm } from '../../utils/Fields';
+import { tabsContent } from '../../utils/Fields';
 
 const EditProfile = ({ navigation }) => {
    const currentAccount = useAccount();
 
-   const sheetRef = useRef(BottomSheet);
+   const refSheetSelectImage = useRef(BottomSheet);
 
-   const [tab, setTab] = useState('school');
-   const [loading, setLoading] = useState(false);
    const [isRendered, setIsRendered] = useState(false);
+   const [tab, setTab] = useState('school');
    const [tempAccount, setTempAccount] = useState(currentAccount);
+   const [indexSheetSelectImage, setIndexSheetSelectImage] = useState(-1);
+
+   useEffect(() => {
+      setIsRendered(true);
+   }, []);
 
    const handleGallerySelection = () =>
       handleSelection(ImagePicker.requestMediaLibraryPermissionsAsync, ImagePicker.launchImageLibraryAsync);
@@ -34,29 +39,41 @@ const EditProfile = ({ navigation }) => {
       if (status !== 'granted') {
          Alert.alert('Thông báo', 'Không có quyền truy cập!');
       } else {
-         let res = await launchFunction({
+         let response = await launchFunction({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 4],
             quality: 1,
          });
 
-         if (!res.canceled) {
+         if (!response.canceled) {
             setTempAccount((prevTempAccount) => ({
                ...prevTempAccount,
                data: {
                   ...prevTempAccount.data,
-                  avatar: res.assets[0],
+                  avatar: response.assets[0],
                },
             }));
          }
       }
-      sheetRef?.current?.close();
+      if (indexSheetSelectImage > -1) {
+         refSheetSelectImage?.current?.close();
+      }
    };
 
    const handleChangeTab = (tabName) => {
       setTab(tabName);
-      sheetRef?.current?.close();
+      if (indexSheetSelectImage > -1) {
+         refSheetSelectImage?.current?.close();
+      }
+   };
+
+   const handleOnPressWithoutFeedback = () => {
+      if (currentTab('edit')) {
+         if (indexSheetSelectImage > -1) {
+            refSheetSelectImage?.current?.close();
+         }
+      }
    };
 
    const currentTab = (name) => tab === name;
@@ -64,28 +81,22 @@ const EditProfile = ({ navigation }) => {
    const tabContent = () => {
       switch (tab) {
          case 'school':
-            return <SchoolInformationView navigation={navigation} />;
+            return <SchoolView navigation={navigation} />;
          case 'edit':
-            return (
-               <EditView
-                  navigation={navigation}
-                  tempAccount={tempAccount}
-                  setTempAccount={setTempAccount}
-                  loading={loading}
-                  setLoading={setLoading}
-               />
-            );
+            return <EditView navigation={navigation} tempAccount={tempAccount} setTempAccount={setTempAccount} />;
          default:
             return null;
       }
    };
 
+   if (!isRendered) return <Loading />;
+
    return (
       <GestureHandlerRootView>
          <View style={GlobalStyle.BackGround}>
             <ScrollView showsVerticalScrollIndicator={false}>
-               <DismissKeyboard onPress={() => sheetRef?.current?.close()}>
-                  <LinearGradient
+               <DismissKeyboard onPress={handleOnPressWithoutFeedback}>
+                  {/* <LinearGradient
                      colors={Theme.LinearColors4}
                      start={{ x: 0, y: 1 }}
                      end={{ x: 1, y: 0 }}
@@ -95,7 +106,7 @@ const EditProfile = ({ navigation }) => {
                         <TouchableOpacity
                            activeOpacity={0.5}
                            disabled={!currentTab('edit')}
-                           onPress={() => sheetRef?.current?.expand()}
+                           onPress={() => refSheetSelectImage?.current?.expand()}
                         >
                            <Image
                               style={EditProfileStyle.Avatar}
@@ -113,10 +124,34 @@ const EditProfile = ({ navigation }) => {
                            )}
                         </TouchableOpacity>
                      </View>
-                  </LinearGradient>
+                  </LinearGradient> */}
+                  <ImageBackground source={{ uri: defaultImage.USER_COVER }} style={EditProfileStyle.AvatarContainer}>
+                     <View style={EditProfileStyle.AvatarTouch}>
+                        <TouchableOpacity
+                           activeOpacity={0.8}
+                           disabled={!currentTab('edit')}
+                           onPress={() => refSheetSelectImage?.current?.expand()}
+                        >
+                           <Image
+                              style={EditProfileStyle.Avatar}
+                              source={{
+                                 uri:
+                                    typeof tempAccount.data.avatar === 'string'
+                                       ? tempAccount.data.avatar
+                                       : tempAccount.data.avatar.uri,
+                              }}
+                           />
+                           {currentTab('edit') && (
+                              <View style={EditProfileStyle.CameraIcon}>
+                                 <Icon source="camera" color="white" size={24} />
+                              </View>
+                           )}
+                        </TouchableOpacity>
+                     </View>
+                  </ImageBackground>
 
                   <View style={EditProfileStyle.ChoiceContainer}>
-                     {tabsEditForm.map((f) => (
+                     {tabsContent.editProfile.map((f) => (
                         <TouchableOpacity
                            key={f.name}
                            style={EditProfileStyle.ChoiceButton}
@@ -142,10 +177,11 @@ const EditProfile = ({ navigation }) => {
          </View>
 
          <BottomSheet
-            ref={sheetRef}
+            ref={refSheetSelectImage}
             index={-1}
             snapPoints={['25%']}
             enablePanDownToClose
+            onChange={setIndexSheetSelectImage}
             backgroundStyle={{ backgroundColor: '#273238' }}
             handleIndicatorStyle={{ backgroundColor: 'white' }}
          >
@@ -182,7 +218,7 @@ const EditProfileStyle = StyleSheet.create({
       height: 140,
       borderWidth: 4,
       borderRadius: 140 / 2,
-      borderColor: Theme.SecondaryColor,
+      borderColor: '#fff',
       backgroundColor: Theme.SecondaryColor,
    },
    CameraIcon: {

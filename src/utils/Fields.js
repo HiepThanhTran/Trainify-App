@@ -91,7 +91,13 @@ export const schoolFields = [
 
 export const accountFields = (currentAccount) => {
    return [
-      { label: 'Email', name: 'email', value: currentAccount.data.email, icon: 'email', disabled: true },
+      {
+         label: 'Email',
+         name: 'email',
+         value: currentAccount.data.email,
+         icon: 'email',
+         disabled: true,
+      },
       {
          label: `Mã số ${currentAccount.data.original_role.toLowerCase()}`,
          name: 'code',
@@ -103,24 +109,45 @@ export const accountFields = (currentAccount) => {
 };
 
 export const userFields = [
-   { label: 'Họ', name: 'last_name', icon: 'account-eye' },
-   { label: 'Tên đệm', name: 'middle_name', icon: 'account-eye' },
-   { label: 'Tên', name: 'first_name', icon: 'account-eye' },
-   { label: 'Địa chỉ', name: 'address', icon: 'map-marker' },
-   { label: 'Số điện thoại', name: 'phone_number', icon: 'phone', keyboardType: 'numeric' },
+   {
+      label: 'Họ',
+      name: 'last_name',
+      icon: 'account-eye',
+   },
+   {
+      label: 'Tên đệm',
+      name: 'middle_name',
+      icon: 'account-eye',
+   },
+   {
+      label: 'Tên',
+      name: 'first_name',
+      icon: 'account-eye',
+   },
+   {
+      label: 'Địa chỉ',
+      name: 'address',
+      icon: 'map-marker',
+   },
+   {
+      label: 'Số điện thoại',
+      name: 'phone_number',
+      icon: 'phone',
+      keyboardType: 'numeric',
+   },
 ];
 
-export const tabsEditForm = [
-   { label: 'Thông tin trường', name: 'school' },
-   { label: 'Thông tin cá nhân', name: 'edit' },
-];
-
-export const tabsActivityDetails = [
-   { label: 'Tổng quan', name: 'overview' },
-   { label: 'Bình luận', name: 'comments' },
-];
-
-export const tabsBulletinDetails = [
-   { label: 'Tổng quan', name: 'overview' },
-   { label: 'Hoạt động', name: 'activities' },
-];
+export const tabsContent = {
+   bulletin: [
+      { label: 'Tổng quan', name: 'overview' },
+      { label: 'Hoạt động', name: 'activities' },
+   ],
+   activity: [
+      { label: 'Tổng quan', name: 'overview' },
+      { label: 'Bình luận', name: 'comments' },
+   ],
+   editProfile: [
+      { label: 'Thông tin trường', name: 'school' },
+      { label: 'Thông tin cá nhân', name: 'edit' },
+   ],
+};

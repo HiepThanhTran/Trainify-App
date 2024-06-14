@@ -18,16 +18,19 @@ import {
 } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
-const EditView = ({ navigation, tempAccount, setTempAccount, loading, setLoading }) => {
+const EditView = ({ navigation, tempAccount, setTempAccount }) => {
    const dispatch = useAccountDispatch();
    const currentAccount = useAccount();
 
+   const [loading, setLoading] = useState(false);
+   const [isRendered, setIsRendered] = useState(false);
    const [snackBarMessage, setSnackBarMessage] = useState('');
    const [snackBarVisible, setSnackBarVisible] = useState(false);
    const [snackBarDuration, setSnackBarDuration] = useState(7000);
 
    useEffect(() => {
       renderHeaderButton();
+      setIsRendered(true);
    }, [navigation, currentAccount, tempAccount]);
 
    const handleUpdateProfile = async () => {
@@ -57,22 +60,27 @@ const EditView = ({ navigation, tempAccount, setTempAccount, loading, setLoading
       setSnackBarDuration(300000);
       const { accessToken, refreshToken } = await getTokens();
       try {
-         let res = await authAPI(accessToken).patch(endPoints['me-update'], form, {
-            headers: {
-               'Content-Type': 'multipart/form-data',
-            },
-         });
+         let response = await authAPI(accessToken).patch(endPoints['me-update'], form);
 
-         if (res.status === statusCode.HTTP_200_OK) {
-            dispatch(UpdateAccountAction(res.data));
+         if (response.status === statusCode.HTTP_200_OK) {
+            dispatch(UpdateAccountAction(response.data));
             setSnackBarMessage('Cập nhật thành công');
          }
       } catch (error) {
-         if (error.response && error.response.status === statusCode.HTTP_401_UNAUTHORIZED) {
+         if (
+            error.response &&
+            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN)
+         ) {
             const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) handleUpdateProfile();
-            else setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
-         } else console.error(error);
+            if (newAccessToken) {
+               handleUpdateProfile();
+            } else {
+               setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
+            }
+         } else {
+            console.error('Update profile', error);
+         }
       } finally {
          setLoading(false);
          setSnackBarDuration(7000);
@@ -119,11 +127,12 @@ const EditView = ({ navigation, tempAccount, setTempAccount, loading, setLoading
          onChange: handleDatePickerOnChange,
          mode: 'date',
          is24Hour: true,
-         display: 'spinner',
          minimumDate: getFirstDayOfYear(new Date(tempAccount.data.user.date_of_birth)),
          maximumDate: getLastDayOfYear(new Date(tempAccount.data.user.date_of_birth)),
       });
    };
+
+   if (!isRendered) return <Loading />;
 
    return (
       <View style={{ ...EditViewStyle.FormContainer, ...EditViewStyle.SectionContainer }}>
@@ -223,7 +232,7 @@ const EditViewStyle = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 2,
       borderColor: Theme.PrimaryColor,
-      marginHorizontal: 12,
+      marginHorizontal: 8,
    },
    FormContainer: {
       marginBottom: 6,

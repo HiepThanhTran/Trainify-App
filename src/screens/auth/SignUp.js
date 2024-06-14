@@ -13,9 +13,9 @@ import { signUpFields } from '../../utils/Fields';
 
 const SignUp = ({ navigation }) => {
    const [account, setAccount] = useState({});
+   const [loading, setLoading] = useState(false);
    const [errorMessage, setErrorMessage] = useState('');
    const [errorVisible, setErrorVisible] = useState(false);
-   const [loading, setLoading] = useState(false);
 
    const handleSignUp = async () => {
       for (let field of signUpFields) {
@@ -33,25 +33,30 @@ const SignUp = ({ navigation }) => {
       }
 
       let form = new FormData();
-      for (let key in account)
-         if (key !== 'confirm') form.append(key, key !== 'password' ? account[key].trim() : account[key]);
+      for (let key in account) {
+         if (key !== 'confirm') {
+            form.append(key, account[key]);
+         }
+      }
 
       setLoading(true);
       setErrorVisible(false);
       try {
-         let res = await APIs.post(endPoints['student-register'], form, {
-            headers: {
-               'Content-Type': 'multipart/form-data',
-            },
-         });
+         let response = await APIs.post(endPoints['student-register'], form);
 
-         if (res.status === statusCode.HTTP_201_CREATED) {
+         if (response.status === statusCode.HTTP_201_CREATED) {
             Alert.alert(
                'Đăng ký thành công',
                'Chuyển sang đăng nhập?',
                [
-                  { text: 'Đăng nhập', onPress: () => navigation.navigate('SignIn') },
-                  { text: 'Hủy', style: 'cancel' },
+                  {
+                     text: 'Đăng nhập',
+                     onPress: () => navigation.navigate('SignIn'),
+                  },
+                  {
+                     text: 'Hủy',
+                     style: 'cancel',
+                  },
                ],
                { cancelable: true },
             );
@@ -60,7 +65,9 @@ const SignUp = ({ navigation }) => {
          if (error.response && error.response.status === statusCode.HTTP_400_BAD_REQUEST) {
             setErrorVisible(true);
             setErrorMessage(error.response.data.detail);
-         } else console.error(error);
+         } else {
+            console.error(error);
+         }
       } finally {
          setLoading(false);
       }
