@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform, Image } from "react-native";
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform, Image, Alert } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import All from "./All.js";
 import GlobalStyle from "../../styles/Style.js";
@@ -10,6 +10,8 @@ import APIs, { endPoints, authAPI } from "../../configs/APIs.js";
 import { statusCode } from "../../configs/Constants.js";
 import * as ImagePicker from 'expo-image-picker';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const CreateActivityForm = () => {
    const [nameActivity, setNameActivity] = useState("");
@@ -24,12 +26,12 @@ const CreateActivityForm = () => {
    const [dropdownBulletin, setDropDownBulletin] = useState("");
    const [faculties, setFaculties] = useState([]);
    const [dropdownFaculty, setDropDownFaculty] = useState("");
-   const [semesters, setSemesters] = useState("");
+   const [semesters, setSemesters] = useState([]);
    const [dropdownSemester, setDropDownSemester] = useState("");
    const [criterions, setCriterions] = useState([]);
    const [dropdownCriterion, setDropDownCriterion] = useState("");
    const [selectedImage, setSelectedImage] = useState(null);
-   const [dropdownOrganizer, setDropDownOrganizer] = useState("");
+   const [dropdownOrganizer, setDropDownOrganizer] = useState("Onl");
    const [description, setDescription] = useState("");
    const richText = useRef(null);
 
@@ -82,10 +84,10 @@ const CreateActivityForm = () => {
       loadBulletins();
    }, []);
 
-   const loadFalcuties = async () => {
+   const loadFaculties = async () => {
       try {
          let facultyArray = [];
-         let i = 1
+         let i = 1;
          while (true) {
             let res = await APIs.get(endPoints['faculty'], { params: { page: i } });
             if (res.status === statusCode.HTTP_200_OK) {
@@ -98,16 +100,16 @@ const CreateActivityForm = () => {
       } catch (error) {
          console.error(error);
       }
-   }
+   };
 
    useEffect(() => {
-     loadFalcuties();
-   }, [])
+      loadFaculties();
+   }, []);
 
    const loadSemester = async () => {
       try {
          let semesterArray = [];
-         let i = 1
+         let i = 1;
          while (true) {
             let res = await APIs.get(endPoints['semesters'], { params: { page: i } });
             if (res.status === statusCode.HTTP_200_OK) {
@@ -120,24 +122,65 @@ const CreateActivityForm = () => {
       } catch (error) {
          console.error(error);
       }
-   }
+   };
 
-   useEffect(() =>{
+   useEffect(() => {
       loadSemester();
-   },[])
+   }, []);
 
    const pickImage = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
          mediaTypes: ImagePicker.MediaTypeOptions.All,
          allowsEditing: true,
          aspect: [4, 4],
-         quality: 1
-      })
+         quality: 1,
+      });
 
       if (!result.canceled) {
          setSelectedImage(result.assets[0].uri);
       }
-   }
+   };
+
+   const createActivity = async () => {
+      let form = new FormData();
+      form.append('name', nameActivity);
+      form.append('participant', participant);
+      form.append('start_date', formatDate(startDate));
+      form.append('end_date', formatDate(endDate));
+      form.append('location', location);
+      form.append('point', point);
+      form.append('bulletin', dropdownBulletin);
+      form.append('faculty', dropdownFaculty);
+      form.append('semester', dropdownSemester);
+      form.append('criterion', dropdownCriterion);
+      if (selectedImage) {
+         form.append('image', {
+            uri: selectedImage,
+            name: 'activity.jpg', // Tên file bạn muốn gửi
+            type: 'image/jpeg' // Định dạng của file
+         });
+      }
+      form.append('organizational_form', dropdownOrganizer);
+      form.append('description', description);
+
+      try {
+         const accessToken = await AsyncStorage.getItem('access-token');
+         let res = await authAPI(accessToken).post(endPoints['activities'], form, {
+            headers: {
+               'Content-Type': 'multipart/form-data',
+            },
+         });
+
+         if (res.status === statusCode.HTTP_201_CREATED) {
+            Alert.alert('Thành công', 'Tạo hoạt động thành công');
+         } else {
+            Alert.alert('Thất bại', 'Không thể tạo hoạt động');
+         }
+      } catch (error) {
+         console.error(error);
+         Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tạo hoạt động');
+      }
+   };
 
    return (
       <View style={GlobalStyle.BackGround}>
@@ -153,7 +196,7 @@ const CreateActivityForm = () => {
                      placeholder="Tên hoạt động"
                      style={All.TextInput}
                      multiline={true}
-                     value={nameActivity}
+                     
                   />
                   <Entypo name="news" size={24} color="black" style={All.TextInputIcon} />
                </View>
@@ -167,7 +210,7 @@ const CreateActivityForm = () => {
                         placeholder="Đối tượng"
                         style={All.TextInput}
                         multiline={true}
-                        value={participant}
+                        onChangeText={setParticipant}
                      />
                      <Ionicons name="people" size={24} style={All.TextInputIcon} />
                   </View>
@@ -185,7 +228,7 @@ const CreateActivityForm = () => {
                            <Picker.Item label="Onl" value="Onl" />
                            <Picker.Item label="Off" value="Off" />
                         </Picker>
-                     </View>                
+                     </View>
                   </View>
                </View>
             </View>
@@ -200,13 +243,12 @@ const CreateActivityForm = () => {
                         onValueChange={(itemValue) => setDropDownFaculty(itemValue)}
                      >
                         {faculties.map((faculty) => (
-                           <Picker.Item key={faculty.id} label={faculty.name} value={faculties.id} />
+                           <Picker.Item key={faculty.id} label={faculty.name} value={faculty.id} />
                         ))}
                      </Picker>
                   </View>
                </View>
-               </View>
-               
+            </View>
 
             <View style={[All.TextInputContainer, All.Flex]}>
                <Text style={All.TextInputTitle}>Học kì</Text>
@@ -214,17 +256,17 @@ const CreateActivityForm = () => {
                   <View style={All.PickerWrapper}>
                      <Picker
                         selectedValue={dropdownSemester}
-                        style={All.Picker}  
+                        style={All.Picker}
                         onValueChange={(itemValue) => setDropDownSemester(itemValue)}
                      >
                         {semesters.map((semester) => (
-                           <Picker.Item key={semester.id} label={semester.name} value={semester.id} />
+                           <Picker.Item key={semester.id} label={`${semester.original_name} - ${semester.academic_year}`} value={semester.id} />
                         ))}
                      </Picker>
                   </View>
                </View>
             </View>
-            
+
             <View style={All.TextInputFlex}>
                <View style={[All.TextInputContainer, All.Flex]}>
                   <Text style={All.TextInputTitle}>Ngày bắt đầu</Text>
@@ -280,7 +322,7 @@ const CreateActivityForm = () => {
                      placeholder="Địa điểm cụ thể"
                      style={All.TextInput}
                      multiline={true}
-                     value={location}
+                     onChangeText={setLocation}
                   />
                   <Ionicons name="location" size={24} style={All.TextInputIcon} />
                </View>
@@ -294,7 +336,7 @@ const CreateActivityForm = () => {
                         placeholder="Điểm cộng"
                         style={All.TextInput}
                         multiline={true}
-                        value={point}
+                        onChangeText={setPoint}
                      />
                      <AntDesign name="star" size={24} style={All.TextInputIcon} />
                   </View>
@@ -328,7 +370,7 @@ const CreateActivityForm = () => {
                         onValueChange={(itemValue) => setDropDownBulletin(itemValue)}
                      >
                         {bulletins.map((bulletin) => (
-                           <Picker.Item key={bulletin.id} label={bulletin.name} value={bulletin.iđ} />
+                           <Picker.Item key={bulletin.id} label={bulletin.name} value={bulletin.id} />
                         ))}
                      </Picker>
                   </View>
@@ -341,9 +383,7 @@ const CreateActivityForm = () => {
                   {selectedImage ? (
                      <Image source={{ uri: selectedImage }} style={All.Image} />
                   ) : (
-                     <>
-                        <Ionicons name="image-outline" size={24} color="black" />
-                     </>
+                     <Ionicons name="image-outline" size={24} color="black" />
                   )}
                </TouchableOpacity>
             </View>
@@ -379,14 +419,14 @@ const CreateActivityForm = () => {
                </View>
 
                <View style={All.ButtonContainer}>
-                  <TouchableOpacity style={All.Button}>
+                  <TouchableOpacity style={All.Button} onPress={createActivity}>
                      <Text style={All.ButtonText}>Tạo</Text>
                   </TouchableOpacity>
                </View>
             </View>
          </ScrollView>
       </View>
-   )
-}
+   );
+};
 
 export default CreateActivityForm;
