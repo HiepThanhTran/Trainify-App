@@ -10,7 +10,6 @@ import APIs, { endPoints, authAPI } from "../../configs/APIs.js";
 import { statusCode } from "../../configs/Constants.js";
 import * as ImagePicker from 'expo-image-picker';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
-import Theme from "../../styles/Theme.js";
 
 const CreateActivityForm = () => {
    const [startDate, setStartDate] = useState(new Date());
@@ -26,7 +25,6 @@ const CreateActivityForm = () => {
    const [dropdownFaculty, setDropDownFaculty] = useState("");
    const [selectedImage, setSelectedImage] = useState(null);
    const [description, setDescription] = useState("");
-   const [selectedAction, setSelectedAction] = useState(null);
    const richText = useRef(null);
 
    const onChangeStartDate = (event, selectedDate) => {
