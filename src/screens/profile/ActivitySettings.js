@@ -104,15 +104,9 @@ const ActivitySettings = ({navigation}) => {
                                 />
                             </View>
 
-                            <View style={ActivitySettingStyle.CardButton}>
-                                <TouchableOpacity style={ActivitySettingStyle.Button}>
-                                    <Text style={ActivitySettingStyle.ButtonText}>Chỉnh sửa</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity style={ActivitySettingStyle.Button}>
-                                    <Text style={ActivitySettingStyle.ButtonText}>Xóa</Text>
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity style={ActivitySettingStyle.WatchDetailContainer}>
+                                <Text style={ActivitySettingStyle.WatchDetailTitle}>Xem chi tiết</Text>
+                            </TouchableOpacity>
                         </View>
                     ))}
                     {loading && page > 1 && <Loading />}
@@ -177,27 +171,14 @@ const ActivitySettingStyle = StyleSheet.create({
         fontSize: 18,
         lineHeight: 25
     },
-    CardButton: {
-        flexDirection: 'row',
+    WatchDetailContainer:{
         marginLeft: 20,
-        marginTop: 10,
         marginBottom: 20
     },
-    Button: {
-        borderWidth: 1,
-        borderColor: Theme.PrimaryColor,
-        width: 100,
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 10,
-        backgroundColor: Theme.PrimaryColor,
-        borderRadius: 8
-    },
-    ButtonText: {
+    WatchDetailTitle:{
         fontFamily: Theme.Bold,
         fontSize: 16,
-        color: 'white'
+        color: Theme.PrimaryColor
     }
 })
 

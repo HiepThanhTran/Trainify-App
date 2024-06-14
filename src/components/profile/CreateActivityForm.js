@@ -1,116 +1,299 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
-import GlobalStyle from "../../styles/Style";
-import { Entypo, Ionicons, Fontisto, FontAwesome, FontAwesome5, AntDesign } from '@expo/vector-icons';
-import All from "./All";
-import { DateTimePicker} from "@react-native-community/datetimepicker";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform, Image } from "react-native";
+import { Picker } from '@react-native-picker/picker';
+import All from "./All.js";
+import GlobalStyle from "../../styles/Style.js";
+import { Entypo, AntDesign, Ionicons } from '@expo/vector-icons';
+import { formatDate } from "../../utils/Utilities.js";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import APIs, { endPoints } from "../../configs/APIs.js";
+import { statusCode } from "../../configs/Constants.js";
+import * as ImagePicker from 'expo-image-picker';
+import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
+import Theme from "../../styles/Theme.js";
 
 const CreateActivityForm = () => {
-   const [date, setDate] = useState(new Date());
-   const [showPicker, setShowPicker] = useState(false);
+   const [startDate, setStartDate] = useState(new Date());
+   const [endDate, setEndDate] = useState(new Date());
+   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+   const [criterions, setCriterions] = useState([]);
+   const [bulletins, setBulletins] = useState([]);
+   const [dropdownOrganizer, setDropDownOrganizer] = useState("");
+   const [dropdownCriterion, setDropDownCriterion] = useState("");
+   const [dropdownBulletin, setDropDownBulletin] = useState("");
+   const [selectedImage, setSelectedImage] = useState(null);
+   const [description, setDescription] = useState("");
+   const [selectedAction, setSelectedAction] = useState(null);
+   const richText = useRef(null);
 
-   const handleDateChange = (event, selectedDate) => {
-      const currentDate = selectedDate || date;
-      setShowPicker(false);
-      setDate(currentDate);
+   const onChangeStartDate = (event, selectedDate) => {
+      const currentDate = selectedDate || startDate;
+      setShowStartDatePicker(Platform.OS === 'ios');
+      setStartDate(currentDate);
    };
 
-   const showDatePicker = () => {
-      setShowPicker(true);
+   const onChangeEndDate = (event, selectedDate) => {
+      const currentDate = selectedDate || endDate;
+      setShowEndDatePicker(Platform.OS === 'ios');
+      setEndDate(currentDate);
    };
+
+   const loadCriterions = useCallback(async () => {
+      try {
+         let res = await APIs.get(endPoints['criterions']);
+         if (res.status === statusCode.HTTP_200_OK) {
+            setCriterions(res.data);
+         }
+      } catch (error) {
+         console.error(error);
+      }
+   }, []);
+
+   useEffect(() => {
+      loadCriterions();
+   }, []);
+
+   const loadBulletins = async () => {
+      let bulletinsArray = [];
+      let i = 1;
+      try {
+         while (true) {
+            let res = await APIs.get(endPoints['bulletins'], { params: { page: i } });
+            if (res.status === statusCode.HTTP_200_OK) {
+               bulletinsArray = [...bulletinsArray, ...res.data.results];
+               i++;
+            }
+            if (res.data.next === null) break;
+         }
+         setBulletins(bulletinsArray);
+      } catch (error) {
+         console.error(error);
+      }
+   };
+
+   useEffect(() => {
+      loadBulletins();
+   }, []);
+
+   const pickImage = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+         mediaTypes: ImagePicker.MediaTypeOptions.All,
+         allowsEditing: true,
+         aspect: [4, 4],
+         quality: 1
+      })
+
+      if (!result.canceled) {
+         setSelectedImage(result.assets[0].uri);
+      }
+   }
 
    return (
       <View style={GlobalStyle.BackGround}>
-         <View style={All.Container}>
-            <ScrollView style={All.FormCreateActivity}>
-               <View style={All.TextInputContainer}>
-                  <Text style={All.TextInputTitle}>Hoạt động</Text>
-                  <View style={All.TextInputWrapper}>
-                     <TextInput
-                        placeholder="Tên hoạt động"
-                        style={All.TextInput}
-                     />
-                     <Entypo name="news" size={24} color="black" style={All.Icon} />
-                  </View>
+         <ScrollView
+            style={All.AcvitityFormContainer}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+         >
+            <View style={All.TextInputContainer}>
+               <Text style={All.TextInputTitle}>Hoạt động</Text>
+               <View style={All.TextInputWrapper}>
+                  <TextInput
+                     placeholder="Tên hoạt động"
+                     style={All.TextInput}
+                     multiline={true}
+                  />
+                  <Entypo name="news" size={24} color="black" style={All.TextInputIcon} />
                </View>
+            </View>
 
-               <View style={All.TextInputContainer}>
+            <View style={All.TextInputFlex}>
+               <View style={[All.TextInputContainer, All.Flex]}>
                   <Text style={All.TextInputTitle}>Đối tượng</Text>
                   <View style={All.TextInputWrapper}>
                      <TextInput
-                        placeholder="Đối tượng tham gia"
+                        placeholder="Đối tượng"
                         style={All.TextInput}
+                        multiline={true}
                      />
-                     <Ionicons name="people" size={24} color="black" style={All.Icon} />
+                     <Ionicons name="people" size={24} style={All.TextInputIcon} />
                   </View>
                </View>
 
-               <View style={All.TextInputContainer}>
+               <View style={[All.TextInputContainer, All.Flex]}>
+                  <Text style={All.TextInputTitle}>Hình thức</Text>
+                  <View style={All.TextInputWrapper}>
+                     <Picker
+                        selectedValue={dropdownOrganizer}
+                        style={All.Picker}
+                        onValueChange={(itemValue) => setDropDownOrganizer(itemValue)}
+                     >
+                        <Picker.Item label="Online" value="Onl" />
+                        <Picker.Item label="Offline" value="Off" />
+                     </Picker>
+                  </View>
+               </View>
+            </View>
+
+            <View style={All.TextInputFlex}>
+               <View style={[All.TextInputContainer, All.Flex]}>
                   <Text style={All.TextInputTitle}>Ngày bắt đầu</Text>
-                  <TouchableOpacity onPress={showDatePicker} style={All.TextInputWrapper}>
-                     <Text style={All.TextInput}>{date.toDateString()}</Text>
-                     <AntDesign name="clockcircle" size={24} color="black" style={All.Icon}/>
+                  <TouchableOpacity
+                     style={All.TextInputWrapper}
+                     onPress={() => setShowStartDatePicker(true)}
+                  >
+                     <TextInput
+                        style={[All.TextInput, All.TextInputDate]}
+                        editable={false}
+                        value={formatDate(startDate)}
+                     />
+                     <AntDesign name="clockcircle" size={20} color="black" style={All.TextInputIcon} />
+                  </TouchableOpacity>
+                  {showStartDatePicker && (
+                     <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        display="spinner"
+                        onChange={onChangeStartDate}
+                     />
+                  )}
+               </View>
+
+               <View style={[All.TextInputContainer, All.Flex]}>
+                  <Text style={All.TextInputTitle}>Ngày kết thúc</Text>
+                  <TouchableOpacity
+                     style={All.TextInputWrapper}
+                     onPress={() => setShowEndDatePicker(true)}
+                  >
+                     <TextInput
+                        style={[All.TextInput, All.TextInputDate]}
+                        editable={false}
+                        value={formatDate(endDate)}
+                     />
+                     <AntDesign name="clockcircle" size={20} color="black" style={All.TextInputIcon} />
+                  </TouchableOpacity>
+                  {showEndDatePicker && (
+                     <DateTimePicker
+                        value={endDate}
+                        mode="date"
+                        display="spinner"
+                        onChange={onChangeEndDate}
+                     />
+                  )}
+               </View>
+            </View>
+
+            <View style={All.TextInputContainer}>
+               <Text style={All.TextInputTitle}>Địa điểm</Text>
+               <View style={All.TextInputWrapper}>
+                  <TextInput
+                     placeholder="Tên địa điểm"
+                     style={All.TextInput}
+                     multiline={true}
+                  />
+                  <Ionicons name="location" size={24} style={All.TextInputIcon} />
+               </View>
+            </View>
+
+            <View style={All.TextInputFlex}>
+               <View style={[All.TextInputContainer, All.Flex]}>
+                  <Text style={All.TextInputTitle}>Điểm</Text>
+                  <View style={All.TextInputWrapper}>
+                     <TextInput
+                        placeholder="Điểm cộng"
+                        style={All.TextInput}
+                        multiline={true}
+                     />
+                     <AntDesign name="star" size={24} style={All.TextInputIcon} />
+                  </View>
+               </View>
+
+               <View style={[All.TextInputContainer, All.Flex]}>
+                  <Text style={All.TextInputTitle}>Điều</Text>
+                  <View style={All.TextInputWrapper}>
+                     <View style={All.PickerWrapper}>
+                        <Picker
+                           selectedValue={dropdownCriterion}
+                           style={All.Picker}
+                           onValueChange={(itemValue) => setDropDownCriterion(itemValue)}
+                        >
+                           {criterions.map((criterion) => (
+                              <Picker.Item key={criterion.id} label={criterion.name} value={criterion.id} />
+                           ))}
+                        </Picker>
+                     </View>
+                  </View>
+               </View>
+            </View>
+
+            <View style={[All.TextInputContainer, All.Flex]}>
+               <Text style={All.TextInputTitle}>Bản tin</Text>
+               <View style={All.TextInputWrapper}>
+                  <View style={All.PickerWrapper}>
+                     <Picker
+                        selectedValue={dropdownBulletin}
+                        style={All.Picker}
+                        onValueChange={(itemValue) => setDropDownBulletin(itemValue)}
+                     >
+                        {bulletins.map((bulletin) => (
+                           <Picker.Item key={bulletin.id} label={bulletin.name} value={bulletin.id} />
+                        ))}
+                     </Picker>
+                  </View>
+               </View>
+            </View>
+
+            <View style={All.TextInputContainer}>
+               <Text style={All.TextInputTitle}>Hình ảnh</Text>
+               <TouchableOpacity style={All.ImageContainer} onPress={pickImage}>
+                  {selectedImage ? (
+                     <Image source={{ uri: selectedImage }} style={All.Image} />
+                  ) : (
+                     <>
+                        <Ionicons name="image-outline" size={24} color="black" />
+                     </>
+                  )}
+               </TouchableOpacity>
+            </View>
+
+            <View style={All.TextInputContainer}>
+               <Text style={All.TextInputTitle}>Mô tả</Text>
+               <RichToolbar
+                     editor={richText}
+                     selectedIconTint="#873c1e"
+                     iconTint="#312921"
+                     style={All.RichEditorToolbar}
+                     actions={[
+                        actions.setBold,
+                        actions.setItalic,
+                        actions.setUnderline,
+                        actions.insertBulletsList,
+                        actions.insertOrderedList,
+                        actions.insertLink,
+                        actions.setStrikethrough,
+                     ]}
+                  />
+               <View style={All.RichEditor}>
+                  <RichEditor
+                     ref={richText}
+                     style={All.TextInput}
+                     multiline={true}
+                     placeholder="Mô tả hoạt động"
+                     androidHardwareAccelerationDisabled={true}
+                     onChange={setDescription}
+                  />
+               </View>
+
+               <View style={All.ButtonContainer}>
+                  <TouchableOpacity style={All.Button}>
+                     <Text style={All.ButtonText}>Tạo</Text>
                   </TouchableOpacity>
                </View>
-
-               <View style={All.TextInputContainer}>
-                  <Text style={All.TextInputTitle}>Địa điểm</Text>
-                  <View style={All.TextInputWrapper}>
-                     <TextInput
-                        placeholder="Tên địa điểm"
-                        style={All.TextInput}
-                     />
-                     <Ionicons name="location" size={24} color="black" style={All.Icon} />
-                  </View>
-               </View>
-
-               <View style={All.TextInputContainer}>
-                  <Text style={All.TextInputTitle}>Điểm cộng</Text>
-                  <View style={All.TextInputWrapper}>
-                     <TextInput
-                        placeholder="Điểm cộng cho sinh viên"
-                        style={All.TextInput}
-                     />
-                    <Fontisto name="star" size={24} color="black"  style={All.Icon}/>
-                  </View>
-               </View>
-
-               <View style={All.TextInputContainer}>
-                  <Text style={All.TextInputTitle}>Bảng tin</Text>
-                  <View style={All.TextInputWrapper}>
-                     <TextInput
-                        placeholder="Tên bảng tin"
-                        style={All.TextInput}
-                     />
-                    <FontAwesome5 name="newspaper" size={24} color="black"  style={All.Icon}/>
-                  </View>
-               </View>
-
-               <View style={All.TextInputContainer}>
-                  <Text style={All.TextInputTitle}>Khoa</Text>
-                  <View style={All.TextInputWrapper}>
-                     <TextInput
-                        placeholder="Tên khoa"
-                        style={All.TextInput}
-                     />
-                     <FontAwesome name="graduation-cap" size={24} color="black" style={All.Icon}/>
-                  </View>
-               </View>
-
-               {showPicker && (
-                  <DateTimePickerAndroid
-                     testID="dateTimePicker"
-                     value={date}
-                     mode="date"
-                     is24Hour={true}
-                     display="default"
-                     onChange={handleDateChange}
-                  />
-               )}
-            </ScrollView>
-         </View>
+            </View>
+         </ScrollView>
       </View>
    )
-};
+}
 
 export default CreateActivityForm;
