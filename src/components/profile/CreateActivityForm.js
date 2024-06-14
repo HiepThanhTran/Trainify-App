@@ -12,18 +12,24 @@ import * as ImagePicker from 'expo-image-picker';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 
 const CreateActivityForm = () => {
+   const [nameActivity, setNameActivity] = useState("");
+   const [participant, setParticipant] = useState("");
    const [startDate, setStartDate] = useState(new Date());
-   const [endDate, setEndDate] = useState(new Date());
    const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+   const [endDate, setEndDate] = useState(new Date());
    const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-   const [criterions, setCriterions] = useState([]);
+   const [location, setLocation] = useState("");
+   const [point, setPoint] = useState("");
    const [bulletins, setBulletins] = useState([]);
-   const [faculties, setFaculties] = useState([]);
-   const [dropdownOrganizer, setDropDownOrganizer] = useState("");
-   const [dropdownCriterion, setDropDownCriterion] = useState("");
    const [dropdownBulletin, setDropDownBulletin] = useState("");
+   const [faculties, setFaculties] = useState([]);
    const [dropdownFaculty, setDropDownFaculty] = useState("");
+   const [semesters, setSemesters] = useState("");
+   const [dropdownSemester, setDropDownSemester] = useState("");
+   const [criterions, setCriterions] = useState([]);
+   const [dropdownCriterion, setDropDownCriterion] = useState("");
    const [selectedImage, setSelectedImage] = useState(null);
+   const [dropdownOrganizer, setDropDownOrganizer] = useState("");
    const [description, setDescription] = useState("");
    const richText = useRef(null);
 
@@ -76,7 +82,7 @@ const CreateActivityForm = () => {
       loadBulletins();
    }, []);
 
-   const loadFalcuty = async () => {
+   const loadFalcuties = async () => {
       try {
          let facultyArray = [];
          let i = 1
@@ -95,8 +101,30 @@ const CreateActivityForm = () => {
    }
 
    useEffect(() => {
-      loadFalcuty();
+     loadFalcuties();
    }, [])
+
+   const loadSemester = async () => {
+      try {
+         let semesterArray = [];
+         let i = 1
+         while (true) {
+            let res = await APIs.get(endPoints['semesters'], { params: { page: i } });
+            if (res.status === statusCode.HTTP_200_OK) {
+               semesterArray = [...semesterArray, ...res.data.results];
+               i++;
+            }
+            if (res.data.next === null) break;
+         }
+         setSemesters(semesterArray);
+      } catch (error) {
+         console.error(error);
+      }
+   }
+
+   useEffect(() =>{
+      loadSemester();
+   },[])
 
    const pickImage = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -125,6 +153,7 @@ const CreateActivityForm = () => {
                      placeholder="Tên hoạt động"
                      style={All.TextInput}
                      multiline={true}
+                     value={nameActivity}
                   />
                   <Entypo name="news" size={24} color="black" style={All.TextInputIcon} />
                </View>
@@ -138,6 +167,7 @@ const CreateActivityForm = () => {
                         placeholder="Đối tượng"
                         style={All.TextInput}
                         multiline={true}
+                        value={participant}
                      />
                      <Ionicons name="people" size={24} style={All.TextInputIcon} />
                   </View>
@@ -146,14 +176,16 @@ const CreateActivityForm = () => {
                <View style={[All.TextInputContainer, All.Flex]}>
                   <Text style={All.TextInputTitle}>Hình thức</Text>
                   <View style={All.TextInputWrapper}>
-                     <Picker
-                        selectedValue={dropdownOrganizer}
-                        style={All.Picker}
-                        onValueChange={(itemValue) => setDropDownOrganizer(itemValue)}
-                     >
-                        <Picker.Item label="Onl" value="Onl" />
-                        <Picker.Item label="Off" value="Off" />
-                     </Picker>
+                     <View style={All.PickerWrapper}>
+                        <Picker
+                           selectedValue={dropdownOrganizer}
+                           style={All.Picker}
+                           onValueChange={(itemValue) => setDropDownOrganizer(itemValue)}
+                        >
+                           <Picker.Item label="Onl" value="Onl" />
+                           <Picker.Item label="Off" value="Off" />
+                        </Picker>
+                     </View>                
                   </View>
                </View>
             </View>
@@ -173,8 +205,26 @@ const CreateActivityForm = () => {
                      </Picker>
                   </View>
                </View>
-            </View>
+               </View>
+               
 
+            <View style={[All.TextInputContainer, All.Flex]}>
+               <Text style={All.TextInputTitle}>Học kì</Text>
+               <View style={All.TextInputWrapper}>
+                  <View style={All.PickerWrapper}>
+                     <Picker
+                        selectedValue={dropdownSemester}
+                        style={All.Picker}  
+                        onValueChange={(itemValue) => setDropDownSemester(itemValue)}
+                     >
+                        {semesters.map((semester) => (
+                           <Picker.Item key={semester.id} label={semester.name} value={semester.id} />
+                        ))}
+                     </Picker>
+                  </View>
+               </View>
+            </View>
+            
             <View style={All.TextInputFlex}>
                <View style={[All.TextInputContainer, All.Flex]}>
                   <Text style={All.TextInputTitle}>Ngày bắt đầu</Text>
@@ -230,6 +280,7 @@ const CreateActivityForm = () => {
                      placeholder="Địa điểm cụ thể"
                      style={All.TextInput}
                      multiline={true}
+                     value={location}
                   />
                   <Ionicons name="location" size={24} style={All.TextInputIcon} />
                </View>
@@ -243,6 +294,7 @@ const CreateActivityForm = () => {
                         placeholder="Điểm cộng"
                         style={All.TextInput}
                         multiline={true}
+                        value={point}
                      />
                      <AntDesign name="star" size={24} style={All.TextInputIcon} />
                   </View>
@@ -321,6 +373,8 @@ const CreateActivityForm = () => {
                      placeholder="Mô tả hoạt động"
                      androidHardwareAccelerationDisabled={true}
                      onChange={setDescription}
+                     showsVerticalScrollIndicator={false}
+                     showsHorizontalScrollIndicator={false}
                   />
                </View>
 

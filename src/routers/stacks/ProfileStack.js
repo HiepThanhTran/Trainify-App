@@ -5,36 +5,27 @@ import TrainingPoint from '../../screens/profile/TrainingPoint';
 import Theme from '../../styles/Theme';
 import CreateActivityForm from '../../components/profile/CreateActivityForm';
 import UpdateAndDeleteActivity from '../../components/profile/UpdateAnDeleteActivity';
-import { useAccount } from '../../store/contexts/AccountContext';
-import { roles } from '../../configs/Constants';
 
 const Stack = createNativeStackNavigator();
 const ProfileStack = () => {
-    const currentAccount = useAccount();
-    const role = currentAccount?.user?.role;
-
-    return (
-        <Stack.Navigator
-            screenOptions={{
-                headerStyle: { backgroundColor: Theme.PrimaryColor },
-                headerTintColor: 'white',
-            }}
-        >
-            <Stack.Screen
-                name="EditProfile"
-                component={EditProfile}
-                options={({ route }) => ({ title: route?.params?.full_name ?? 'Trang cá nhân' })}
-            />
-            <Stack.Screen name="TrainingPoint" component={TrainingPoint} options={{ title: 'Điểm rèn luyện' }} />
-            {role !== roles.STU && (
-                <>
-                    <Stack.Screen name="ActivitySettings" component={ActivitySettings} options={{ title: 'Quản lý hoạt động' }} />
-                    <Stack.Screen name="CreateActivityForm" component={CreateActivityForm} options={{ title: 'Tạo hoạt động' }} />
-                    <Stack.Screen name="UpdateAndDeleteActivity" component={UpdateAndDeleteActivity} options={{ title: 'Chi tiết hoạt động' }} />
-                </>
-            )}
-        </Stack.Navigator>
-    );
+   return (
+      <Stack.Navigator
+         screenOptions={{
+            headerStyle: { backgroundColor: Theme.PrimaryColor },
+            headerTintColor: 'white',
+         }}
+      >
+         <Stack.Screen
+            name="EditProfile"
+            component={EditProfile}
+            options={({ route }) => ({ title: route?.params?.full_name ?? 'Trang cá nhân' })}
+         />
+         <Stack.Screen name="TrainingPoint" component={TrainingPoint} options={{ title: 'Điểm rèn luyện' }} />
+         <Stack.Screen name="ActivitySettings" component={ActivitySettings} options={{ title: 'Quản lý hoạt động' }} />
+         <Stack.Screen name="CreateActivityForm" component={CreateActivityForm} options={{ title: 'Tạo hoạt động' }} />
+         <Stack.Screen name="UpdateAndDeleteActivity" component={UpdateAndDeleteActivity} options={{ title: 'Chi tiết hoạt động' }} />
+      </Stack.Navigator>
+   );
 };
 
 export default ProfileStack;
