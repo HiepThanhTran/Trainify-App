@@ -78,6 +78,9 @@ export const endPoints = {
    //// Statistics
    'statistics-points': (semesterCode) => `/statistics/${semesterCode}/points/`, // GET: Thống kê theo khoa hoặc lớp hoặc cả 2
    'export-statistics': (semesterCode) => `/statistics/${semesterCode}/export/`, // GET: Xuất file thống kê dạng pdf hoặc csv
+
+   //Faculty
+   'faculty': '/faculty/', //GET: Lấy danh sách khoa
 };
 
 export const authAPI = (token) => {

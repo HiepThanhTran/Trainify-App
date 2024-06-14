@@ -56,6 +56,13 @@ const ActivitySettings = ({navigation}) => {
         navigation.navigate('CreateActivityForm')
     }
 
+    const gotoUpdateAndDeleteActivity = (activityUserCreateID) => {
+        navigation.navigate('UpdateAndDeleteActivity', {
+            screen: 'UpdateAndDeleteActivity',
+            params: { activityUserCreateID }
+        })
+    }
+
     return (
         <View style={GlobalStyle.BackGround}>
             <View style={ActivitySettingStyle.Container}>
@@ -104,7 +111,7 @@ const ActivitySettings = ({navigation}) => {
                                 />
                             </View>
 
-                            <TouchableOpacity style={ActivitySettingStyle.WatchDetailContainer}>
+                            <TouchableOpacity style={ActivitySettingStyle.WatchDetailContainer} onPress={() => gotoUpdateAndDeleteActivity(activity.id)}>
                                 <Text style={ActivitySettingStyle.WatchDetailTitle}>Xem chi tiết</Text>
                             </TouchableOpacity>
                         </View>

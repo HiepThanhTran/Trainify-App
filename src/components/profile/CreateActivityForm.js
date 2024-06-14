@@ -6,7 +6,7 @@ import GlobalStyle from "../../styles/Style.js";
 import { Entypo, AntDesign, Ionicons } from '@expo/vector-icons';
 import { formatDate } from "../../utils/Utilities.js";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import APIs, { endPoints } from "../../configs/APIs.js";
+import APIs, { endPoints, authAPI } from "../../configs/APIs.js";
 import { statusCode } from "../../configs/Constants.js";
 import * as ImagePicker from 'expo-image-picker';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
@@ -19,9 +19,11 @@ const CreateActivityForm = () => {
    const [showEndDatePicker, setShowEndDatePicker] = useState(false);
    const [criterions, setCriterions] = useState([]);
    const [bulletins, setBulletins] = useState([]);
+   const [faculties, setFaculties] = useState([]);
    const [dropdownOrganizer, setDropDownOrganizer] = useState("");
    const [dropdownCriterion, setDropDownCriterion] = useState("");
    const [dropdownBulletin, setDropDownBulletin] = useState("");
+   const [dropdownFaculty, setDropDownFaculty] = useState("");
    const [selectedImage, setSelectedImage] = useState(null);
    const [description, setDescription] = useState("");
    const [selectedAction, setSelectedAction] = useState(null);
@@ -76,6 +78,28 @@ const CreateActivityForm = () => {
       loadBulletins();
    }, []);
 
+   const loadFalcuty = async () => {
+      try {
+         let facultyArray = [];
+         let i = 1
+         while (true) {
+            let res = await APIs.get(endPoints['faculty'], { params: { page: i } });
+            if (res.status === statusCode.HTTP_200_OK) {
+               facultyArray = [...facultyArray, ...res.data.results];
+               i++;
+            }
+            if (res.data.next === null) break;
+         }
+         setFaculties(facultyArray);
+      } catch (error) {
+         console.error(error);
+      }
+   }
+
+   useEffect(() => {
+      loadFalcuty();
+   }, [])
+
    const pickImage = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
          mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -129,8 +153,25 @@ const CreateActivityForm = () => {
                         style={All.Picker}
                         onValueChange={(itemValue) => setDropDownOrganizer(itemValue)}
                      >
-                        <Picker.Item label="Online" value="Onl" />
-                        <Picker.Item label="Offline" value="Off" />
+                        <Picker.Item label="Onl" value="Onl" />
+                        <Picker.Item label="Off" value="Off" />
+                     </Picker>
+                  </View>
+               </View>
+            </View>
+
+            <View style={[All.TextInputContainer, All.Flex]}>
+               <Text style={All.TextInputTitle}>Khoa</Text>
+               <View style={All.TextInputWrapper}>
+                  <View style={All.PickerWrapper}>
+                     <Picker
+                        selectedValue={dropdownFaculty}
+                        style={All.Picker}
+                        onValueChange={(itemValue) => setDropDownFaculty(itemValue)}
+                     >
+                        {faculties.map((faculty) => (
+                           <Picker.Item key={faculty.id} label={faculty.name} value={faculties.id} />
+                        ))}
                      </Picker>
                   </View>
                </View>
@@ -188,7 +229,7 @@ const CreateActivityForm = () => {
                <Text style={All.TextInputTitle}>Địa điểm</Text>
                <View style={All.TextInputWrapper}>
                   <TextInput
-                     placeholder="Tên địa điểm"
+                     placeholder="Địa điểm cụ thể"
                      style={All.TextInput}
                      multiline={true}
                   />
@@ -237,7 +278,7 @@ const CreateActivityForm = () => {
                         onValueChange={(itemValue) => setDropDownBulletin(itemValue)}
                      >
                         {bulletins.map((bulletin) => (
-                           <Picker.Item key={bulletin.id} label={bulletin.name} value={bulletin.id} />
+                           <Picker.Item key={bulletin.id} label={bulletin.name} value={bulletin.iđ} />
                         ))}
                      </Picker>
                   </View>
@@ -260,20 +301,20 @@ const CreateActivityForm = () => {
             <View style={All.TextInputContainer}>
                <Text style={All.TextInputTitle}>Mô tả</Text>
                <RichToolbar
-                     editor={richText}
-                     selectedIconTint="#873c1e"
-                     iconTint="#312921"
-                     style={All.RichEditorToolbar}
-                     actions={[
-                        actions.setBold,
-                        actions.setItalic,
-                        actions.setUnderline,
-                        actions.insertBulletsList,
-                        actions.insertOrderedList,
-                        actions.insertLink,
-                        actions.setStrikethrough,
-                     ]}
-                  />
+                  editor={richText}
+                  selectedIconTint="#873c1e"
+                  iconTint="#312921"
+                  style={All.RichEditorToolbar}
+                  actions={[
+                     actions.setBold,
+                     actions.setItalic,
+                     actions.setUnderline,
+                     actions.insertBulletsList,
+                     actions.insertOrderedList,
+                     actions.insertLink,
+                     actions.setStrikethrough,
+                  ]}
+               />
                <View style={All.RichEditor}>
                   <RichEditor
                      ref={richText}
