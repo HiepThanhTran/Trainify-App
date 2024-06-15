@@ -11,7 +11,7 @@ import { statusCode } from "../../configs/Constants.js";
 import * as ImagePicker from 'expo-image-picker';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Loading from "../../components/common/Loading";
 
 const CreateActivityForm = () => {
    const [nameActivity, setNameActivity] = useState("");
@@ -31,6 +31,7 @@ const CreateActivityForm = () => {
    const [criterions, setCriterions] = useState([]);
    const [dropdownCriterion, setDropDownCriterion] = useState("");
    const [selectedImage, setSelectedImage] = useState(null);
+   const [isLoadingImage, setIsLoadingImage] = useState(false);
    const [dropdownOrganizer, setDropDownOrganizer] = useState("Onl");
    const [description, setDescription] = useState("");
    const richText = useRef(null);
@@ -128,18 +129,28 @@ const CreateActivityForm = () => {
       loadSemester();
    }, []);
 
-   const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-         mediaTypes: ImagePicker.MediaTypeOptions.All,
-         allowsEditing: true,
-         aspect: [4, 4],
-         quality: 1,
-      });
+   const handleSelection = async (requestPermission, launchFunction) => {
+      let { status } = await requestPermission();
+      if (status !== 'granted') {
+         Alert.alert('Thông báo', 'Không có quyền truy cập!');
+      } else {
+         let res = await launchFunction({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1,
+         });
 
-      if (!result.canceled) {
-         setSelectedImage(result.assets[0].uri);
+         console.log(res);
+
+         if (!res.canceled) {
+            setSelectedImage(res.assets[0].uri)
+         }
       }
    };
+
+   const handleGallerySelection = () =>
+      handleSelection(ImagePicker.requestMediaLibraryPermissionsAsync, ImagePicker.launchImageLibraryAsync);
 
    const createActivity = async () => {
       let form = new FormData();
@@ -153,15 +164,12 @@ const CreateActivityForm = () => {
       form.append('faculty', dropdownFaculty);
       form.append('semester', dropdownSemester);
       form.append('criterion', dropdownCriterion);
-      if (selectedImage) {
-         form.append('image', {
-            uri: selectedImage.uri,
-            name: selectedImage.name,
-            type: selectedImage.type
-         });
-      }
+      form.append('image', selectedImage);
+     
       form.append('organizational_form', dropdownOrganizer);
       form.append('description', description);
+
+      console.log(form);
 
       try {
          const accessToken = await AsyncStorage.getItem('access-token');
@@ -383,8 +391,10 @@ const CreateActivityForm = () => {
 
             <View style={All.TextInputContainer}>
                <Text style={All.TextInputTitle}>Hình ảnh</Text>
-               <TouchableOpacity style={All.ImageContainer} onPress={pickImage}>
-                  {selectedImage ? (
+               <TouchableOpacity style={All.ImageContainer} onPress={handleGallerySelection}>
+                  {isLoadingImage ? (
+                     <Loading />
+                  ) : selectedImage ? (
                      <Image source={{ uri: selectedImage }} style={All.Image} />
                   ) : (
                      <Ionicons name="image-outline" size={24} color="black" />
