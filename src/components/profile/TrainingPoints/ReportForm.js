@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import GlobalStyle from '../../../styles/Style';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import Theme from "../../../styles/Theme";
@@ -8,6 +8,20 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
 const ReportForm = ({ navigation }) => {
+   useEffect(() => {
+      navigation.setOptions({
+         headerRight: () => (
+            <TouchableOpacity
+               style={{
+                  ...GlobalStyle.Center,
+                  ...GlobalStyle.HeaderButton,
+               }}
+            >
+               <Text style={{ ...GlobalStyle.HeaderButtonText }}>Gửi</Text>
+            </TouchableOpacity>
+         ),
+      });
+   })
    const [reports, setReports] = useState("");
    const [imageReport, setImageReport] = useState("");
    const [loadingImageReport, setLoadingImageReport] = useState(false);
@@ -82,12 +96,6 @@ const ReportForm = ({ navigation }) => {
                   )}
                </TouchableOpacity>
             </View>
-
-            <View style={ReportFormStyle.ButtonReportContainer}>
-               <TouchableOpacity style={ReportFormStyle.ButtonReport}>
-                  <Text style={ReportFormStyle.ButtonReportText}>Gửi</Text>
-               </TouchableOpacity>
-            </View>
          </View>
       </View>
    );
@@ -132,23 +140,6 @@ const ReportFormStyle = StyleSheet.create({
    ImageReport:{
       width: '100%',
       height: '100%',
-   },
-   ButtonReportContainer:{
-      flexDirection: 'row',
-      justifyContent: 'center',
-   },
-   ButtonReport:{
-      width: 120,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: Theme.PrimaryColor,
-      borderRadius: 8,
-   },
-   ButtonReportText:{
-      fontFamily: Theme.Bold,
-      fontSize: 16,
-      color: 'white'
    }
 })
 export default ReportForm;
