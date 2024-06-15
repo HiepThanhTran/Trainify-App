@@ -155,9 +155,9 @@ const CreateActivityForm = () => {
       form.append('criterion', dropdownCriterion);
       if (selectedImage) {
          form.append('image', {
-            uri: selectedImage,
-            name: 'activity.jpg', // Tên file bạn muốn gửi
-            type: 'image/jpeg' // Định dạng của file
+            uri: selectedImage.uri,
+            name: selectedImage.name,
+            type: selectedImage.type
          });
       }
       form.append('organizational_form', dropdownOrganizer);
@@ -196,7 +196,8 @@ const CreateActivityForm = () => {
                      placeholder="Tên hoạt động"
                      style={All.TextInput}
                      multiline={true}
-                     
+                     value={nameActivity}
+                     onChangeText={setNameActivity}
                   />
                   <Entypo name="news" size={24} color="black" style={All.TextInputIcon} />
                </View>
@@ -210,6 +211,7 @@ const CreateActivityForm = () => {
                         placeholder="Đối tượng"
                         style={All.TextInput}
                         multiline={true}
+                        value={participant}
                         onChangeText={setParticipant}
                      />
                      <Ionicons name="people" size={24} style={All.TextInputIcon} />
@@ -322,6 +324,7 @@ const CreateActivityForm = () => {
                      placeholder="Địa điểm cụ thể"
                      style={All.TextInput}
                      multiline={true}
+                     value={location}
                      onChangeText={setLocation}
                   />
                   <Ionicons name="location" size={24} style={All.TextInputIcon} />
@@ -336,6 +339,7 @@ const CreateActivityForm = () => {
                         placeholder="Điểm cộng"
                         style={All.TextInput}
                         multiline={true}
+                        value={point}
                         onChangeText={setPoint}
                      />
                      <AntDesign name="star" size={24} style={All.TextInputIcon} />
