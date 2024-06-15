@@ -160,11 +160,10 @@ const CreateActivityForm = () => {
       form.append('end_date', formatDate(endDate));
       form.append('location', location);
       form.append('point', point);
-      form.append('bulletin', dropdownBulletin);
+      // form.append('bulletin', dropdownBulletin);
       form.append('faculty', dropdownFaculty);
       form.append('semester', dropdownSemester);
       form.append('criterion', dropdownCriterion);
-      form.append('image', selectedImage);
      
       form.append('organizational_form', dropdownOrganizer);
       form.append('description', description);
@@ -395,6 +394,7 @@ const CreateActivityForm = () => {
                   {isLoadingImage ? (
                      <Loading />
                   ) : selectedImage ? (
+                     console.log(selectedImage),
                      <Image source={{ uri: selectedImage }} style={All.Image} />
                   ) : (
                      <Ionicons name="image-outline" size={24} color="black" />

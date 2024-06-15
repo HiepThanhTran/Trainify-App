@@ -57,7 +57,7 @@ const ActivitySettings = ({navigation}) => {
     }
 
     const gotoUpdateAndDeleteActivity = (activityUserCreateID) => {
-        navigation.navigate('UpdateAndDeleteActivity', {
+        navigation.navigate('ProfileStack', {
             screen: 'UpdateAndDeleteActivity',
             params: { activityUserCreateID }
         })
