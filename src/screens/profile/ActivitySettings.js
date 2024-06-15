@@ -1,197 +1,191 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, RefreshControl } from "react-native";
 import GlobalStyle from "../../styles/Style";
-import { FontAwesome } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { endPoints, authAPI } from "../../configs/APIs";
 import Theme from "../../styles/Theme";
-import Searchbar from "../../components/common/Searchbar"
-import { useEffect, useState } from "react";
-import { authAPI, endPoints } from '../../configs/APIs';
-import { formatDate } from "../../utils/Utilities";
+import { useEffect, useState, useCallback } from "react";
+import { useAccount } from "../../store/contexts/AccountContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { statusCode } from "../../configs/Constants";
+import Searchbar from "../../components/common/Searchbar"
+import RenderHTML from "react-native-render-html";
+import { screenWidth } from "react-native-gifted-charts/src/utils";
+import { search, isCloseToBottom, loadMore, onRefresh } from "../../utils/Utilities";
+import Loading from "../../components/common/Loading";
 
-const ActivitySettings = () => {
-    const [activityList, setActivityList] = useState([]);
+const ActivitySettings = ({navigation}) => {
+    const currentUser = useAccount();
+    const currentUserID = currentUser.data.user.id;
+    const [activityUserCreate, setActivityUserCreate] = useState([]);
     const [page, setPage] = useState(1);
     const [activityName, setActivityName] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
-    const loadActivityList = async () => {
+    const loadActivityUserCreate = async () => {
+        if (page <= 0) return;
+        setLoading(true);
         try {
             const accessToken = await AsyncStorage.getItem('access-token');
-            let res = await authAPI(accessToken).get(endPoints['activities']);
-            setActivityList(res.data.results);
+            let res = await authAPI(accessToken).get(endPoints['activities'], {
+                params: { organizer_id: currentUserID, page, name: activityName }
+            })
+            if (res.data.next === null) setPage(0);
+            if (res.status === statusCode.HTTP_200_OK)
+                setActivityUserCreate(page === 1 ? res.data.results : [...activityUserCreate, ...res.data.results]);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
         }
-    };
+    }
 
     useEffect(() => {
-        loadActivityList();
-    });
+        loadActivityUserCreate();
+    }, [currentUserID, page, activityName, refreshing]);
+
+    const handleScroll = (event) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        if (isCloseToBottom({ layoutMeasurement, contentOffset, contentSize })) {
+            loadMore(event.nativeEvent, loading, page, setPage);
+        }
+    }
+
+    const goToCreateActivityForm = () => {
+        navigation.navigate('CreateActivityForm')
+    }
+
+    const gotoUpdateAndDeleteActivity = (activityUserCreateID) => {
+        navigation.navigate('ProfileStack', {
+            screen: 'UpdateAndDeleteActivity',
+            params: { activityUserCreateID }
+        })
+    }
 
     return (
         <View style={GlobalStyle.BackGround}>
-            <ScrollView style={ActivitySettingStyle.Container}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-            >
+            <View style={ActivitySettingStyle.Container}>
                 <Searchbar
                     placeholder="Tìm kiếm hoạt động"
+                    value={activityName}
+                    onChangeText={(value) => search(value, setPage, setActivityName)}
                 />
 
-                <View style={ActivitySettingStyle.Top}>
-                    <Text style={ActivitySettingStyle.TitleTop}>Danh sách hoạt động</Text>
-                    <TouchableOpacity>
-                        <Ionicons name="add-circle" size={32} color={Theme.PrimaryColor} />
+                <View style={ActivitySettingStyle.Alignment}>
+                    <Text style={ActivitySettingStyle.Text}>Danh sách hoạt động</Text>
+                    <TouchableOpacity style={ActivitySettingStyle.AddActivity} onPress={goToCreateActivityForm}>
+                        <MaterialIcons name="assignment-add" size={36} color={Theme.PrimaryColor} />
                     </TouchableOpacity>
                 </View>
 
-                <View style={ActivitySettingStyle.Middle}>
-                    <TouchableOpacity style={ActivitySettingStyle.ButtonMiddle}>
-                        <Text style={ActivitySettingStyle.ButtonMiddleText}>Tất cả</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[ActivitySettingStyle.ButtonMiddle, { marginLeft: 10 }]}>
-                        <Text style={ActivitySettingStyle.ButtonMiddleText}>Tôi</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={ActivitySettingStyle.Bottom}>
-                    {activityList.map(activity => (
-                        <TouchableOpacity key={activity.id} style={ActivitySettingStyle.Card}>
-                            <Text style={ActivitySettingStyle.CardTitle}>{activity.name}</Text>
-                            <View style={ActivitySettingStyle.CardDes}>
-                                <View style={ActivitySettingStyle.Date}>
-                                    <View style={ActivitySettingStyle.Item}>
-                                        <AntDesign name="clockcircle" size={28} color="black" />
-                                        <View style={ActivitySettingStyle.ItemDes}>
-                                            <Text style={ActivitySettingStyle.ItemDesTitle}>Ngày bắt đầu</Text>
-                                            <Text style={ActivitySettingStyle.ItemDesDate}>{formatDate(activity.start_date)}</Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={ActivitySettingStyle.Item}>
-                                        <AntDesign name="clockcircle" size={28} color="black" />
-                                        <View style={ActivitySettingStyle.ItemDes}>
-                                            <Text style={ActivitySettingStyle.ItemDesTitle}>Ngày kết thúc</Text>
-                                            <Text style={ActivitySettingStyle.ItemDesDate}>{formatDate(activity.end_date)}</Text>
-                                        </View>
-                                    </View>
-                                </View>
-
-                                <View style={ActivitySettingStyle.Location}>
-                                    <Ionicons name="location" size={30} color="black" />
-                                    <Text style={ActivitySettingStyle.LocationDes}>Địa điểm: {activity.location}</Text>
-                                </View>
-
-                                <View style={ActivitySettingStyle.Create}>
-                                    <View style={ActivitySettingStyle.UserCreate}>
-                                        <Ionicons name="people" size={30} color="black" />
-                                        <Text style={ActivitySettingStyle.UserCreateDes}>Người tạo: {activity.created_by.full_name}</Text>
-                                    </View>
-                                </View>
+                <ScrollView
+                    style={ActivitySettingStyle.Content}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    onScroll={handleScroll}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={() => onRefresh({setPage, setRefreshing, setFilter: setActivityName})}
+                        />
+                    }
+                >
+                    {!refreshing && loading && page === 1 && <Loading />}
+                    {activityUserCreate.map(activity => (
+                        <View key={activity.id} style={ActivitySettingStyle.Card}>
+                            <View style={ActivitySettingStyle.CardImage}>
+                                <Image source={{ uri: activity.image }} style={ActivitySettingStyle.Image} />
                             </View>
-                            <View />
-                        </TouchableOpacity>
+
+                            <View style={ActivitySettingStyle.CardDes}>
+                                <Text style={ActivitySettingStyle.CardDesName}>{activity.name}</Text>
+                                <RenderHTML
+                                    contentWidth={screenWidth}
+                                    source={{ html: activity.description }}
+                                    defaultTextProps={{
+                                        numberOfLines: 3,
+                                        ellipsizeMode: 'tail',
+                                    }}
+                                    baseStyle={ActivitySettingStyle.Des}
+                                />
+                            </View>
+
+                            <TouchableOpacity style={ActivitySettingStyle.WatchDetailContainer} onPress={() => gotoUpdateAndDeleteActivity(activity.id)}>
+                                <Text style={ActivitySettingStyle.WatchDetailTitle}>Xem chi tiết</Text>
+                            </TouchableOpacity>
+                        </View>
                     ))}
-                </View>
-            </ScrollView>
+                    {loading && page > 1 && <Loading />}
+                </ScrollView>
+            </View>
         </View>
     )
 };
 
 const ActivitySettingStyle = StyleSheet.create({
     Container: {
-        marginTop: 16,
+        marginTop: 20,
         marginRight: 16,
         marginLeft: 16,
-        marginBottom: 50
+        marginBottom: 130
     },
-    Top: {
+    Alignment: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    TitleTop: {
+    Text: {
         fontFamily: Theme.Bold,
-        fontSize: 22,
+        fontSize: 18
     },
-    Middle: {
-        flexDirection: 'row',
-        marginTop: 15
-    },
-    ButtonMiddle: {
+    AddActivity: {
         borderWidth: 1,
-        borderColor: '#d6d9de',
-        width: 80,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
+        borderColor: Theme.PrimaryColor,
         borderRadius: 8
     },
-    ButtonMiddleText: {
-        fontFamily: Theme.SemiBold,
-        fontSize: 16,
-        color: 'gray'
-    },
-    Bottom: {
+    Content: {
         marginTop: 25
     },
     Card: {
         borderWidth: 1,
-        borderColor: Theme.PrimaryColor,
-        padding: 10,
+        borderColor: '#e1e1e1',
+        borderRadius: 12,
         marginBottom: 20,
-        borderRadius: 12
     },
-    CardTitle: {
-        fontFamily: Theme.Bold,
-        fontSize: 22
+    CardImage: {
+        height: 100
+    },
+    Image: {
+        width: '100%',
+        height: '100%',
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
     },
     CardDes: {
-        marginTop: 10
+        marginTop: 20,
+        marginLeft: 20,
+        marginRight: 20,
+        marginBottom: 10
     },
-    Date:{
-        flexDirection: 'row',
-        justifyContent: 'space-between'
+    CardDesName: {
+        fontFamily: Theme.Bold,
+        fontSize: 25,
+        marginBottom: 10
     },
-    Item:{
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    ItemDes:{
-        marginLeft: 8
-    },
-    ItemDesTitle:{
+    Des: {
         fontFamily: Theme.SemiBold,
-        fontSize: 16
+        fontSize: 18,
+        lineHeight: 25
     },
-    ItemDesDate:{
-        fontFamily: Theme.Bold,
-        fontSize: 16
+    WatchDetailContainer:{
+        marginLeft: 20,
+        marginBottom: 20
     },
-    Location:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10
-    },
-    LocationDes:{
+    WatchDetailTitle:{
         fontFamily: Theme.Bold,
         fontSize: 16,
-        marginLeft: 8
-    },
-    Create:{
-        marginTop: 10
-    },
-    UserCreate:{
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    UserCreateDes:{
-        fontFamily: Theme.Bold,
-        fontSize: 16,
-        marginLeft: 8
+        color: Theme.PrimaryColor
     }
 })
 

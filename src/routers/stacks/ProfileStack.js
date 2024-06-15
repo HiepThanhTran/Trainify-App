@@ -8,6 +8,9 @@ import Theme from '../../styles/Theme';
 
 const Stack = createStackNavigator();
 
+import UpdateAndDeleteActivity from '../../components/profile/UpdateAnDeleteActivity';
+
+const Stack = createNativeStackNavigator();
 const ProfileStack = () => {
    return (
       <Stack.Navigator
@@ -32,6 +35,11 @@ const ProfileStack = () => {
                component={CreateActivityForm}
                options={{ title: 'Tạo hoạt động' }}
             />
+            <Stack.Screen
+               name="UpdateAndDeleteActivity"
+               component={UpdateAndDeleteActivity}
+               options={{ title: 'Chi tiết hoạt động' }}
+            />
          </Stack.Group>
 
          <Stack.Group screenOptions={{ headerShown: false }}>
@@ -41,6 +49,11 @@ const ProfileStack = () => {
          <Stack.Group screenOptions={{ presentation: 'modal' }}>
             <Stack.Screen name="ReportForm" component={ReportForm} />
          </Stack.Group>
+         <Stack.Screen
+            name="EditProfile"
+            component={EditProfile}
+            options={({ route }) => ({ title: route?.params?.full_name ?? 'Trang cá nhân' })}
+         />
       </Stack.Navigator>
    );
 };
