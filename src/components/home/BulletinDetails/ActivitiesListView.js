@@ -1,32 +1,27 @@
 import { useEffect, useState } from 'react';
-import { RefreshControl, ScrollView } from 'react-native';
 import APIs, { endPoints } from '../../../configs/APIs';
 import { statusCode } from '../../../configs/Constants';
-import Theme from '../../../styles/Theme';
-import { loadMore, onRefresh, search } from '../../../utils/Utilities';
-import CardActivity from '../../common/CardActivity';
-import Loading from '../../common/Loading';
+import { search } from '../../../utils/Utilities';
+import ActivityCardList from '../../common/ActivityCardList';
 import Searchbar from '../../common/Searchbar';
 
 const ActivitiesListView = ({ navigation, bulletinID }) => {
    const [activities, setActivities] = useState([]);
    const [page, setPage] = useState(1);
-   const [activityName, setActivityName] = useState('');
+   const [name, setName] = useState('');
+   const [loading, setLoading] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
-   const [activitiesLoading, setActivitiesLoading] = useState(false);
 
    useEffect(() => {
       loadActivities();
-   }, [page, activityName, refreshing]);
+   }, [page, name, refreshing]);
 
    const loadActivities = async () => {
       if (!bulletinID || page <= 0) return;
 
-      setActivitiesLoading(true);
+      setLoading(true);
       try {
-         let response = await APIs.get(endPoints['activities'], {
-            params: { bulletin_id: bulletinID, page, name: activityName },
-         });
+         let response = await APIs.get(endPoints['activities'], { params: { bulletin_id: bulletinID, page, name } });
 
          if (response.status === statusCode.HTTP_200_OK) {
             if (page === 1) {
@@ -41,41 +36,32 @@ const ActivitiesListView = ({ navigation, bulletinID }) => {
       } catch (error) {
          console.error('Activities of bulletin', error);
       } finally {
-         setActivitiesLoading(false);
+         setLoading(false);
          setRefreshing(false);
       }
    };
 
-   const goActivityDetail = (activityID) => navigation.navigate('ActivityDetail', { activityID });
-
    return (
       <>
          <Searchbar
-            value={activityName}
+            value={name}
             placeholder="Tìm kiếm hoạt động"
             style={{ marginVertical: 0, marginBottom: 16 }}
-            onChangeText={(value) => search(value, setPage, setActivityName)}
+            onChangeText={(value) => search(value, setPage, setName)}
          />
-         <ScrollView
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            onScroll={({ nativeEvent }) => loadMore(nativeEvent, activitiesLoading, page, setPage)}
-            refreshControl={
-               <RefreshControl
-                  colors={[Theme.PrimaryColor]}
-                  refreshing={refreshing}
-                  onRefresh={() =>
-                     onRefresh({ setPage, setData: setActivities, setRefreshing, setFilter: setActivityName })
-                  }
-               />
-            }
-         >
-            {!refreshing && activitiesLoading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
-            {activities.map((item, index) => (
-               <CardActivity key={item.id} instance={item} index={index} onPress={() => goActivityDetail(item.id)} />
-            ))}
-            {activitiesLoading && page > 1 && <Loading style={{ marginTop: 16 }} />}
-         </ScrollView>
+         <ActivityCardList
+            navigation={navigation}
+            refreshing={refreshing}
+            loading={loading}
+            data={activities}
+            page={page}
+            onScroll={true}
+            onRefresh={true}
+            setPage={setPage}
+            setFilter={setName}
+            setData={setActivities}
+            setRefreshing={setRefreshing}
+         />
       </>
    );
 };

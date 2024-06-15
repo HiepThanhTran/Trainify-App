@@ -13,9 +13,10 @@ const HomeStyle = StyleSheet.create({
       marginTop: -30,
       borderTopLeftRadius: 32,
       borderTopRightRadius: 32,
-      backgroundColor: 'white',
+      backgroundColor: '#fff',
    },
    Header: {
+      paddingHorizontal: 8,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -41,7 +42,7 @@ const HomeStyle = StyleSheet.create({
    },
    TabItem: {
       marginHorizontal: 12,
-      paddingVertical: 16,
+      paddingVertical: 12,
    },
    TabText: {
       fontSize: 16,

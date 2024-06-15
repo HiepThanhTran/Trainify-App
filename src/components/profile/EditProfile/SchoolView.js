@@ -13,6 +13,7 @@ const SchoolView = ({ navigation }) => {
 
    useEffect(() => {
       navigation.setOptions({ headerRight: null });
+
       setTimeout(() => {
          setIsRedered(true);
       }, 500);

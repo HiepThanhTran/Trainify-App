@@ -1,10 +1,107 @@
+import _ from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
+import { authAPI, endPoints } from '../../../configs/APIs';
+import { statusCode } from '../../../configs/Constants';
+import { useAccount, useAccountDispatch } from '../../../store/contexts/AccountContext';
 import GlobalStyle from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
+import { getTokens, refreshAccessToken } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
-const BarChartOfPoints = ({ dataChart, trainingPoints, currentSemester, ...props }) => {
+const BarChartOfPoints = ({ navigation, currentSemester, criterions, ...props }) => {
+   const dispatch = useAccountDispatch();
+   const currentAccount = useAccount();
+
+   const [trainingPoints, setTrainingPoints] = useState({});
+   const [loading, setLoading] = useState(false);
+
+   useEffect(() => {
+      loadTrainingPoints();
+   }, [navigation, currentSemester, props?.refreshing]);
+
+   const loadTrainingPoints = async () => {
+      if (!currentSemester) return;
+
+      setLoading(true);
+      const { accessToken, refreshToken } = await getTokens();
+      try {
+         let response = await authAPI(accessToken).get(
+            endPoints['student-points'](currentAccount.data.user.id, currentSemester.code),
+         );
+
+         if (response.status === statusCode.HTTP_200_OK) {
+            setTrainingPoints(response.data);
+         }
+      } catch (error) {
+         if (
+            error.response &&
+            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN)
+         ) {
+            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+            if (newAccessToken) {
+               loadTrainingPoints();
+            }
+         } else {
+            console.error('Points', error);
+         }
+      } finally {
+         setLoading(false);
+         props?.setRefreshing(false);
+      }
+   };
+
+   const pointsDataChart = useMemo(() => {
+      let data = [];
+
+      if (currentSemester && !_.isEmpty(trainingPoints) && trainingPoints.training_points.length > 0) {
+         data = trainingPoints.training_points.map((item) => ({
+            label: item.criterion,
+            value: item.point,
+            frontColor: Theme.PrimaryColor,
+            topLabelComponent: () => (
+               <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>{item.point}</Text>
+            ),
+         }));
+      }
+
+      return data;
+   }, [trainingPoints]);
+
+   const criterionDataChart = useMemo(() => {
+      let data = [];
+
+      if (criterions.length > 0) {
+         data = criterions.map((item) => ({
+            value: item.max_point,
+            frontColor: '#f0a419',
+            topLabelComponent: () => (
+               <Text style={{ color: 'lightgrey', fontSize: 12, marginTop: -4 }}>{item.max_point}</Text>
+            ),
+         }));
+      }
+
+      return data;
+   }, [criterions]);
+
+   const dataChart = useMemo(() => {
+      let sourceData = [];
+
+      if (pointsDataChart.length > 0) {
+         sourceData = pointsDataChart;
+      } else {
+         sourceData = criterions.map((item) => ({
+            label: item.name,
+            value: 0,
+            frontColor: Theme.PrimaryColor,
+         }));
+      }
+
+      return sourceData.flatMap((val, i) => [val, criterionDataChart[i]]);
+   }, [pointsDataChart, criterionDataChart]);
+
    return (
       <View style={BarChartStyle.ChartContainer}>
          <View style={BarChartStyle.ChartTitle}>
@@ -20,23 +117,23 @@ const BarChartOfPoints = ({ dataChart, trainingPoints, currentSemester, ...props
                </View>
             </View>
          </View>
-         {props?.loading ? (
+         {loading ? (
             <Loading />
          ) : (
             <>
                <BarChart
                   data={dataChart}
                   hideRules
-                  height={currentSemester ? 160 : 80}
                   spacing={8}
                   barWidth={14}
-                  labelWidth={40}
-                  noOfSections={currentSemester ? 5 : 2}
                   maxValue={100}
-                  barBorderTopLeftRadius={4}
-                  barBorderTopRightRadius={4}
+                  labelWidth={40}
                   xAxisColor={'lightgray'}
                   yAxisColor={'lightgray'}
+                  barBorderTopLeftRadius={4}
+                  barBorderTopRightRadius={4}
+                  height={currentSemester ? 160 : 80}
+                  noOfSections={currentSemester ? 5 : 2}
                   yAxisTextStyle={{ color: 'lightgray' }}
                   xAxisLabelTextStyle={{ color: 'lightgray', textAlign: 'center' }}
                />
@@ -67,11 +164,11 @@ const BarChartOfPoints = ({ dataChart, trainingPoints, currentSemester, ...props
 
 const BarChartStyle = StyleSheet.create({
    ChartContainer: {
-      backgroundColor: '#333340',
-      paddingBottom: 12,
-      borderRadius: 12,
-      paddingHorizontal: 12,
       margin: 12,
+      borderRadius: 12,
+      paddingBottom: 12,
+      paddingHorizontal: 12,
+      backgroundColor: '#333340',
    },
    ChartTitle: {
       marginTop: 20,
@@ -84,36 +181,36 @@ const BarChartStyle = StyleSheet.create({
       textAlign: 'center',
    },
    ChartDetails: {
+      marginTop: 24,
       flexDirection: 'row',
       justifyContent: 'space-evenly',
-      marginTop: 24,
    },
    ChartDetailsWrap: {
       flexDirection: 'row',
       alignItems: 'center',
    },
    ChartDetailsDot: {
-      height: 12,
       width: 12,
-      borderRadius: 6,
-      marginRight: 8,
+      height: 12,
       marginTop: 4,
+      marginRight: 8,
+      borderRadius: 6,
    },
    ChartDetailsText: {
       height: 16,
       color: 'lightgray',
    },
    ChartBottom: {
-      marginTop: 16,
       padding: 8,
+      marginTop: 16,
       borderRadius: 8,
       flexDirection: 'row',
    },
    ChartBottomText: {
-      color: 'lightgray',
-      fontFamily: Theme.SemiBold,
       fontSize: 16,
+      color: 'lightgray',
       textAlign: 'center',
+      fontFamily: Theme.SemiBold,
    },
 });
 

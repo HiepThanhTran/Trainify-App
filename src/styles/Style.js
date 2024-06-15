@@ -18,16 +18,6 @@ const GlobalStyle = StyleSheet.create({
       height: '100%',
       backgroundColor: '#fff',
    },
-   HeaderButton: {
-      height: 40,
-      padding: 8,
-      borderRadius: 16,
-      backgroundColor: '#eee',
-   },
-   HeaderButtonText: {
-      color: 'black',
-      fontFamily: Theme.Bold,
-   },
    BottomSheetView: {
       padding: 16,
       marginBottom: 12,
@@ -46,6 +36,37 @@ const GlobalStyle = StyleSheet.create({
    ModalContainer: {
       flex: 1,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+   },
+   Header: {},
+   HeaderWrap: {
+      paddingBottom: 12,
+      alignItems: 'center',
+      flexDirection: 'row',
+      backgroundColor: Theme.PrimaryColor,
+   },
+   HeaderTitle: {
+      flex: 1,
+      marginTop: 12,
+      marginLeft: 12,
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+   },
+   HeaderTitleText: {
+      fontFamily: Theme.Bold,
+      fontSize: 20,
+      color: '#fff',
+   },
+   HeaderButton: {
+      height: 40,
+      padding: 8,
+      marginRight: 12,
+      borderRadius: 16,
+      backgroundColor: '#eee',
+   },
+   HeaderButtonText: {
+      color: 'black',
+      fontFamily: Theme.Bold,
    },
    BackButton: {
       backgroundColor: 'white',

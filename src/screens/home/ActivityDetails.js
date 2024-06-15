@@ -2,7 +2,6 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import 'moment/locale/vi';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Modal, Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import Loading from '../../components/common/Loading';
@@ -96,16 +95,6 @@ const ActivityDetails = ({ navigation, route }) => {
       }
    };
 
-   const animateHeight = (toValue) => {
-      Animated.timing(animatedHeight, {
-         toValue,
-         duration: 500,
-         useNativeDriver: false,
-      }).start();
-   };
-
-   const currentTab = (name) => tab === name;
-
    const tabContent = () => {
       switch (tab) {
          case 'overview':
@@ -131,58 +120,62 @@ const ActivityDetails = ({ navigation, route }) => {
       }
    };
 
+   const currentTab = (name) => tab === name;
+
+   const animateHeight = (toValue) => {
+      Animated.timing(animatedHeight, {
+         toValue,
+         duration: 500,
+         useNativeDriver: false,
+      }).start();
+   };
+
    if (!isRendered) return <Loading />;
 
    return (
-      <GestureHandlerRootView>
-         <View style={GlobalStyle.BackGround} onTouchStart={handleOnPressWithoutFeedback}>
-            <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
-               <ImageBackground source={{ uri: activity.image }} style={{ flex: 1 }}>
-                  <TouchableOpacity
-                     activeOpacity={0.8}
-                     style={GlobalStyle.BackButton}
-                     onPress={() => navigation.goBack()}
-                  >
-                     <Ionicons name="chevron-back" color="gray" size={30} />
+      <View style={GlobalStyle.BackGround} onTouchStart={handleOnPressWithoutFeedback}>
+         <Animated.View style={{ ...HomeStyle.Image, height: animatedHeight }}>
+            <ImageBackground source={{ uri: activity.image }} style={{ flex: 1 }}>
+               <TouchableOpacity activeOpacity={0.8} style={GlobalStyle.BackButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="chevron-back" color="gray" size={30} />
+               </TouchableOpacity>
+            </ImageBackground>
+         </Animated.View>
+         <View style={{ ...HomeStyle.Body, paddingBottom: currentTab('overview') ? 0 : screenHeight / 16 }}>
+            <View style={HomeStyle.Header}>
+               <Text style={HomeStyle.HeaderText}>{activity.name}</Text>
+               <View style={ActivityDetailsStyle.Like}>
+                  <Text style={ActivityDetailsStyle.LikeDetail}>{totalLikes}</Text>
+                  <TouchableOpacity onPress={handleLikeActivity}>
+                     <AntDesign
+                        size={28}
+                        name={liked ? 'like1' : 'like2'}
+                        color={liked ? Theme.PrimaryColor : 'black'}
+                     />
                   </TouchableOpacity>
-               </ImageBackground>
-            </Animated.View>
-            <View style={{ ...HomeStyle.Body, paddingBottom: currentTab('overview') ? 0 : screenHeight / 16 }}>
-               <View style={HomeStyle.Header}>
-                  <Text style={HomeStyle.HeaderText}>{activity.name}</Text>
-                  <View style={ActivityDetailsStyle.Like}>
-                     <Text style={ActivityDetailsStyle.LikeDetail}>{totalLikes}</Text>
-                     <TouchableOpacity onPress={handleLikeActivity}>
-                        <AntDesign
-                           size={28}
-                           name={liked ? 'like1' : 'like2'}
-                           color={liked ? Theme.PrimaryColor : 'black'}
-                        />
-                     </TouchableOpacity>
-                  </View>
                </View>
-
-               <View style={HomeStyle.TabContainer}>
-                  {tabsContent.activity.map((f) => (
-                     <TouchableOpacity
-                        key={f.name}
-                        style={HomeStyle.TabItem}
-                        disabled={f.name === tab ? true : false}
-                        onPress={() => handleChangeTab(f.name)}
-                     >
-                        <Text
-                           style={{
-                              ...HomeStyle.TabText,
-                              color: f.name === tab ? Theme.PrimaryColor : 'black',
-                           }}
-                        >
-                           {f.label}
-                        </Text>
-                     </TouchableOpacity>
-                  ))}
-               </View>
-               {tabContent()}
             </View>
+
+            <View style={HomeStyle.TabContainer}>
+               {tabsContent.activity.map((f) => (
+                  <TouchableOpacity
+                     key={f.name}
+                     style={HomeStyle.TabItem}
+                     disabled={f.name === tab ? true : false}
+                     onPress={() => handleChangeTab(f.name)}
+                  >
+                     <Text
+                        style={{
+                           ...HomeStyle.TabText,
+                           color: f.name === tab ? Theme.PrimaryColor : 'black',
+                        }}
+                     >
+                        {f.label}
+                     </Text>
+                  </TouchableOpacity>
+               ))}
+            </View>
+            {tabContent()}
          </View>
 
          <Portal>
@@ -190,7 +183,7 @@ const ActivityDetails = ({ navigation, route }) => {
                <Loading />
             </Modal>
          </Portal>
-      </GestureHandlerRootView>
+      </View>
    );
 };
 

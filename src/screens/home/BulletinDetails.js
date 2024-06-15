@@ -52,14 +52,6 @@ const BulletinDetails = ({ navigation, route }) => {
       }
    };
 
-   const animateHeight = (toValue) => {
-      Animated.timing(animatedHeight, {
-         toValue,
-         duration: 500,
-         useNativeDriver: false,
-      }).start();
-   };
-
    const tabContent = () => {
       switch (tab) {
          case 'overview':
@@ -69,6 +61,14 @@ const BulletinDetails = ({ navigation, route }) => {
          default:
             return null;
       }
+   };
+
+   const animateHeight = (toValue) => {
+      Animated.timing(animatedHeight, {
+         toValue,
+         duration: 500,
+         useNativeDriver: false,
+      }).start();
    };
 
    if (!isRendered) return <Loading />;

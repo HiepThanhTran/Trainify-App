@@ -4,7 +4,7 @@ import { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
 import { formatDate } from '../../utils/Utilities';
 
-const CardBulletin = ({ instance, ...props }) => {
+const BulletinCard = ({ instance, ...props }) => {
    return (
       <TouchableOpacity onPress={props?.onPress}>
          <View style={CardStyle.Card}>
@@ -65,4 +65,4 @@ const CardStyle = StyleSheet.create({
    },
 });
 
-export default CardBulletin;
+export default BulletinCard;

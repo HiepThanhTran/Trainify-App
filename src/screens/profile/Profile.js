@@ -77,7 +77,7 @@ const Profile = ({ navigation }) => {
                   </Text>
                </View>
                <TouchableOpacity
-                  onPress={() => goToScreen('EditProfile', { full_name: currentAccount.data.user.full_name })}
+                  onPress={() => goToScreen('EditProfile', { fullName: currentAccount.data.user.full_name })}
                   style={{ ...GlobalStyle.Center, ...ProfileStyle.HeaderButton }}
                >
                   <Text style={ProfileStyle.ButtonText}>Trang cá nhân</Text>

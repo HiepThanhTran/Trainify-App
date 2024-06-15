@@ -1,7 +1,7 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import CardBulletin from '../../components/common/CardBulletin';
+import BulletinCard from '../../components/common/BulletinCard';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
 import Loading from '../../components/common/Loading';
 import Searchbar from '../../components/common/Searchbar';
@@ -47,7 +47,7 @@ const Bulletin = ({ navigation }) => {
       }
    };
 
-   const goToBulletinDetail = (bulletinID) => {
+   const goToBulletinDetails = (bulletinID) => {
       navigation.navigate('HomeStack', {
          screen: 'BulletinDetail',
          params: { bulletinID },
@@ -84,7 +84,7 @@ const Bulletin = ({ navigation }) => {
                >
                   {!refreshing && loading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
                   {bulletins.map((item) => (
-                     <CardBulletin key={item.id} instance={item} onPress={() => goToBulletinDetail(item.id)} />
+                     <BulletinCard key={item.id} instance={item} onPress={() => goToBulletinDetails(item.id)} />
                   ))}
                   {loading && page > 1 && <Loading style={{ marginBottom: 16 }} />}
                </ScrollView>

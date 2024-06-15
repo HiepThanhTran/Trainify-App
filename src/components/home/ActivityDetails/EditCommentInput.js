@@ -1,5 +1,14 @@
 import { useRef, useState } from 'react';
-import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+   Image,
+   Modal,
+   ScrollView,
+   StyleSheet,
+   Text,
+   TouchableOpacity,
+   TouchableWithoutFeedback,
+   View,
+} from 'react-native';
 import { Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import { authAPI, endPoints } from '../../../configs/APIs';
@@ -55,6 +64,12 @@ const EditCommentInput = (props) => {
       }
    };
 
+   const handleOnPressWithoutFeedback = () => {
+      if (refEditorEditComment?.current?.isKeyboardOpen) {
+         refEditorEditComment?.current?.dismissKeyboard();
+      }
+   };
+
    return (
       <Portal>
          <Modal
@@ -64,27 +79,32 @@ const EditCommentInput = (props) => {
             onRequestClose={() => props?.setModalEditCommentVisible(false)}
          >
             <View style={{ flex: 1 }}>
-               <View style={{ ...GlobalStyle.ModalContainer, backgroundColor: '#273238' }}>
-                  <View style={EditCommentInputStyle.EditCommentInput}>
-                     <View style={{ marginRight: 12 }}>
-                        <Image
-                           source={{ uri: props?.selectedComment?.account?.avatar }}
-                           style={EditCommentInputStyle.Avatar}
-                        />
+               <View
+                  style={{ ...GlobalStyle.ModalContainer, backgroundColor: '#273238' }}
+                  onTouchStart={handleOnPressWithoutFeedback}
+               >
+                  <TouchableWithoutFeedback>
+                     <View style={EditCommentInputStyle.EditCommentInput}>
+                        <View style={{ marginRight: 12, alignSelf: 'flex-start' }}>
+                           <Image
+                              source={{ uri: props?.selectedComment?.account?.avatar }}
+                              style={EditCommentInputStyle.Avatar}
+                           />
+                        </View>
+                        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+                           <RichEditor
+                              ref={refEditorEditComment}
+                              onChange={setEditComment}
+                              initialContentHTML={props?.selectedComment.content}
+                              placeholder="Nhập bình luận của bạn..."
+                              showsVerticalScrollIndicator={false}
+                              showsHorizontalScrollIndicator={false}
+                              style={{ borderRadius: 16, overflow: 'hidden' }}
+                              editorStyle={{ backgroundColor: '#d5deef', placeholderColor: 'gray' }}
+                           />
+                        </ScrollView>
                      </View>
-                     <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-                        <RichEditor
-                           ref={refEditorEditComment}
-                           onChange={setEditComment}
-                           initialContentHTML={props?.selectedComment.content}
-                           placeholder="Nhập bình luận của bạn..."
-                           showsVerticalScrollIndicator={false}
-                           showsHorizontalScrollIndicator={false}
-                           style={{ borderRadius: 16, overflow: 'hidden' }}
-                           editorStyle={{ backgroundColor: '#d5deef', placeholderColor: 'gray' }}
-                        />
-                     </ScrollView>
-                  </View>
+                  </TouchableWithoutFeedback>
                   <View style={EditCommentInputStyle.EditButtonsContainer}>
                      <TouchableOpacity
                         style={EditCommentInputStyle.EditButton}

@@ -29,7 +29,20 @@ const EditView = ({ navigation, tempAccount, setTempAccount }) => {
    const [snackBarDuration, setSnackBarDuration] = useState(7000);
 
    useEffect(() => {
-      renderHeaderButton();
+      navigation.setOptions({
+         headerRight: () => (
+            <TouchableOpacity
+               onPress={handleUpdateProfile}
+               style={{
+                  ...GlobalStyle.Center,
+                  ...GlobalStyle.HeaderButton,
+               }}
+            >
+               <Text style={{ ...GlobalStyle.HeaderButtonText }}>Cập nhật</Text>
+            </TouchableOpacity>
+         ),
+      });
+
       setIsRendered(true);
    }, [navigation, currentAccount, tempAccount]);
 
@@ -103,22 +116,6 @@ const EditView = ({ navigation, tempAccount, setTempAccount }) => {
    const handleDatePickerOnChange = (event, selectedDate) => {
       const dateInDesiredFormat = selectedDate.toISOString().split('T')[0];
       updateUserOfTempAccount('date_of_birth', dateInDesiredFormat);
-   };
-
-   const renderHeaderButton = () => {
-      navigation.setOptions({
-         headerRight: () => (
-            <TouchableOpacity
-               onPress={handleUpdateProfile}
-               style={{
-                  ...GlobalStyle.Center,
-                  ...GlobalStyle.HeaderButton,
-               }}
-            >
-               <Text style={{ ...GlobalStyle.HeaderButtonText }}>Cập nhật</Text>
-            </TouchableOpacity>
-         ),
-      });
    };
 
    const renderDatePicker = () => {

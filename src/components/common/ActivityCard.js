@@ -4,7 +4,7 @@ import { defaultImage } from '../../configs/Constants';
 import Theme from '../../styles/Theme';
 import { formatDate } from '../../utils/Utilities';
 
-const CardActivity = ({ instance, index, ...props }) => {
+const ActivityCard = ({ instance, index, reportButton, ...props }) => {
    return (
       <View style={{ ...props?.style }}>
          <ImageBackground
@@ -12,9 +12,26 @@ const CardActivity = ({ instance, index, ...props }) => {
             style={{ ...CarddActivityStyle.Background, marginTop: index === 0 ? 0 : 12 }}
          >
             <View style={CarddActivityStyle.CardContainer}>
-               <View>
+               <View style={{ ...CarddActivityStyle.CardRow, marginTop: 0 }}>
                   <Text style={CarddActivityStyle.CardTitle}>{instance.name}</Text>
+                  {reportButton && (
+                     <TouchableOpacity activeOpacity={0.8} onPress={props?.onReport}>
+                        <View
+                           style={{
+                              borderRadius: 8,
+                              paddingVertical: 8,
+                              paddingHorizontal: 16,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: '#6ac239',
+                           }}
+                        >
+                           <Text style={{ ...CarddActivityStyle.CardText, marginLeft: 0 }}>Báo thiếu</Text>
+                        </View>
+                     </TouchableOpacity>
+                  )}
                </View>
+
                <View style={CarddActivityStyle.CardRow}>
                   <View style={CarddActivityStyle.CardWrap}>
                      <AntDesign name="star" size={24} color="lightgrey" />
@@ -23,6 +40,7 @@ const CardActivity = ({ instance, index, ...props }) => {
                      </Text>
                   </View>
                </View>
+
                <View style={CarddActivityStyle.CardRow}>
                   <View style={CarddActivityStyle.CardWrap}>
                      <Ionicons name="time" size={24} color="lightgrey" />
@@ -32,6 +50,7 @@ const CardActivity = ({ instance, index, ...props }) => {
                   </View>
                   <Text style={CarddActivityStyle.CardText}>{instance.semester}</Text>
                </View>
+
                <View style={CarddActivityStyle.CardRow}>
                   <View style={{ ...CarddActivityStyle.CardWrap, marginLeft: -4 }}>
                      <Image
@@ -41,7 +60,7 @@ const CardActivity = ({ instance, index, ...props }) => {
                      <Text style={CarddActivityStyle.CardText}>{instance.created_by.full_name}</Text>
                   </View>
                   <TouchableOpacity style={CarddActivityStyle.CardWrap} onPress={props?.onPress ?? null}>
-                     <Text style={CarddActivityStyle.CardText}>Xem chi tiết</Text>
+                     <Text style={{ ...CarddActivityStyle.CardText, marginRight: 4 }}>Xem chi tiết</Text>
                      <AntDesign name="arrowright" size={20} color="lightgrey" />
                   </TouchableOpacity>
                </View>
@@ -90,4 +109,4 @@ const CarddActivityStyle = StyleSheet.create({
    },
 });
 
-export default CardActivity;
+export default ActivityCard;

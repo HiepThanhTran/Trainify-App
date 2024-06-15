@@ -24,7 +24,7 @@ const CommentsListView = ({ activityID, ...props }) => {
    const [page, setPage] = useState(1);
    const [isRendered, setIsRendered] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
-   const [commentsLoading, setCommentsLoading] = useState(false);
+   const [loading, setLoading] = useState(false);
    const [modalSettingsVisible, setModalSettingsVisible] = useState(false);
    const [modalEditCommentVisible, setModalEditCommentVisible] = useState(false);
 
@@ -35,7 +35,7 @@ const CommentsListView = ({ activityID, ...props }) => {
    const loadComments = async () => {
       if (!activityID || page < 1) return;
 
-      setCommentsLoading(true);
+      setLoading(true);
       try {
          let res = await APIs.get(endPoints['activity-comments'](activityID), { params: { page } });
 
@@ -52,7 +52,7 @@ const CommentsListView = ({ activityID, ...props }) => {
       } catch (error) {
          console.error('Comments of activity', error);
       } finally {
-         setCommentsLoading(false);
+         setLoading(false);
          setRefreshing(false);
          setIsRendered(true);
       }
@@ -76,7 +76,7 @@ const CommentsListView = ({ activityID, ...props }) => {
       <ScrollView
          showsHorizontalScrollIndicator={false}
          showsVerticalScrollIndicator={false}
-         onScroll={({ nativeEvent }) => loadMore(nativeEvent, commentsLoading, page, setPage)}
+         onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
          refreshControl={
             <RefreshControl
                colors={[Theme.PrimaryColor]}
@@ -137,7 +137,7 @@ const CommentsListView = ({ activityID, ...props }) => {
                      </View>
                   );
                })}
-               {commentsLoading && page > 1 && <Loading style={{ marginBottom: 32 }} />}
+               {loading && page > 1 && <Loading style={{ marginBottom: 32 }} />}
             </View>
          </View>
 
