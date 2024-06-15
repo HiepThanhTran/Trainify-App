@@ -65,10 +65,6 @@ export default All = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-    ImageTitle:{
-        fontFamily: Theme.SemiBold,
-        fontSize: 16,
-    },
     RichEditor:{
         borderWidth : 2,
         borderColor: Theme.PrimaryColor,

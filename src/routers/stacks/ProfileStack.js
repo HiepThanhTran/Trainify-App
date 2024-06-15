@@ -1,4 +1,4 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator} from '@react-navigation/stack';
 import CreateActivityForm from '../../components/profile/CreateActivityForm';
 import ReportForm from '../../components/profile/TrainingPoints/ReportForm';
 import ActivitySettings from '../../screens/profile/ActivitySettings';
@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 
 import UpdateAndDeleteActivity from '../../components/profile/UpdateAnDeleteActivity';
 
-const Stack = createNativeStackNavigator();
+// const Stack = createNativeStackNavigator();
 const ProfileStack = () => {
    return (
       <Stack.Navigator
@@ -49,11 +49,6 @@ const ProfileStack = () => {
          <Stack.Group screenOptions={{ presentation: 'modal' }}>
             <Stack.Screen name="ReportForm" component={ReportForm} />
          </Stack.Group>
-         <Stack.Screen
-            name="EditProfile"
-            component={EditProfile}
-            options={({ route }) => ({ title: route?.params?.full_name ?? 'Trang cá nhân' })}
-         />
       </Stack.Navigator>
    );
 };
