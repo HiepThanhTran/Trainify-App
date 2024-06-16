@@ -1,4 +1,5 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
@@ -8,7 +9,7 @@ import HomeStyle from '../../../screens/home/Style';
 import { useAccount, useAccountDispatch } from '../../../store/contexts/AccountContext';
 import { screenHeight, screenWidth } from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
-import { formatDate, getTokens, refreshAccessToken } from '../../../utils/Utilities';
+import { getTokens, refreshAccessToken } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
 const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
@@ -21,8 +22,8 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
    useEffect(() => {
       setTimeout(() => {
          setIsRedered(true);
-      }, 500)
-   }, [])
+      }, 500);
+   }, []);
 
    const handleRegisterActivity = async () => {
       props?.setModalVisible(true);
@@ -54,7 +55,8 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                handleRegisterActivity();
             }
          } else {
-            console.error('Register activity', error);
+            console.error('Register activity:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
          }
       } finally {
          props?.setModalVisible(false);
@@ -72,14 +74,14 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
             },
             {
                text: 'Hủy',
-               style: 'cancel'
+               style: 'cancel',
             },
          ],
          { cancelable: false },
       );
    };
 
-   if (!isRendered) return <Loading />
+   if (!isRendered) return <Loading />;
 
    return (
       <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
@@ -97,7 +99,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Ngày bắt đầu</Text>
-                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.start_date)}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{moment(activity.start_date).format('DD/MM/YYYY')}</Text>
                   </View>
                </View>
                <View style={HomeStyle.DetailsItem}>
@@ -106,7 +108,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Ngày kết thúc</Text>
-                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.end_date)}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{moment(activity.end_date).format('DD/MM/YYYY')}</Text>
                   </View>
                </View>
             </View>
@@ -118,7 +120,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>ĐRL điều</Text>
-                     <Text style={HomeStyle.DetailsValue}>{activity.criterion}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.criterion.name}</Text>
                   </View>
                </View>
                <View style={HomeStyle.DetailsItem}>
@@ -172,7 +174,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Khoa</Text>
-                     <Text style={HomeStyle.DetailsValue}>{activity.faculty}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.faculty.name}</Text>
                   </View>
                </View>
             </View>
@@ -184,7 +186,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Học kỳ</Text>
-                     <Text style={HomeStyle.DetailsValue}>{activity.semester}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{activity.semester.name}</Text>
                   </View>
                </View>
             </View>
@@ -230,7 +232,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
-                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.created_date)}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{moment(activity.created_date).format('DD/MM/YYYY')}</Text>
                   </View>
                </View>
                <View style={HomeStyle.DetailsItem}>
@@ -239,7 +241,7 @@ const ActivitySummary = ({ activityID, activity, setActivity, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
-                     <Text style={HomeStyle.DetailsValue}>{formatDate(activity.updated_date)}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{moment(activity.updated_date).format('DD/MM/YYYY')}</Text>
                   </View>
                </View>
             </View>

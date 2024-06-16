@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import CreateActivityForm from '../../components/profile/CreateActivityForm';
+import CreateActivityForm from '../../components/profile/ActivitySettings/CreateActivityForm';
+import EditActivityForm from '../../components/profile/ActivitySettings/EditActivityForm';
 import ReportForm from '../../components/profile/TrainingPoints/ReportForm';
 import ActivitySettings from '../../screens/profile/ActivitySettings';
 import EditProfile from '../../screens/profile/EditProfile';
@@ -8,9 +9,6 @@ import Theme from '../../styles/Theme';
 
 const Stack = createStackNavigator();
 
-import UpdateAndDeleteActivity from '../../components/profile/UpdateAnDeleteActivity';
-
-const Stack = createNativeStackNavigator();
 const ProfileStack = () => {
    return (
       <Stack.Navigator
@@ -30,16 +28,6 @@ const ProfileStack = () => {
                component={ActivitySettings}
                options={{ title: 'Quản lý hoạt động' }}
             />
-            <Stack.Screen
-               name="CreateActivityForm"
-               component={CreateActivityForm}
-               options={{ title: 'Tạo hoạt động' }}
-            />
-            <Stack.Screen
-               name="UpdateAndDeleteActivity"
-               component={UpdateAndDeleteActivity}
-               options={{ title: 'Chi tiết hoạt động' }}
-            />
          </Stack.Group>
 
          <Stack.Group screenOptions={{ headerShown: false }}>
@@ -48,12 +36,17 @@ const ProfileStack = () => {
 
          <Stack.Group screenOptions={{ presentation: 'modal' }}>
             <Stack.Screen name="ReportForm" component={ReportForm} />
+            <Stack.Screen
+               name="CreateActivityForm"
+               component={CreateActivityForm}
+               options={{ title: 'Tạo hoạt động' }}
+            />
+            <Stack.Screen
+               name="EditActivityForm"
+               component={EditActivityForm}
+               options={{ title: 'Chỉnh sửa hoạt động' }}
+            />
          </Stack.Group>
-         <Stack.Screen
-            name="EditProfile"
-            component={EditProfile}
-            options={({ route }) => ({ title: route?.params?.full_name ?? 'Trang cá nhân' })}
-         />
       </Stack.Navigator>
    );
 };

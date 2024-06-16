@@ -1,15 +1,16 @@
+import moment from 'moment';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
+import { defaultImage } from '../../configs/Constants';
 import { screenHeight, screenWidth } from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { formatDate } from '../../utils/Utilities';
 
-const BulletinCard = ({ instance, ...props }) => {
+const CommonCard = ({ instance, ...props }) => {
    return (
-      <TouchableOpacity onPress={props?.onPress}>
+      <TouchableOpacity onPress={props?.onPress ?? null}>
          <View style={CardStyle.Card}>
             <View style={CardStyle.CardImage}>
-               <Image style={CardStyle.Image} source={{ uri: instance.image }} />
+               <Image style={CardStyle.Image} source={{ uri: instance?.image ?? defaultImage.BULLETIN_IMAGE }} />
             </View>
             <Text style={CardStyle.CardTitle}>{instance.name}</Text>
             <RenderHTML
@@ -22,7 +23,7 @@ const BulletinCard = ({ instance, ...props }) => {
                }}
             />
             <Text style={CardStyle.CardDate}>
-               Ngày tạo: <Text>{formatDate(instance.created_date)}</Text>
+               Ngày tạo: <Text>{moment(instance.created_date).format('DD/MM/YYYY')}</Text>
             </Text>
          </View>
       </TouchableOpacity>
@@ -65,4 +66,4 @@ const CardStyle = StyleSheet.create({
    },
 });
 
-export default BulletinCard;
+export default CommonCard;

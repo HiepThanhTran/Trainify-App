@@ -1,7 +1,7 @@
 import { CLIENT_ID, CLIENT_SECRET } from '@env';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, ScrollView } from 'react-native';
 import AuthFooter from '../../components/auth/AuthFooter';
 import AuthForm from '../../components/auth/AuthForm';
 import AuthHeader from '../../components/auth/AuthHeader';
@@ -27,28 +27,25 @@ const SignIn = ({ navigation }) => {
       for (let field of signInFields) {
          if (!account[field.name]) {
             setErrorVisible(true);
-            setErrorMessage(field.errorMessage);
+            setErrorMessage(`${field.label} không được trống`);
             return;
          }
       }
 
       setLoading(true);
       setErrorVisible(false);
+      const data = {
+         ...account,
+         grant_type: 'password',
+         client_id: CLIENT_ID,
+         client_secret: CLIENT_SECRET,
+      };
       try {
-         let tokens = await APIs.post(
-            endPoints['token'],
-            {
-               ...account,
-               grant_type: 'password',
-               client_id: CLIENT_ID,
-               client_secret: CLIENT_SECRET,
+         let tokens = await APIs.post(endPoints['token'], data, {
+            headers: {
+               'Content-Type': 'application/json',
             },
-            {
-               headers: {
-                  'Content-Type': 'application/json',
-               },
-            },
-         );
+         });
 
          const { accessToken } = await setTokens(tokens);
 
@@ -64,7 +61,8 @@ const SignIn = ({ navigation }) => {
             setErrorVisible(true);
             setErrorMessage('Email hoặc mật khẩu không chính xác');
          } else {
-            console.error('Sign in', error);
+            console.error('Sign in:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
          }
       } finally {
          setLoading(false);

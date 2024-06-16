@@ -1,7 +1,7 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import 'moment/locale/vi';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Modal, Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import Loading from '../../components/common/Loading';
@@ -33,29 +33,30 @@ const ActivityDetails = ({ navigation, route }) => {
    const animatedHeight = useState(new Animated.Value(screenHeight / 3))[0];
 
    useEffect(() => {
+      const loadActivity = async () => {
+         if (!activityID) return;
+
+         setActivityLoading(true);
+         try {
+            const { accessToken } = await getTokens();
+            let response = await authAPI(accessToken).get(endPoints['activity-detail'](activityID));
+
+            if (response.status === statusCode.HTTP_200_OK) {
+               setActivity(response.data);
+               setTotalLikes(response.data.total_likes);
+               setLiked(response.data?.liked ?? false);
+            }
+         } catch (error) {
+            console.error('Activity details', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
+         } finally {
+            setActivityLoading(false);
+            setIsRendered(true);
+         }
+      };
+
       loadActivity();
    }, []);
-
-   const loadActivity = async () => {
-      if (!activityID) return;
-
-      setActivityLoading(true);
-      try {
-         const { accessToken } = await getTokens();
-         let response = await authAPI(accessToken).get(endPoints['activity-detail'](activityID));
-
-         if (response.status === statusCode.HTTP_200_OK) {
-            setActivity(response.data);
-            setTotalLikes(response.data.total_likes);
-            setLiked(response.data?.liked ?? false);
-         }
-      } catch (error) {
-         console.error('Activity details', error);
-      } finally {
-         setActivityLoading(false);
-         setIsRendered(true);
-      }
-   };
 
    const handleLikeActivity = async () => {
       setLiked(!liked);
@@ -72,7 +73,7 @@ const ActivityDetails = ({ navigation, route }) => {
                handleLikeActivity();
             }
          } else {
-            console.error(error);
+            console.error('Like activity:', error);
          }
       }
    };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Icon, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import Theme from '../../styles/Theme';
 
 const AuthInput = ({ field, account, setAccount }) => {
@@ -8,11 +8,11 @@ const AuthInput = ({ field, account, setAccount }) => {
    const [icon, setIcon] = useState(field.icon);
 
    const updateAccount = (field, value) => {
-      setAccount({
-         ...account,
-         [field]: value
-      });
-   }
+      setAccount((prevAccount) => ({
+         ...prevAccount,
+         [field]: value,
+      }));
+   };
 
    const handlePress = () => {
       setPasswordVisible(!passwordVisible);

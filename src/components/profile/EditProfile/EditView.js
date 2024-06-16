@@ -1,4 +1,5 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Portal, RadioButton, Snackbar, TextInput } from 'react-native-paper';
@@ -9,13 +10,7 @@ import { useAccount, useAccountDispatch } from '../../../store/contexts/AccountC
 import GlobalStyle from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
 import { accountFields, userFields } from '../../../utils/Fields';
-import {
-   formatDate,
-   getFirstDayOfYear,
-   getLastDayOfYear,
-   getTokens,
-   refreshAccessToken,
-} from '../../../utils/Utilities';
+import { getFirstDayOfYear, getLastDayOfYear, getTokens, refreshAccessToken } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
 const EditView = ({ navigation, tempAccount, setTempAccount }) => {
@@ -29,33 +24,28 @@ const EditView = ({ navigation, tempAccount, setTempAccount }) => {
    const [snackBarDuration, setSnackBarDuration] = useState(7000);
 
    useEffect(() => {
+      setIsRendered(true);
+   }, []);
+
+   useEffect(() => {
       navigation.setOptions({
          headerRight: () => (
             <TouchableOpacity
-               onPress={handleUpdateProfile}
-               style={{
-                  ...GlobalStyle.Center,
-                  ...GlobalStyle.HeaderButton,
-               }}
+               onPress={handleEditProfile}
+               style={{ ...GlobalStyle.Center, ...GlobalStyle.HeaderButton }}
             >
-               <Text style={{ ...GlobalStyle.HeaderButtonText }}>Cập nhật</Text>
+               <Text style={GlobalStyle.HeaderButtonText}>Cập nhật</Text>
             </TouchableOpacity>
          ),
       });
-
-      setIsRendered(true);
    }, [navigation, currentAccount, tempAccount]);
 
-   const handleUpdateProfile = async () => {
+   const handleEditProfile = async () => {
       let form = new FormData();
       let size = 0;
 
       if (currentAccount.data.avatar !== tempAccount.data.avatar) {
-         form.append('avatar', {
-            uri: tempAccount.data.avatar.uri,
-            type: tempAccount.data.avatar.mimeType,
-            name: tempAccount.data.avatar.fileName,
-         });
+         form.append('avatar', tempAccount.data.avatar);
          size++;
       }
 
@@ -87,12 +77,11 @@ const EditView = ({ navigation, tempAccount, setTempAccount }) => {
          ) {
             const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
             if (newAccessToken) {
-               handleUpdateProfile();
-            } else {
-               setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
+               handleEditProfile();
             }
          } else {
-            console.error('Update profile', error);
+            console.error('Update profile:', error);
+            setSnackBarMessage('Có lỗi xảy ra khi cập nhật');
          }
       } finally {
          setLoading(false);
@@ -113,10 +102,8 @@ const EditView = ({ navigation, tempAccount, setTempAccount }) => {
       }));
    };
 
-   const handleDatePickerOnChange = (event, selectedDate) => {
-      const dateInDesiredFormat = selectedDate.toISOString().split('T')[0];
-      updateUserOfTempAccount('date_of_birth', dateInDesiredFormat);
-   };
+   const handleDatePickerOnChange = (event, selectedDate) =>
+      updateUserOfTempAccount('date_of_birth', moment(selectedDate).format('YYYY-MM-DD'));
 
    const renderDatePicker = () => {
       DateTimePickerAndroid.open({
@@ -194,7 +181,7 @@ const EditView = ({ navigation, tempAccount, setTempAccount }) => {
          <Text style={EditViewStyle.FormText}>Ngày sinh</Text>
          <TouchableOpacity onPress={renderDatePicker} style={EditViewStyle.FormWrap}>
             <Text style={{ ...EditViewStyle.FormData, padding: 16, fontSize: 16 }}>
-               {formatDate(tempAccount.data.user.date_of_birth)}
+               {moment(tempAccount.data.user.date_of_birth).format('DD/MM/YYYY')}
             </Text>
          </TouchableOpacity>
 

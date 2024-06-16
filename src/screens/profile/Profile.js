@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import Loading from '../../components/common/Loading';
-import SectionItem from '../../components/profile/SectionItem';
+import SectionItem from '../../components/common/SectionItem';
 import { SignOutAction } from '../../store/actions/AccountAction';
 import { useAccount, useAccountDispatch } from '../../store/contexts/AccountContext';
 import GlobalStyle, { screenHeight, screenWidth } from '../../styles/Style';
@@ -88,9 +88,9 @@ const Profile = ({ navigation }) => {
             {profileSections.map((section, index) => {
                if (section.roles.includes(currentAccount.data.role)) {
                   return (
-                     <View key={'section-' + index} style={SectionStyle.Section}>
-                        <Text style={SectionStyle.SectionTitle}>{section.title}</Text>
-                        <View style={SectionStyle.SectionBody}>
+                     <View key={'section-' + index} style={ProfileStyle.Section}>
+                        <Text style={ProfileStyle.SectionTitle}>{section.title}</Text>
+                        <View style={ProfileStyle.SectionBody}>
                            {section.items.map((item, itemIndex) => (
                               <SectionItem key={'item-' + itemIndex} instance={item} onPress={goToScreen} />
                            ))}
@@ -196,9 +196,6 @@ const ProfileStyle = StyleSheet.create({
       padding: 12,
       borderRadius: 12,
    },
-});
-
-const SectionStyle = StyleSheet.create({
    Section: {
       marginTop: 40,
       marginHorizontal: 12,

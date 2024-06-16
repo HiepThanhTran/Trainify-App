@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import APIs, { endPoints } from '../../../configs/APIs';
 import { statusCode } from '../../../configs/Constants';
 import { search } from '../../../utils/Utilities';
@@ -13,33 +14,36 @@ const ActivitiesListView = ({ navigation, bulletinID }) => {
    const [refreshing, setRefreshing] = useState(false);
 
    useEffect(() => {
+      const loadActivities = async () => {
+         if (!bulletinID || page <= 0) return;
+
+         setLoading(true);
+         try {
+            let response = await APIs.get(endPoints['activities'], { params: { bulletin_id: bulletinID, page, name } });
+
+            if (response.status === statusCode.HTTP_200_OK) {
+               if (page === 1) {
+                  setActivities(response.data.results);
+               } else {
+                  setActivities((prevActivities) => [...prevActivities, ...response.data.results]);
+               }
+            }
+            if (response.data.next === null) {
+               setPage(0);
+            }
+         } catch (error) {
+            console.error('Activities of bulletin:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
+         } finally {
+            setLoading(false);
+            setRefreshing(false);
+         }
+      };
+
       loadActivities();
    }, [page, name, refreshing]);
 
-   const loadActivities = async () => {
-      if (!bulletinID || page <= 0) return;
-
-      setLoading(true);
-      try {
-         let response = await APIs.get(endPoints['activities'], { params: { bulletin_id: bulletinID, page, name } });
-
-         if (response.status === statusCode.HTTP_200_OK) {
-            if (page === 1) {
-               setActivities(response.data.results);
-            } else {
-               setActivities((prevActivities) => [...prevActivities, ...response.data.results]);
-            }
-         }
-         if (response.data.next === null) {
-            setPage(0);
-         }
-      } catch (error) {
-         console.error('Activities of bulletin', error);
-      } finally {
-         setLoading(false);
-         setRefreshing(false);
-      }
-   };
+   const goActivityDetail = (activityID) => navigation.navigate('ActivityDetail', { activityID });
 
    return (
       <>
@@ -61,6 +65,7 @@ const ActivitiesListView = ({ navigation, bulletinID }) => {
             setFilter={setName}
             setData={setActivities}
             setRefreshing={setRefreshing}
+            onPress={(activity) => goActivityDetail(activity.id)}
          />
       </>
    );

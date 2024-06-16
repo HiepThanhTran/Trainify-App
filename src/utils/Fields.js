@@ -6,13 +6,11 @@ export const signInFields = [
       name: 'username',
       icon: 'email',
       keyboardType: 'email-address',
-      errorMessage: 'Email không được trống',
    },
    {
       label: 'Mật khẩu',
       name: 'password',
       icon: 'eye',
-      errorMessage: 'Mật khẩu không được trống',
    },
 ];
 
@@ -22,26 +20,22 @@ export const signUpFields = [
       name: 'code',
       icon: 'badge-account',
       keyboardType: 'numeric',
-      errorMessage: 'Mã số sinh viên không được trống',
    },
    {
       label: 'Email',
       name: 'email',
       icon: 'email',
       keyboardType: 'email-address',
-      errorMessage: 'Email không được trống',
    },
    {
       label: 'Mật khẩu',
       name: 'password',
       icon: 'eye',
-      errorMessage: 'Mật khẩu không được trống',
    },
    {
       label: 'Xác nhận mật khẩu',
       name: 'confirm',
       icon: 'eye',
-      errorMessage: 'Vui lòng xác nhận mật khẩu!',
    },
 ];
 

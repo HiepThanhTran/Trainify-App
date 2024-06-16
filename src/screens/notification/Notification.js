@@ -5,10 +5,12 @@ const Notification = ({ navigation }) => {
    return (
       <View style={GlobalStyle.Container}>
          <Text>Notification Screen</Text>
-         <Button
-            title="Go to detail"
-            onPress={() => navigation.navigate('NotificationStack', { screen: 'NotificationDetail' })}
-         />
+         <View style={{ marginTop: 12 }}>
+            <Button
+               title="Go to detail"
+               onPress={() => navigation.navigate('NotificationStack', { screen: 'NotificationDetail' })}
+            />
+         </View>
       </View>
    );
 };
