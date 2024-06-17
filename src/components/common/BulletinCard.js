@@ -57,6 +57,7 @@ const CardStyle = StyleSheet.create({
       width: '100%',
       fontSize: 20,
       fontFamily: Theme.Regular,
+      lineHeight: 30
    },
    CardDate: {
       fontSize: 16,
