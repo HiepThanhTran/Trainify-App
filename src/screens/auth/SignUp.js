@@ -21,7 +21,7 @@ const SignUp = ({ navigation }) => {
       for (let field of signUpFields) {
          if (!account[field.name]) {
             setErrorVisible(true);
-            setErrorMessage(field.errorMessage);
+            setErrorMessage(`${field.label} không được trống`);
             return;
          }
       }
@@ -66,7 +66,8 @@ const SignUp = ({ navigation }) => {
             setErrorVisible(true);
             setErrorMessage(error.response.data.detail);
          } else {
-            console.error(error);
+            console.error('Sign up:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
          }
       } finally {
          setLoading(false);

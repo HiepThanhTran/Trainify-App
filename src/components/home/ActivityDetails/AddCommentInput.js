@@ -1,6 +1,6 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useRef, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { RichEditor } from 'react-native-pell-rich-editor';
 import { authAPI, endPoints } from '../../../configs/APIs';
@@ -44,7 +44,8 @@ const AddCommentInput = (props) => {
                handleAddComment();
             }
          } else {
-            console.error('Add commnet', error);
+            console.error('Add commnet:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
          }
       } finally {
          props?.setModalVisible(false);

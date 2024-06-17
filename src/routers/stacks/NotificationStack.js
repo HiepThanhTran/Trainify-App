@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import NotificationDetail from '../../screens/notification/NotificationDetail';
+import Theme from '../../styles/Theme';
 
 const Stack = createStackNavigator();
 

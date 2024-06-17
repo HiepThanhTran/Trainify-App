@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import CreateActivityForm from '../../components/profile/CreateActivityForm';
+import CreateActivityForm from '../../components/profile/ActivitySettings/CreateActivityForm';
+import EditActivityForm from '../../components/profile/ActivitySettings/EditActivityForm';
 import ReportForm from '../../components/profile/TrainingPoints/ReportForm';
 import ActivitySettings from '../../screens/profile/ActivitySettings';
 import EditProfile from '../../screens/profile/EditProfile';
@@ -8,8 +9,6 @@ import RegisterAssistants from '../../screens/profile/RegisterAssistants';
 import Theme from '../../styles/Theme';
 
 const Stack = createStackNavigator();
-
-import UpdateAndDeleteActivity from '../../components/profile/UpdateAnDeleteActivity';
 
 const ProfileStack = () => {
    return (
@@ -36,17 +35,6 @@ const ProfileStack = () => {
                component={RegisterAssistants}
                options={{ title: 'Đăng ký tài khoản' }}
             />
-
-            <Stack.Screen
-               name="CreateActivityForm"
-               component={CreateActivityForm}
-               options={{ title: 'Tạo hoạt động' }}
-            />
-            <Stack.Screen
-               name="UpdateAndDeleteActivity"
-               component={UpdateAndDeleteActivity}
-               options={{ title: 'Chi tiết hoạt động' }}
-            />
          </Stack.Group>
 
          <Stack.Group screenOptions={{ headerShown: false }}>
@@ -55,6 +43,16 @@ const ProfileStack = () => {
 
          <Stack.Group screenOptions={{ presentation: 'modal' }}>
             <Stack.Screen name="ReportForm" component={ReportForm} />
+            <Stack.Screen
+               name="CreateActivityForm"
+               component={CreateActivityForm}
+               options={{ title: 'Tạo hoạt động' }}
+            />
+            <Stack.Screen
+               name="EditActivityForm"
+               component={EditActivityForm}
+               options={{ title: 'Chỉnh sửa hoạt động' }}
+            />
          </Stack.Group>
       </Stack.Navigator>
    );

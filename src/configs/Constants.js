@@ -1,7 +1,7 @@
 export const defaultImage = {
    USER_AVATAR: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715504153/default-avatar.png',
    USER_COVER: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1716737233/default-user-cover.jpg',
-   BULLETIN_COVER: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715532800/bulletin-cover.png',
+   BULLETIN_IMAGE: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715532800/bulletin-cover.png',
    ACTIVITY_IMAGE: 'https://res.cloudinary.com/dtthwldgs/image/upload/v1715532803/activity-image.png',
 };
 

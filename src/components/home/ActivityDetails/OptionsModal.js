@@ -32,7 +32,8 @@ const OptionsModal = (props) => {
                handleDeleteComment();
             }
          } else {
-            console.error('Delete comment', error);
+            console.error('Delete comment:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
          }
       } finally {
          props?.setModalVisible(false);

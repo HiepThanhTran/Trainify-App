@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import RenderHTML from 'react-native-render-html';
 import APIs, { endPoints } from '../../../configs/APIs';
@@ -18,55 +18,73 @@ import OptionsModal from './OptionsModal';
 const CommentsListView = ({ activityID, ...props }) => {
    const currentAccount = useAccount();
 
+   const [shouldShowMoreButtons, setShouldShowMoreButtons] = useState({});
    const [expandedComments, setExpandedComments] = useState({});
    const [selectedComment, setSelectedComment] = useState({});
    const [comments, setComments] = useState([]);
    const [page, setPage] = useState(1);
+   const [loading, setLoading] = useState(false);
    const [isRendered, setIsRendered] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
-   const [loading, setLoading] = useState(false);
    const [modalSettingsVisible, setModalSettingsVisible] = useState(false);
    const [modalEditCommentVisible, setModalEditCommentVisible] = useState(false);
 
    useEffect(() => {
+      const loadComments = async () => {
+         if (!activityID || page < 1) return;
+
+         setLoading(true);
+         try {
+            let res = await APIs.get(endPoints['activity-comments'](activityID), { params: { page } });
+
+            if (res.status === statusCode.HTTP_200_OK) {
+               if (page === 1) {
+                  setComments(res.data.results);
+               } else {
+                  setComments((prevComments) => [...prevComments, ...res.data.results]);
+               }
+            }
+            if (res.data.next === null) {
+               setPage(0);
+            }
+         } catch (error) {
+            console.error('Comments of activity:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
+         } finally {
+            setLoading(false);
+            setRefreshing(false);
+            setIsRendered(true);
+         }
+      };
+
       loadComments();
    }, [page]);
-
-   const loadComments = async () => {
-      if (!activityID || page < 1) return;
-
-      setLoading(true);
-      try {
-         let res = await APIs.get(endPoints['activity-comments'](activityID), { params: { page } });
-
-         if (res.status === statusCode.HTTP_200_OK) {
-            if (page === 1) {
-               setComments(res.data.results);
-            } else {
-               setComments((prevComments) => [...prevComments, ...res.data.results]);
-            }
-         }
-         if (res.data.next === null) {
-            setPage(0);
-         }
-      } catch (error) {
-         console.error('Comments of activity', error);
-      } finally {
-         setLoading(false);
-         setRefreshing(false);
-         setIsRendered(true);
-      }
-   };
 
    const handleOnPressSettings = (comment) => {
       setSelectedComment(comment);
       setModalSettingsVisible(true);
    };
 
-   const toggleExpandComment = (commentId) => {
+   const onTextLayout = (nativeEvent, commentID) => {
+      setExpandedComments((prevState) => {
+         if (prevState[commentID] !== undefined) {
+            return prevState;
+         }
+         return {
+            ...prevState,
+            [commentID]: nativeEvent.lines.length <= 2,
+         };
+      });
+      setShouldShowMoreButtons((prevState) => ({
+         ...prevState,
+         [commentID]: nativeEvent.lines.length > 2,
+      }));
+   };
+
+   const toggleExpandComment = (commentID) => {
       setExpandedComments((prevState) => ({
          ...prevState,
-         [commentId]: !prevState[commentId],
+         [commentID]: !prevState[commentID],
       }));
    };
 
@@ -89,54 +107,51 @@ const CommentsListView = ({ activityID, ...props }) => {
       >
          <View style={{ ...props?.style }}>
             <View style={{ marginBottom: 8 }}>
-               {comments.map((item, index) => {
-                  const isExpanded = expandedComments[item.id];
-                  const contentLength = item?.content?.length || 0;
-                  const shouldShowMoreButton = contentLength > 71;
-
-                  return (
-                     <View
-                        key={item.id}
-                        style={{
-                           ...CommentListViewStyle.Card,
-                           borderBottomWidth: index !== comments.length - 1 ? 0.5 : 0,
-                        }}
-                     >
-                        <View style={{ flexDirection: 'row' }}>
-                           <View style={{ overflow: 'hidden' }}>
-                              <Image source={{ uri: item?.account.avatar }} style={CommentListViewStyle.Avatar} />
-                           </View>
-                           <View style={CommentListViewStyle.CardContent}>
-                              {item?.account.id === currentAccount.data.id && (
-                                 <TouchableOpacity
-                                    style={CommentListViewStyle.OptionsButton}
-                                    onPress={() => handleOnPressSettings(item)}
-                                 >
-                                    <Icon source="dots-vertical" size={28} />
-                                 </TouchableOpacity>
-                              )}
-
-                              <Text style={CommentListViewStyle.Username}>{item?.account.full_name}</Text>
-                              <RenderHTML
-                                 contentWidth={screenWidth}
-                                 source={{ html: item?.content }}
-                                 baseStyle={HomeStyle.DetailsDescription}
-                                 defaultTextProps={{
-                                    numberOfLines: isExpanded ? 0 : 2,
-                                    ellipsizeMode: 'tail',
-                                 }}
-                              />
-                              {shouldShowMoreButton && (
-                                 <TouchableOpacity onPress={() => toggleExpandComment(item.id)}>
-                                    <Text style={HomeStyle.MoreButton}>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</Text>
-                                 </TouchableOpacity>
-                              )}
-                           </View>
+               {comments.map((item, index) => (
+                  <View
+                     key={item.id}
+                     style={{
+                        ...CommentListViewStyle.Card,
+                        borderBottomWidth: index !== comments.length - 1 ? 0.5 : 0,
+                     }}
+                  >
+                     <View style={{ flexDirection: 'row' }}>
+                        <View style={{ overflow: 'hidden' }}>
+                           <Image source={{ uri: item?.account.avatar }} style={CommentListViewStyle.Avatar} />
                         </View>
-                        <Text style={CommentListViewStyle.CreatedDate}>{moment(item?.created_date).fromNow()}</Text>
+                        <View style={CommentListViewStyle.CardContent}>
+                           {item?.account.id === currentAccount.data.id && (
+                              <TouchableOpacity
+                                 style={CommentListViewStyle.OptionsButton}
+                                 onPress={() => handleOnPressSettings(item)}
+                              >
+                                 <Icon source="dots-vertical" size={28} />
+                              </TouchableOpacity>
+                           )}
+
+                           <Text style={CommentListViewStyle.Username}>{item?.account.full_name}</Text>
+                           <RenderHTML
+                              contentWidth={screenWidth}
+                              source={{ html: item?.content }}
+                              baseStyle={HomeStyle.DetailsDescription}
+                              defaultTextProps={{
+                                 numberOfLines: expandedComments[item.id] ? undefined : 2,
+                                 ellipsizeMode: 'tail',
+                                 onTextLayout: ({ nativeEvent }) => onTextLayout(nativeEvent, item.id),
+                              }}
+                           />
+                           {shouldShowMoreButtons[item.id] && (
+                              <TouchableOpacity onPress={() => toggleExpandComment(item.id)}>
+                                 <Text style={HomeStyle.MoreButton}>
+                                    {expandedComments[item.id] ? 'Thu gọn' : 'Xem thêm'}
+                                 </Text>
+                              </TouchableOpacity>
+                           )}
+                        </View>
                      </View>
-                  );
-               })}
+                     <Text style={CommentListViewStyle.CreatedDate}>{moment(item?.created_date).fromNow()}</Text>
+                  </View>
+               ))}
                {loading && page > 1 && <Loading style={{ marginBottom: 32 }} />}
             </View>
          </View>

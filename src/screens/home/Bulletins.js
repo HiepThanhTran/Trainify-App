@@ -1,51 +1,51 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import BulletinCard from '../../components/common/BulletinCard';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import CommonCardList from '../../components/common/CommonCardList';
 import DismissKeyboard from '../../components/common/DismissKeyboard';
-import Loading from '../../components/common/Loading';
 import Searchbar from '../../components/common/Searchbar';
 import APIs, { endPoints } from '../../configs/APIs';
 import { statusCode } from '../../configs/Constants';
 import GlobalStyle from '../../styles/Style';
 import Theme from '../../styles/Theme';
-import { loadMore, onRefresh, search } from '../../utils/Utilities';
+import { search } from '../../utils/Utilities';
 import HomeStyle from './Style';
 
 const Bulletin = ({ navigation }) => {
    const [bulletins, setBulletins] = useState([]);
    const [page, setPage] = useState(1);
-   const [bulletinName, setBulletinName] = useState('');
+   const [name, setName] = useState('');
    const [loading, setLoading] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
 
    useEffect(() => {
-      loadBulletins();
-   }, [page, bulletinName, refreshing]);
+      const loadBulletins = async () => {
+         if (page <= 0) return;
 
-   const loadBulletins = async () => {
-      if (page <= 0) return;
-
-      setLoading(true);
-      try {
-         const response = await APIs.get(endPoints['bulletins'], { params: { page, name: bulletinName } });
-         if (response.status === statusCode.HTTP_200_OK) {
-            if (page === 1) {
-               setBulletins(response.data.results);
-            } else {
-               setBulletins((prevBulletins) => [...prevBulletins, ...response.data.results]);
+         setLoading(true);
+         try {
+            const response = await APIs.get(endPoints['bulletins'], { params: { page, name: name } });
+            if (response.status === statusCode.HTTP_200_OK) {
+               if (page === 1) {
+                  setBulletins(response.data.results);
+               } else {
+                  setBulletins((prevBulletins) => [...prevBulletins, ...response.data.results]);
+               }
             }
+            if (response.data.next === null) {
+               setPage(0);
+            }
+         } catch (error) {
+            console.error('Bulletins list:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
+         } finally {
+            setLoading(false);
+            setRefreshing(false);
          }
-         if (response.data.next === null) {
-            setPage(0);
-         }
-      } catch (error) {
-         console.error('Bulletin API', error);
-      } finally {
-         setLoading(false);
-         setRefreshing(false);
-      }
-   };
+      };
+
+      loadBulletins();
+   }, [page, name, refreshing]);
 
    const goToBulletinDetails = (bulletinID) => {
       navigation.navigate('HomeStack', {
@@ -60,34 +60,29 @@ const Bulletin = ({ navigation }) => {
             <View style={{ marginHorizontal: 12, marginTop: 32 }}>
                <View style={HomeStyle.Header}>
                   <Text style={HomeStyle.HeaderTitle}>Bản tin</Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => {}}>
                      <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
                   </TouchableOpacity>
                </View>
+
                <Searchbar
-                  value={bulletinName}
+                  value={name}
                   placeholder="Tìm kiếm bản tin"
-                  onChangeText={(value) => search(value, setPage, setBulletinName)}
+                  onChangeText={(value) => search(value, setPage, setName)}
                />
-               <ScrollView
-                  style={{ marginBottom: 135 }}
-                  showsVerticalScrollIndicator={false}
-                  showsHorizontalScrollIndicator={false}
-                  onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
-                  refreshControl={
-                     <RefreshControl
-                        colors={[Theme.PrimaryColor]}
-                        refreshing={refreshing}
-                        onRefresh={() => onRefresh({ setPage, setRefreshing, setFilter: setBulletinName })}
-                     />
-                  }
-               >
-                  {!refreshing && loading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
-                  {bulletins.map((item) => (
-                     <BulletinCard key={item.id} instance={item} onPress={() => goToBulletinDetails(item.id)} />
-                  ))}
-                  {loading && page > 1 && <Loading style={{ marginBottom: 16 }} />}
-               </ScrollView>
+
+               <CommonCardList
+                  refreshing={refreshing}
+                  loading={loading}
+                  data={bulletins}
+                  page={page}
+                  loadMore={true}
+                  onRefresh={true}
+                  setPage={setPage}
+                  setFilter={setName}
+                  setRefreshing={setRefreshing}
+                  onPress={(bulletin) => goToBulletinDetails(bulletin.id)}
+               />
             </View>
          </DismissKeyboard>
       </View>

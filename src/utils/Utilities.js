@@ -53,7 +53,7 @@ export const loadMore = (nativeEvent, loading, page, setPage) => {
 };
 
 export const onRefresh = ({ setPage, setRefreshing, setFilter = null, setData = null }) => {
-   setPage((prevPage) => 1);
+   setPage(1);
    setRefreshing(true);
    if (setData) setData([]);
    if (setFilter) setFilter('');
@@ -62,11 +62,6 @@ export const onRefresh = ({ setPage, setRefreshing, setFilter = null, setData = 
 export const search = (value, setPage, callback) => {
    setPage((prevPage) => 1);
    callback(value);
-};
-
-export const formatDate = (dateString) => {
-   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-   return new Date(dateString).toLocaleDateString('vi-VN', options);
 };
 
 export const getFirstDayOfYear = (date) => {

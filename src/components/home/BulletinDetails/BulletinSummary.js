@@ -1,11 +1,11 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 import { ScrollView, Text, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { rolesName } from '../../../configs/Constants';
 import HomeStyle from '../../../screens/home/Style';
 import GlobalStyle, { screenWidth } from '../../../styles/Style';
 import Theme from '../../../styles/Theme';
-import { formatDate } from '../../../utils/Utilities';
 import Loading from '../../common/Loading';
 
 const BulletinSummary = ({ bulletin, ...props }) => {
@@ -46,7 +46,7 @@ const BulletinSummary = ({ bulletin, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Ngày tạo</Text>
-                     <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.created_date)}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{moment(bulletin.created_date).format('DD/MM/YYYY')}</Text>
                   </View>
                </View>
                <View style={HomeStyle.DetailsItem}>
@@ -55,7 +55,7 @@ const BulletinSummary = ({ bulletin, ...props }) => {
                   </View>
                   <View style={HomeStyle.Details}>
                      <Text style={HomeStyle.DetailsText}>Cập nhật</Text>
-                     <Text style={HomeStyle.DetailsValue}>{formatDate(bulletin.updated_date)}</Text>
+                     <Text style={HomeStyle.DetailsValue}>{moment(bulletin.updated_date).format('DD/MM/YYYY')}</Text>
                   </View>
                </View>
             </View>

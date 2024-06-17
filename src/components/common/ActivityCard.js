@@ -1,10 +1,10 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { defaultImage } from '../../configs/Constants';
 import Theme from '../../styles/Theme';
-import { formatDate } from '../../utils/Utilities';
 
-const ActivityCard = ({ instance, index, reportButton, ...props }) => {
+const ActivityCard = ({ instance, index, ...props }) => {
    return (
       <View style={{ ...props?.style }}>
          <ImageBackground
@@ -14,18 +14,9 @@ const ActivityCard = ({ instance, index, reportButton, ...props }) => {
             <View style={CarddActivityStyle.CardContainer}>
                <View style={{ ...CarddActivityStyle.CardRow, marginTop: 0 }}>
                   <Text style={CarddActivityStyle.CardTitle}>{instance.name}</Text>
-                  {reportButton && (
+                  {props?.onReport && (
                      <TouchableOpacity activeOpacity={0.8} onPress={props?.onReport}>
-                        <View
-                           style={{
-                              borderRadius: 8,
-                              paddingVertical: 8,
-                              paddingHorizontal: 16,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              backgroundColor: '#6ac239',
-                           }}
-                        >
+                        <View style={CarddActivityStyle.ReportButton}>
                            <Text style={{ ...CarddActivityStyle.CardText, marginLeft: 0 }}>Báo thiếu</Text>
                         </View>
                      </TouchableOpacity>
@@ -36,7 +27,7 @@ const ActivityCard = ({ instance, index, reportButton, ...props }) => {
                   <View style={CarddActivityStyle.CardWrap}>
                      <AntDesign name="star" size={24} color="lightgrey" />
                      <Text style={CarddActivityStyle.CardText}>
-                        {instance.point} điểm - {instance.criterion}
+                        {instance.point} điểm - {instance.criterion.name}
                      </Text>
                   </View>
                </View>
@@ -45,10 +36,10 @@ const ActivityCard = ({ instance, index, reportButton, ...props }) => {
                   <View style={CarddActivityStyle.CardWrap}>
                      <Ionicons name="time" size={24} color="lightgrey" />
                      <Text style={{ ...CarddActivityStyle.CardText, color: 'lightgrey' }}>
-                        {formatDate(instance.created_date)}
+                        {moment(instance.created_date).format('DD/MM/YYYY')}
                      </Text>
                   </View>
-                  <Text style={CarddActivityStyle.CardText}>{instance.semester}</Text>
+                  <Text style={CarddActivityStyle.CardText}>{instance.semester.name}</Text>
                </View>
 
                <View style={CarddActivityStyle.CardRow}>
@@ -74,6 +65,14 @@ const CarddActivityStyle = StyleSheet.create({
    Background: {
       borderRadius: 8,
       overflow: 'hidden',
+   },
+   ReportButton: {
+      borderRadius: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#6ac239',
    },
    CardContainer: {
       padding: 16,

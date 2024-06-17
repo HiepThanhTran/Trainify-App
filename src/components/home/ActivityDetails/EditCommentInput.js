@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import {
+   Alert,
    Image,
    Modal,
    ScrollView,
@@ -57,7 +58,8 @@ const EditCommentInput = (props) => {
                handleEditComment();
             }
          } else {
-            console.error('Edit comment', error);
+            console.error('Edit comment:', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
          }
       } finally {
          props?.setModalVisible(false);

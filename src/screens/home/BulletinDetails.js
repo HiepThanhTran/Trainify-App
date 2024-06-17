@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { Animated, ImageBackground, Keyboard, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, ImageBackground, Keyboard, Text, TouchableOpacity, View } from 'react-native';
 import Loading from '../../components/common/Loading';
 import ActivitiesListView from '../../components/home/BulletinDetails/ActivitiesListView';
 import BulletinSummary from '../../components/home/BulletinDetails/BulletinSummary';
@@ -22,25 +22,26 @@ const BulletinDetails = ({ navigation, route }) => {
    const animatedHeight = useState(new Animated.Value(screenHeight / 3))[0];
 
    useEffect(() => {
+      const loadBulletin = async () => {
+         if (!bulletinID) return;
+
+         setBulletinLoading(true);
+         try {
+            let response = await APIs.get(endPoints['bulletin-detail'](bulletinID));
+            if (response.status === statusCode.HTTP_200_OK) {
+               setBulletin(response.data);
+            }
+         } catch (error) {
+            console.error('Bulletin details', error);
+            Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
+         } finally {
+            setBulletinLoading(false);
+            setIsRendered(true);
+         }
+      };
+
       loadBulletin();
    }, []);
-
-   const loadBulletin = async () => {
-      if (!bulletinID) return;
-
-      setBulletinLoading(true);
-      try {
-         let response = await APIs.get(endPoints['bulletin-detail'](bulletinID));
-         if (response.status === statusCode.HTTP_200_OK) {
-            setBulletin(response.data);
-         }
-      } catch (error) {
-         console.error('Bulletin details', error);
-      } finally {
-         setBulletinLoading(false);
-         setIsRendered(true);
-      }
-   };
 
    const handleChangeTab = (name) => {
       setTab(name);
@@ -53,13 +54,15 @@ const BulletinDetails = ({ navigation, route }) => {
    };
 
    const tabContent = () => {
-      switch (tab) {
-         case 'overview':
-            return <BulletinSummary bulletin={bulletin} loading={bulletinLoading} />;
-         case 'activities':
-            return <ActivitiesListView navigation={navigation} bulletinID={bulletinID} />;
-         default:
-            return null;
+      if (isRendered) {
+         switch (tab) {
+            case 'overview':
+               return <BulletinSummary bulletin={bulletin} loading={bulletinLoading} />;
+            case 'activities':
+               return <ActivitiesListView navigation={navigation} bulletinID={bulletinID} />;
+            default:
+               return null;
+         }
       }
    };
 

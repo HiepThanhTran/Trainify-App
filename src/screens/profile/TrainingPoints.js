@@ -32,69 +32,69 @@ const TrainingPoints = ({ navigation }) => {
    const [activitiesLoading, setActivitiesLoading] = useState(false);
 
    useEffect(() => {
-      const allSemesters = loadSemestersOfStudent();
-      const allCriterions = loadCriterions();
+      const loadCriterions = async () => {
+         try {
+            let response = await APIs.get(endPoints['criterions']);
 
-      const allPromises = Promise.allSettled([allSemesters, allCriterions]);
+            if (response.status === statusCode.HTTP_200_OK) {
+               setCriterions(response.data);
+               setSelectedCriterion(response.data[0]);
+            }
+         } catch (error) {
+            console.log('Criterions:', error);
+         }
+      };
+
+      const loadSemestersOfStudent = async () => {
+         try {
+            let response = await APIs.get(endPoints['student-semesters'](currentAccount.data.user.id));
+
+            if (response.status === statusCode.HTTP_200_OK) {
+               setSemesters(response.data);
+            }
+         } catch (error) {
+            console.log('Semesters:', error);
+         }
+      };
+
+      const allCriterions = loadCriterions();
+      const allSemesters = loadSemestersOfStudent();
+
+      const allPromises = Promise.allSettled([allCriterions, allSemesters]);
 
       allPromises.finally(() => setIsRedered(true));
    }, []);
 
    useEffect(() => {
+      const loadActivityOfCriterion = async () => {
+         if (!currentSemester || page <= 0) return;
+
+         setActivitiesLoading(true);
+         try {
+            let response = await APIs.get(endPoints['activities'], {
+               params: { semester_id: currentSemester.id, criterion_id: selectedCriterion.id, page },
+            });
+
+            if (response.status === statusCode.HTTP_200_OK) {
+               if (page === 1) {
+                  setActivities(response.data.results);
+               } else {
+                  setActivities((prevActivities) => [...prevActivities, ...response.data.results]);
+               }
+            }
+            if (response.data.next === null) {
+               setPage(0);
+            }
+         } catch (error) {
+            console.log('Criterion activities', error);
+         } finally {
+            setActivitiesLoading(false);
+            setRefreshing(false);
+         }
+      };
+
       loadActivityOfCriterion();
    }, [currentSemester, selectedCriterion, page, refreshing]);
-
-   const loadSemestersOfStudent = async () => {
-      try {
-         let response = await APIs.get(endPoints['student-semesters'](currentAccount.data.user.id));
-
-         if (response.status === statusCode.HTTP_200_OK) {
-            setSemesters(response.data);
-         }
-      } catch (error) {
-         console.log('Semesters', error);
-      }
-   };
-
-   const loadCriterions = async () => {
-      try {
-         let response = await APIs.get(endPoints['criterions']);
-
-         if (response.status === statusCode.HTTP_200_OK) {
-            setCriterions(response.data);
-            setSelectedCriterion(response.data[0]);
-         }
-      } catch (error) {
-         console.log('Criterions', error);
-      }
-   };
-
-   const loadActivityOfCriterion = async () => {
-      if (!currentSemester || page <= 0) return;
-
-      setActivitiesLoading(true);
-      try {
-         let response = await APIs.get(endPoints['activities'], {
-            params: { semester_id: currentSemester.id, criterion_id: selectedCriterion.id, page },
-         });
-
-         if (response.status === statusCode.HTTP_200_OK) {
-            if (page === 1) {
-               setActivities(response.data.results);
-            } else {
-               setActivities((prevActivities) => [...prevActivities, ...response.data.results]);
-            }
-         }
-         if (response.data.next === null) {
-            setPage(0);
-         }
-      } catch (error) {
-         console.log('Criterion activities', error);
-      } finally {
-         setActivitiesLoading(false);
-         setRefreshing(false);
-      }
-   };
 
    const handleChangeSemester = (semester) => {
       if (semester.id !== currentSemester?.id) {
@@ -132,6 +132,8 @@ const TrainingPoints = ({ navigation }) => {
          params: { activityID },
       });
    };
+
+   const goToReport = () => navigation.navigate('ReportForm');
 
    if (!isRendered) return <Loading />;
 
@@ -194,9 +196,8 @@ const TrainingPoints = ({ navigation }) => {
                      refreshing={refreshing}
                      data={activities}
                      page={page}
-                     reportButton={true}
-                     onDetails={goActivityDetails}
-                     onReport={() => navigation.navigate('ReportForm')}
+                     onReport={goToReport}
+                     onPress={(activity) => goActivityDetails(activity.id)}
                   />
                </View>
             </TouchableOpacity>

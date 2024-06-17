@@ -51,7 +51,11 @@ const EditProfile = ({ navigation }) => {
                ...prevTempAccount,
                data: {
                   ...prevTempAccount.data,
-                  avatar: response.assets[0],
+                  avatar: {
+                     uri: response.assets[0].uri,
+                     type: response.assets[0].mimeType,
+                     name: response.assets[0].fileName,
+                  },
                },
             }));
          }

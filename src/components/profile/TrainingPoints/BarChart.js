@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { authAPI, endPoints } from '../../../configs/APIs';
 import { statusCode } from '../../../configs/Constants';
@@ -16,42 +16,6 @@ const BarChartOfPoints = ({ navigation, currentSemester, criterions, ...props })
 
    const [trainingPoints, setTrainingPoints] = useState({});
    const [loading, setLoading] = useState(false);
-
-   useEffect(() => {
-      loadTrainingPoints();
-   }, [navigation, currentSemester, props?.refreshing]);
-
-   const loadTrainingPoints = async () => {
-      if (!currentSemester) return;
-
-      setLoading(true);
-      const { accessToken, refreshToken } = await getTokens();
-      try {
-         let response = await authAPI(accessToken).get(
-            endPoints['student-points'](currentAccount.data.user.id, currentSemester.code),
-         );
-
-         if (response.status === statusCode.HTTP_200_OK) {
-            setTrainingPoints(response.data);
-         }
-      } catch (error) {
-         if (
-            error.response &&
-            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
-               error.response.status === statusCode.HTTP_403_FORBIDDEN)
-         ) {
-            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) {
-               loadTrainingPoints();
-            }
-         } else {
-            console.error('Points', error);
-         }
-      } finally {
-         setLoading(false);
-         props?.setRefreshing(false);
-      }
-   };
 
    const pointsDataChart = useMemo(() => {
       let data = [];
@@ -101,6 +65,43 @@ const BarChartOfPoints = ({ navigation, currentSemester, criterions, ...props })
 
       return sourceData.flatMap((val, i) => [val, criterionDataChart[i]]);
    }, [pointsDataChart, criterionDataChart]);
+
+   useEffect(() => {
+      const loadTrainingPoints = async () => {
+         if (!currentSemester) return;
+
+         setLoading(true);
+         const { accessToken, refreshToken } = await getTokens();
+         try {
+            let response = await authAPI(accessToken).get(
+               endPoints['student-points'](currentAccount.data.user.id, currentSemester.code),
+            );
+
+            if (response.status === statusCode.HTTP_200_OK) {
+               setTrainingPoints(response.data);
+            }
+         } catch (error) {
+            if (
+               error.response &&
+               (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+                  error.response.status === statusCode.HTTP_403_FORBIDDEN)
+            ) {
+               const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+               if (newAccessToken) {
+                  loadTrainingPoints();
+               }
+            } else {
+               console.error('Training points of student:', error);
+               Alert.alert('Thông báo', 'Hệ thống đang bận, vui lòng thử lại sau!');
+            }
+         } finally {
+            setLoading(false);
+            props?.setRefreshing(false);
+         }
+      };
+
+      loadTrainingPoints();
+   }, [navigation, currentSemester, props?.refreshing]);
 
    return (
       <View style={BarChartStyle.ChartContainer}>

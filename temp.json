@@ -1,0 +1,19 @@
+{
+   "bulletin": { "label": "Bản tin", "required": false, "value": { "id": 5, "name": "Bản tin tháng 5" } },
+   "criterion": { "label": "Điều", "required": false, "value": { "id": 3, "name": "Điều 3" } },
+   "description": { "label": "Mô tả hoạt động", "required": true, "value": "<div>abcasdasd</div>" },
+   "end_date": { "label": "Ngày kết thúc", "required": true, "value": "2024-06-16" },
+   "faculty": { "label": "Khoa", "required": true, "value": 3 },
+   "image": {
+      "label": "Hình ảnh",
+      "required": false,
+      "value": "http://res.cloudinary.com/dtthwldgs/image/upload/v1718526879/activity-913.jpg"
+   },
+   "location": { "label": "Địa điểm", "required": true, "value": "abc" },
+   "name": { "label": "Tên hoạt động", "required": true, "value": "Update 4" },
+   "organizational_form": { "label": "Hình thức", "required": false, "value": "Onl" },
+   "participant": { "label": "Đối tượng", "required": true, "value": "sv" },
+   "point": { "label": "Điểm", "required": true, "value": 9 },
+   "semester": { "label": "Học kỳ", "required": true, "value": { "id": 7, "name": "Học kỳ 1 - 2023-2027" } },
+   "start_date": { "label": "Ngày bắt đầu", "required": true, "value": "2024-06-16" }
+}
