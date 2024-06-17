@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Modal, Image, ScrollView, TouchableOpacity, RefreshControl} from "react-native";
+import { View, Text, StyleSheet, TextInput, Modal, Image, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
 import { useEffect, useState } from "react";
 import Theme from "../../styles/Theme";
 import GlobalStyle from "../../styles/Style";
@@ -11,28 +11,49 @@ import { statusCode } from "../../configs/Constants";
 import APIs, { endPoints } from "../../configs/APIs";
 import Loading from '../../components/common/Loading';
 import moment from "moment";
-import {onRefresh} from '../../utils/Utilities';
+import { LinearGradient } from "expo-linear-gradient";
+import Searchbar from '../../components/common/Searchbar';
+import { loadMore, onRefresh, search} from '../../utils/Utilities';
 
 const RegisterAssistants = () => {
     const [openModal, setOpenModal] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [assistants, setAssistants] = useState([]);
+    const [hasAccount, setHasAccount] = useState(false);
+    const [code, setCode] = useState("");
+    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [selectedCode, setSelectedCode] = useState("");
+
     const loadAssistants = async () => {
+        if(page<=0) return;
+        setLoading(true);
         try {
-            let res = await APIs.get(endPoints['assistants']);
+            let res = await APIs.get(endPoints['assistants'], {
+                params: { page, has_account: hasAccount, code}
+            });
             if (res.status === statusCode.HTTP_200_OK) {
-                setAssistants(res.data);
+                if(page === 1){
+                    setAssistants(res.data.results);
+                }else{
+                    setAssistants((prevAssistants) => [...prevAssistants, ...res.data.results]);
+                }
+            }
+            if(res.data.next === null){
+                setPage(0);
             }
         } catch (error) {
             console.error(error);
+        }finally{
+            setLoading(false);
+            setRefreshing(false);
         }
-    }
+    };
 
     useEffect(() => {
         loadAssistants();
-    }, [refreshing]);
+    }, [refreshing, page, hasAccount, code]);
 
     return (
         <View style={GlobalStyle.BackGround}>
@@ -47,7 +68,9 @@ const RegisterAssistants = () => {
                     </View>
                     <View style={RegisterAssistantStyles.Field}>
                         <TouchableOpacity style={RegisterAssistantStyles.InputContainer} onPress={() => setOpenModal(true)}>
-                            <Text style={RegisterAssistantStyles.Text}>Mã số trợ lý sinh viên</Text>
+                            <Text style={[RegisterAssistantStyles.Text, selectedCode ? RegisterAssistantStyles.SelectedText : null]}>
+                                {selectedCode ? selectedCode : "Mã số trợ lý sinh viên"}
+                            </Text>
                             <Entypo name="newsletter" size={24} color="black" style={RegisterAssistantStyles.Icon} />
                         </TouchableOpacity>
                     </View>
@@ -92,6 +115,7 @@ const RegisterAssistants = () => {
                     onRequestClose={() => setOpenModal(false)}
                     animationType="slide"
                 >
+
                     <View>
                         <TouchableOpacity onPress={() => setOpenModal(false)} style={RegisterAssistantStyles.CloseButton}>
                             <Text style={RegisterAssistantStyles.CloseButtonText}>Đóng</Text>
@@ -100,46 +124,69 @@ const RegisterAssistants = () => {
                             style={RegisterAssistantStyles.CardsContainer}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
+                            onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
                             refreshControl={
                                 <RefreshControl
-                                    refreshing={refreshing}
-                                    onRefresh={() => onRefresh({ setRefreshing})}
+                                   colors={[Theme.PrimaryColor]}
+                                   refreshing={refreshing}
+                                   onRefresh={() => onRefresh({ setPage, setRefreshing, setFilter: setCode })}
                                 />
-                            }
+                             }
                         >
+                            <Searchbar
+                                placeholder="Nhập code"
+                                value={code}
+                                onChangeText={(value) => search(value, setPage, setCode)}
+                            />
+                            {!refreshing && loading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
                             {assistants && assistants.map((assistant) => (
-                                <TouchableOpacity key={assistant.id} style={RegisterAssistantStyles.Card}>
-                                    <View style={RegisterAssistantStyles.CardItem}>
-                                        <View style={RegisterAssistantStyles.CardDes}>
-                                            <AntDesign name="idcard" size={24} color="black" />
-                                            <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.full_name}</Text>
+                                <TouchableOpacity
+                                    key={assistant.id}
+                                    style={RegisterAssistantStyles.Card}
+                                    onPress={() => {
+                                        setSelectedCode(assistant.code);
+                                        setOpenModal(false);
+                                    }}
+                                >
+                                    <LinearGradient
+                                        colors={Theme.LinearColors4}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 1 }}
+                                        style={{ padding: 16, borderRadius: 8 }}
+                                    >
+                                        <View style={RegisterAssistantStyles.CardItem}>
+                                            <View style={RegisterAssistantStyles.CardDes}>
+                                                <AntDesign name="idcard" size={24} color="black" />
+                                                <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.full_name}</Text>
+                                            </View>
+                                            <View style={RegisterAssistantStyles.CardDes}>
+                                                <FontAwesome name="birthday-cake" size={24} color="black" />
+                                                <Text style={RegisterAssistantStyles.CardDesTitle}>{moment(assistant.date_of_birth).format('DD/MM/YYYY')}</Text>
+                                            </View>
                                         </View>
-                                        <View style={RegisterAssistantStyles.CardDes}>
-                                            <FontAwesome name="birthday-cake" size={24} color="black" />
-                                            <Text style={RegisterAssistantStyles.CardDesTitle}>{moment(assistant.date_of_birth).format('DD/MM/YYYY')}</Text>
-                                        </View>
-                                    </View>
 
-                                    <View style={[RegisterAssistantStyles.CardItem, { marginTop: 20 }]}>
-                                        <View style={RegisterAssistantStyles.CardDes}>
-                                            <FontAwesome name="transgender" size={24} color="black" />
-                                            <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.gender}</Text>
+                                        <View style={[RegisterAssistantStyles.CardItem, { marginTop: 20 }]}>
+                                            <View style={RegisterAssistantStyles.CardDes}>
+                                                <FontAwesome name="transgender" size={24} color="black" />
+                                                <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.gender}</Text>
+                                            </View>
+                                            <View style={RegisterAssistantStyles.CardDes}>
+                                                <AntDesign name="phone" size={24} color="black" />
+                                                <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.phone_number}</Text>
+                                            </View>
                                         </View>
-                                        <View style={RegisterAssistantStyles.CardDes}>
-                                            <AntDesign name="phone" size={24} color="black" />
-                                            <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.phone_number}</Text>
-                                        </View>
-                                    </View>
-                                    
-                                    <View style={RegisterAssistantStyles.Address}>
-                                        <Text style={RegisterAssistantStyles.AddressTitle}>Address: {assistant.address}</Text>
-                                    </View>
 
-                                    <View style={RegisterAssistantStyles.Code}>
-                                        <Text style={RegisterAssistantStyles.CodeTitle}>Code: {assistant.code}</Text>
-                                    </View>
+                                        <View style={RegisterAssistantStyles.Address}>
+                                            <Text style={RegisterAssistantStyles.AddressTitle}>Address: {assistant.address}</Text>
+                                        </View>
+
+                                        <View style={RegisterAssistantStyles.Code}>
+                                            <Text style={RegisterAssistantStyles.CodeTitle}>Code: {assistant.code}</Text>
+                                        </View>
+                                    </LinearGradient>
                                 </TouchableOpacity>
                             ))}
+                            {loading && page > 1 && <Loading style={{ marginBottom: 16 }} />}
                         </ScrollView>
                     </View>
                 </Modal>
@@ -214,14 +261,13 @@ const RegisterAssistantStyles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 16,
         marginRight: 16,
-        marginBottom: 50
+        marginBottom: 50,
     },
     Card: {
-        borderWidth: 1,
-        borderColor: Theme.PrimaryColor,
         borderRadius: 8,
         padding: 12,
-        marginBottom: 20,
+        marginBottom: 10,
+        padding: 8,
     },
     CardItem: {
         flexDirection: 'row',
@@ -236,21 +282,21 @@ const RegisterAssistantStyles = StyleSheet.create({
         fontSize: 16,
         marginLeft: 10
     },
-    Address:{
+    Address: {
         marginTop: 20
     },
-    AddressTitle:{
+    AddressTitle: {
         fontFamily: Theme.Italic,
         fontSize: 16
     },
-    Code:{
+    Code: {
         marginTop: 20
     },
-    CodeTitle:{
+    CodeTitle: {
         fontFamily: Theme.Bold,
         fontSize: 16,
     },
-    CloseButton:{
+    CloseButton: {
         marginTop: 20,
         marginLeft: 16,
         paddingVertical: 8,
@@ -259,11 +305,19 @@ const RegisterAssistantStyles = StyleSheet.create({
         borderRadius: 8,
         alignSelf: 'flex-start'
     },
-    CloseButtonText:{
+    CloseButtonText: {
         color: 'white',
         fontFamily: Theme.Bold,
         fontSize: 16,
-    }
+    },
+    SelectedText: {
+        flex: 1,
+        height: 40,
+        fontSize: 16,
+        paddingVertical: 8,
+        paddingHorizontal: 0,
+        color: 'black'
+    },
 });
 
 export default RegisterAssistants;
