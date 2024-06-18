@@ -1,19 +1,26 @@
 {
-   "bulletin": { "label": "Bản tin", "required": false, "value": { "id": 5, "name": "Bản tin tháng 5" } },
-   "criterion": { "label": "Điều", "required": false, "value": { "id": 3, "name": "Điều 3" } },
-   "description": { "label": "Mô tả hoạt động", "required": true, "value": "<div>abcasdasd</div>" },
+   "bulletin": { "label": "Bản tin", "required": false, "value": 12 },
+   "created_by": { "value": 1 },
+   "created_date": { "value": "2024-06-16T20:56:52.504494+07:00" },
+   "criterion": { "label": "Điều", "required": false, "value": 1 },
+   "description": { "label": "Mô tả hoạt động", "required": true, "value": "<div>Test create activity 2</div>" },
    "end_date": { "label": "Ngày kết thúc", "required": true, "value": "2024-06-16" },
-   "faculty": { "label": "Khoa", "required": true, "value": 3 },
+   "faculty": { "label": "Khoa", "required": true, "value": 1 },
+   "id": { "value": 914 },
    "image": {
       "label": "Hình ảnh",
       "required": false,
-      "value": "http://res.cloudinary.com/dtthwldgs/image/upload/v1718526879/activity-913.jpg"
+      "value": "http://res.cloudinary.com/dtthwldgs/image/upload/v1718546212/activity-914.jpg"
    },
-   "location": { "label": "Địa điểm", "required": true, "value": "abc" },
-   "name": { "label": "Tên hoạt động", "required": true, "value": "Update 4" },
+   "liked": { "value": false },
+   "location": { "label": "Địa điểm", "required": true, "value": "Nha Be" },
+   "name": { "label": "Tên hoạt động", "required": true, "value": "Test create activity 2" },
    "organizational_form": { "label": "Hình thức", "required": false, "value": "Onl" },
-   "participant": { "label": "Đối tượng", "required": true, "value": "sv" },
-   "point": { "label": "Điểm", "required": true, "value": 9 },
-   "semester": { "label": "Học kỳ", "required": true, "value": { "id": 7, "name": "Học kỳ 1 - 2023-2027" } },
-   "start_date": { "label": "Ngày bắt đầu", "required": true, "value": "2024-06-16" }
+   "participant": { "label": "Đối tượng", "required": true, "value": "Sinh vien" },
+   "point": { "label": "Điểm", "required": true, "value": 10 },
+   "registered": { "value": false },
+   "semester": { "label": "Học kỳ", "required": true, "value": 15 },
+   "start_date": { "label": "Ngày bắt đầu", "required": true, "value": "2024-06-16" },
+   "total_likes": { "value": 0 },
+   "updated_date": { "value": "2024-06-16T20:56:52.958991+07:00" }
 }

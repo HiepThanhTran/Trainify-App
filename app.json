@@ -1,16 +1,12 @@
 {
-  "expo": {
-    "name": "tpm-mobileapp",
-    "slug": "tpm-mobileapp",
-    "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "plugins": [
-      "expo-font"
-    ],
-    "android": {
-      "package": "com.anonymous.tpmmobileapp"
-    }
-  } 
+   "expo": {
+      "name": "tpm-mobileapp",
+      "slug": "tpm-mobileapp",
+      "version": "1.0.0",
+      "assetBundlePatterns": ["**/*"],
+      "plugins": ["expo-font"],
+      "android": {
+         "package": "com.anonymous.tpmmobileapp"
+      }
+   }
 }
