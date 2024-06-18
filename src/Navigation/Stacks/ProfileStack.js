@@ -4,6 +4,7 @@ import EditActivityView from '../../Components/Profile/ActivitySettings/EditActi
 import ReportActivityForm from '../../Components/Profile/TrainingPoints/ReportActivityForm';
 import ActivitySettings from '../../Screens/Profile/ActivitySettings';
 import EditProfile from '../../Screens/Profile/EditProfile';
+import RegisterAssistants from '../../Screens/Profile/RegisterAssistants';
 import TrainingPoints from '../../Screens/Profile/TrainingPoints';
 import Theme from '../../Styles/Theme';
 

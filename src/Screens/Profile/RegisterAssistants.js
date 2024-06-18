@@ -13,13 +13,14 @@ import {
    TouchableOpacity,
    View,
 } from 'react-native';
-import Loading from '../../components/common/Loading';
-import Searchbar from '../../components/common/Searchbar';
-import APIs, { endPoints } from '../../configs/APIs';
-import { statusCode } from '../../configs/Constants';
-import GlobalStyle from '../../styles/Style';
-import Theme from '../../styles/Theme';
-import { loadMore, onRefresh, search } from '../../utils/Utilities';
+import DismissKeyboard from '../../Components/Common/DismissKeyboard';
+import Loading from '../../Components/Common/Loading';
+import Searchbar from '../../Components/Common/Searchbar';
+import APIs, { endPoints } from '../../Configs/APIs';
+import { statusCode } from '../../Configs/Constants';
+import GlobalStyle from '../../Styles/Style';
+import Theme from '../../Styles/Theme';
+import { loadMore, onRefresh, search } from '../../Utils/Utilities';
 
 const RegisterAssistants = () => {
    const [openModal, setOpenModal] = useState(false);
@@ -63,144 +64,153 @@ const RegisterAssistants = () => {
 
    return (
       <View style={GlobalStyle.BackGround}>
-         <View style={GlobalStyle.Container}>
-            <View style={RegisterAssistantStyles.FormRegister}>
-               <Text style={RegisterAssistantStyles.FormRegisterTitle}>Đăng ký tài khoản cho trợ lý sinh viên</Text>
-               <View style={RegisterAssistantStyles.RegisterAssistantImageContainer}>
-                  <Image
-                     style={RegisterAssistantStyles.RegisterAssistantImage}
-                     source={require('../../assets/images/RegisterAssistant.png')}
-                  />
-               </View>
-               <View style={RegisterAssistantStyles.Field}>
-                  <TouchableOpacity style={RegisterAssistantStyles.InputContainer} onPress={() => setOpenModal(true)}>
-                     <Text
-                        style={[
-                           RegisterAssistantStyles.Text,
-                           selectedCode ? RegisterAssistantStyles.SelectedText : null,
-                        ]}
-                     >
-                        {selectedCode ? selectedCode : 'Mã số trợ lý sinh viên'}
-                     </Text>
-                     <Entypo name="newsletter" size={24} color="black" style={RegisterAssistantStyles.Icon} />
-                  </TouchableOpacity>
-               </View>
-
-               <View style={RegisterAssistantStyles.Field}>
-                  <View style={RegisterAssistantStyles.InputContainer}>
-                     <TextInput style={RegisterAssistantStyles.TextInput} placeholder="Email trợ lý sinh viên" />
-                     <MaterialIcons name="email" size={24} color="black" style={RegisterAssistantStyles.Icon} />
-                  </View>
-               </View>
-
-               <View style={RegisterAssistantStyles.Field}>
-                  <View style={RegisterAssistantStyles.InputContainer}>
-                     <TextInput
-                        style={RegisterAssistantStyles.TextInput}
-                        placeholder="Mật khẩu"
-                        secureTextEntry={!showPassword}
+         <DismissKeyboard>
+            <View style={GlobalStyle.Container}>
+               <View style={RegisterAssistantStyles.FormRegister}>
+                  <Text style={RegisterAssistantStyles.FormRegisterTitle}>Đăng ký tài khoản cho trợ lý sinh viên</Text>
+                  <View style={RegisterAssistantStyles.RegisterAssistantImageContainer}>
+                     <Image
+                        style={RegisterAssistantStyles.RegisterAssistantImage}
+                        source={require('../../Assets/Images/RegisterAssistant.png')}
                      />
-                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                        <Ionicons
-                           name={showPassword ? 'eye-off' : 'eye'}
-                           size={24}
-                           color="black"
-                           style={RegisterAssistantStyles.Icon}
+                  </View>
+                  <View style={RegisterAssistantStyles.Field}>
+                     <TouchableOpacity
+                        style={RegisterAssistantStyles.InputContainer}
+                        onPress={() => setOpenModal(true)}
+                     >
+                        <Text
+                           style={[
+                              RegisterAssistantStyles.Text,
+                              selectedCode ? RegisterAssistantStyles.SelectedText : null,
+                           ]}
+                        >
+                           {selectedCode ? selectedCode : 'Mã số trợ lý sinh viên'}
+                        </Text>
+                        <Entypo name="newsletter" size={24} color="black" style={RegisterAssistantStyles.Icon} />
+                     </TouchableOpacity>
+                  </View>
+
+                  <View style={RegisterAssistantStyles.Field}>
+                     <View style={RegisterAssistantStyles.InputContainer}>
+                        <TextInput style={RegisterAssistantStyles.TextInput} placeholder="Email trợ lý sinh viên" />
+                        <MaterialIcons name="email" size={24} color="black" style={RegisterAssistantStyles.Icon} />
+                     </View>
+                  </View>
+
+                  <View style={RegisterAssistantStyles.Field}>
+                     <View style={RegisterAssistantStyles.InputContainer}>
+                        <TextInput
+                           style={RegisterAssistantStyles.TextInput}
+                           placeholder="Mật khẩu"
+                           secureTextEntry={!showPassword}
                         />
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                           <Ionicons
+                              name={showPassword ? 'eye-off' : 'eye'}
+                              size={24}
+                              color="black"
+                              style={RegisterAssistantStyles.Icon}
+                           />
+                        </TouchableOpacity>
+                     </View>
+                  </View>
+
+                  <View style={RegisterAssistantStyles.ButtonContainer}>
+                     <TouchableOpacity style={RegisterAssistantStyles.Button}>
+                        <Text style={RegisterAssistantStyles.ButtonText}>Đăng ký</Text>
                      </TouchableOpacity>
                   </View>
                </View>
 
-               <View style={RegisterAssistantStyles.ButtonContainer}>
-                  <TouchableOpacity style={RegisterAssistantStyles.Button}>
-                     <Text style={RegisterAssistantStyles.ButtonText}>Đăng ký</Text>
-                  </TouchableOpacity>
-               </View>
-            </View>
-
-            <Modal visible={openModal} onRequestClose={() => setOpenModal(false)} animationType="slide">
-               <View>
-                  <TouchableOpacity onPress={() => setOpenModal(false)} style={RegisterAssistantStyles.CloseButton}>
-                     <Text style={RegisterAssistantStyles.CloseButtonText}>Đóng</Text>
-                  </TouchableOpacity>
-                  <ScrollView
-                     style={RegisterAssistantStyles.CardsContainer}
-                     showsVerticalScrollIndicator={false}
-                     showsHorizontalScrollIndicator={false}
-                     onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
-                     refreshControl={
-                        <RefreshControl
-                           colors={[Theme.PrimaryColor]}
-                           refreshing={refreshing}
-                           onRefresh={() => onRefresh({ setPage, setRefreshing, setFilter: setCode })}
+               <Modal visible={openModal} onRequestClose={() => setOpenModal(false)} animationType="slide">
+                  <View>
+                     <TouchableOpacity onPress={() => setOpenModal(false)} style={RegisterAssistantStyles.CloseButton}>
+                        <Text style={RegisterAssistantStyles.CloseButtonText}>Đóng</Text>
+                     </TouchableOpacity>
+                     <ScrollView
+                        style={RegisterAssistantStyles.CardsContainer}
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
+                        onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
+                        refreshControl={
+                           <RefreshControl
+                              colors={[Theme.PrimaryColor]}
+                              refreshing={refreshing}
+                              onRefresh={() => onRefresh({ setPage, setRefreshing, setFilter: setCode })}
+                           />
+                        }
+                     >
+                        <Searchbar
+                           placeholder="Nhập code"
+                           value={code}
+                           onChangeText={(value) => search(value, setPage, setCode)}
                         />
-                     }
-                  >
-                     <Searchbar
-                        placeholder="Nhập code"
-                        value={code}
-                        onChangeText={(value) => search(value, setPage, setCode)}
-                     />
-                     {!refreshing && loading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
-                     {assistants &&
-                        assistants.map((assistant) => (
-                           <TouchableOpacity
-                              key={assistant.id}
-                              style={RegisterAssistantStyles.Card}
-                              onPress={() => {
-                                 setSelectedCode(assistant.code);
-                                 setOpenModal(false);
-                              }}
-                           >
-                              <LinearGradient
-                                 colors={Theme.LinearColors4}
-                                 start={{ x: 0, y: 0 }}
-                                 end={{ x: 1, y: 1 }}
-                                 style={{ padding: 16, borderRadius: 8 }}
+                        {!refreshing && loading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
+                        {assistants &&
+                           assistants.map((assistant) => (
+                              <TouchableOpacity
+                                 key={assistant.id}
+                                 style={RegisterAssistantStyles.Card}
+                                 onPress={() => {
+                                    setSelectedCode(assistant.code);
+                                    setOpenModal(false);
+                                 }}
                               >
-                                 <View style={RegisterAssistantStyles.CardItem}>
-                                    <View style={RegisterAssistantStyles.CardDes}>
-                                       <AntDesign name="idcard" size={24} color="black" />
-                                       <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.full_name}</Text>
+                                 <LinearGradient
+                                    colors={Theme.LinearColors4}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{ padding: 16, borderRadius: 8 }}
+                                 >
+                                    <View style={RegisterAssistantStyles.CardItem}>
+                                       <View style={RegisterAssistantStyles.CardDes}>
+                                          <AntDesign name="idcard" size={24} color="black" />
+                                          <Text style={RegisterAssistantStyles.CardDesTitle}>
+                                             {assistant.full_name}
+                                          </Text>
+                                       </View>
+                                       <View style={RegisterAssistantStyles.CardDes}>
+                                          <FontAwesome name="birthday-cake" size={24} color="black" />
+                                          <Text style={RegisterAssistantStyles.CardDesTitle}>
+                                             {moment(assistant.date_of_birth).format('DD/MM/YYYY')}
+                                          </Text>
+                                       </View>
                                     </View>
-                                    <View style={RegisterAssistantStyles.CardDes}>
-                                       <FontAwesome name="birthday-cake" size={24} color="black" />
-                                       <Text style={RegisterAssistantStyles.CardDesTitle}>
-                                          {moment(assistant.date_of_birth).format('DD/MM/YYYY')}
+
+                                    <View style={[RegisterAssistantStyles.CardItem, { marginTop: 20 }]}>
+                                       <View style={RegisterAssistantStyles.CardDes}>
+                                          <FontAwesome name="transgender" size={24} color="black" />
+                                          <Text style={RegisterAssistantStyles.CardDesTitle}>
+                                             {assistant.gender === 'M' ? 'Nam' : 'Nữ'}
+                                          </Text>
+                                       </View>
+                                       <View style={RegisterAssistantStyles.CardDes}>
+                                          <AntDesign name="phone" size={24} color="black" />
+                                          <Text style={RegisterAssistantStyles.CardDesTitle}>
+                                             {assistant.phone_number}
+                                          </Text>
+                                       </View>
+                                    </View>
+
+                                    <View style={RegisterAssistantStyles.Address}>
+                                       <Text style={RegisterAssistantStyles.AddressTitle}>
+                                          Address: {assistant.address}
                                        </Text>
                                     </View>
-                                 </View>
 
-                                 <View style={[RegisterAssistantStyles.CardItem, { marginTop: 20 }]}>
-                                    <View style={RegisterAssistantStyles.CardDes}>
-                                       <FontAwesome name="transgender" size={24} color="black" />
-                                       <Text style={RegisterAssistantStyles.CardDesTitle}>{assistant.gender}</Text>
+                                    <View style={RegisterAssistantStyles.Code}>
+                                       <Text style={RegisterAssistantStyles.CodeTitle}>Code: {assistant.code}</Text>
                                     </View>
-                                    <View style={RegisterAssistantStyles.CardDes}>
-                                       <AntDesign name="phone" size={24} color="black" />
-                                       <Text style={RegisterAssistantStyles.CardDesTitle}>
-                                          {assistant.phone_number}
-                                       </Text>
-                                    </View>
-                                 </View>
-
-                                 <View style={RegisterAssistantStyles.Address}>
-                                    <Text style={RegisterAssistantStyles.AddressTitle}>
-                                       Address: {assistant.address}
-                                    </Text>
-                                 </View>
-
-                                 <View style={RegisterAssistantStyles.Code}>
-                                    <Text style={RegisterAssistantStyles.CodeTitle}>Code: {assistant.code}</Text>
-                                 </View>
-                              </LinearGradient>
-                           </TouchableOpacity>
-                        ))}
-                     {loading && page > 1 && <Loading style={{ marginBottom: 16 }} />}
-                  </ScrollView>
-               </View>
-            </Modal>
-         </View>
+                                 </LinearGradient>
+                              </TouchableOpacity>
+                           ))}
+                        {loading && page > 1 && <Loading style={{ marginBottom: 16 }} />}
+                     </ScrollView>
+                  </View>
+               </Modal>
+            </View>
+         </DismissKeyboard>
       </View>
    );
 };
@@ -276,7 +286,6 @@ const RegisterAssistantStyles = StyleSheet.create({
    Card: {
       borderRadius: 8,
       padding: 12,
-      marginBottom: 10,
       padding: 8,
    },
    CardItem: {
