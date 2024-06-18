@@ -6,6 +6,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import GlobalStyle, { screenHeight, screenWidth } from '../../Styles/Style';
 import Theme from '../../Styles/Theme';
 
+
 const Splash = ({ navigation }) => {
    const refLottieView = useRef(LottieView);
 

@@ -28,6 +28,12 @@ const ProfileStack = () => {
                component={ActivitySettings}
                options={{ title: 'Quản lý hoạt động' }}
             />
+
+            <Stack.Screen
+               name="RegisterAssistants"
+               component={RegisterAssistants}
+               options={{ title: 'Đăng ký tài khoản' }}
+            />
          </Stack.Group>
 
          <Stack.Group screenOptions={{ headerShown: false }}>

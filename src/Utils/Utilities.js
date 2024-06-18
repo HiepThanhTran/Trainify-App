@@ -60,7 +60,7 @@ export const onRefresh = ({ setPage, setRefreshing, setFilter = null, setData = 
 };
 
 export const search = (value, setPage, callback) => {
-   setPage(1);
+   setPage((prevPage) => 1);
    callback(value);
 };
 

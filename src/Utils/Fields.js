@@ -62,6 +62,7 @@ export const profileSections = [
       roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT],
       items: [
          { label: 'Quản lý hoạt động', icon: 'wrench-outline', screen: 'ActivitySettings' },
+         { label: 'Tạo tài khoản', icon: 'account-plus', screen: 'RegisterAssistants' },
          // { label: '', icon: '', screen: '' },
       ],
    },
