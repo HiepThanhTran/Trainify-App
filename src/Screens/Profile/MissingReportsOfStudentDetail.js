@@ -3,7 +3,6 @@ import GlobalStyle from "../../Styles/Style";
 import Theme from "../../Styles/Theme";
 import APIs, { authAPI, endPoints } from "../../Configs/APIs";
 import { useState, useEffect } from "react";
-import RenderHTML from "react-native-render-html";
 import { screenWidth } from "react-native-gifted-charts/src/utils";
 import { getTokens } from "../../Utils/Utilities";
 import moment from "moment";
