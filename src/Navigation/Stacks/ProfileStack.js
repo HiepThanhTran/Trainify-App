@@ -3,8 +3,8 @@ import CreateActivityView from '../../Components/Profile/ActivitySettings/Create
 import EditActivityView from '../../Components/Profile/ActivitySettings/EditActivityView';
 import ReportActivityForm from '../../Components/Profile/TrainingPoints/ReportActivityForm';
 import ActivitySettings from '../../Screens/Profile/ActivitySettings';
+import CreateAssistantAccount from '../../Screens/Profile/CreateAssistantAccount';
 import EditProfile from '../../Screens/Profile/EditProfile';
-import RegisterAssistants from '../../Screens/Profile/RegisterAssistants';
 import TrainingPoints from '../../Screens/Profile/TrainingPoints';
 import Theme from '../../Styles/Theme';
 
@@ -31,8 +31,8 @@ const ProfileStack = () => {
             />
 
             <Stack.Screen
-               name="RegisterAssistants"
-               component={RegisterAssistants}
+               name="CreateAssistantAccount"
+               component={CreateAssistantAccount}
                options={{ title: 'Đăng ký tài khoản' }}
             />
          </Stack.Group>

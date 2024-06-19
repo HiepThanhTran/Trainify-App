@@ -48,9 +48,11 @@ const Profile = ({ navigation }) => {
       );
    };
 
-   const goToScreen = ({ screen, params, otherStack }) => {
+   const goToScreen = ({ screen, params, otherStack, otherTab }) => {
       if (otherStack) {
          navigation.navigate(otherStack, { screen, params });
+      } else if (otherTab) {
+         navigation.navigate(otherTab, params);
       } else {
          navigation.navigate('ProfileStack', { screen, params });
       }
@@ -59,7 +61,11 @@ const Profile = ({ navigation }) => {
    if (!isRendered) return <Loading />;
 
    return (
-      <LinearGradient end={{ x: 0.5, y: 0.5 }} colors={['rgba(62,154,228,1)', 'rgba(255,255,255, 0.8)']}>
+      <LinearGradient
+         style={{ flex: 1 }}
+         end={{ x: 0.5, y: 0.5 }}
+         colors={['rgba(62,154,228,1)', 'rgba(255,255,255, 0.8)']}
+      >
          <ScrollView
             bounces={false}
             scrollEventThrottle={16}
@@ -87,15 +93,23 @@ const Profile = ({ navigation }) => {
                </TouchableOpacity>
             </View>
 
-            {profileSections.map((section, index) => {
+            {profileSections(currentAccount).map((section, index) => {
                if (section.roles.includes(currentAccount.data.role)) {
                   return (
                      <View key={'section-' + index} style={ProfileStyle.Section}>
                         <Text style={ProfileStyle.SectionTitle}>{section.title}</Text>
                         <View style={ProfileStyle.SectionBody}>
-                           {section.items.map((item, itemIndex) => (
-                              <SectionItem key={'item-' + itemIndex} instance={item} onPress={goToScreen} />
-                           ))}
+                           {section.items.map((item, itemIndex) => {
+                              if (item.roles) {
+                                 if (item.roles.includes(currentAccount.data.role)) {
+                                    return (
+                                       <SectionItem key={'item-' + itemIndex} instance={item} onPress={goToScreen} />
+                                    );
+                                 }
+                              } else {
+                                 return <SectionItem key={'item-' + itemIndex} instance={item} onPress={goToScreen} />;
+                              }
+                           })}
                         </View>
                      </View>
                   );

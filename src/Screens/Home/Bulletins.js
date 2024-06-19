@@ -60,7 +60,7 @@ const Bulletins = ({ navigation }) => {
             <View style={{ marginHorizontal: 12, marginTop: 32 }}>
                <View style={HomeStyle.Header}>
                   <Text style={HomeStyle.HeaderTitle}>Bản tin</Text>
-                  <TouchableOpacity onPress={() => navigation.navigate('ChatStack', { screen: 'Chat' })}>
+                  <TouchableOpacity onPress={() => {}}>
                      <AntDesign name="message1" size={28} color={Theme.PrimaryColor} />
                   </TouchableOpacity>
                </View>

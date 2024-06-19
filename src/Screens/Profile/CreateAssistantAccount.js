@@ -3,8 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
+   Alert,
    Image,
-   Modal,
    RefreshControl,
    ScrollView,
    StyleSheet,
@@ -13,46 +13,52 @@ import {
    TouchableOpacity,
    View,
 } from 'react-native';
+import { Modal, Portal } from 'react-native-paper';
 import DismissKeyboard from '../../Components/Common/DismissKeyboard';
 import Loading from '../../Components/Common/Loading';
 import Searchbar from '../../Components/Common/Searchbar';
-import APIs, { endPoints } from '../../Configs/APIs';
+import APIs, { authAPI, endPoints } from '../../Configs/APIs';
 import { statusCode } from '../../Configs/Constants';
+import { useAccountDispatch } from '../../Store/Contexts/AccountContext';
 import GlobalStyle from '../../Styles/Style';
 import Theme from '../../Styles/Theme';
-import { loadMore, onRefresh, search } from '../../Utils/Utilities';
+import { assistantFields } from '../../Utils/Fields';
+import { getTokens, loadMore, onRefresh, refreshAccessToken, search } from '../../Utils/Utilities';
 
-const RegisterAssistants = () => {
-   const [openModal, setOpenModal] = useState(false);
-   const [showPassword, setShowPassword] = useState(false);
+const CreateAssistantAccount = () => {
+   const dispatch = useAccountDispatch();
+
    const [assistants, setAssistants] = useState([]);
-   const [hasAccount, setHasAccount] = useState(false);
+   const [account, setAccount] = useState({});
    const [code, setCode] = useState('');
    const [page, setPage] = useState(1);
    const [loading, setLoading] = useState(false);
    const [refreshing, setRefreshing] = useState(false);
-   const [selectedCode, setSelectedCode] = useState('');
+   const [showPassword, setShowPassword] = useState(false);
+   const [modalVisible, setModalVisible] = useState(false);
+   const [openModalAssistant, setOpenModalAssistant] = useState(false);
 
    useEffect(() => {
       const loadAssistants = async () => {
          if (page <= 0) return;
+
          setLoading(true);
          try {
-            let res = await APIs.get(endPoints['assistants'], {
-               params: { page, has_account: hasAccount, code },
+            const response = await APIs.get(endPoints['assistants'], {
+               params: { page, has_account: false, code },
             });
-            if (res.status === statusCode.HTTP_200_OK) {
+            if (response.status === statusCode.HTTP_200_OK) {
                if (page === 1) {
-                  setAssistants(res.data.results);
+                  setAssistants(response.data.results);
                } else {
-                  setAssistants((prevAssistants) => [...prevAssistants, ...res.data.results]);
+                  setAssistants((prevAssistants) => [...prevAssistants, ...response.data.results]);
                }
             }
-            if (res.data.next === null) {
+            if (response.data.next === null) {
                setPage(0);
             }
          } catch (error) {
-            console.error(error);
+            console.error('Assistant list', error);
          } finally {
             setLoading(false);
             setRefreshing(false);
@@ -60,7 +66,70 @@ const RegisterAssistants = () => {
       };
 
       loadAssistants();
-   }, [refreshing, page, hasAccount, code]);
+   }, [refreshing, page, code]);
+
+   const handleCreateAccountAssistant = async () => {
+      for (let field of assistantFields) {
+         console.log(field.name);
+         if (!account[field.name] || account[field.name] === undefined) {
+            Alert.alert('Thông báo', `${field.label} không được trống`);
+            return;
+         }
+      }
+
+      if (account['password'] !== account['confirm']) {
+         Alert.alert('Thông báo', 'Mật khẩu không trùng nhau');
+         return;
+      }
+
+      if (account['password'].length < 6) {
+         Alert.alert('Thông báo', 'Vui lòng nhập mật khẩu ít nhất 6 kí tự');
+         return;
+      }
+
+      let form = new FormData();
+      for (let key in account) {
+         if (key !== 'confirm') {
+            form.append(key, account[key]);
+         }
+      }
+
+      setModalVisible(true);
+      const { accessToken, refreshToken } = await getTokens();
+      try {
+         const response = await authAPI(accessToken).post(endPoints['assistant-register'], form);
+
+         if (response.status === statusCode.HTTP_201_CREATED) {
+            setAccount({});
+            Alert.alert('Thông báo', 'Đăng ký tài khoản cho trợ lý sinh viên thành công!');
+         }
+      } catch (error) {
+         if (
+            error.response &&
+            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN)
+         ) {
+            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+            if (newAccessToken) {
+               handleCreateAccountAssistant();
+            }
+         } else if (error.response && error.response.status === statusCode.HTTP_400_BAD_REQUEST) {
+            Alert.alert('Thông báo', error.response.data.detail);
+         } else {
+            console.error('Create account assistant:', error);
+            Alert.alert('Lỗi', 'Có lỗi xảy ra khi thực hiện thao tác.');
+         }
+      } finally {
+         setModalVisible(false);
+      }
+   };
+
+   const updateAccountAssistant = (field, value) => {
+      setAccount((prevAccount) => ({
+         ...prevAccount,
+         [field]: value,
+      }));
+   };
 
    return (
       <View style={GlobalStyle.BackGround}>
@@ -77,15 +146,15 @@ const RegisterAssistants = () => {
                   <View style={RegisterAssistantStyles.Field}>
                      <TouchableOpacity
                         style={RegisterAssistantStyles.InputContainer}
-                        onPress={() => setOpenModal(true)}
+                        onPress={() => setOpenModalAssistant(true)}
                      >
                         <Text
                            style={[
                               RegisterAssistantStyles.Text,
-                              selectedCode ? RegisterAssistantStyles.SelectedText : null,
+                              account['code'] ? RegisterAssistantStyles.SelectedText : null,
                            ]}
                         >
-                           {selectedCode ? selectedCode : 'Mã số trợ lý sinh viên'}
+                           {account['code'] ? account['code'] : 'Mã số trợ lý sinh viên'}
                         </Text>
                         <Entypo name="newsletter" size={24} color="black" style={RegisterAssistantStyles.Icon} />
                      </TouchableOpacity>
@@ -93,7 +162,12 @@ const RegisterAssistants = () => {
 
                   <View style={RegisterAssistantStyles.Field}>
                      <View style={RegisterAssistantStyles.InputContainer}>
-                        <TextInput style={RegisterAssistantStyles.TextInput} placeholder="Email trợ lý sinh viên" />
+                        <TextInput
+                           value={account['email']}
+                           style={RegisterAssistantStyles.TextInput}
+                           placeholder="Email trợ lý sinh viên"
+                           onChangeText={(value) => updateAccountAssistant('email', value)}
+                        />
                         <MaterialIcons name="email" size={24} color="black" style={RegisterAssistantStyles.Icon} />
                      </View>
                   </View>
@@ -101,9 +175,31 @@ const RegisterAssistants = () => {
                   <View style={RegisterAssistantStyles.Field}>
                      <View style={RegisterAssistantStyles.InputContainer}>
                         <TextInput
+                           value={account['password']}
                            style={RegisterAssistantStyles.TextInput}
                            placeholder="Mật khẩu"
                            secureTextEntry={!showPassword}
+                           onChangeText={(value) => updateAccountAssistant('password', value)}
+                        />
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                           <Ionicons
+                              name={showPassword ? 'eye-off' : 'eye'}
+                              size={24}
+                              color="black"
+                              style={RegisterAssistantStyles.Icon}
+                           />
+                        </TouchableOpacity>
+                     </View>
+                  </View>
+
+                  <View style={RegisterAssistantStyles.Field}>
+                     <View style={RegisterAssistantStyles.InputContainer}>
+                        <TextInput
+                           value={account['confirm']}
+                           style={RegisterAssistantStyles.TextInput}
+                           placeholder="Xác nhận mật khẩu"
+                           secureTextEntry={!showPassword}
+                           onChangeText={(value) => updateAccountAssistant('confirm', value)}
                         />
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                            <Ionicons
@@ -117,15 +213,24 @@ const RegisterAssistants = () => {
                   </View>
 
                   <View style={RegisterAssistantStyles.ButtonContainer}>
-                     <TouchableOpacity style={RegisterAssistantStyles.Button}>
+                     <TouchableOpacity style={RegisterAssistantStyles.Button} onPress={handleCreateAccountAssistant}>
                         <Text style={RegisterAssistantStyles.ButtonText}>Đăng ký</Text>
                      </TouchableOpacity>
                   </View>
                </View>
 
-               <Modal visible={openModal} onRequestClose={() => setOpenModal(false)} animationType="slide">
-                  <View>
-                     <TouchableOpacity onPress={() => setOpenModal(false)} style={RegisterAssistantStyles.CloseButton}>
+               <Modal
+                  visible={openModalAssistant}
+                  onRequestClose={() => setOpenModalAssistant(false)}
+                  animationType="slide"
+                  style={{ backgroundColor: '#fff' }}
+                  contentContainerStyle={{ flex: 1 }}
+               >
+                  <View style={{ flex: 1 }}>
+                     <TouchableOpacity
+                        onPress={() => setOpenModalAssistant(false)}
+                        style={RegisterAssistantStyles.CloseButton}
+                     >
                         <Text style={RegisterAssistantStyles.CloseButtonText}>Đóng</Text>
                      </TouchableOpacity>
                      <ScrollView
@@ -153,8 +258,12 @@ const RegisterAssistants = () => {
                                  key={assistant.id}
                                  style={RegisterAssistantStyles.Card}
                                  onPress={() => {
-                                    setSelectedCode(assistant.code);
-                                    setOpenModal(false);
+                                    updateAccountAssistant('code', assistant.code);
+                                    updateAccountAssistant(
+                                       'email',
+                                       `${assistant.code}${assistant.first_name}@ou.edu.vn`,
+                                    );
+                                    setOpenModalAssistant(false);
                                  }}
                               >
                                  <LinearGradient
@@ -211,6 +320,12 @@ const RegisterAssistants = () => {
                </Modal>
             </View>
          </DismissKeyboard>
+
+         <Portal>
+            <Modal visible={modalVisible} style={GlobalStyle.Container}>
+               <Loading />
+            </Modal>
+         </Portal>
       </View>
    );
 };
@@ -227,7 +342,7 @@ const RegisterAssistantStyles = StyleSheet.create({
    },
    RegisterAssistantImageContainer: {
       width: '100%',
-      height: 300,
+      height: 260,
    },
    RegisterAssistantImage: {
       width: '100%',
@@ -339,4 +454,4 @@ const RegisterAssistantStyles = StyleSheet.create({
    },
 });
 
-export default RegisterAssistants;
+export default CreateAssistantAccount;

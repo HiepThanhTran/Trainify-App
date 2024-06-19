@@ -6,7 +6,14 @@ const SectionItem = ({ instance, ...props }) => {
    return (
       <TouchableOpacity
          activeOpacity={0.6}
-         onPress={() => props?.onPress({ screen: instance.screen, otherStack: instance.otherStack })}
+         onPress={() =>
+            props?.onPress({
+               screen: instance.screen,
+               params: instance.params,
+               otherStack: instance.otherStack,
+               otherTab: instance.otherTab,
+            })
+         }
          style={SectionItemStyle.SectionItem}
       >
          <View style={SectionItemStyle.SectionItemLeft}>

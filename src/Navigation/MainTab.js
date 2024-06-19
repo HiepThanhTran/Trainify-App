@@ -2,7 +2,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-paper';
 import Activities from '../Screens/Home/Activities';
 import Bulletins from '../Screens/Home/Bulletins';
-import Notification from '../Screens/Notification/Notification';
 import Profile from '../Screens/Profile/Profile';
 import Theme from '../Styles/Theme';
 
@@ -44,11 +43,11 @@ const MainTab = () => {
       >
          <Tab.Screen name="Home" component={Bulletins} options={{ tabBarLabel: 'Trang chủ' }} />
          <Tab.Screen name="Activites" component={Activities} options={{ tabBarLabel: 'Hoạt động' }} />
-         <Tab.Screen
+         {/* <Tab.Screen
             name="Notification"
             component={Notification}
             options={{ tabBarLabel: 'Thông báo', tabBarBadge: 3 }}
-         />
+         /> */}
          <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Tôi' }} />
       </Tab.Navigator>
    );

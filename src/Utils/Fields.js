@@ -6,7 +6,6 @@ export const signInFields = [
       label: 'Email',
       name: 'username',
       icon: 'email',
-      keyboardType: 'email-address',
    },
    {
       label: 'Mật khẩu',
@@ -26,7 +25,6 @@ export const signUpFields = [
       label: 'Email',
       name: 'email',
       icon: 'email',
-      keyboardType: 'email-address',
    },
    {
       label: 'Mật khẩu',
@@ -37,6 +35,21 @@ export const signUpFields = [
       label: 'Xác nhận mật khẩu',
       name: 'confirm',
       icon: 'eye',
+   },
+];
+
+export const assistantFields = [
+   {
+      label: 'Mã trợ lý sinh viên',
+      name: 'code',
+   },
+   {
+      label: 'Email trợ lý sinh viên',
+      name: 'email',
+   },
+   {
+      label: 'Mật khẩu',
+      name: 'password',
    },
 ];
 
@@ -56,42 +69,82 @@ export const initalActivity = {
    description: { label: 'Mô tả hoạt động', value: '', required: true },
 };
 
-export const profileSections = [
-   {
-      title: 'Chức năng',
-      roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT],
-      items: [
-         { label: 'Quản lý hoạt động', icon: 'wrench-outline', screen: 'ActivitySettings' },
-         { label: 'Tạo tài khoản', icon: 'account-plus', screen: 'RegisterAssistants' },
-         // { label: '', icon: '', screen: '' },
-      ],
-   },
-   {
-      title: 'Tiện ích',
-      roles: [roles.STUDENT],
-      items: [
-         { label: 'Điểm rèn luyện', icon: 'star-outline', screen: 'TrainingPoint' },
-         { label: 'Hoạt động của sinh viên', icon: 'ticket', screen: '' },
-      ],
-   },
-   {
-      title: 'Cài đặt',
-      roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT, roles.STUDENT],
-      items: [
-         { label: 'Cài đặt bảo mật', icon: 'shield-account', screen: '' },
-         { label: 'Cài đặt thông báo', icon: 'bell-outline', screen: '' },
-         // { label: 'Cài đặt chung', icon: 'cog-outline', screen: '' },
-      ],
-   },
-   {
-      title: 'Trợ giúp',
-      roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT, roles.STUDENT],
-      items: [
-         { label: 'Trung tâm trợ giúp', icon: 'help-circle-outline', screen: 'ChatList', otherStack: 'ChatStack' },
-         // { label: '', icon: '', screen: '' },
-      ],
-   },
-];
+export const profileSections = (currentAccount) => {
+   return [
+      {
+         title: 'Chức năng',
+         roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT],
+         items: [
+            {
+               label: 'Quản lý hoạt động',
+               icon: 'wrench-outline',
+               screen: 'ActivitySettings',
+            },
+            {
+               label: 'Báo thiếu của sinh viên',
+               icon: 'application-edit-outline',
+               screen: 'MissingReportsOfStudent',
+            },
+            {
+               label: 'Tạo tài khoản trợ lý sinh viên',
+               icon: 'account-plus-outline',
+               screen: 'CreateAssistantAccount',
+               roles: [roles.ADMINISTRATOR, roles.SPECIALIST],
+            },
+         ],
+      },
+      {
+         title: 'Tiện ích',
+         roles: [roles.STUDENT],
+         items: [
+            {
+               label: 'Điểm rèn luyện',
+               icon: 'star-outline',
+               screen: 'TrainingPoint',
+            },
+            {
+               label: 'Hoạt động của sinh viên',
+               icon: 'ticket',
+               screen: 'ActivitiesOfStudent',
+            },
+         ],
+      },
+      {
+         title: 'Cài đặt',
+         roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT, roles.STUDENT],
+         items: [
+            {
+               label: 'Cài đặt bảo mật',
+               icon: 'shield-account',
+               screen: 'SecuritySettings',
+            },
+            // {
+            //    label: 'Cài đặt thông báo',
+            //    icon: 'bell-outline',
+            //    screen: '',
+            // },
+            // {
+            //    label: 'Cài đặt chung',
+            //    icon: 'cog-outline',
+            //    screen: '',
+            // },
+         ],
+      },
+      {
+         title: 'Trợ giúp',
+         roles: [roles.ADMINISTRATOR, roles.SPECIALIST, roles.ASSISTANT, roles.STUDENT],
+         items: [
+            {
+               label: 'Trung tâm trợ giúp',
+               icon: 'help-circle-outline',
+               otherTab: 'ChatTab',
+               params: { avatar: currentAccount.data.avatar, fullName: currentAccount.data.user.full_name },
+            },
+            // { label: '', icon: '', screen: '' },
+         ],
+      },
+   ];
+};
 
 export const schoolFields = [
    { label: 'Hệ đào tạo', name: 'educational_system', icon: 'school' },

@@ -1,106 +1,83 @@
-import { useEffect, useState } from 'react';
-import { Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { collection, onSnapshot, or, orderBy, query, where } from 'firebase/firestore';
+import { useLayoutEffect, useState } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import DismissKeyboard from '../../Components/Common/DismissKeyboard';
 import Loading from '../../Components/Common/Loading';
-import Searchbar from '../../Components/Common/Searchbar';
-import APIs, { endPoints } from '../../Configs/APIs';
-import { statusCode } from '../../Configs/Constants';
+import { firestore } from '../../Configs/Firebase';
 import { useAccount } from '../../Store/Contexts/AccountContext';
 import GlobalStyle from '../../Styles/Style';
 import Theme from '../../Styles/Theme';
-import { loadMore, onRefresh, search } from '../../Utils/Utilities';
 
 const ChatList = ({ navigation }) => {
    const currentAccount = useAccount();
 
-   const [allUser, setallUser] = useState([]);
-   const [page, setPage] = useState(1);
-   const [name, setName] = useState('');
+   const [messages, setMessages] = useState([]);
    const [loading, setLoading] = useState(false);
-   const [refreshing, setRefreshing] = useState(false);
 
-   useEffect(() => {
-      navigation.setOptions({
-         headerRight: () => (
-            <TouchableOpacity
-               style={{ marginRight: 12 }}
-               onPress={() =>
-                  navigation.navigate('ProfileStack', {
-                     screen: 'EditProfile',
-                  })
-               }
-            >
-               <Image
-                  source={{ uri: currentAccount.data.avatar }}
-                  style={{ width: 40, height: 40, borderRadius: 20 }}
-               />
-            </TouchableOpacity>
-         ),
-      });
-   }, [navigation]);
-
-   useEffect(() => {
-      const loadAllUser = async () => {
-         if (page <= 0) return;
-
-         setLoading(true);
-         try {
-            const response = await APIs.get(endPoints['all-user'], { params: { page, name } });
-
-            if (response.status === statusCode.HTTP_200_OK) {
-               if (page === 1) {
-                  setallUser(response.data.results);
-               } else {
-                  setallUser((prevAllUser) => [...prevAllUser, ...response.data.results]);
-               }
-            }
-            if (response.data.next === null) {
-               setPage(0);
-            }
-         } catch (error) {
-            console.error('All user:', error);
-         } finally {
-            setLoading(false);
-            setRefreshing(false);
-         }
-      };
-
-      loadAllUser();
-   }, [page, name, refreshing]);
-
-   const renderRefreshControl = () => {
-      return (
-         <RefreshControl
-            colors={[Theme.PrimaryColor]}
-            refreshing={refreshing}
-            onRefresh={() => onRefresh({ setPage, setRefreshing, setFilter: setName })}
-         />
+   useLayoutEffect(() => {
+      const collectionRef = collection(firestore, 'chats');
+      const q = query(
+         collectionRef,
+         orderBy('createdAt', 'desc'),
+         or(where('user._id', '==', currentAccount.data.id), where('toUser._id', '==', currentAccount.data.id)),
       );
-   };
+
+      setLoading(true);
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+         const rawMessages = querySnapshot.docs.map((doc) => ({
+            _id: doc.id,
+            createdAt: doc.data().createdAt.toDate(),
+            text: doc.data().text,
+            user: doc.data().user,
+            toUser: doc.data().toUser,
+         }));
+
+         const groupedMessages = [];
+         const messageMap = {};
+
+         rawMessages.forEach((message) => {
+            const userPairKey = `${Math.min(message.user._id, message.toUser._id)}-${Math.max(
+               message.user._id,
+               message.toUser._id,
+            )}`;
+
+            if (!messageMap[userPairKey]) {
+               messageMap[userPairKey] = { ...message };
+            } else {
+               if (new Date(message.createdAt) > new Date(messageMap[userPairKey].createdAt)) {
+                  messageMap[userPairKey] = { ...message };
+               }
+            }
+         });
+
+         for (const key in messageMap) {
+            groupedMessages.push(messageMap[key]);
+         }
+
+         groupedMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+         setMessages(groupedMessages);
+         setLoading(false);
+      });
+
+      return unsubscribe;
+   }, []);
+
+   if (loading) return <Loading />;
 
    return (
-      <View style={GlobalStyle.BackGround}>
+      <View style={{ ...GlobalStyle.BackGround, backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
          <DismissKeyboard>
-            <View style={{ marginHorizontal: 8 }}>
-               <Searchbar
-                  value={name}
-                  placeholder="Tìm kiếm..."
-                  onChangeText={(value) => search(value, setPage, setName)}
-                  style={{ borderRadius: 40, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8 }}
-               />
-
-               <ScrollView
-                  style={{ marginBottom: 136 }}
-                  showsVerticalScrollIndicator={false}
-                  showsHorizontalScrollIndicator={false}
-                  refreshControl={renderRefreshControl()}
-                  onScroll={({ nativeEvent }) => loadMore(nativeEvent, loading, page, setPage)}
-               >
-                  {!refreshing && loading && page === 1 && <Loading style={{ marginBottom: 16 }} />}
-                  {allUser.map((item) => (
+            <View style={{ marginHorizontal: 8, marginTop: 8 }}>
+               <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+                  {messages.map((item, index) => (
                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => navigation.navigate('ChatStack', { screen: 'Chat', params: { user: item } })}
+                        key={`message-${index}`}
+                        onPress={() =>
+                           navigation.navigate('ChatStack', {
+                              screen: 'Chat',
+                              params: { toUser: item.user._id === currentAccount.data.id ? item.toUser : item.user },
+                           })
+                        }
                      >
                         <View
                            style={{
@@ -112,26 +89,27 @@ const ChatList = ({ navigation }) => {
                         >
                            <View style={{ width: '20%' }}>
                               <Image
-                                 source={{ uri: item.avatar }}
+                                 source={{
+                                    uri:
+                                       item.user._id === currentAccount.data.id ? item.toUser.avatar : item.user.avatar,
+                                 }}
                                  style={{
-                                    width: 64,
-                                    height: 64,
-                                    marginRight: 12,
+                                    width: 48,
+                                    height: 48,
                                     borderRadius: 40,
                                     backgroundColor: Theme.SecondaryColor,
                                  }}
                               />
                            </View>
                            <View style={{ width: '80%' }}>
-                              <Text style={{ fontFamily: Theme.SemiBold }}>{item.user.full_name}</Text>
-                              <Text style={{ color: 'gray', fontSize: 12 }} numberOfLines={1} ellipsizeMode="tail">
-                                 TEST
+                              <Text style={{ fontFamily: Theme.SemiBold }}>
+                                 {item.user._id === currentAccount.data.id ? item.toUser.fullName : item.user.fullName}
                               </Text>
+                              <Text style={{ color: 'gray' }}>{item.text}</Text>
                            </View>
                         </View>
                      </TouchableOpacity>
                   ))}
-                  {loading && page > 1 && <Loading style={{ marginTop: 16 }} />}
                </ScrollView>
             </View>
          </DismissKeyboard>
