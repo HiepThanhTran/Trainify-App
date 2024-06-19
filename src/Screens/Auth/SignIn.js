@@ -37,6 +37,9 @@ const SignIn = ({ navigation }) => {
       setLoading(true);
       setErrorVisible(false);
 
+      console.log(CLIENT_ID)
+      console.log(CLIENT_SECRET)
+
       const data = {
          ...account,
          grant_type: 'password',
