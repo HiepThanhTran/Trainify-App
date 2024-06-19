@@ -64,11 +64,7 @@ const SecuritySettings = () => {
          ]);
       } catch (error) {
          console.error('Reset password:', error);
-         if (
-            error.response &&
-            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
-               error.response.status === statusCode.HTTP_403_FORBIDDEN)
-         ) {
+         if (error.response) {
             if (
                error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
                error.response.status === statusCode.HTTP_403_FORBIDDEN

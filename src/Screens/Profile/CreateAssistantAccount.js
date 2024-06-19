@@ -104,20 +104,20 @@ const CreateAssistantAccount = () => {
             Alert.alert('Thông báo', 'Đăng ký tài khoản cho trợ lý sinh viên thành công!');
          }
       } catch (error) {
-         if (
-            error.response &&
-            (error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
-               error.response.status === statusCode.HTTP_403_FORBIDDEN)
-         ) {
-            const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
-            if (newAccessToken) {
-               handleCreateAccountAssistant();
+         if (error.response) {
+            if (
+               error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+               error.response.status === statusCode.HTTP_403_FORBIDDEN
+            ) {
+               const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+               if (newAccessToken) {
+                  handleCreateAccountAssistant();
+               }
+            } else if (error.response && error.response.status === statusCode.HTTP_400_BAD_REQUEST) {
+               Alert.alert('Thông báo', error.response.data.detail);
             }
-         } else if (error.response && error.response.status === statusCode.HTTP_400_BAD_REQUEST) {
-            Alert.alert('Thông báo', error.response.data.detail);
          } else {
-            console.error('Create account assistant:', error);
-            Alert.alert('Lỗi', 'Có lỗi xảy ra khi thực hiện thao tác.');
+            Alert.alert('Thông báo', 'Có lỗi xảy ra khi thực hiện thao tác.');
          }
       } finally {
          setModalVisible(false);
