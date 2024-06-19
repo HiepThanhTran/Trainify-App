@@ -7,6 +7,8 @@ import CreateAssistantAccount from '../../Screens/Profile/CreateAssistantAccount
 import EditProfile from '../../Screens/Profile/EditProfile';
 import SecuritySettings from '../../Screens/Profile/SecuritySettings';
 import TrainingPoints from '../../Screens/Profile/TrainingPoints';
+import MissingReportsOfStudent from '../../Screens/Profile/MissingReportsOfStudent';
+import MissingReportsOfStudentDetail from '../../Screens/Profile/MissingReportsOfStudentDetail';
 import Theme from '../../Styles/Theme';
 
 const Stack = createStackNavigator();
@@ -30,6 +32,18 @@ const ProfileStack = () => {
                component={ActivitySettings}
                options={{ title: 'Quản lý hoạt động' }}
             />
+            <Stack.Screen
+               name="MissingReportsOfStudent"
+               component={MissingReportsOfStudent}
+               options={{ title: 'Báo thiếu sinh viên' }}
+            />
+
+            <Stack.Screen
+               name="MissingReportsOfStudentDetail"
+               component={MissingReportsOfStudentDetail}
+               options={{ title: 'Thông tin chi tiết' }}
+            />
+
             <Stack.Screen
                name="CreateAssistantAccount"
                component={CreateAssistantAccount}
