@@ -37,14 +37,11 @@ const SignIn = ({ navigation }) => {
       setLoading(true);
       setErrorVisible(false);
 
-      console.log(CLIENT_ID)
-      console.log(CLIENT_SECRET)
-
       const data = {
          ...account,
          grant_type: 'password',
-         client_id: CLIENT_ID,
-         client_secret: CLIENT_SECRET,
+         client_id: "nKjcfzujrqsPIrzxPkRPnZQvu9wG1tMJqhDpxFsJ",
+         client_secret: "1RsRgR9SVfU82yc4SP02E6k1JnDzOqdenp6d0MEi78OBSNuq5iy50ocpccBZN4syxstlg23sAMySgloNt6XipaPyngxcDpaMNUsshVQdc2RP2Rn0t0eijJpL1I8MC9rP",
       };
 
       try {

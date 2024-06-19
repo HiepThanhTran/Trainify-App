@@ -1,6 +1,9 @@
-import { API_VERSION, BASE_URL, URL_TYPE } from '@env';
+// import { API_VERSION, BASE_URL, URL_TYPE } from '@env';
 import axios from 'axios';
 
+const BASE_URL="https://trainingpoint.vercel.app"
+const URL_TYPE="api"
+const API_VERSION="v1"
 const API_URL = `${BASE_URL}/${URL_TYPE}/${API_VERSION}/`;
 
 export const endPoints = {
