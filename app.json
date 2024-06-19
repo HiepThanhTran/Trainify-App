@@ -6,6 +6,7 @@
       "assetBundlePatterns": ["**/*"],
       "plugins": ["expo-font"],
       "android": {
+         "googleServicesFile": "./android/app/google-services.json",
          "package": "com.anonymous.tpmmobileapp"
       }
    }
