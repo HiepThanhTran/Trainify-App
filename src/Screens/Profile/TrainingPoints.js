@@ -8,13 +8,13 @@ import ChipList from '../../Components/Common/ChipList';
 import Loading from '../../Components/Common/Loading';
 import BarChartOfPoints from '../../Components/Profile/TrainingPoints/BarChart';
 import SemestersList from '../../Components/Profile/TrainingPoints/SemestersList';
-import APIs, { endPoints } from '../../Configs/APIs';
+import APIs, { authAPI, endPoints } from '../../Configs/APIs';
 import { statusCode } from '../../Configs/Constants';
 import { useAccount } from '../../Store/Contexts/AccountContext';
 import { useGlobalContext } from '../../Store/Contexts/GlobalContext';
 import GlobalStyle from '../../Styles/Style';
 import Theme from '../../Styles/Theme';
-import { loadMore, onRefresh } from '../../Utils/Utilities';
+import { getTokens, loadMore, onRefresh } from '../../Utils/Utilities';
 
 const TrainingPoints = ({ navigation }) => {
    const { currentSemester, setCurrentSemester } = useGlobalContext();
@@ -70,8 +70,9 @@ const TrainingPoints = ({ navigation }) => {
          if (!currentSemester || page <= 0) return;
 
          setActivitiesLoading(true);
+         const { accessToken } = await getTokens();
          try {
-            let response = await APIs.get(endPoints['activities'], {
+            let response = await authAPI(accessToken).get(endPoints['activities'], {
                params: { semester_id: currentSemester.id, criterion_id: selectedCriterion.id, page },
             });
 
