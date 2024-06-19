@@ -124,16 +124,6 @@ export const profileSections = (currentAccount) => {
                icon: 'shield-account',
                screen: 'SecuritySettings',
             },
-            // {
-            //    label: 'Cài đặt thông báo',
-            //    icon: 'bell-outline',
-            //    screen: '',
-            // },
-            // {
-            //    label: 'Cài đặt chung',
-            //    icon: 'cog-outline',
-            //    screen: '',
-            // },
          ],
       },
       {

@@ -1,9 +1,11 @@
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import 'dayjs/locale/vi';
 import { addDoc, and, collection, onSnapshot, or, orderBy, query, where } from 'firebase/firestore';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { Image, ImageBackground, Text, TouchableOpacity, View } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Image, ImageBackground, Keyboard, Text, TouchableOpacity, View } from 'react-native';
+import { GiftedChat, Send } from 'react-native-gifted-chat';
 import { Icon } from 'react-native-paper';
+import Loading from '../../Components/Common/Loading';
 import { firestore } from '../../Configs/Firebase';
 import { useAccount } from '../../Store/Contexts/AccountContext';
 import Theme from '../../Styles/Theme';
@@ -71,7 +73,7 @@ const Chat = ({ navigation, route }) => {
       });
    }, [navigation]);
 
-   useLayoutEffect(() => {
+   useEffect(() => {
       let toUserID = toUser?.id || toUser?._id;
       let fromUserID = currentAccount.data.id;
 
@@ -92,7 +94,6 @@ const Chat = ({ navigation, route }) => {
                createdAt: doc.data().createdAt.toDate(),
                text: doc.data().text,
                user: doc.data().user,
-               toUser: doc.data().toUser,
             })),
          );
       });
@@ -118,17 +119,36 @@ const Chat = ({ navigation, route }) => {
 
    return (
       <ImageBackground source={require('../../Assets/Images/ChatBackground.jpg')} style={{ flex: 1 }}>
-         <GiftedChat
-            messages={messages}
-            showUserAvatar={true}
-            showAvatarForEveryMessage={false}
-            onSend={(messages) => onSend(messages)}
-            user={{
-               _id: currentAccount.data.id,
-               fullName: currentAccount.data.user.full_name,
-               avatar: currentAccount.data.avatar,
-            }}
-         />
+         <View style={{ flex: 1 }} onTouchStart={() => Keyboard.dismiss()}>
+            <GiftedChat
+               messages={messages}
+               showUserAvatar={true}
+               showAvatarForEveryMessage={false}
+               alwaysShowSend={true}
+               locale="vi"
+               renderLoading={() => <Loading />}
+               placeholder="Nhập tin nhắn của bạn..."
+               onSend={(messages) => onSend(messages)}
+               renderSend={(props) => (
+                  <Send
+                     {...props}
+                     containerStyle={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 16,
+                        marginBottom: 4,
+                     }}
+                  >
+                     <FontAwesome name="send" size={24} color={Theme.PrimaryColor} />
+                  </Send>
+               )}
+               user={{
+                  _id: currentAccount.data.id,
+                  fullName: currentAccount.data.user.full_name,
+                  avatar: currentAccount.data.avatar,
+               }}
+            />
+         </View>
       </ImageBackground>
    );
 };

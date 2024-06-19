@@ -4,7 +4,7 @@
       "slug": "tpm-mobileapp",
       "version": "1.0.0",
       "assetBundlePatterns": ["**/*"],
-      "plugins": ["expo-font"],
+      "plugins": ["expo-font", "@react-native-firebase/app"],
       "android": {
          "googleServicesFile": "./android/app/google-services.json",
          "package": "com.anonymous.tpmmobileapp"

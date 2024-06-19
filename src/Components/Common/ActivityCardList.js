@@ -32,7 +32,7 @@ const ActivityCardList = ({ navigation, data, loading, refreshing, setRefreshing
                onPress={() => props?.onPress?.(item) ?? null}
             />
          ))}
-         {loading && page > 1 && <Loading style={{ marginTop: 16 }} />}
+         {loading && page > 1 && <Loading style={{ marginVertical: 16 }} />}
       </ScrollView>
    );
 };

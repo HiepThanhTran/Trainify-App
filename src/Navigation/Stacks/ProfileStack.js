@@ -2,6 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CreateActivityView from '../../Components/Profile/ActivitySettings/CreateActivityView';
 import EditActivityView from '../../Components/Profile/ActivitySettings/EditActivityView';
 import ReportActivityForm from '../../Components/Profile/TrainingPoints/ReportActivityForm';
+import ActivitiesOfStudent from '../../Screens/Profile/ActivitesOfStudent';
 import ActivitySettings from '../../Screens/Profile/ActivitySettings';
 import CreateAssistantAccount from '../../Screens/Profile/CreateAssistantAccount';
 import EditProfile from '../../Screens/Profile/EditProfile';
@@ -28,6 +29,11 @@ const ProfileStack = () => {
                options={({ route }) => ({ title: route?.params?.fullName ?? 'Trang cá nhân' })}
             />
             <Stack.Screen
+               name="ActivitiesOfStudent"
+               component={ActivitiesOfStudent}
+               options={{ title: 'Hoạt động của sinh viên' }}
+            />
+            <Stack.Screen
                name="ActivitySettings"
                component={ActivitySettings}
                options={{ title: 'Quản lý hoạt động' }}
@@ -37,13 +43,11 @@ const ProfileStack = () => {
                component={MissingReportsOfStudent}
                options={{ title: 'Báo thiếu sinh viên' }}
             />
-
             <Stack.Screen
                name="MissingReportsOfStudentDetail"
                component={MissingReportDetails}
-               options={{ title: 'Thông tin chi tiết' }}
+               options={{ title: 'Chi tiết báo thiếu' }}
             />
-
             <Stack.Screen
                name="CreateAssistantAccount"
                component={CreateAssistantAccount}
