@@ -5,6 +5,7 @@ import ReportActivityForm from '../../Components/Profile/TrainingPoints/ReportAc
 import ActivitySettings from '../../Screens/Profile/ActivitySettings';
 import CreateAssistantAccount from '../../Screens/Profile/CreateAssistantAccount';
 import EditProfile from '../../Screens/Profile/EditProfile';
+import SecuritySettings from '../../Screens/Profile/SecuritySettings';
 import TrainingPoints from '../../Screens/Profile/TrainingPoints';
 import Theme from '../../Styles/Theme';
 
@@ -29,12 +30,12 @@ const ProfileStack = () => {
                component={ActivitySettings}
                options={{ title: 'Quản lý hoạt động' }}
             />
-
             <Stack.Screen
                name="CreateAssistantAccount"
                component={CreateAssistantAccount}
                options={{ title: 'Đăng ký tài khoản' }}
             />
+            <Stack.Screen name="SecuritySettings" component={SecuritySettings} options={{ title: 'Cài đặt bảo mật' }} />
          </Stack.Group>
 
          <Stack.Group screenOptions={{ headerShown: false }}>

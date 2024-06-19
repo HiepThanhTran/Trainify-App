@@ -1,11 +1,11 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import Theme from '../Styles/Theme';
-import MainTab from './MainTab';
-import ChatStack from './Stacks/ChatStack';
-import HomeStack from './Stacks/HomeStack';
-import ProfileStack from './Stacks/ProfileStack';
-import ChatTab from './Tabs/ChatTab';
+import Theme from '../../Styles/Theme';
+import ChatTab from '../Tabs/ChatTab';
+import MainTab from '../Tabs/MainTab';
+import ChatStack from './ChatStack';
+import HomeStack from './HomeStack';
+import ProfileStack from './ProfileStack';
 
 const Stack = createStackNavigator();
 

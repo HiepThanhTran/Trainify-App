@@ -140,7 +140,7 @@ const CreateAssistantAccount = () => {
                   <View style={RegisterAssistantStyles.RegisterAssistantImageContainer}>
                      <Image
                         style={RegisterAssistantStyles.RegisterAssistantImage}
-                        source={require('../../Assets/Images/RegisterAssistant.png')}
+                        source={require('../../Assets/Images/FormBackground.png')}
                      />
                   </View>
                   <View style={RegisterAssistantStyles.Field}>
@@ -365,6 +365,7 @@ const RegisterAssistantStyles = StyleSheet.create({
       flex: 1,
       height: 40,
       fontSize: 16,
+      paddingHorizontal: 12,
    },
    Text: {
       flex: 1,
@@ -451,6 +452,7 @@ const RegisterAssistantStyles = StyleSheet.create({
       paddingVertical: 8,
       paddingHorizontal: 0,
       color: 'black',
+      paddingHorizontal: 12,
    },
 });
 
