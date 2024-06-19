@@ -27,7 +27,7 @@ const ActivityCardList = ({ navigation, data, loading, refreshing, setRefreshing
                instance={item}
                key={item.id}
                index={index}
-               report={true}
+               report={props?.report}
                onReport={() => props?.onReport?.(item) ?? null}
                onPress={() => props?.onPress?.(item) ?? null}
             />
