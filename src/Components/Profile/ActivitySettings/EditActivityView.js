@@ -38,21 +38,21 @@ const EditActivityView = ({ navigation, route }) => {
 
    const handleEditActivity = async (activity) => {
       let form = new FormData();
-      for (let [key, field] of Object.entries(activity)) {
-         if (field.required && !field.value) {
-            Alert.alert('Thông báo', `${field.label} không được trống`);
+      for (let key in activity) {
+         if (activity[key].required && !activity[key].value) {
+            Alert.alert('Thông báo', `${activity[key].label} không được trống`);
             return;
          }
 
-         if (!field.required && !field.value) {
+         if (!activity[key].required && !activity[key].value) {
             continue;
          }
 
-         if (key === 'image' && typeof field.value === 'string') {
+         if (key === 'image' && typeof activity[key].value === 'string') {
             continue;
          }
 
-         form.append(key, field.value);
+         form.append(key, activity[key].value);
       }
 
       const { accessToken } = await getTokens();

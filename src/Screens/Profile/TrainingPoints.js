@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ActivityCardList from '../../Components/Common/ActivityCardList';
@@ -8,13 +9,13 @@ import ChipList from '../../Components/Common/ChipList';
 import Loading from '../../Components/Common/Loading';
 import BarChartOfPoints from '../../Components/Profile/TrainingPoints/BarChart';
 import SemestersList from '../../Components/Profile/TrainingPoints/SemestersList';
-import APIs, { endPoints } from '../../Configs/APIs';
+import APIs, { authAPI, endPoints } from '../../Configs/APIs';
 import { statusCode } from '../../Configs/Constants';
 import { useAccount } from '../../Store/Contexts/AccountContext';
 import { useGlobalContext } from '../../Store/Contexts/GlobalContext';
 import GlobalStyle from '../../Styles/Style';
 import Theme from '../../Styles/Theme';
-import { loadMore, onRefresh } from '../../Utils/Utilities';
+import { getTokens, loadMore, onRefresh } from '../../Utils/Utilities';
 
 const TrainingPoints = ({ navigation }) => {
    const { currentSemester, setCurrentSemester } = useGlobalContext();
@@ -22,6 +23,7 @@ const TrainingPoints = ({ navigation }) => {
 
    const refSheetSemesters = useRef(BottomSheet);
 
+   const [wasNavigatedFromGoBack, setWasNavigatedFromGoBack] = useState(false);
    const [criterions, setCriterions] = useState([]);
    const [semesters, setSemesters] = useState([]);
    const [activities, setActivities] = useState([]);
@@ -70,8 +72,9 @@ const TrainingPoints = ({ navigation }) => {
          if (!currentSemester || page <= 0) return;
 
          setActivitiesLoading(true);
+         const { accessToken, refreshToken } = await getTokens();
          try {
-            let response = await APIs.get(endPoints['activities'], {
+            let response = await authAPI(accessToken).get(endPoints['activities'], {
                params: { semester_id: currentSemester.id, criterion_id: selectedCriterion.id, page },
             });
 
@@ -86,7 +89,24 @@ const TrainingPoints = ({ navigation }) => {
                setPage(0);
             }
          } catch (error) {
-            console.log('Criterion activities', error);
+            console.error('Activity of criterion:', error);
+            if (error.response) {
+               if (
+                  error.response.status === statusCode.HTTP_401_UNAUTHORIZED ||
+                  error.response.status === statusCode.HTTP_403_FORBIDDEN
+               ) {
+                  const newAccessToken = await refreshAccessToken(refreshToken, dispatch);
+                  if (newAccessToken) {
+                     handleResetPassword();
+                  }
+               } else if (error.response && error.response.status === statusCode.HTTP_400_BAD_REQUEST) {
+                  Alert.alert('Thông báo', error.response.data.detail);
+               }
+            } else if (error.message && error.message.includes('auth/invalid-credential')) {
+               Alert.alert('Thông báo', 'Mật khẩu hiện tại không đúng');
+            } else {
+               Alert.alert('Thông báo', 'Có lỗi xảy ra khi thực hiện thao tác.');
+            }
          } finally {
             setActivitiesLoading(false);
             setRefreshing(false);
@@ -95,6 +115,28 @@ const TrainingPoints = ({ navigation }) => {
 
       loadActivityOfCriterion();
    }, [currentSemester, selectedCriterion, page, refreshing]);
+
+   useEffect(() => {
+      const unsubscribeFocus = navigation.addListener('focus', () => {});
+
+      const unsubscribeBlur = navigation.addListener('blur', () => {
+         setWasNavigatedFromGoBack(true);
+      });
+
+      return () => {
+         unsubscribeFocus();
+         unsubscribeBlur();
+      };
+   }, [navigation]);
+
+   useFocusEffect(
+      useCallback(() => {
+         if (wasNavigatedFromGoBack) {
+            onRefresh({ setPage, setRefreshing, setData: setActivities });
+            setWasNavigatedFromGoBack(false);
+         }
+      }, [wasNavigatedFromGoBack]),
+   );
 
    const handleChangeSemester = (semester) => {
       if (semester.id !== currentSemester?.id) {
@@ -196,6 +238,7 @@ const TrainingPoints = ({ navigation }) => {
                      refreshing={refreshing}
                      data={activities}
                      page={page}
+                     report={true}
                      onReport={(activity) => goToReport(activity.id)}
                      onPress={(activity) => goActivityDetails(activity.id)}
                   />

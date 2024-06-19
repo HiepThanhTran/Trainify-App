@@ -53,7 +53,7 @@ export const assistantFields = [
    },
 ];
 
-export const initalActivity = {
+export const initialActivity = {
    name: { label: 'Tên hoạt động', value: '', required: true },
    participant: { label: 'Đối tượng', value: '', required: true },
    organizational_form: { label: 'Hình thức', value: 'Onl', required: false },
@@ -67,6 +67,12 @@ export const initalActivity = {
    bulletin: { label: 'Bản tin', value: null, required: false },
    image: { label: 'Hình ảnh', value: null, required: false },
    description: { label: 'Mô tả hoạt động', value: '', required: true },
+};
+
+export const initialResetPassword = {
+   old_password: { label: 'Mật khẩu hiện tại', value: '' },
+   new_password: { label: 'Mật khẩu mới', value: '' },
+   confirm: { label: 'Xác nhận mật khẩu mới', value: '' },
 };
 
 export const profileSections = (currentAccount) => {
@@ -140,7 +146,6 @@ export const profileSections = (currentAccount) => {
                otherTab: 'ChatTab',
                params: { avatar: currentAccount.data.avatar, fullName: currentAccount.data.user.full_name },
             },
-            // { label: '', icon: '', screen: '' },
          ],
       },
    ];

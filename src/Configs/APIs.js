@@ -79,7 +79,7 @@ export const endPoints = {
    'report-detail': (reportID) => `/reports/${reportID}/`,
    // POST: Xác nhận báo thiếu
    'confirm-report': (reportID) => `/reports/${reportID}/confirm/`,
-   // POST: Từ chối báo thiếu
+   // DELETE: Từ chối báo thiếu
    'reject-report': (reportID) => `/reports/${reportID}/reject/`,
 
    //// Comments

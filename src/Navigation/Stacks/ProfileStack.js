@@ -5,9 +5,10 @@ import ReportActivityForm from '../../Components/Profile/TrainingPoints/ReportAc
 import ActivitySettings from '../../Screens/Profile/ActivitySettings';
 import CreateAssistantAccount from '../../Screens/Profile/CreateAssistantAccount';
 import EditProfile from '../../Screens/Profile/EditProfile';
-import TrainingPoints from '../../Screens/Profile/TrainingPoints';
+import MissingReportDetails from '../../Screens/Profile/MissingReportDetails';
 import MissingReportsOfStudent from '../../Screens/Profile/MissingReportsOfStudent';
-import MissingReportsOfStudentDetail from '../../Screens/Profile/MissingReportsOfStudentDetail';
+import SecuritySettings from '../../Screens/Profile/SecuritySettings';
+import TrainingPoints from '../../Screens/Profile/TrainingPoints';
 import Theme from '../../Styles/Theme';
 
 const Stack = createStackNavigator();
@@ -31,7 +32,6 @@ const ProfileStack = () => {
                component={ActivitySettings}
                options={{ title: 'Quản lý hoạt động' }}
             />
-
             <Stack.Screen
                name="MissingReportsOfStudent"
                component={MissingReportsOfStudent}
@@ -40,7 +40,7 @@ const ProfileStack = () => {
 
             <Stack.Screen
                name="MissingReportsOfStudentDetail"
-               component={MissingReportsOfStudentDetail}
+               component={MissingReportDetails}
                options={{ title: 'Thông tin chi tiết' }}
             />
 
@@ -49,6 +49,7 @@ const ProfileStack = () => {
                component={CreateAssistantAccount}
                options={{ title: 'Đăng ký tài khoản' }}
             />
+            <Stack.Screen name="SecuritySettings" component={SecuritySettings} options={{ title: 'Cài đặt bảo mật' }} />
          </Stack.Group>
 
          <Stack.Group screenOptions={{ headerShown: false }}>

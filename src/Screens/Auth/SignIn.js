@@ -70,7 +70,7 @@ const SignIn = ({ navigation }) => {
          await setTokens(tokens);
          dispatch(SignInAction(response.data));
       } catch (error) {
-         if (error.message.includes('auth/invalid-credential')) {
+         if (error.message && error.message.includes('auth/invalid-credential')) {
             createUserWithEmailAndPassword(auth, account['username'], account['password'])
                .then(() => handleSignIn())
                .catch((error) => {

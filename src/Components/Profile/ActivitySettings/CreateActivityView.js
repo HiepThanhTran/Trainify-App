@@ -8,17 +8,17 @@ import ActivityForm from './ActivityForm.js';
 const CreateActivityView = ({ navigation }) => {
    const handleCreateActivity = async (activity) => {
       let form = new FormData();
-      for (let [key, field] of Object.entries(activity)) {
-         if (field.required && !field.value) {
-            Alert.alert('Lỗi', `${field.label} không được trống`);
+      for (let key in activity) {
+         if (activity[key].required && !activity[key].value) {
+            Alert.alert('Lỗi', `${activity[key].label} không được trống`);
             return;
          }
 
-         if (!field.required && !field.value) {
+         if (!activity[key].required && !activity[key].value) {
             continue;
          }
 
-         form.append(key, field.value);
+         form.append(key, activity[key].value);
       }
 
       const { accessToken } = await getTokens();

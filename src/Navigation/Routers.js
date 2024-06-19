@@ -4,8 +4,8 @@ import Loading from '../Components/Common/Loading';
 import useFonts from '../Configs/Fonts';
 import { useAccount } from '../Store/Contexts/AccountContext';
 import Theme from '../Styles/Theme';
-import MainStack from './MainStack';
 import AuthStack from './Stacks/AuthStack';
+import MainStack from './Stacks/MainStack';
 
 const Routers = () => {
    const fontsLoaded = useFonts();
