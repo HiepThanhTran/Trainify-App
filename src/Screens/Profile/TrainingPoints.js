@@ -238,6 +238,7 @@ const TrainingPoints = ({ navigation }) => {
                      refreshing={refreshing}
                      data={activities}
                      page={page}
+                     report={true}
                      onReport={(activity) => goToReport(activity.id)}
                      onPress={(activity) => goActivityDetails(activity.id)}
                   />

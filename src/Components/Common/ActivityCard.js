@@ -14,8 +14,8 @@ const ActivityCard = ({ instance, index, ...props }) => {
             <View style={CarddActivityStyle.CardContainer}>
                <View style={{ ...CarddActivityStyle.CardRow, marginTop: 0 }}>
                   <Text style={CarddActivityStyle.CardTitle}>{instance.name}</Text>
-                  {props?.onReport &&
-                     (instance.reported.reported ? (
+                  {props?.report ? (
+                     instance?.reported?.reported ? (
                         <TouchableOpacity
                            activeOpacity={0.8}
                            onPress={props?.onReport}
@@ -51,7 +51,8 @@ const ActivityCard = ({ instance, index, ...props }) => {
                               <Text style={{ ...CarddActivityStyle.CardText, marginLeft: 0 }}>Báo thiếu</Text>
                            </View>
                         </TouchableOpacity>
-                     ))}
+                     )
+                  ) : null}
                </View>
 
                <View style={CarddActivityStyle.CardRow}>

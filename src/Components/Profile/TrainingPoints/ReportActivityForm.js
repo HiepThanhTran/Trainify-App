@@ -19,6 +19,7 @@ const ReportActivityForm = ({ navigation, route }) => {
 
    const [reportForm, setReportForm] = useState({});
    const [modalVisible, setModalVisible] = useState(false);
+   const [isRendered, setIsRendered] = useState(false);
 
    useEffect(() => {
       navigation.setOptions({
@@ -31,6 +32,9 @@ const ReportActivityForm = ({ navigation, route }) => {
             </TouchableOpacity>
          ),
       });
+      setTimeout(() => {
+         setIsRendered(true);
+      }, 500);
    }, [navigation, reportForm]);
 
    const handleReportActivity = async () => {
@@ -114,6 +118,8 @@ const ReportActivityForm = ({ navigation, route }) => {
       updateReportForm('content', value);
       refScrollView?.current?.scrollToEnd();
    };
+
+   if (!isRendered) return <Loading />;
 
    return (
       <View style={GlobalStyle.BackGround}>
