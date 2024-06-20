@@ -1,8 +1,8 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { authAPI, endPoints } from '../../../Configs/APIs.js';
-import { initalActivity } from '../../../Utils/Fields.js';
-import { getTokens } from '../../../Utils/Utilities.js';
+import { authAPI, endPoints } from '../../../Configs/APIs';
+import { initialActivity } from '../../../Utils/Fields';
+import { getTokens } from '../../../Utils/Utilities';
 import ActivityForm from './ActivityForm.js';
 
 const CreateActivityView = ({ navigation }) => {
@@ -27,7 +27,7 @@ const CreateActivityView = ({ navigation }) => {
 
    return (
       <ActivityForm
-         activityData={initalActivity}
+         activityData={initialActivity}
          navigation={navigation}
          isEditMode={false}
          onSubmit={handleCreateActivity}

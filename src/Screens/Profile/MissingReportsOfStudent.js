@@ -126,7 +126,7 @@ const MissingReportsOfStudent = ({ navigation }) => {
                         source={{ uri: report.evidence }}
                         style={MissingReportsOfStudentStyle.imageBackground}
                      >
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => gotoMissingReportsOfStudentDetail(report.id)}>
                            {report.is_resolved ? (
                               <View style={MissingReportsOfStudentStyle.Resolved}>
                                  <Text style={MissingReportsOfStudentStyle.Solved}>Đã giải quyết</Text>
@@ -234,10 +234,10 @@ const MissingReportsOfStudentStyle = StyleSheet.create({
    },
    imageBackground: {
       width: '100%',
-      height: 200,
       borderRadius: 8,
       overflow: 'hidden',
       marginBottom: 16,
+      padding: 16,
    },
    linearGradient: {
       width: '100%',

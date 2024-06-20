@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { authAPI, endPoints } from '../../../Configs/APIs.js';
 import { statusCode } from '../../../Configs/Constants.js';
-import { initalActivity } from '../../../Utils/Fields.js';
+import { initialActivity } from '../../../Utils/Fields.js';
 import { getTokens, mapValues, refreshAccessToken } from '../../../Utils/Utilities.js';
 import Loading from '../../Common/Loading.js';
 import ActivityForm from './ActivityForm.js';
@@ -10,7 +10,7 @@ import ActivityForm from './ActivityForm.js';
 const EditActivityView = ({ navigation, route }) => {
    const { activityID } = route?.params;
 
-   const [activityData, setActivityData] = useState(initalActivity);
+   const [activityData, setActivityData] = useState(initialActivity);
    const [loading, setLoading] = useState(false);
 
    useEffect(() => {
@@ -23,7 +23,7 @@ const EditActivityView = ({ navigation, route }) => {
             let response = await authAPI(accessToken).get(endPoints['activity-detail'](activityID));
 
             if (response.status === statusCode.HTTP_200_OK) {
-               setActivityData(mapValues(initalActivity, response.data));
+               setActivityData(mapValues(initialActivity, response.data));
             }
          } catch (error) {
             console.error('Activity details of edit', error);

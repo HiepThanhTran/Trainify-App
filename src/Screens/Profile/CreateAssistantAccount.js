@@ -70,7 +70,6 @@ const CreateAssistantAccount = () => {
 
    const handleCreateAccountAssistant = async () => {
       for (let field of assistantFields) {
-         console.log(field.name);
          if (!account[field.name] || account[field.name] === undefined) {
             Alert.alert('Thông báo', `${field.label} không được trống`);
             return;
