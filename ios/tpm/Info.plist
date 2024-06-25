@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.anonymous.tpmmobileapp</string>
+          <string>com.devlin.tpm</string>
         </array>
       </dict>
     </array>

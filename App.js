@@ -1,7 +1,5 @@
-import { LogBox, PermissionsAndroid } from 'react-native';
+import { LogBox } from 'react-native';
 import Providers from './src/Navigation/Providers';
-
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 // LogBox.ignoreAllLogs();
 LogBox.ignoreLogs([

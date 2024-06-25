@@ -1,4 +1,4 @@
-package com.anonymous.tpmmobileapp
+package com.devlin.tpm
 
 import android.app.Application
 import android.content.res.Configuration

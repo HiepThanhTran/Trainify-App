@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "tpmmobileapp.app"
-               BlueprintName = "tpmmobileapp"
-               ReferencedContainer = "container:tpmmobileapp.xcodeproj">
+               BuildableName = "tpm.app"
+               BlueprintName = "tpm"
+               ReferencedContainer = "container:tpm.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "tpmmobileappTests.xctest"
-               BlueprintName = "tpmmobileappTests"
-               ReferencedContainer = "container:tpmmobileapp.xcodeproj">
+               BuildableName = "tpmTests.xctest"
+               BlueprintName = "tpmTests"
+               ReferencedContainer = "container:tpm.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "tpmmobileapp.app"
-            BlueprintName = "tpmmobileapp"
-            ReferencedContainer = "container:tpmmobileapp.xcodeproj">
+            BuildableName = "tpm.app"
+            BlueprintName = "tpm"
+            ReferencedContainer = "container:tpm.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "tpmmobileapp.app"
-            BlueprintName = "tpmmobileapp"
-            ReferencedContainer = "container:tpmmobileapp.xcodeproj">
+            BuildableName = "tpm.app"
+            BlueprintName = "tpm"
+            ReferencedContainer = "container:tpm.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

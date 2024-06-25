@@ -4,10 +4,12 @@
       "slug": "tpm-mobileapp",
       "version": "1.0.0",
       "assetBundlePatterns": ["**/*"],
-      "plugins": ["expo-font", "@react-native-firebase/app"],
+      "plugins": ["expo-font"],
       "android": {
-         "googleServicesFile": "./android/app/google-services.json",
-         "package": "com.anonymous.tpmmobileapp"
+         "package": "com.devlin.tpm"
+      },
+      "ios": {
+         "bundleIdentifier": "com.devlin.tpm"
       }
    }
 }
