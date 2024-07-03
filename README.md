@@ -40,7 +40,7 @@ cd TPM-Mobile-App
 
 2. Install dependencies
 
--  Ensure npm is installed on your machine, and then run:
+   -  Ensure npm is installed on your machine, and then run:
 
 ```shell
 npm install
@@ -73,13 +73,13 @@ FIREBASE_DATABASE_URL=your-firebase-database-url
 
 5. Run the project
 
-   -  Run on Android:
+-  Run on Android:
 
 ```shell
 npx react-native run-android
 ```
 
-   -  Run on iOS:
+-  Run on iOS:
 
 ```shell
 npx react-native run-ios
