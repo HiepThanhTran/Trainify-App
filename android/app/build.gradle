@@ -83,9 +83,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.devlin.tpm'
+    namespace 'com.fh.tpm'
     defaultConfig {
-        applicationId 'com.devlin.tpm'
+        applicationId 'com.fh.tpm'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

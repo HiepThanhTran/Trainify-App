@@ -1,15 +1,15 @@
 {
    "expo": {
-      "name": "tpm-mobileapp",
-      "slug": "tpm-mobileapp",
+      "name": "Training Point Management",
+      "slug": "training_point_management",
       "version": "1.0.0",
       "assetBundlePatterns": ["**/*"],
       "plugins": ["expo-font"],
       "android": {
-         "package": "com.devlin.tpm"
+         "package": "com.fh.tpm"
       },
       "ios": {
-         "bundleIdentifier": "com.devlin.tpm"
+         "bundleIdentifier": "com.fh.tpm"
       }
    }
 }

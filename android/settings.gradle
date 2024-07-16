@@ -1,4 +1,4 @@
-rootProject.name = 'tpm-mobileapp'
+rootProject.name = 'tpm'
 
 dependencyResolutionManagement {
   versionCatalogs {
