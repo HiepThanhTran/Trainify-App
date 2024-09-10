@@ -55,21 +55,31 @@ npm install
 
    -  Create a .env file in the root directory and add the following:
 
-```shell
-BASE_URL=your-base-url (e.g: https://trainingpoint.vercel.app)
-URL_TYPE=your-url-type (e.g: api)
-API_VERSION=your-api-version (e.g: v1)
-CLIENT_ID=your-client-id (from django-oauth-toolkit)
-CLIENT_SECRET=your-client-secret (from django-oauth-toolkit)
-FIREBASE_API_KEY=your-firebase-api-key
-FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain
-FIREBASE_PROJECT_ID=your-firebase-project-id
-FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket
-FIREBASE_MESSAGING_SENDER_ID=your-firebase-mapping-sender-id
-FIREBASE_APP_ID=your-firebase-app-id
-FIREBASE_MEASUREMENT_ID=your-firebase-measurement
-FIREBASE_DATABASE_URL=your-firebase-database-url
-```
+`BASE_URL=your-base-url (e.g: https://trainingpoint.vercel.app)`
+
+`URL_TYPE=your-url-type (e.g: api)`
+
+`API_VERSION=your-api-version (e.g: v1)`
+
+`CLIENT_ID=your-client-id (from django-oauth-toolkit)`
+
+`CLIENT_SECRET=your-client-secret (from django-oauth-toolkit)`
+
+`FIREBASE_API_KEY=your-firebase-api-key`
+
+`FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain`
+
+`FIREBASE_PROJECT_ID=your-firebase-project-id`
+
+`FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket`
+
+`FIREBASE_MESSAGING_SENDER_ID=your-firebase-mapping-sender-id`
+
+`FIREBASE_APP_ID=your-firebase-app-id`
+
+`FIREBASE_MEASUREMENT_ID=your-firebase-measurement`
+
+`FIREBASE_DATABASE_URL=your-firebase-database-url`
 
 5. Run the project
 
@@ -84,7 +94,3 @@ npx react-native run-android
 ```shell
 npx react-native run-ios
 ```
-
-## Contact
-
-For any questions or issues, please contact the project maintainer at [hieptt.2003@gmail.com](mailto:hieptt.2003@gmail.com).
